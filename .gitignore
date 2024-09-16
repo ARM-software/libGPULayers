@@ -1,0 +1,10 @@
+# Editor config files
+.vs
+.vscode
+
+# Build and debug output files
+/.cache
+/bin*
+/build*
+/log*
+/scratch*
