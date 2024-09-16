@@ -1,0 +1,59 @@
+#pragma once
+
+#include <vulkan/vulkan.h>
+
+#include "instance_functions.hpp"
+
+/**
+ * \brief Interception table lookup entry.
+ */
+struct InstanceInterceptTableEntry
+{
+    /**
+     * \brief The function entrypoint name.
+     */
+    const char* name;
+
+    /**
+     * \brief The layer function pointer.
+     */
+    PFN_vkVoidFunction function;
+};
+
+#define ENTRY(fnc) { STR(fnc), reinterpret_cast<PFN_vkVoidFunction>(layer_##fnc) }
+
+/**
+ * \brief The instance dispatch table used to call the driver.
+ */
+static const struct InstanceInterceptTableEntry instanceIntercepts[] = {
+{ITABLE_MEMBERS}};
+
+#undef ENTRY
+
+/**
+ * \brief The instance dispatch table used to call the driver.
+ */
+struct InstanceDispatchTable {
+    PFN_vkGetInstanceProcAddr vkGetInstanceProcAddr;
+
+{DTABLE_MEMBERS}};
+
+#define ENTRY(fnc) table.fnc = (PFN_##fnc)getProcAddr(instance, STR(fnc))
+
+/**
+ * \brief Initialize the instance dispatch table with driver function pointers.
+ *
+ * \param instance      The instance handle.
+ * \param getProcAddr   The function getter for the driver/next layer down.
+ * \param table         The table to populate.
+ */
+static inline void initDriverInstanceDispatchTable(
+    VkInstance instance,
+    PFN_vkGetInstanceProcAddr getProcAddr,
+    InstanceDispatchTable& table
+) {
+    table.vkGetInstanceProcAddr = getProcAddr;
+
+{DTABLE_INITS}}
+
+#undef ENTRY

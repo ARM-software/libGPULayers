@@ -1,0 +1,11 @@
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    auto* layer = Device::retrieve(device);
+
+    // Layer proxy must be destroyed before the driver version
+    // so we can clean up any layer-owned resources
+    Device::destroy(layer);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    layer->driver.vkDestroyDevice(device, pAllocator);

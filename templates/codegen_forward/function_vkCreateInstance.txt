@@ -1,0 +1,24 @@
+    auto* chainInfo = get_chain_info(pCreateInfo, VK_LAYER_LINK_INFO);
+
+    auto fpGetInstanceProcAddr = chainInfo->u.pLayerInfo->pfnNextGetInstanceProcAddr;
+    auto fpCreateInstance = reinterpret_cast<PFN_vkCreateInstance>(fpGetInstanceProcAddr(nullptr, "vkCreateInstance"));
+    if (!fpCreateInstance)
+    {
+        return VK_ERROR_INITIALIZATION_FAILED;
+    }
+
+    chainInfo->u.pLayerInfo = chainInfo->u.pLayerInfo->pNext;
+    auto res = fpCreateInstance(pCreateInfo, pAllocator, pInstance);
+    if (res != VK_SUCCESS)
+    {
+        return res;
+    }
+
+    // Hold the lock to access layer-wide global store
+    auto instance = std::make_unique<Instance>(*pInstance, fpGetInstanceProcAddr);
+    {
+        std::lock_guard<std::mutex> lock { g_vulkanLock };
+        Instance::store(*pInstance, instance);
+    }
+
+    return VK_SUCCESS;

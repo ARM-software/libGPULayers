@@ -1,0 +1,32 @@
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    auto* layer = Instance::retrieve(physicalDevice);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+
+    auto* chainInfo = get_chain_info(pCreateInfo, VK_LAYER_LINK_INFO);
+    auto fpGetInstanceProcAddr = chainInfo->u.pLayerInfo->pfnNextGetInstanceProcAddr;
+    auto fpGetDeviceProcAddr = chainInfo->u.pLayerInfo->pfnNextGetDeviceProcAddr;
+    auto fpCreateDevice = reinterpret_cast<PFN_vkCreateDevice>(fpGetInstanceProcAddr(layer->instance, "vkCreateDevice"));
+    if (!fpCreateDevice)
+    {
+        return VK_ERROR_INITIALIZATION_FAILED;
+    }
+
+    // Advance the link info for the next element on the chain
+    chainInfo->u.pLayerInfo = chainInfo->u.pLayerInfo->pNext;
+
+    auto res = fpCreateDevice(physicalDevice, pCreateInfo, pAllocator, pDevice);
+    if (res != VK_SUCCESS)
+    {
+        return res;
+    }
+
+    auto device = std::make_unique<Device>(layer, physicalDevice, *pDevice, fpGetDeviceProcAddr);
+
+    // Hold the lock to access layer-wide global store
+    lock.lock();
+    Device::store(*pDevice, std::move(device));
+
+    return VK_SUCCESS;
