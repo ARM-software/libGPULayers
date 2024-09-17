@@ -274,7 +274,7 @@ class Command:
 
 def load_template(path, style):
     base_dir = os.path.dirname(__file__)
-    template_dir = f'templates/codegen_{style}'
+    template_dir = f'templates/vulkan/codegen_{style}'
     template_file = os.path.join(base_dir, template_dir, path)
 
     # Load the data from the file
@@ -578,7 +578,7 @@ def load_handwritten_commands(style):
     Load the small number of hand-written functions from template files.
     '''
     script_dir = os.path.dirname(__file__)
-    template_dir = os.path.join(script_dir, f'templates/codegen_{style}')
+    template_dir = os.path.join(script_dir, f'templates/vulkan/codegen_{style}')
     pattern = re.compile(r'^function_(.*)\.txt$')
 
     commands = {}
@@ -746,7 +746,7 @@ def main():
     manual_commands = load_handwritten_commands(args.layer_style)
 
     # Transfer static resources to output
-    copy_resource(f'templates/source_{args.layer_style}', outdir)
+    copy_resource(f'templates/vulkan/source_{args.layer_style}', outdir)
 
     # Generate the layer skeleton
     outfile = os.path.join(outdir, 'CMakeLists.txt')
