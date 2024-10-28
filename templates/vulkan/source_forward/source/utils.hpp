@@ -29,11 +29,15 @@
  */
 
 #include <cassert>
+#include <memory>
 #include <string>
 
-#include <android/log.h>
 #include <inttypes.h>
-#include <time.h>
+#include <sys/time.h>
+
+#ifdef __ANDROID__
+  #include <android/log.h>
+#endif
 
 /**
  * \brief Convert a dispatchable API handle to the underlying dispatch key.
@@ -69,22 +73,31 @@ static inline void* getDispatchKey(
 #define CONFIG_LOG 1
 
 #if CONFIG_TRACE
+  #ifdef __ANDROID__
     #if !defined(ARM_LOG_TAG)
         #error "ARM_LOG_TAG not defined"
     #endif
 
     #define LAYER_TRACE(x) __android_log_print(ANDROID_LOG_INFO, ARM_LOG_TAG, "API Trace: %s", x)
+  #else
+    #define LAYER_TRACE(x) printf("API Trace: %s\n", x)
+  #endif
 #else
     #define LAYER_TRACE(x)
 #endif
 
 #if CONFIG_LOG
+  #ifdef __ANDROID__
     #if !defined(ARM_LOG_TAG)
         #error "ARM_LOG_TAG not defined"
     #endif
 
     #define LAYER_LOG(...) __android_log_print(ANDROID_LOG_DEBUG, ARM_LOG_TAG, __VA_ARGS__)
     #define LAYER_ERR(...) __android_log_print(ANDROID_LOG_ERROR, ARM_LOG_TAG, __VA_ARGS__)
+  #else
+    #define LAYER_LOG(...) printf(__VA_ARGS__); printf("\n");
+    #define LAYER_ERR(...) printf(__VA_ARGS__); printf("\n");
+  #endif
 #else
     #define LAYER_LOG(...)
     #define LAYER_ERR(...)

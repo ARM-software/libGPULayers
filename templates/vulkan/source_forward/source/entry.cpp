@@ -28,6 +28,8 @@
  * This module exposes the entrypoints used by the Android layer loader.
  */
 #include <array>
+#include <cstring>
+#include <mutex>
 #include <thread>
 
 #include "utils.hpp"

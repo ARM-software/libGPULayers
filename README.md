@@ -55,7 +55,8 @@ from this repository you acknowledge that you accept terms specified in the
 # Documentation
 
 * [Building a new layer](./docs/building.md)
-* [Running using a layer](./docs/running.md)
+* [Running using a layer on Android](./docs/running_android.md)
+* [Running using a layer on Linux](./docs/running_linux.md)
 * [Frequently asked questions](./docs/faq.md)
 
 # Support

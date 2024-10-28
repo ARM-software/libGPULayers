@@ -19,13 +19,18 @@ placeholder "Demo" with your layer name, but the layer name must start with
 `VkLayer` to be considered a legal Vulkan layer.
 
 ```
-python3 --project-name VkLayerDemo --output layer_demo
+python3 generate_vulkan_layer.py --project-name VkLayerDemo --output layer_demo
 ```
 
-## Build the layer
+**Note:** The skeleton layer does nothing other than intercept all of the
+Vulkan API entry points and forward them to the next layer/driver in the stack.
+You must edit the skeleton source code to make it do something useful ...
 
-A standard build script is provided for Linux hosts. Build the layer using the
-helper script, specifying either `Release` or `Debug` as your build type.
+## Build the Android layer
+
+Builds for Android are using a  standard build script, provided for Linux
+build hosts. Build the layer using the helper script, specifying either
+`Release` or `Debug` as your build type.
 
 ```sh
 export ANDROID_NDK_HOME=/path/to/android/ndk
@@ -34,9 +39,19 @@ cd layer_demo
 ./android_build.sh Release
 ```
 
-**Note:** The skeleton layer does nothing other than intercept all of the
-Vulkan API entry points and forward them to the next layer/driver in the stack.
-You must edit the skeleton source code to make it do something useful ...
+## Build the Linux layer
+
+Builds for Linux use CMake directly.
+
+```sh
+cd layer_demo
+
+mkdir build
+cd build
+
+cmake -DCMAKE_BUILD_TYPE=Release ..
+make -j16
+```
 
 - - -
 
