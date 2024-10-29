@@ -49,6 +49,12 @@ std::mutex g_vulkanLock;
 
 #define VK_LAYER_EXPORT __attribute__((visibility("default")))
 
+#if defined(VK_USE_PLATFORM_ANDROID_KHR)
+    #define VK_LAYER_EXPORT_ANDROID VK_LAYER_EXPORT
+#else
+    #define VK_LAYER_EXPORT_ANDROID
+#endif
+
 /**
  * \brief The layer configuration.
  */
@@ -235,7 +241,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateInstanceExtensionPrope
 }
 
 /** See Vulkan API for documentation. */
-VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceExtensionProperties(
+VK_LAYER_EXPORT_ANDROID VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceExtensionProperties(
     VkPhysicalDevice gpu,
     const char* pLayerName,
     uint32_t* pPropertyCount,
@@ -294,7 +300,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateInstanceLayerPropertie
 }
 
 /** See Vulkan API for documentation. */
-VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceLayerProperties(
+VK_LAYER_EXPORT_ANDROID VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceLayerProperties(
     VkPhysicalDevice gpu,
     uint32_t* pPropertyCount,
     VkLayerProperties* pProperties
@@ -318,15 +324,6 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceLayerProperties(
 
     *pPropertyCount = layerProps.size();
     return VK_SUCCESS;
-}
-
-/* See Vulkan API for documentation. */
-VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateInstance(
-    const VkInstanceCreateInfo* pCreateInfo,
-    const VkAllocationCallbacks* pAllocator,
-    VkInstance* pInstance
-) {
-    return  layer_vkCreateInstance(pCreateInfo, pAllocator, pInstance);
 }
 
 }

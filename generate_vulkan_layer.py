@@ -402,7 +402,7 @@ def generate_layer_instance_dispatch_table(file, mapping, commands, style):
         tname = command.name
         if tname not in FORWARD_WITHOUT_INTERCEPT:
             if plat_define:
-                itable_members.append(f'#if {plat_define}\n')
+                itable_members.append(f'#if defined({plat_define})\n')
 
             itable_members.append(f'    ENTRY({tname}),\n')
 
@@ -411,8 +411,8 @@ def generate_layer_instance_dispatch_table(file, mapping, commands, style):
 
         if tname not in INTERCEPT_WITHOUT_FORWARD:
             if plat_define:
-                dispatch_table_members.append(f'#if {plat_define}\n')
-                dispatch_table_inits.append(f'#if {plat_define}\n')
+                dispatch_table_members.append(f'#if defined({plat_define})\n')
+                dispatch_table_inits.append(f'#if defined({plat_define})\n')
 
             dispatch_table_members.append(f'    {ttype} {tname};\n')
             dispatch_table_inits.append(f'    ENTRY({tname});\n')
@@ -448,7 +448,7 @@ def generate_layer_instance_layer_decls(file, mapping, commands, style):
 
         plat_define = mapping.get_platform_define(command.name)
         if plat_define:
-            lines.append(f'#if {plat_define}')
+            lines.append(f'#if defined({plat_define})')
 
         lines.append('/* See Vulkan API for documentation. */')
         decl = f'VKAPI_ATTR {command.rtype} VKAPI_CALL layer_{command.name}('
@@ -483,7 +483,7 @@ def generate_layer_instance_layer_defs(file, mapping, commands, manual_commands,
 
         plat_define = mapping.get_platform_define(command.name)
         if plat_define:
-            lines.append(f'#if {plat_define}')
+            lines.append(f'#if defined({plat_define})')
 
         lines.append('/* See Vulkan API for documentation. */')
 
@@ -544,9 +544,9 @@ def generate_layer_device_dispatch_table(file, mapping, commands, style):
         tname = command.name
 
         if plat_define:
-            itable_members.append(f'#if {plat_define}')
-            dispatch_table_members.append(f'#if {plat_define}')
-            dispatch_table_inits.append(f'#if {plat_define}')
+            itable_members.append(f'#if defined({plat_define})')
+            dispatch_table_members.append(f'#if defined({plat_define})')
+            dispatch_table_inits.append(f'#if defined({plat_define})')
 
         itable_members.append(f'    ENTRY({tname}),\n')
         dispatch_table_members.append(f'    {ttype} {tname};\n')
@@ -583,7 +583,7 @@ def generate_layer_device_layer_decls(file, mapping, commands, style):
 
         plat_define = mapping.get_platform_define(command.name)
         if plat_define:
-            lines.append(f'#if {plat_define}')
+            lines.append(f'#if defined({plat_define})')
 
         lines.append('/* See Vulkan API for documentation. */')
         decl = f'VKAPI_ATTR {command.rtype} VKAPI_CALL layer_{command.name}('
@@ -618,7 +618,7 @@ def generate_layer_device_layer_defs(file, mapping, commands, manual_commands, s
 
         plat_define = mapping.get_platform_define(command.name)
         if plat_define:
-            lines.append(f'#if {plat_define}')
+            lines.append(f'#if defined({plat_define})')
 
         lines.append('/* See Vulkan API for documentation. */')
 
