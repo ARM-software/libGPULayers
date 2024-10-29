@@ -25,7 +25,10 @@
 
 /**
  * \file
- * This module exposes the entrypoints used by the Android layer loader.
+ * This module exposes the entrypoints used by the layer loader.
+ *
+ * Note that the Android loader requires more functions to be exposed as
+ * library symbols than other Vulkan loaders.
  */
 #include <array>
 #include <cstring>
@@ -315,6 +318,15 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceLayerProperties(
 
     *pPropertyCount = layerProps.size();
     return VK_SUCCESS;
+}
+
+/* See Vulkan API for documentation. */
+VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateInstance(
+    const VkInstanceCreateInfo* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkInstance* pInstance
+) {
+    return  layer_vkCreateInstance(pCreateInfo, pAllocator, pInstance);
 }
 
 }
