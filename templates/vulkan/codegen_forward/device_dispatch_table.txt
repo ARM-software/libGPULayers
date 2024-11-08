@@ -3,6 +3,9 @@
 #include <vulkan/vulkan.h>
 
 #include "device_functions.hpp"
+#if __has_include ("layer_device_functions.hpp")
+    #include "layer_device_functions.hpp"
+#endif
 
 /**
  * \brief Interception table lookup entry.
@@ -19,8 +22,6 @@ struct DeviceInterceptTableEntry
      */
     PFN_vkVoidFunction function;
 };
-
-#define ENTRY(fnc) { STR(fnc), reinterpret_cast<PFN_vkVoidFunction>(layer_##fnc) }
 
 /**
  * \brief The device dispatch table used to call the driver.

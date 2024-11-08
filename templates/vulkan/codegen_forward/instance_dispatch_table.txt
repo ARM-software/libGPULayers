@@ -3,6 +3,9 @@
 #include <vulkan/vulkan.h>
 
 #include "instance_functions.hpp"
+#if __has_include ("layer_instance_functions.hpp")
+    #include "layer_instance_functions.hpp"
+#endif
 
 /**
  * \brief Interception table lookup entry.
@@ -19,8 +22,6 @@ struct InstanceInterceptTableEntry
      */
     PFN_vkVoidFunction function;
 };
-
-#define ENTRY(fnc) { STR(fnc), reinterpret_cast<PFN_vkVoidFunction>(layer_##fnc) }
 
 /**
  * \brief The instance dispatch table used to call the driver.

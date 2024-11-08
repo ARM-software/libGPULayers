@@ -28,6 +28,8 @@
  * This module implements miscellaneous utility functions.
  */
 
+#pragma once
+
 #include <cassert>
 #include <memory>
 #include <string>
@@ -38,6 +40,11 @@
 #ifdef __ANDROID__
   #include <android/log.h>
 #endif
+
+/**
+ * Tag type used for function dispatch;
+ */
+struct user_tag {};
 
 /**
  * \brief Convert a dispatchable API handle to the underlying dispatch key.

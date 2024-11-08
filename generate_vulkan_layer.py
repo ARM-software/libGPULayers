@@ -404,8 +404,7 @@ def generate_layer_instance_dispatch_table(file, mapping, commands, style):
             if plat_define:
                 itable_members.append(f'#if defined({plat_define})\n')
 
-            itable_members.append(f'    ENTRY({tname}),\n')
-
+            itable_members.append(f'   {{ STR(fnc), reinterpret_cast<PFN_vkVoidFunction>(layer_{tname}<user_tag>) }},\n')
             if plat_define:
                 itable_members.append('#endif\n')
 
@@ -448,10 +447,11 @@ def generate_layer_instance_layer_decls(file, mapping, commands, style):
 
         plat_define = mapping.get_platform_define(command.name)
         if plat_define:
-            lines.append(f'#if defined({plat_define})')
+            lines.append(f'#if defined({plat_define})\n')
 
+        # Declare the default implementation
         lines.append('/* See Vulkan API for documentation. */')
-        decl = f'VKAPI_ATTR {command.rtype} VKAPI_CALL layer_{command.name}('
+        decl = f'VKAPI_ATTR {command.rtype} VKAPI_CALL layer_{command.name}_default('
         lines.append(decl)
 
         for i, (ptype, pname, array) in enumerate(command.params):
@@ -460,9 +460,30 @@ def generate_layer_instance_layer_decls(file, mapping, commands, style):
                 ending = ');'
             parl = f'    {ptype} {pname}{array}{ending}'
             lines.append(parl)
+        lines.append('')
+
+        # Define the default tag dispatch handler
+        lines.append('/* Default template without specialization. */')
+        decl = 'template <typename T>'
+        lines.append(decl)
+        decl = f'VKAPI_ATTR {command.rtype} VKAPI_CALL layer_{command.name}('
+        lines.append(decl)
+
+        for i, (ptype, pname, array) in enumerate(command.params):
+            ending = ','
+            if i == len(command.params) - 1:
+                ending = ''
+            parl = f'    {ptype} {pname}{array}{ending}'
+            lines.append(parl)
+
+        parmfwd = ", ".join([x[1] for x in command.params])
+        retfwd = 'return ' if command.rtype != 'void' else ''
+        lines.append(') {')
+        lines.append(f'    {retfwd}layer_{command.name}_default({parmfwd});')
+        lines.append('}')
 
         if plat_define:
-            lines.append('#endif')
+            lines.append('\n#endif')
 
         file.write('\n'.join(lines))
         file.write('\n\n')
@@ -483,11 +504,10 @@ def generate_layer_instance_layer_defs(file, mapping, commands, manual_commands,
 
         plat_define = mapping.get_platform_define(command.name)
         if plat_define:
-            lines.append(f'#if defined({plat_define})')
+            lines.append(f'#if defined({plat_define})\n')
 
         lines.append('/* See Vulkan API for documentation. */')
-
-        decl = f'VKAPI_ATTR {command.rtype} VKAPI_CALL layer_{command.name}('
+        decl = f'VKAPI_ATTR {command.rtype} VKAPI_CALL layer_{command.name}_default('
         lines.append(decl)
 
         for i, (ptype, pname, array) in enumerate(command.params):
@@ -518,7 +538,7 @@ def generate_layer_instance_layer_defs(file, mapping, commands, manual_commands,
         lines.append('}\n')
 
         if plat_define:
-            lines.append('#endif')
+            lines.append('#endif\n')
 
     data = data.replace('{FUNCTION_DEFS}', '\n'.join(lines))
     file.write(data)
@@ -548,7 +568,7 @@ def generate_layer_device_dispatch_table(file, mapping, commands, style):
             dispatch_table_members.append(f'#if defined({plat_define})')
             dispatch_table_inits.append(f'#if defined({plat_define})')
 
-        itable_members.append(f'    ENTRY({tname}),\n')
+        itable_members.append(f'   {{ STR(fnc), reinterpret_cast<PFN_vkVoidFunction>(layer_{tname}<user_tag>) }},\n')
         dispatch_table_members.append(f'    {ttype} {tname};\n')
         dispatch_table_inits.append(f'    ENTRY({tname});\n')
 
@@ -583,10 +603,10 @@ def generate_layer_device_layer_decls(file, mapping, commands, style):
 
         plat_define = mapping.get_platform_define(command.name)
         if plat_define:
-            lines.append(f'#if defined({plat_define})')
+            lines.append(f'#if defined({plat_define})\n')
 
         lines.append('/* See Vulkan API for documentation. */')
-        decl = f'VKAPI_ATTR {command.rtype} VKAPI_CALL layer_{command.name}('
+        decl = f'VKAPI_ATTR {command.rtype} VKAPI_CALL layer_{command.name}_default('
         lines.append(decl)
 
         for i, (ptype, pname, array) in enumerate(command.params):
@@ -595,9 +615,30 @@ def generate_layer_device_layer_decls(file, mapping, commands, style):
                 ending = ');'
             parl = f'    {ptype} {pname}{array}{ending}'
             lines.append(parl)
+        lines.append('')
+
+        # Define the default tag dispatch handler
+        lines.append('/* Default template without specialization. */')
+        decl = 'template <typename T>'
+        lines.append(decl)
+        decl = f'VKAPI_ATTR {command.rtype} VKAPI_CALL layer_{command.name}('
+        lines.append(decl)
+
+        for i, (ptype, pname, array) in enumerate(command.params):
+            ending = ','
+            if i == len(command.params) - 1:
+                ending = ''
+            parl = f'    {ptype} {pname}{array}{ending}'
+            lines.append(parl)
+
+        parmfwd = ", ".join([x[1] for x in command.params])
+        retfwd = 'return ' if command.rtype != 'void' else ''
+        lines.append(') {')
+        lines.append(f'    {retfwd}layer_{command.name}_default({parmfwd});')
+        lines.append('}')
 
         if plat_define:
-            lines.append('#endif')
+            lines.append('\n#endif')
 
         file.write('\n'.join(lines))
         file.write('\n\n')
@@ -618,11 +659,11 @@ def generate_layer_device_layer_defs(file, mapping, commands, manual_commands, s
 
         plat_define = mapping.get_platform_define(command.name)
         if plat_define:
-            lines.append(f'#if defined({plat_define})')
+            lines.append(f'#if defined({plat_define})\n')
 
         lines.append('/* See Vulkan API for documentation. */')
 
-        decl = f'VKAPI_ATTR {command.rtype} VKAPI_CALL layer_{command.name}('
+        decl = f'VKAPI_ATTR {command.rtype} VKAPI_CALL layer_{command.name}_default('
         lines.append(decl)
 
         for i, (ptype, pname, array) in enumerate(command.params):
@@ -653,7 +694,7 @@ def generate_layer_device_layer_defs(file, mapping, commands, manual_commands, s
         lines.append('}\n')
 
         if plat_define:
-            lines.append('#endif')
+            lines.append('#endif\n')
 
     data = data.replace('{FUNCTION_DEFS}', '\n'.join(lines))
     file.write(data)
