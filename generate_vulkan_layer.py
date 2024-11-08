@@ -136,7 +136,7 @@ class VersionMapping(dict):
             for command in commands:
                 fname = command.get('name')
                 assert fname not in self, fname
-                self[fname] = [api_version]
+                self[fname] = [(api_version, None)]
 
     def load_api_extensions(self, root):
         '''
@@ -155,8 +155,13 @@ class VersionMapping(dict):
                 continue
 
             # Omit extensions that are not on the Android platform
-            platforms = extension.get('platform', 'android').split(',')
-            if 'android' not in platforms:
+            platforms = extension.get('platform', None)
+            is_android = True
+            if platforms:
+                platforms = platforms.split(',')
+                is_android = 'android' in platforms
+
+            if not is_android:
                 continue
 
             # Omit extensions that are from other vendors
@@ -174,7 +179,35 @@ class VersionMapping(dict):
                 fname = command.get('name')
                 if fname not in self:
                     self[fname] = []
-                self[fname].append(ext_name)
+
+                self[fname].append((ext_name, platforms))
+
+    def get_platform_define(self, command):
+        '''
+        Determine the platform define for a command mapping.
+        '''
+        mappings = self[command]
+
+        platforms = set()
+
+        for mapping in mappings:
+            # No platform always takes precedence
+            if mapping[1] is None:
+                platforms = set()
+                break
+
+            # Limited platforms accumulate
+            platforms.update(set(mapping[1]))
+
+        # Currently only handle no define mapping or Android only
+        if not platforms:
+            return None
+
+        if len(platforms) == 1 and 'android' in platforms:
+            return 'VK_USE_PLATFORM_ANDROID_KHR'
+
+        assert False, f'Unhandled mapping: {platforms}'
+
 
 class Command:
 
@@ -354,7 +387,6 @@ def generate_layer_instance_dispatch_table(file, mapping, commands, style):
 
     data = load_template('instance_dispatch_table.txt', style)
 
-
     # Create a listing of API versions and API extensions
     itable_members = []
     dispatch_table_members = []
@@ -364,15 +396,31 @@ def generate_layer_instance_dispatch_table(file, mapping, commands, style):
         if command.dispatch_type != 'instance':
             continue
 
+        plat_define = mapping.get_platform_define(command.name)
+
         ttype = f'PFN_{command.name}'
         tname = command.name
-
         if tname not in FORWARD_WITHOUT_INTERCEPT:
+            if plat_define:
+                itable_members.append(f'#if defined({plat_define})\n')
+
             itable_members.append(f'    ENTRY({tname}),\n')
 
+            if plat_define:
+                itable_members.append('#endif\n')
+
         if tname not in INTERCEPT_WITHOUT_FORWARD:
+            if plat_define:
+                dispatch_table_members.append(f'#if defined({plat_define})\n')
+                dispatch_table_inits.append(f'#if defined({plat_define})\n')
+
             dispatch_table_members.append(f'    {ttype} {tname};\n')
             dispatch_table_inits.append(f'    ENTRY({tname});\n')
+
+            if plat_define:
+                dispatch_table_members.append('#endif\n')
+                dispatch_table_inits.append('#endif\n')
+
 
     data = data.replace('{ITABLE_MEMBERS}', ''.join(itable_members))
     data = data.replace('{DTABLE_MEMBERS}', ''.join(dispatch_table_members))
@@ -396,8 +444,13 @@ def generate_layer_instance_layer_decls(file, mapping, commands, style):
         if command.dispatch_type != "instance":
             continue
 
-        lines = ['/* See Vulkan API for documentation. */']
+        lines = []
 
+        plat_define = mapping.get_platform_define(command.name)
+        if plat_define:
+            lines.append(f'#if defined({plat_define})')
+
+        lines.append('/* See Vulkan API for documentation. */')
         decl = f'VKAPI_ATTR {command.rtype} VKAPI_CALL layer_{command.name}('
         lines.append(decl)
 
@@ -407,6 +460,9 @@ def generate_layer_instance_layer_decls(file, mapping, commands, style):
                 ending = ');'
             parl = f'    {ptype} {pname}{array}{ending}'
             lines.append(parl)
+
+        if plat_define:
+            lines.append('#endif')
 
         file.write('\n'.join(lines))
         file.write('\n\n')
@@ -424,6 +480,10 @@ def generate_layer_instance_layer_defs(file, mapping, commands, manual_commands,
     for command in commands:
         if command.dispatch_type != "instance":
             continue
+
+        plat_define = mapping.get_platform_define(command.name)
+        if plat_define:
+            lines.append(f'#if defined({plat_define})')
 
         lines.append('/* See Vulkan API for documentation. */')
 
@@ -455,10 +515,10 @@ def generate_layer_instance_layer_defs(file, mapping, commands, manual_commands,
             lines.append('    lock.unlock();')
             lines.append(f'    {retfwd}layer->driver.{command.name}({parmfwd});')
 
-        #TODO: Create functions need to add creation code
-        #TODO: Destroy functions need to add destroy code
-
         lines.append('}\n')
+
+        if plat_define:
+            lines.append('#endif')
 
     data = data.replace('{FUNCTION_DEFS}', '\n'.join(lines))
     file.write(data)
@@ -476,12 +536,26 @@ def generate_layer_device_dispatch_table(file, mapping, commands, style):
     dispatch_table_members = []
     dispatch_table_inits = []
     for command in commands:
-        if command.dispatch_type == "device":
-            ttype = f'PFN_{command.name}'
-            tname = command.name
-            itable_members.append(f'    ENTRY({tname}),\n')
-            dispatch_table_members.append(f'    {ttype} {tname};\n')
-            dispatch_table_inits.append(f'    ENTRY({tname});\n')
+        if command.dispatch_type != "device":
+            continue
+
+        plat_define = mapping.get_platform_define(command.name)
+        ttype = f'PFN_{command.name}'
+        tname = command.name
+
+        if plat_define:
+            itable_members.append(f'#if defined({plat_define})')
+            dispatch_table_members.append(f'#if defined({plat_define})')
+            dispatch_table_inits.append(f'#if defined({plat_define})')
+
+        itable_members.append(f'    ENTRY({tname}),\n')
+        dispatch_table_members.append(f'    {ttype} {tname};\n')
+        dispatch_table_inits.append(f'    ENTRY({tname});\n')
+
+        if plat_define:
+            itable_members.append('#endif')
+            dispatch_table_members.append('#endif')
+            dispatch_table_inits.append('#endif')
 
     data = data.replace('{ITABLE_MEMBERS}', ''.join(itable_members))
     data = data.replace('{DTABLE_MEMBERS}', ''.join(dispatch_table_members))
@@ -505,8 +579,13 @@ def generate_layer_device_layer_decls(file, mapping, commands, style):
         if command.dispatch_type != "device":
             continue
 
-        lines = ['/* See Vulkan API for documentation. */']
+        lines = []
 
+        plat_define = mapping.get_platform_define(command.name)
+        if plat_define:
+            lines.append(f'#if defined({plat_define})')
+
+        lines.append('/* See Vulkan API for documentation. */')
         decl = f'VKAPI_ATTR {command.rtype} VKAPI_CALL layer_{command.name}('
         lines.append(decl)
 
@@ -516,6 +595,9 @@ def generate_layer_device_layer_decls(file, mapping, commands, style):
                 ending = ');'
             parl = f'    {ptype} {pname}{array}{ending}'
             lines.append(parl)
+
+        if plat_define:
+            lines.append('#endif')
 
         file.write('\n'.join(lines))
         file.write('\n\n')
@@ -533,6 +615,10 @@ def generate_layer_device_layer_defs(file, mapping, commands, manual_commands, s
     for command in commands:
         if command.dispatch_type != "device":
             continue
+
+        plat_define = mapping.get_platform_define(command.name)
+        if plat_define:
+            lines.append(f'#if defined({plat_define})')
 
         lines.append('/* See Vulkan API for documentation. */')
 
@@ -564,10 +650,10 @@ def generate_layer_device_layer_defs(file, mapping, commands, manual_commands, s
             lines.append('    lock.unlock();')
             lines.append(f'    {retfwd}layer->driver.{command.name}({parmfwd});')
 
-            #TODO: Create functions need to add creation code
-            #TODO: Destroy functions need to add destroy code
-
         lines.append('}\n')
+
+        if plat_define:
+            lines.append('#endif')
 
     data = data.replace('{FUNCTION_DEFS}', '\n'.join(lines))
     file.write(data)

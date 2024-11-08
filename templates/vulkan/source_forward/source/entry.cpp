@@ -25,9 +25,14 @@
 
 /**
  * \file
- * This module exposes the entrypoints used by the Android layer loader.
+ * This module exposes the entrypoints used by the layer loader.
+ *
+ * Note that the Android loader requires more functions to be exposed as
+ * library symbols than other Vulkan loaders.
  */
 #include <array>
+#include <cstring>
+#include <mutex>
 #include <thread>
 
 #include "utils.hpp"
@@ -43,6 +48,12 @@
 std::mutex g_vulkanLock;
 
 #define VK_LAYER_EXPORT __attribute__((visibility("default")))
+
+#if defined(VK_USE_PLATFORM_ANDROID_KHR)
+    #define VK_LAYER_EXPORT_ANDROID VK_LAYER_EXPORT
+#else
+    #define VK_LAYER_EXPORT_ANDROID
+#endif
 
 /**
  * \brief The layer configuration.
@@ -230,7 +241,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateInstanceExtensionPrope
 }
 
 /** See Vulkan API for documentation. */
-VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceExtensionProperties(
+VK_LAYER_EXPORT_ANDROID VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceExtensionProperties(
     VkPhysicalDevice gpu,
     const char* pLayerName,
     uint32_t* pPropertyCount,
@@ -289,7 +300,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateInstanceLayerPropertie
 }
 
 /** See Vulkan API for documentation. */
-VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceLayerProperties(
+VK_LAYER_EXPORT_ANDROID VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceLayerProperties(
     VkPhysicalDevice gpu,
     uint32_t* pPropertyCount,
     VkLayerProperties* pProperties

@@ -21,6 +21,18 @@
 # SOFTWARE.
 # -----------------------------------------------------------------------------
 
+# Compiler accepts GNU-style command line options
+set(is_gnu_fe1 "$<STREQUAL:${CMAKE_CXX_COMPILER_FRONTEND_VARIANT},GNU>")
+
+# Compiler accepts AppleClang-style command line options, which is also GNU-style
+set(is_gnu_fe2 "$<STREQUAL:${CMAKE_CXX_COMPILER_FRONTEND_VARIANT},AppleClang>")
+
+# Compiler accepts GNU-style command line options
+set(is_gnu_fe "$<OR:${is_gnu_fe1},${is_gnu_fe2}>")
+
+# Compiler is upstream clang with the standard frontend
+set(is_clang "$<AND:${is_gnu_fe},$<CXX_COMPILER_ID:Clang,AppleClang>>")
+
 # Set output file names
 if (CMAKE_BUILD_TYPE STREQUAL "Release")
     set(VK_LAYER {LAYER_NAME}_sym)
@@ -64,17 +76,17 @@ target_compile_options(
         -fno-rtti
         -Wall
         -Wextra
-        -Wdocumentation
-        -Wno-missing-field-initializers)
+        -Wno-missing-field-initializers
+        $<${is_clang}:-Wdocumentation>)
 
 target_compile_definitions(
     ${VK_LAYER} PRIVATE
-        VK_USE_PLATFORM_ANDROID_KHR=1
-        ARM_LOG_TAG="{LAYER_NAME}")
+        $<$<PLATFORM_ID:Android>:VK_USE_PLATFORM_ANDROID_KHR=1>
+        $<$<PLATFORM_ID:Android>:ARM_LOG_TAG="{LAYER_NAME}">)
 
 target_link_libraries(
     ${VK_LAYER}
-        log)
+        $<$<PLATFORM_ID:Android>:log>)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Release")
     add_custom_command(

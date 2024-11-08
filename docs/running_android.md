@@ -1,7 +1,7 @@
-# Running using a layer
+# Running using a layer on Android
 
-There are multiple ways to install layer drivers for Android. For our use
-we cannot usually modify the application APK, so we install the layer into
+There are multiple ways to install layer drivers for Android. For our use case
+we cannot usually modify the application binary, so we install the layer into
 the target application data directory on the file system.
 
 ## Script configuration
