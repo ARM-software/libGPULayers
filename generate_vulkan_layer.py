@@ -404,7 +404,7 @@ def generate_layer_instance_dispatch_table(file, mapping, commands, style):
             if plat_define:
                 itable_members.append(f'#if defined({plat_define})\n')
 
-            itable_members.append(f'   {{ STR(fnc), reinterpret_cast<PFN_vkVoidFunction>(layer_{tname}<user_tag>) }},\n')
+            itable_members.append(f'   {{ "{tname}", reinterpret_cast<PFN_vkVoidFunction>(layer_{tname}<user_tag>) }},\n')
             if plat_define:
                 itable_members.append('#endif\n')
 
@@ -568,7 +568,7 @@ def generate_layer_device_dispatch_table(file, mapping, commands, style):
             dispatch_table_members.append(f'#if defined({plat_define})')
             dispatch_table_inits.append(f'#if defined({plat_define})')
 
-        itable_members.append(f'   {{ STR(fnc), reinterpret_cast<PFN_vkVoidFunction>(layer_{tname}<user_tag>) }},\n')
+        itable_members.append(f'   {{ "{tname}", reinterpret_cast<PFN_vkVoidFunction>(layer_{tname}<user_tag>) }},\n')
         dispatch_table_members.append(f'    {ttype} {tname};\n')
         dispatch_table_inits.append(f'    ENTRY({tname});\n')
 
