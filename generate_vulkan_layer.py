@@ -402,28 +402,28 @@ def generate_layer_instance_dispatch_table(file, mapping, commands, style):
         tname = command.name
         if tname not in FORWARD_WITHOUT_INTERCEPT:
             if plat_define:
-                itable_members.append(f'#if defined({plat_define})\n')
+                itable_members.append(f'#if defined({plat_define})')
 
-            itable_members.append(f'   {{ "{tname}", reinterpret_cast<PFN_vkVoidFunction>(layer_{tname}<user_tag>) }},\n')
+            itable_members.append(f'   ENTRY({tname}),')
             if plat_define:
-                itable_members.append('#endif\n')
+                itable_members.append('#endif')
 
         if tname not in INTERCEPT_WITHOUT_FORWARD:
             if plat_define:
-                dispatch_table_members.append(f'#if defined({plat_define})\n')
-                dispatch_table_inits.append(f'#if defined({plat_define})\n')
+                dispatch_table_members.append(f'#if defined({plat_define})')
+                dispatch_table_inits.append(f'#if defined({plat_define})')
 
-            dispatch_table_members.append(f'    {ttype} {tname};\n')
-            dispatch_table_inits.append(f'    ENTRY({tname});\n')
+            dispatch_table_members.append(f'    {ttype} {tname};')
+            dispatch_table_inits.append(f'    ENTRY({tname});')
 
             if plat_define:
-                dispatch_table_members.append('#endif\n')
-                dispatch_table_inits.append('#endif\n')
+                dispatch_table_members.append('#endif')
+                dispatch_table_inits.append('#endif')
 
 
-    data = data.replace('{ITABLE_MEMBERS}', ''.join(itable_members))
-    data = data.replace('{DTABLE_MEMBERS}', ''.join(dispatch_table_members))
-    data = data.replace('{DTABLE_INITS}', ''.join(dispatch_table_inits))
+    data = data.replace('{ITABLE_MEMBERS}', '\n'.join(itable_members))
+    data = data.replace('{DTABLE_MEMBERS}', '\n'.join(dispatch_table_members))
+    data = data.replace('{DTABLE_INITS}', '\n'.join(dispatch_table_inits))
     file.write(data)
 
 
@@ -568,18 +568,18 @@ def generate_layer_device_dispatch_table(file, mapping, commands, style):
             dispatch_table_members.append(f'#if defined({plat_define})')
             dispatch_table_inits.append(f'#if defined({plat_define})')
 
-        itable_members.append(f'   {{ "{tname}", reinterpret_cast<PFN_vkVoidFunction>(layer_{tname}<user_tag>) }},\n')
-        dispatch_table_members.append(f'    {ttype} {tname};\n')
-        dispatch_table_inits.append(f'    ENTRY({tname});\n')
+        itable_members.append(f'    ENTRY({tname}),')
+        dispatch_table_members.append(f'    {ttype} {tname};')
+        dispatch_table_inits.append(f'    ENTRY({tname});')
 
         if plat_define:
             itable_members.append('#endif')
             dispatch_table_members.append('#endif')
             dispatch_table_inits.append('#endif')
 
-    data = data.replace('{ITABLE_MEMBERS}', ''.join(itable_members))
-    data = data.replace('{DTABLE_MEMBERS}', ''.join(dispatch_table_members))
-    data = data.replace('{DTABLE_INITS}', ''.join(dispatch_table_inits))
+    data = data.replace('{ITABLE_MEMBERS}', '\n'.join(itable_members))
+    data = data.replace('{DTABLE_MEMBERS}', '\n'.join(dispatch_table_members))
+    data = data.replace('{DTABLE_INITS}', '\n'.join(dispatch_table_inits))
     file.write(data)
 
 

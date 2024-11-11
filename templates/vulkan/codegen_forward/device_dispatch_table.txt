@@ -23,6 +23,8 @@ struct DeviceInterceptTableEntry
     PFN_vkVoidFunction function;
 };
 
+#define ENTRY(fnc) { STR(fnc), reinterpret_cast<PFN_vkVoidFunction>(layer_##fnc<user_tag>) }
+
 /**
  * \brief The device dispatch table used to call the driver.
  */
