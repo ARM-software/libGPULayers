@@ -53,7 +53,9 @@ configure_file(
 
 add_library(
     ${VK_LAYER} SHARED
-        config.cpp)
+        config.cpp
+        device.cpp
+        instance.cpp)
 
 target_include_directories(
     ${VK_LAYER} PRIVATE
@@ -76,10 +78,6 @@ target_compile_options(
         -Wno-missing-field-initializers
         $<${is_clang}:-Wdocumentation>)
 
-target_link_options(
-    ${VK_LAYER} PRIVATE
-        -Wl,--exclude-libs,ALL)
-
 target_compile_definitions(
     ${VK_LAYER} PRIVATE
         $<$<PLATFORM_ID:Android>:VK_USE_PLATFORM_ANDROID_KHR=1>
@@ -87,6 +85,7 @@ target_compile_definitions(
 
 target_link_libraries(
     ${VK_LAYER}
+        layer_common
         $<$<PLATFORM_ID:Android>:log>)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Release")

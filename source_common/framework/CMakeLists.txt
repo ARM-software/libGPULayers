@@ -38,14 +38,13 @@ set(DIR_TARGET layer_common)
 add_library(
     ${DIR_TARGET} STATIC
         device_functions.cpp
-        device.cpp
         entry.cpp
-        instance_functions.cpp
-        instance.cpp)
+        instance_functions.cpp)
 
 target_include_directories(
     ${DIR_TARGET} PRIVATE
-        ${CMAKE_CURRENT_BINARY_DIR}
+        # Note, this includes from the layer-specific tree
+        ${PROJECT_SOURCE_DIR}/source
         .)
 
 target_include_directories(
