@@ -3,6 +3,9 @@
 #include <vulkan/vulkan.h>
 
 #include "instance_functions.hpp"
+#if __has_include ("layer_instance_functions.hpp")
+    #include "layer_instance_functions.hpp"
+#endif
 
 /**
  * \brief Interception table lookup entry.
@@ -20,13 +23,14 @@ struct InstanceInterceptTableEntry
     PFN_vkVoidFunction function;
 };
 
-#define ENTRY(fnc) { STR(fnc), reinterpret_cast<PFN_vkVoidFunction>(layer_##fnc) }
+#define ENTRY(fnc) { STR(fnc), reinterpret_cast<PFN_vkVoidFunction>(layer_##fnc<user_tag>) }
 
 /**
  * \brief The instance dispatch table used to call the driver.
  */
 static const struct InstanceInterceptTableEntry instanceIntercepts[] = {
-{ITABLE_MEMBERS}};
+{ITABLE_MEMBERS}
+};
 
 #undef ENTRY
 
@@ -36,7 +40,8 @@ static const struct InstanceInterceptTableEntry instanceIntercepts[] = {
 struct InstanceDispatchTable {
     PFN_vkGetInstanceProcAddr vkGetInstanceProcAddr;
 
-{DTABLE_MEMBERS}};
+{DTABLE_MEMBERS}
+};
 
 #define ENTRY(fnc) table.fnc = (PFN_##fnc)getProcAddr(instance, STR(fnc))
 
@@ -54,6 +59,7 @@ static inline void initDriverInstanceDispatchTable(
 ) {
     table.vkGetInstanceProcAddr = getProcAddr;
 
-{DTABLE_INITS}}
+{DTABLE_INITS}
+}
 
 #undef ENTRY
