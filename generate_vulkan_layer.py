@@ -451,6 +451,7 @@ def generate_layer_instance_layer_decls(file, mapping, commands, style):
 
         # Declare the default implementation
         lines.append('/* See Vulkan API for documentation. */')
+        lines.append('/* Default common code pass-through implementation. */')
         decl = f'VKAPI_ATTR {command.rtype} VKAPI_CALL layer_{command.name}_default('
         lines.append(decl)
 
@@ -463,7 +464,7 @@ def generate_layer_instance_layer_decls(file, mapping, commands, style):
         lines.append('')
 
         # Define the default tag dispatch handler
-        lines.append('/* Default template without specialization. */')
+        lines.append('/* Match-all template to use default implementation. */')
         decl = 'template <typename T>'
         lines.append(decl)
         decl = f'VKAPI_ATTR {command.rtype} VKAPI_CALL layer_{command.name}('
@@ -606,6 +607,7 @@ def generate_layer_device_layer_decls(file, mapping, commands, style):
             lines.append(f'#if defined({plat_define})\n')
 
         lines.append('/* See Vulkan API for documentation. */')
+        lines.append('/* Default common code pass-through implementation. */')
         decl = f'VKAPI_ATTR {command.rtype} VKAPI_CALL layer_{command.name}_default('
         lines.append(decl)
 
@@ -618,7 +620,7 @@ def generate_layer_device_layer_decls(file, mapping, commands, style):
         lines.append('')
 
         # Define the default tag dispatch handler
-        lines.append('/* Default template without specialization. */')
+        lines.append('/* Match-all template to use default implementation. */')
         decl = 'template <typename T>'
         lines.append(decl)
         decl = f'VKAPI_ATTR {command.rtype} VKAPI_CALL layer_{command.name}('
