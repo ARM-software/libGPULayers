@@ -72,7 +72,7 @@ static inline void* getDispatchKey(
 /**
  * \brief Enable to enable API entrypoint tracing to the log/logcat.
  */
-#define CONFIG_TRACE 0
+#define CONFIG_TRACE 1
 
 /**
  * \brief Enable to enable layer logging to the log/logcat.
@@ -81,11 +81,11 @@ static inline void* getDispatchKey(
 
 #if CONFIG_TRACE
   #ifdef __ANDROID__
-    #if !defined(ARM_LOG_TAG)
-        #error "ARM_LOG_TAG not defined"
+    #if !defined(LGL_LOG_TAG)
+        #error "LGL_LOG_TAG not defined"
     #endif
 
-    #define LAYER_TRACE(x) __android_log_print(ANDROID_LOG_INFO, ARM_LOG_TAG, "API Trace: %s", x)
+    #define LAYER_TRACE(x) __android_log_print(ANDROID_LOG_INFO, LGL_LOG_TAG, "API Trace: %s", x)
   #else
     #define LAYER_TRACE(x) printf("API Trace: %s\n", x)
   #endif
@@ -95,12 +95,12 @@ static inline void* getDispatchKey(
 
 #if CONFIG_LOG
   #ifdef __ANDROID__
-    #if !defined(ARM_LOG_TAG)
-        #error "ARM_LOG_TAG not defined"
+    #if !defined(LGL_LOG_TAG)
+        #error "LGL_LOG_TAG not defined"
     #endif
 
-    #define LAYER_LOG(...) __android_log_print(ANDROID_LOG_DEBUG, ARM_LOG_TAG, __VA_ARGS__)
-    #define LAYER_ERR(...) __android_log_print(ANDROID_LOG_ERROR, ARM_LOG_TAG, __VA_ARGS__)
+    #define LAYER_LOG(...) __android_log_print(ANDROID_LOG_DEBUG, LGL_LOG_TAG, __VA_ARGS__)
+    #define LAYER_ERR(...) __android_log_print(ANDROID_LOG_ERROR, LGL_LOG_TAG, __VA_ARGS__)
   #else
     #define LAYER_LOG(...) printf(__VA_ARGS__); printf("\n");
     #define LAYER_ERR(...) printf(__VA_ARGS__); printf("\n");

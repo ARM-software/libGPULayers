@@ -35,8 +35,8 @@ import sys
 ANDROID_TMP_DIR = '/data/local/tmp/'
 
 # Expected layer names
-EXPECTED_VULKAN_LAYER_NAME = 'VK_LAYER_LGL_FIZZBUZZ'
-EXPECTED_VULKAN_LAYER_FILE = 'libVkLayerFizzbuzz.so'
+EXPECTED_VULKAN_LAYER_NAME = 'VK_LAYER_LGL_EXAMPLE'
+EXPECTED_VULKAN_LAYER_FILE = 'libVkLayerExample.so'
 
 class Device:
     '''

@@ -38,7 +38,6 @@ set(DIR_TARGET layer_common)
 add_library(
     ${DIR_TARGET} STATIC
         device_functions.cpp
-        entry.cpp
         instance_functions.cpp)
 
 target_include_directories(
@@ -67,7 +66,7 @@ target_compile_options(
 target_compile_definitions(
     ${DIR_TARGET} PRIVATE
         $<$<PLATFORM_ID:Android>:VK_USE_PLATFORM_ANDROID_KHR=1>
-        $<$<PLATFORM_ID:Android>:ARM_LOG_TAG="VkLayerFizzbuzz">)
+        $<$<PLATFORM_ID:Android>:LGL_LOG_TAG="${LGL_LOG_TAG}">)
 
 # TODO: Remove this?
 target_link_libraries(

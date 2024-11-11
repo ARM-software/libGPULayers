@@ -27,5 +27,9 @@ set(CMAKE_CXX_STANDARD 20)
 
 project(Example VERSION 1.0.0)
 
+# Common configuration
+set(LGL_LOG_TAG, "VkLayerExample")
+
+# Build steps
 add_subdirectory(source)
 add_subdirectory(../source_common/framework build_common)
