@@ -36,11 +36,14 @@
 #include <thread>
 
 #include "utils.hpp"
+#include "version.hpp"
+
 #include "instance.hpp"
 #include "instance_functions.hpp"
 #include "device.hpp"
 #include "device_dispatch_table.hpp"
 #include "device_functions.hpp"
+
 
 std::mutex g_vulkanLock;
 
@@ -52,7 +55,14 @@ std::mutex g_vulkanLock;
     #define VK_LAYER_EXPORT_ANDROID
 #endif
 
-extern const std::array<VkLayerProperties, 1> layerProps;
+/**
+ * \brief The layer configuration.
+ */
+#define LGL_VERSION VK_MAKE_VERSION(LGL_VER_MAJOR, LGL_VER_MINOR, LGL_VER_PATCH)
+
+static const std::array<VkLayerProperties, 1> layerProps = {
+    {{ LGL_LAYER_NAME, LGL_VERSION, 1, LGL_LAYER_DESC }},
+};
 
 /**
  * \brief Dispatch table lookup entry.

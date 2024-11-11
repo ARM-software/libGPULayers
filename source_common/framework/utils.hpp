@@ -72,7 +72,7 @@ static inline void* getDispatchKey(
 /**
  * \brief Enable to enable API entrypoint tracing to the log/logcat.
  */
-#define CONFIG_TRACE 1
+#define CONFIG_TRACE 0
 
 /**
  * \brief Enable to enable layer logging to the log/logcat.

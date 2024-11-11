@@ -35,15 +35,15 @@ set(is_clang "$<AND:${is_gnu_fe},$<CXX_COMPILER_ID:Clang,AppleClang>>")
 
 # Set output file names
 if (CMAKE_BUILD_TYPE STREQUAL "Release")
-    set(VK_LAYER VkLayerExample_sym)
-    set(VK_LAYER_STRIP libVkLayerExample.so)
+    set(VK_LAYER {LAYER_NAME}_sym)
+    set(VK_LAYER_STRIP lib{LAYER_NAME}.so)
 else()
-    set(VK_LAYER VkLayerExample)
+    set(VK_LAYER {LAYER_NAME})
 endif()
 
 # Set strings used by configure
-set(LGL_LAYER_NAME_STR "VK_LAYER_LGL_EXAMPLE")
-set(LGL_LAYER_DESC_STR "VkLayerExample by LGL")
+set(LGL_LAYER_NAME_STR "{LGL_LAYER_NAME}")
+set(LGL_LAYER_DESC_STR "{LGL_LAYER_DESC}")
 
 # Vulkan layer library
 configure_file(
@@ -55,8 +55,7 @@ add_library(
     ${VK_LAYER} SHARED
         device.cpp
         entry.cpp
-        instance.cpp
-        layer_device_functions.cpp)
+        instance.cpp)
 
 target_include_directories(
     ${VK_LAYER} PRIVATE

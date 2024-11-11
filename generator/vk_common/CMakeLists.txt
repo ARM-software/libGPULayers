@@ -33,66 +33,42 @@ set(is_gnu_fe "$<OR:${is_gnu_fe1},${is_gnu_fe2}>")
 # Compiler is upstream clang with the standard frontend
 set(is_clang "$<AND:${is_gnu_fe},$<CXX_COMPILER_ID:Clang,AppleClang>>")
 
-# Set output file names
-if (CMAKE_BUILD_TYPE STREQUAL "Release")
-    set(VK_LAYER {LAYER_NAME}_sym)
-    set(VK_LAYER_STRIP lib{LAYER_NAME}.so)
-else()
-    set(VK_LAYER {LAYER_NAME})
-endif()
-
-# Set strings used by configure
-set(LGL_LAYER_NAME_STR "{LGL_LAYER_NAME}")
-set(LGL_LAYER_DESC_STR "{LGL_LAYER_DESC}")
-
-# Vulkan layer library
-configure_file(
-    version.hpp.in
-    version.hpp
-    ESCAPE_QUOTES @ONLY)
+set(DIR_TARGET layer_common)
 
 add_library(
-    ${VK_LAYER} SHARED
-        device.cpp
+    ${DIR_TARGET} STATIC
         device_functions.cpp
-        instance_functions.cpp
-        entry.cpp
-        instance.cpp)
+        instance_functions.cpp)
 
 target_include_directories(
-    ${VK_LAYER} PRIVATE
-        ${CMAKE_CURRENT_BINARY_DIR}
+    ${DIR_TARGET} PRIVATE
+        # Note, this includes from the layer-specific tree
+        ${PROJECT_SOURCE_DIR}/source
         .)
 
 target_include_directories(
-    ${VK_LAYER} SYSTEM PRIVATE
+    ${DIR_TARGET} SYSTEM PRIVATE
         ../../khronos/vulkan/include)
 
 target_compile_options(
-    ${VK_LAYER} PRIVATE
+    ${DIR_TARGET} PRIVATE
         -fvisibility=hidden
         -fvisibility-inlines-hidden
         -fno-exceptions
         -fno-rtti
+        -fpic
         -Wall
         -Wextra
         -Wno-missing-field-initializers
         $<${is_clang}:-Wdocumentation>)
 
+# TODO: Log tag needs to come from child project
 target_compile_definitions(
-    ${VK_LAYER} PRIVATE
+    ${DIR_TARGET} PRIVATE
         $<$<PLATFORM_ID:Android>:VK_USE_PLATFORM_ANDROID_KHR=1>
-        $<$<PLATFORM_ID:Android>:ARM_LOG_TAG="{LAYER_NAME}">)
+        $<$<PLATFORM_ID:Android>:LGL_LOG_TAG="${LGL_LOG_TAG}">)
 
+# TODO: Remove this?
 target_link_libraries(
-    ${VK_LAYER}
+    ${DIR_TARGET}
         $<$<PLATFORM_ID:Android>:log>)
-
-if (CMAKE_BUILD_TYPE STREQUAL "Release")
-    add_custom_command(
-        TARGET "${VK_LAYER}" POST_BUILD
-        DEPENDS "${VK_LAYER}"
-        COMMAND ${CMAKE_STRIP}
-        ARGS --strip-all -o ${VK_LAYER_STRIP} $<TARGET_FILE:${VK_LAYER}>
-        COMMENT "Stripped lib${VK_LAYER}.so to ${VK_LAYER_STRIP}")
-endif()

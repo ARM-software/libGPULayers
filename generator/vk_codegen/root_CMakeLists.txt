@@ -27,4 +27,9 @@ set(CMAKE_CXX_STANDARD 20)
 
 project({PROJECT_NAME} VERSION 1.0.0)
 
+# Common configuration
+set(LGL_LOG_TAG, "{LAYER_NAME}")
+
+# Build steps
 add_subdirectory(source)
+add_subdirectory(../source_common/framework source_common/framework)
