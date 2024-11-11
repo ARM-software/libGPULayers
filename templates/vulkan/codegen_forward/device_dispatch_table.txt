@@ -29,7 +29,8 @@ struct DeviceInterceptTableEntry
  * \brief The device dispatch table used to call the driver.
  */
 static const struct DeviceInterceptTableEntry deviceIntercepts[] = {
-{ITABLE_MEMBERS}};
+{ITABLE_MEMBERS}
+};
 
 #undef ENTRY
 
@@ -37,7 +38,8 @@ static const struct DeviceInterceptTableEntry deviceIntercepts[] = {
 struct DeviceDispatchTable {
     PFN_vkGetDeviceProcAddr vkGetDeviceProcAddr;
 
-{DTABLE_MEMBERS}};
+{DTABLE_MEMBERS}
+};
 
 #define ENTRY(fnc) table.fnc = (PFN_##fnc)getProcAddr(device, STR(fnc))
 
@@ -55,6 +57,7 @@ static inline void initDriverDeviceDispatchTable(
 ) {
     table.vkGetDeviceProcAddr = getProcAddr;
 
-{DTABLE_INITS}}
+{DTABLE_INITS}
+}
 
 #undef ENTRY
