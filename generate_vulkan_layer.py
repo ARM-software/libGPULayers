@@ -481,13 +481,13 @@ def generate_layer_instance_layer_decls(file, mapping, commands, style):
         retfwd = 'return ' if command.rtype != 'void' else ''
         lines.append(') {')
         lines.append(f'    {retfwd}layer_{command.name}_default({parmfwd});')
-        lines.append('}')
+        lines.append('}\n')
 
         if plat_define:
-            lines.append('\n#endif')
+            lines.append('#endif\n')
 
         file.write('\n'.join(lines))
-        file.write('\n\n')
+        file.write('\n')
 
 
 def generate_layer_instance_layer_defs(file, mapping, commands, manual_commands, style):
@@ -637,13 +637,13 @@ def generate_layer_device_layer_decls(file, mapping, commands, style):
         retfwd = 'return ' if command.rtype != 'void' else ''
         lines.append(') {')
         lines.append(f'    {retfwd}layer_{command.name}_default({parmfwd});')
-        lines.append('}')
+        lines.append('}\n')
 
         if plat_define:
-            lines.append('\n#endif')
+            lines.append('#endif\n')
 
         file.write('\n'.join(lines))
-        file.write('\n\n')
+        file.write('\n')
 
 
 def generate_layer_device_layer_defs(file, mapping, commands, manual_commands, style):
