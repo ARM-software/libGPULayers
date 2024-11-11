@@ -56,7 +56,8 @@ add_library(
         config.cpp
         device.cpp
         entry.cpp
-        instance.cpp)
+        instance.cpp
+        layer_device_functions.cpp)
 
 target_include_directories(
     ${VK_LAYER} PRIVATE
