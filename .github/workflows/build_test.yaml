@@ -1,0 +1,48 @@
+name: Build and test
+run-name: Build and test PR${{ github.event.number }}
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    tags:
+      - '*'
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-ubuntu-x64-clang:
+    name: Ubuntu x64 Clang
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: 'true'
+
+      - name: Build layer_example
+        run: |
+          export CXX=clang++
+          mkdir layer_example/build_rel
+          cd layer_example/build_rel
+          cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
+          make -j4
+
+  build-ubuntu-x64-gcc:
+    name: Ubuntu x64 GCC
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: 'true'
+
+      - name: Build layer_example
+        run: |
+          export CXX=g++
+          mkdir layer_example/build_rel
+          cd layer_example/build_rel
+          cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
+          make -j4
