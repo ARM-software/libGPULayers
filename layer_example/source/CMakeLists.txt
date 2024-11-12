@@ -35,15 +35,15 @@ set(is_clang "$<AND:${is_gnu_fe},$<CXX_COMPILER_ID:Clang,AppleClang>>")
 
 # Set output file names
 if (CMAKE_BUILD_TYPE STREQUAL "Release")
-    set(VK_LAYER {LAYER_NAME}_sym)
-    set(VK_LAYER_STRIP lib{LAYER_NAME}.so)
+    set(VK_LAYER VkLayerExample_sym)
+    set(VK_LAYER_STRIP libVkLayerExample.so)
 else()
-    set(VK_LAYER {LAYER_NAME})
+    set(VK_LAYER VkLayerExample)
 endif()
 
 # Set strings used by configure
-set(LGL_LAYER_NAME_STR "{LGL_LAYER_NAME}")
-set(LGL_LAYER_DESC_STR "{LGL_LAYER_DESC}")
+set(LGL_LAYER_NAME_STR "VK_LAYER_LGL_EXAMPLE")
+set(LGL_LAYER_DESC_STR "VkLayerExample by LGL")
 
 # Vulkan layer library
 configure_file(
@@ -54,13 +54,13 @@ configure_file(
 add_library(
     ${VK_LAYER} SHARED
         device.cpp
-        device_functions.cpp
-        instance_functions.cpp
         entry.cpp
-        instance.cpp)
+        instance.cpp
+        layer_device_functions.cpp)
 
 target_include_directories(
     ${VK_LAYER} PRIVATE
+        ${PROJECT_SOURCE_DIR}/../source_common/framework
         ${CMAKE_CURRENT_BINARY_DIR}
         .)
 
@@ -82,10 +82,11 @@ target_compile_options(
 target_compile_definitions(
     ${VK_LAYER} PRIVATE
         $<$<PLATFORM_ID:Android>:VK_USE_PLATFORM_ANDROID_KHR=1>
-        $<$<PLATFORM_ID:Android>:ARM_LOG_TAG="{LAYER_NAME}">)
+        $<$<PLATFORM_ID:Android>:LGL_LOG_TAG="${LGL_LOG_TAG}">)
 
 target_link_libraries(
     ${VK_LAYER}
+        layer_common
         $<$<PLATFORM_ID:Android>:log>)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Release")

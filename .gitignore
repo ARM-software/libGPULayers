@@ -2,11 +2,15 @@
 .vs
 .vscode
 
+# CMake build directories
+build
+build_arm64
+
 # Build and debug output files
 /.cache
 /bin*
-/build*
 /log*
 /scratch*
 /out_*
 /x_*
+

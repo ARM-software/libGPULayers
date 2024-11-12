@@ -25,7 +25,6 @@
 A generator for Vulkan layers.
 '''
 
-import argparse
 from datetime import datetime
 import os
 import re
@@ -142,8 +141,6 @@ class VersionMapping(dict):
         '''
         Load all extension API functions that should be added to the map.
         '''
-        vendors = set()
-
         # Find all the formally supported API feature groups
         extensions = root.findall('.//extension')
         for extension in extensions:
@@ -305,20 +302,19 @@ class Command:
                 assert False, f'Unknown dispatch: {dispatch_type} {self.name}'
 
 
-def load_template(path, style):
+def load_template(path):
     base_dir = os.path.dirname(__file__)
-    template_dir = f'templates/vulkan/codegen_{style}'
-    template_file = os.path.join(base_dir, template_dir, path)
+    template_file = os.path.join(base_dir, 'vk_codegen', path)
 
     # Load the data from the file
-    with open(template_file, "r") as handle:
+    with open(template_file, 'r', encoding='utf-8') as handle:
         data = handle.read()
 
     return data
 
 
-def write_copyright_header(file, style):
-    data = load_template('header.txt', style)
+def write_copyright_header(file):
+    data = load_template('header.txt')
 
     start_year = 2024
     end_year = datetime.now().year
@@ -333,59 +329,12 @@ def write_copyright_header(file, style):
     file.write('\n')
 
 
-def make_api_define(version):
-    version = version.replace('.', '_')
-    return f'LGL_SUPPORT_VULKAN_{version}'
-
-
-def make_extension_define(version):
-    return f'LGL_SUPPORT_EXTENSION_{version.upper()}'
-
-
-def generate_layer_config_header(file, mapping, commands, style):
-    api_versions = set()
-    api_extensions = set()
-
-    # Create a listing of API versions and API extensions
-    for command, versions in mapping.items():
-        for version in versions:
-            try:
-                float(version)
-                api_versions.add(version)
-            except ValueError:
-                api_extensions.add(version)
-
-    api_versions = sorted([x for x in api_versions])
-    api_extensions = sorted([x for x in api_extensions])
+def generate_layer_instance_dispatch_table(file, mapping, commands):
 
     # Write the copyright header to the file
-    write_copyright_header(file, style)
+    write_copyright_header(file)
 
-    file.write(f'#pragma once\n\n')
-
-    # Write the API version toggles
-    file.write(f'// API version support\n\n')
-    for version in api_versions:
-        name = make_api_define(version)
-        file.write(f'#define {name} 1\n')
-    file.write('\n')
-
-    # Write the API extension toggles
-    file.write(f'// Extension support\n\n')
-    for extension in api_extensions:
-        name = make_extension_define(extension)
-        file.write(f'#define {name} 1\n')
-
-    # Ensure newline at end of file
-    file.write('\n')
-
-
-def generate_layer_instance_dispatch_table(file, mapping, commands, style):
-
-    # Write the copyright header to the file
-    write_copyright_header(file, style)
-
-    data = load_template('instance_dispatch_table.txt', style)
+    data = load_template('instance_dispatch_table.txt')
 
     # Create a listing of API versions and API extensions
     itable_members = []
@@ -427,10 +376,10 @@ def generate_layer_instance_dispatch_table(file, mapping, commands, style):
     file.write(data)
 
 
-def generate_layer_instance_layer_decls(file, mapping, commands, style):
+def generate_layer_instance_layer_decls(file, mapping, commands):
 
     # Write the copyright header to the file
-    write_copyright_header(file, style)
+    write_copyright_header(file)
 
     file.write('#pragma once\n')
     file.write('\n')
@@ -490,12 +439,12 @@ def generate_layer_instance_layer_decls(file, mapping, commands, style):
         file.write('\n')
 
 
-def generate_layer_instance_layer_defs(file, mapping, commands, manual_commands, style):
+def generate_layer_instance_layer_defs(file, mapping, commands, manual_commands):
 
     # Write the copyright header to the file
-    write_copyright_header(file, style)
+    write_copyright_header(file)
 
-    data = load_template('instance_defs.txt', style)
+    data = load_template('instance_defs.txt')
 
     # Create a listing of API versions and API extensions
     lines = []
@@ -545,12 +494,12 @@ def generate_layer_instance_layer_defs(file, mapping, commands, manual_commands,
     file.write(data)
 
 
-def generate_layer_device_dispatch_table(file, mapping, commands, style):
+def generate_layer_device_dispatch_table(file, mapping, commands):
 
     # Write the copyright header to the file
-    write_copyright_header(file, style)
+    write_copyright_header(file)
 
-    data = load_template('device_dispatch_table.txt', style)
+    data = load_template('device_dispatch_table.txt')
 
     # Create a listing of API versions and API extensions
     itable_members = []
@@ -584,10 +533,10 @@ def generate_layer_device_dispatch_table(file, mapping, commands, style):
     file.write(data)
 
 
-def generate_layer_device_layer_decls(file, mapping, commands, style):
+def generate_layer_device_layer_decls(file, mapping, commands):
 
     # Write the copyright header to the file
-    write_copyright_header(file, style)
+    write_copyright_header(file)
 
     file.write('#pragma once\n')
     file.write('\n')
@@ -646,12 +595,12 @@ def generate_layer_device_layer_decls(file, mapping, commands, style):
         file.write('\n')
 
 
-def generate_layer_device_layer_defs(file, mapping, commands, manual_commands, style):
+def generate_layer_device_layer_defs(file, mapping, commands, manual_commands):
 
     # Write the copyright header to the file
-    write_copyright_header(file, style)
+    write_copyright_header(file)
 
-    data = load_template('device_defs.txt', style)
+    data = load_template('device_defs.txt')
 
     # Create a listing of API versions and API extensions
     lines = []
@@ -702,109 +651,27 @@ def generate_layer_device_layer_defs(file, mapping, commands, manual_commands, s
     file.write(data)
 
 
-def load_handwritten_commands(style):
+def load_handwritten_commands():
     '''
     Load the small number of hand-written functions from template files.
     '''
     script_dir = os.path.dirname(__file__)
-    template_dir = os.path.join(script_dir, f'templates/vulkan/codegen_{style}')
+    template_dir = os.path.join(script_dir, 'vk_codegen')
     pattern = re.compile(r'^function_(.*)\.txt$')
 
     commands = {}
     for path in os.listdir(template_dir):
         match = pattern.match(path)
         if match:
-            with open(os.path.join(template_dir, path)) as handle:
-                commands[match.group(1)] = handle.read()
+            commands[match.group(1)] = load_template(path)
 
     return commands
-
-
-def generate_layer_root_cmake(file, project_name, style):
-    data = load_template('root_CMakeLists.txt', style)
-    data = data.replace('{PROJECT_NAME}', project_name)
-    file.write(data)
-
-
-def get_layer_api_name(vendor_name, layer_name):
-
-    pattern = re.compile(r'^VkLayer(\w+)$')
-    match = pattern.match(layer_name)
-    assert match
-
-    name_parts = ('VK_LAYER', vendor_name.upper(), match.group(1).upper())
-    return '_'.join(name_parts)
-
-
-def get_layer_api_description(vendor_name, layer_name):
-    return f'{layer_name} by {vendor_name}'
-
-
-def generate_layer_source_cmake(file, vendor_name, layer_name, style):
-
-    data = load_template('source_CMakeLists.txt', style)
-    data = data.replace('{LAYER_NAME}', layer_name)
-
-    name = get_layer_api_name(vendor_name, layer_name)
-    data = data.replace('{LGL_LAYER_NAME}', name)
-
-    desc = get_layer_api_description(vendor_name, layer_name)
-    data = data.replace('{LGL_LAYER_DESC}', desc)
-
-    file.write(data)
-
-
-def generate_layer_install_helper(file, vendor_name, layer_name, style):
-
-    data = load_template('android_install.py', style)
-    data = data.replace('{LAYER_NAME}', layer_name)
-
-    name = get_layer_api_name(vendor_name, layer_name)
-    data = data.replace('{LGL_LAYER_NAME}', name)
-
-    file.write(data)
 
 
 def copy_resource(src_dir, out_dir):
     out_dir = os.path.abspath(out_dir)
     os.makedirs(out_dir, exist_ok=True)
     shutil.copytree(src_dir, out_dir, dirs_exist_ok=True)
-
-
-def parse_command_line():
-    '''
-    Parse the command line.
-
-    Returns:
-        The parsed command line container.
-    '''
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument('--project-name', required=True,
-                        help='CMake project name')
-
-    parser.add_argument('--vendor-name', default='LGL',
-                        help='Layer vendor name (optional)')
-
-    parser.add_argument('--layer-name', default=None,
-                        help='Layer name (optional)')
-
-    choices=('forward',)
-    parser.add_argument('--layer-style', choices=choices, default='forward',
-                        help='Layer interceptor style (optional)')
-
-    parser.add_argument('--output', metavar='DIR', required=True,
-                        help='output directory for layer project')
-
-    parser.add_argument('--overwrite', action='store_true', default=False,
-                        help='overwrite an existing output directory')
-
-    args = parser.parse_args()
-
-    if not args.layer_name:
-        args.layer_name = args.project_name
-
-    return args
 
 
 def main():
@@ -814,27 +681,18 @@ def main():
     Returns:
         The process exit code.
     '''
-    args = parse_command_line()
+    # Determine output directory location
+    base_dir = os.path.dirname(__file__)
+    outdir = os.path.join(base_dir, '..', 'source_common', 'framework')
 
-    # Validate the layer name is well formed
-    pattern = re.compile(r'^VkLayer\w+$')
-    if not pattern.match(args.layer_name):
-        print(f'ERROR: Layer name "{args.layer_name}" is invalid')
-        return 1
-
-    # If overwrite is set, remove output directory if it exists
-    if args.overwrite:
-        shutil.rmtree(args.output, ignore_errors=True)
-
-    # Check that output directory is either empty or non-existent
-    outdir = args.output
+    # Clean the output directory if needed
     if os.path.exists(outdir):
         if not os.path.isdir(outdir):
             print(f'ERROR: Output location "{outdir}" is not a directory')
             return 1
-        if len(os.listdir(outdir)) != 0:
-            print(f'ERROR: Output directory "{outdir}" is not empty')
-            return 1
+
+        shutil.rmtree(outdir, ignore_errors=True)
+        os.makedirs(outdir)
 
     # Parse the XML headers
     tree = ET.parse('./khronos/vulkan/registry/vk.xml')
@@ -872,47 +730,40 @@ def main():
     commands.sort(key=lambda x: x.name)
 
     # Load hand written function bodies
-    manual_commands = load_handwritten_commands(args.layer_style)
+    manual_commands = load_handwritten_commands()
 
-    # Transfer static resources to output
-    copy_resource(f'templates/vulkan/source_{args.layer_style}', outdir)
+    # Generate static resources
+    base_dir = os.path.dirname(__file__)
+    source_dir = os.path.join(base_dir, 'vk_common')
+    copy_resource(source_dir, outdir)
 
-    # Generate the layer skeleton
-    outfile = os.path.join(outdir, 'CMakeLists.txt')
-    with open(outfile, 'w') as handle:
-        generate_layer_root_cmake(handle, args.project_name, args.layer_style)
+    # Generate dynamic resources
+    outfile = os.path.join(outdir, 'instance_dispatch_table.hpp')
+    with open(outfile, 'w', encoding='utf-8', newline='\n') as handle:
+        generate_layer_instance_dispatch_table(handle, mapping, commands)
 
-    outfile = os.path.join(outdir, 'source/CMakeLists.txt')
-    with open(outfile, 'w') as handle:
-        generate_layer_source_cmake(handle, args.vendor_name, args.layer_name, args.layer_style)
+    outfile = os.path.join(outdir, 'device_dispatch_table.hpp')
+    with open(outfile, 'w', encoding='utf-8', newline='\n') as handle:
+        generate_layer_device_dispatch_table(handle, mapping, commands)
 
-    outfile = os.path.join(outdir, 'android_install.py')
-    with open(outfile, 'w') as handle:
-        generate_layer_install_helper(handle, args.vendor_name, args.layer_name, args.layer_style)
+    outfile = os.path.join(outdir, 'instance_functions.hpp')
+    with open(outfile, 'w', encoding='utf-8', newline='\n') as handle:
+        generate_layer_instance_layer_decls(handle, mapping, commands)
 
-    outfile = os.path.join(outdir, 'source/instance_dispatch_table.hpp')
-    with open(outfile, 'w') as handle:
-        generate_layer_instance_dispatch_table(handle, mapping, commands, args.layer_style)
+    outfile = os.path.join(outdir, 'instance_functions.cpp')
+    with open(outfile, 'w', encoding='utf-8', newline='\n') as handle:
+        generate_layer_instance_layer_defs(handle, mapping, commands, manual_commands)
 
-    outfile = os.path.join(outdir, 'source/device_dispatch_table.hpp')
-    with open(outfile, 'w') as handle:
-        generate_layer_device_dispatch_table(handle, mapping, commands, args.layer_style)
+    outfile = os.path.join(outdir, 'device_functions.hpp')
+    with open(outfile, 'w', encoding='utf-8', newline='\n') as handle:
+        generate_layer_device_layer_decls(handle, mapping, commands)
 
-    outfile = os.path.join(outdir, 'source/instance_functions.hpp')
-    with open(outfile, 'w') as handle:
-        generate_layer_instance_layer_decls(handle, mapping, commands, args.layer_style)
+    outfile = os.path.join(outdir, 'device_functions.cpp')
+    with open(outfile, 'w', encoding='utf-8', newline='\n') as handle:
+        generate_layer_device_layer_defs(handle, mapping, commands, manual_commands)
 
-    outfile = os.path.join(outdir, 'source/instance_functions.cpp')
-    with open(outfile, 'w') as handle:
-        generate_layer_instance_layer_defs(handle, mapping, commands, manual_commands, args.layer_style)
+    return 0
 
-    outfile = os.path.join(outdir, 'source/device_functions.hpp')
-    with open(outfile, 'w') as handle:
-        generate_layer_device_layer_decls(handle, mapping, commands, args.layer_style)
-
-    outfile = os.path.join(outdir, 'source/device_functions.cpp')
-    with open(outfile, 'w') as handle:
-        generate_layer_device_layer_defs(handle, mapping, commands, manual_commands, args.layer_style)
 
 if __name__ == '__main__':
     sys.exit(main())

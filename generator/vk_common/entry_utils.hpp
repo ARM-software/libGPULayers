@@ -25,10 +25,9 @@
 
 /**
  * \file
- * This module exposes the entrypoints used by the layer loader.
- *
- * Note that the Android loader requires more functions to be exposed as
- * library symbols than other Vulkan loaders.
+ * This module exposes common functionality used by layer entrypoints,
+ * implemented as library code which can be swapped for alternative
+ * implementations on a per-layer basis if needed.
  */
 #include <array>
 #include <cstring>
@@ -44,8 +43,6 @@
 #include "device_dispatch_table.hpp"
 #include "device_functions.hpp"
 
-
-std::mutex g_vulkanLock;
 
 #define VK_LAYER_EXPORT __attribute__((visibility("default")))
 
@@ -163,10 +160,8 @@ static PFN_vkVoidFunction get_device_layer_function(
     return nullptr;
 }
 
-extern "C" {
-
 /** See Vulkan API for documentation. */
-VK_LAYER_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetDeviceProcAddr(
+static PFN_vkVoidFunction vkGetDeviceProcAddr_default(
     VkDevice device,
     const char* pName
 ) {
@@ -189,7 +184,7 @@ VK_LAYER_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetDeviceProcAddr(
 }
 
 /** See Vulkan API for documentation. */
-VK_LAYER_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetInstanceProcAddr(
+static PFN_vkVoidFunction vkGetInstanceProcAddr_default(
     VkInstance instance,
     const char* pName
 ) {
@@ -222,7 +217,7 @@ VK_LAYER_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetInstanceProcAddr(
 }
 
 /** See Vulkan API for documentation. */
-VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateInstanceExtensionProperties(
+static VkResult vkEnumerateInstanceExtensionProperties_default(
     const char* pLayerName,
     uint32_t* pPropertyCount,
     VkExtensionProperties* pProperties
@@ -241,7 +236,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateInstanceExtensionPrope
 }
 
 /** See Vulkan API for documentation. */
-VK_LAYER_EXPORT_ANDROID VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceExtensionProperties(
+static VkResult vkEnumerateDeviceExtensionProperties_default(
     VkPhysicalDevice gpu,
     const char* pLayerName,
     uint32_t* pPropertyCount,
@@ -276,7 +271,7 @@ VK_LAYER_EXPORT_ANDROID VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceExtensio
 }
 
 /** See Vulkan API for documentation. */
-VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateInstanceLayerProperties(
+static VkResult vkEnumerateInstanceLayerProperties_default(
     uint32_t* pPropertyCount,
     VkLayerProperties* pProperties
 ) {
@@ -300,7 +295,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateInstanceLayerPropertie
 }
 
 /** See Vulkan API for documentation. */
-VK_LAYER_EXPORT_ANDROID VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceLayerProperties(
+static VkResult vkEnumerateDeviceLayerProperties_default(
     VkPhysicalDevice gpu,
     uint32_t* pPropertyCount,
     VkLayerProperties* pProperties
@@ -324,6 +319,4 @@ VK_LAYER_EXPORT_ANDROID VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceLayerPro
 
     *pPropertyCount = layerProps.size();
     return VK_SUCCESS;
-}
-
 }
