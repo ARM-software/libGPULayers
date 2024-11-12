@@ -62,7 +62,7 @@ jobs:
           bash ./android_build.sh Release
 
   build-ubuntu-x64-clang-new-common:
-    name: Ubuntu x64 Clang
+    name: Ubuntu x64 generate common
     runs-on: ubuntu-22.04
     steps:
       - name: Git checkout
@@ -75,7 +75,7 @@ jobs:
           python3 ./generator/generate_vulkan_common.py
 
   build-ubuntu-x64-clang-new-project:
-    name: Ubuntu x64 Clang
+    name: Ubuntu x64 generate new layer
     runs-on: ubuntu-22.04
     steps:
       - name: Git checkout
