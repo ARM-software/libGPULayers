@@ -60,3 +60,33 @@ jobs:
         run: |
           cd layer_example
           bash ./android_build.sh Release
+
+  build-ubuntu-x64-clang-new-common:
+    name: Ubuntu x64 generate common
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: 'true'
+
+      - name: Generate layer_test
+        run: |
+          python3 ./generator/generate_vulkan_common.py
+
+  build-ubuntu-x64-clang-new-project:
+    name: Ubuntu x64 generate new layer
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: 'true'
+
+      - name: Generate layer_test
+        run: |
+          python3 ./generator/generate_vulkan_layer.py --project-name Test --layer-name VkLayerTest --output layer_test
+          mkdir layer_test/build_rel
+          cd layer_test/build_rel
+          cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
+          make -j4
