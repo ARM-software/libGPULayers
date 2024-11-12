@@ -7,10 +7,10 @@ The code for a layer is split into two parts, which are generated separately.
 
 * Common code provides the dispatch framework which intercept all entrypoints,
   and then forwards these to an appropriate handler. The common code provides a
-  default pass-through handler.
+  default pass-through handler for each API entrypoint.
 * User code provides layer-specific implementations of function intercepts and
-  extends the generated `Device` and `Instance` classes with whatever stateful
-  persistence is needed to implement the layer.
+  can extend the generated `Device` and `Instance` classes with whatever
+  additional stateful persistence is needed to implement the layer.
 
 ## Checking out the code
 
