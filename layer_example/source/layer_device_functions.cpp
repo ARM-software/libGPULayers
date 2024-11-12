@@ -29,7 +29,7 @@
 
 #include "utils.hpp"
 #include "device.hpp"
-#include "device_functions.hpp"
+#include "layer_device_functions.hpp"
 
 extern std::mutex g_vulkanLock;
 
