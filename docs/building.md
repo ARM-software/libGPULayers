@@ -83,7 +83,7 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyInstance<user_tag>(
 
 ## Build the Android layer
 
-Builds for Android are using a  standard build script, provided for Linux
+Builds for Android are using a standard build script, provided for Linux
 build hosts. Build the layer using the helper script, specifying either
 `Release` or `Debug` as your build type.
 
