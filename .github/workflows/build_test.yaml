@@ -61,6 +61,19 @@ jobs:
           cd layer_example
           bash ./android_build.sh Release
 
+  build-ubuntu-x64-clang-new-common:
+    name: Ubuntu x64 Clang
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: 'true'
+
+      - name: Generate layer_test
+        run: |
+          python3 ./generator/generate_vulkan_common.py
+
   build-ubuntu-x64-clang-new-project:
     name: Ubuntu x64 Clang
     runs-on: ubuntu-22.04
