@@ -30,6 +30,15 @@ jobs:
           cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
           make -j4
 
+      - name: Build and run unit tests
+        run: |
+          export CXX=clang++
+          mkdir build_unit
+          cd build_unit
+          cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=./ ..
+          make -j4
+          ./bin/unittest_comms
+
   build-ubuntu-x64-gcc:
     name: Ubuntu x64 GCC
     runs-on: ubuntu-22.04

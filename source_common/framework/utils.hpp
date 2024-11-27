@@ -24,7 +24,7 @@
  */
 
 /**
- * \file
+ * @file
  * This module implements miscellaneous utility functions.
  */
 

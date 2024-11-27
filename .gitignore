@@ -2,9 +2,11 @@
 .vs
 .vscode
 
+# Python directories
+__pycache__
+
 # CMake build directories
-build
-build_arm64
+build*
 
 # Build and debug output files
 /.cache
