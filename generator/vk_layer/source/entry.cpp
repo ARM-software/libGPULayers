@@ -24,7 +24,7 @@
  */
 
 /**
- * \file
+ * @file
  * This module exposes the entrypoints used by the layer loader.
  *
  * Note that the Android loader requires more functions to be exposed as

@@ -24,7 +24,7 @@
  */
 
 /**
- * \file
+ * @file
  * This module exposes common functionality used by layer entrypoints,
  * implemented as library code which can be swapped for alternative
  * implementations on a per-layer basis if needed.

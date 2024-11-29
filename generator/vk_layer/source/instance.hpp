@@ -24,7 +24,7 @@
  */
 
 /**
- * \file
+ * @file
  * This module implements layer tracking for VkInstance objects.
  *
  * Role summary
