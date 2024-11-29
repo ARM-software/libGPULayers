@@ -7,3 +7,6 @@
 [submodule "khronos/egl"]
 	path = khronos/egl
 	url = https://github.com/KhronosGroup/EGL-Registry
+[submodule "source_third_party/gtest"]
+	path = source_third_party/gtest
+	url = https://github.com/google/googletest
