@@ -33,10 +33,10 @@ jobs:
       - name: Build and run unit tests
         run: |
           export CXX=clang++
-          mkdir build_unit
-          cd build_unit
+          mkdir build_unittest
+          cd build_unittest
           cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=./ ..
-          make -j4
+          make install -j4
           ./bin/unittest_comms
 
   build-ubuntu-x64-gcc:
