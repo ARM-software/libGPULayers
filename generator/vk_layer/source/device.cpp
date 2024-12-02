@@ -29,7 +29,8 @@
 #include <sys/stat.h>
 #include <vector>
 
-#include "utils.hpp"
+#include "framework/utils.hpp"
+
 #include "device.hpp"
 #include "instance.hpp"
 

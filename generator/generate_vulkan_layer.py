@@ -429,17 +429,13 @@ def main():
         print(f'ERROR: Layer name "{args.layer_name}" is invalid')
         return 1
 
-    # If overwrite is set, remove output directory if it exists
-    if args.overwrite:
-        shutil.rmtree(args.output, ignore_errors=True)
-
-    # Check that output directory is either empty or non-existent
+    # Check that output directory is either empty or over-writable
     outdir = args.output
     if os.path.exists(outdir):
         if not os.path.isdir(outdir):
             print(f'ERROR: Output location "{outdir}" is not a directory')
             return 1
-        if len(os.listdir(outdir)) != 0:
+        if len(os.listdir(outdir)) != 0 and not args.overwrite:
             print(f'ERROR: Output directory "{outdir}" is not empty')
             return 1
 

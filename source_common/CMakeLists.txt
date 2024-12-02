@@ -21,4 +21,8 @@
 # SOFTWARE.
 # -----------------------------------------------------------------------------
 
+# Note: The framework component cannot be built as a common library, because it
+# depends on per-layer implementations of the root intercept Instance and
+# Device classes which get specialized for each use case.
+
 add_subdirectory(comms)

@@ -53,7 +53,7 @@
 #endif
 
 /**
- * \brief The layer configuration.
+ * @brief The layer configuration.
  */
 #define LGL_VERSION VK_MAKE_VERSION(LGL_VER_MAJOR, LGL_VER_MINOR, LGL_VER_PATCH)
 
@@ -62,37 +62,37 @@ static const std::array<VkLayerProperties, 1> layerProps = {
 };
 
 /**
- * \brief Dispatch table lookup entry.
+ * @brief Dispatch table lookup entry.
  */
 struct DispatchTableEntry
 {
     /**
-     * \brief The function entrypoint name.
+     * @brief The function entrypoint name.
      */
     const char* name;
 
     /**
-     * \brief The function pointer.
+     * @brief The function pointer.
      */
     PFN_vkVoidFunction function;
 };
 
 /**
- * \brief Utility macro to define a lookup for a core function.
+ * @brief Utility macro to define a lookup for a core function.
  */
 #define VK_TABLE_ENTRY(func) \
     { STR(func), reinterpret_cast<PFN_vkVoidFunction>(func) }
 
 /**
- * \brief Utility macro to define a lookup for a layer-dispatch-only function.
+ * @brief Utility macro to define a lookup for a layer-dispatch-only function.
  */
 #define VK_TABLE_ENTRYL(func) \
     { STR(func), reinterpret_cast<PFN_vkVoidFunction>(layer_##func) }
 
 /**
- * \brief Fetch the layer function for a given instance entrypoint name.
+ * @brief Fetch the layer function for a given instance entrypoint name.
  *
- * \param name   The layer entry point name.
+ * @param name   The layer entry point name.
  *
  * \return The layer function pointer, or \c nullptr if the layer doesn't
  *         intercept the function.
@@ -126,9 +126,9 @@ static PFN_vkVoidFunction get_instance_layer_function(
 }
 
 /**
- * \brief Fetch the layer function for a given device entrypoint name.
+ * @brief Fetch the layer function for a given device entrypoint name.
  *
- * \param name   The layer entry point name.
+ * @param name   The layer entry point name.
  *
  * \return The layer function pointer, or \c nullptr if the layer doesn't intercept the function.
  */

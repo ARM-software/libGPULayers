@@ -27,6 +27,9 @@ set(CMAKE_CXX_STANDARD 20)
 
 project(libGPULayers_UnitTests VERSION 1.0.0)
 
+# Standard CMake components
+include(source_common/compiler_helper.cmake)
+
 # Build steps
 set(LGL_UNITTEST ON)
 

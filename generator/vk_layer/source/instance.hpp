@@ -25,24 +25,32 @@
 
 /**
  * @file
- * This module implements layer tracking for VkInstance objects.
+ * Declares the root class for layer management of managing VkInstance objects.
  *
  * Role summary
  * ============
  *
- * Instances represent the core context used by the application to connect to the OS graphics
- * subsystem prior to connection to a specific device instance. An instance object is the dispatch
- * root for the Vulkan subsystem, so instance commands all take some form of dispatchable handle
- * that can be resolved into a unique per-instance key. For the driver this key would simply be a
- * pointer directly to the driver-internal instance object, but for our layer we use a instance
- * dispatch key as an index in to the map to find the layer's instance object.
+ * Instances represent the core context used by the application to connect to
+ * the OS graphics subsystem prior to connection to a specific device instance.
+ * An instance object is the dispatch root for the Vulkan subsystem, so
+ * instance commands all take some form of dispatchable handle that can be
+ * resolved into a unique per-instance key. For the driver this key would
+ * simply be a pointer directly to the driver-internal instance object, but for
+ * our layer we use a instance dispatch key as an index in to the map to find
+ * the layer's instance object.
  *
  * Key properties
  * ==============
  *
- * Unlike EGL contexts, Vulkan instances are designed to be used concurrently by multiple
- * application threads. An application can have multiple concurrent instances (although this is less
- * common than with OpenGL ES applications), and use each instance from multiple threads.
+ * Unlike EGL contexts, Vulkan instances are designed to be used concurrently
+ * by multiple application threads. An application can have multiple concurrent
+ * instances (although this is less common than with OpenGL ES applications),
+ * and use each instance from multiple threads.
+ *
+ * Access to the layer driver structures must therefore be kept thread-safe.
+ * For sake of simplicity, we generally implement this by:
+ *   - Holding a global lock whenever any thread is inside layer code.
+ *   - Releasing the global lock whenever the layer calls a driver function.
  */
 
 #pragma once
@@ -53,10 +61,10 @@
 #include <vulkan/vk_layer.h>
 #include <vulkan/vulkan.h>
 
-#include "instance_dispatch_table.hpp"
+#include "framework/instance_dispatch_table.hpp"
 
 /**
- * \brief This class implements the layer state tracker for a single instance.
+ * @brief This class implements the layer state tracker for a single instance.
  *
  * These objects are relatively light-weight, as they are rarely used once a VkDevice has been
  * created, but we need to track the chain-of-ownership as the instance is the root object that
@@ -66,44 +74,44 @@ class Instance
 {
 public:
     /**
-     * \brief Store a new instance into the global store of dispatchable instances.
+     * @brief Store a new instance into the global store of dispatchable instances.
      *
-     * \param handle     The dispatchable instance handle to use as an indirect key.
-     * \param instance   The \c Instance object to store.
+     * @param handle     The dispatchable instance handle to use as an indirect key.
+     * @param instance   The \c Instance object to store.
      */
     static void store(
         VkInstance handle,
         std::unique_ptr<Instance>& instance);
 
     /**
-     * \brief Fetch an instance from the global store of dispatchable instances.
+     * @brief Fetch an instance from the global store of dispatchable instances.
      *
-     * \param handle   The dispatchable instance handle to use as an indirect lookup.
+     * @param handle   The dispatchable instance handle to use as an indirect lookup.
      */
     static Instance* retrieve(
         VkInstance handle);
 
     /**
-     * \brief Fetch an instance from the global store of dispatchable instances.
+     * @brief Fetch an instance from the global store of dispatchable instances.
      *
-     * \param handle   The dispatchable physical device handle to use as an indirect lookup.
+     * @param handle   The dispatchable physical device handle to use as an indirect lookup.
      */
     static Instance* retrieve(
         VkPhysicalDevice handle);
 
     /**
-     * \brief Drop an instance from the global store of dispatchable instances.
+     * @brief Drop an instance from the global store of dispatchable instances.
      *
-     * \param instance   The instance to drop.
+     * @param instance   The instance to drop.
      */
     static void destroy(
         Instance* instance);
 
     /**
-     * \brief Create a new layer instance object.
+     * @brief Create a new layer instance object.
      *
-     * \param instance               The instance handle this instance is created with.
-     * \param nlayerGetProcAddress   The vkGetProcAddress function in the driver/next layer down.
+     * @param instance               The instance handle this instance is created with.
+     * @param nlayerGetProcAddress   The vkGetProcAddress function in the driver/next layer down.
      */
     Instance(
         VkInstance instance,
@@ -111,17 +119,17 @@ public:
 
 public:
     /**
-     * \brief The instance handle this instance is created with.
+     * @brief The instance handle this instance is created with.
      */
     VkInstance instance;
 
     /**
-     * \brief The next layer's \c vkGetInstanceProcAddr() function pointer.
+     * @brief The next layer's \c vkGetInstanceProcAddr() function pointer.
      */
     PFN_vkGetInstanceProcAddr nlayerGetProcAddress;
 
     /**
-     * \brief The driver function dispatch table.
+     * @brief The driver function dispatch table.
      */
-    InstanceDispatchTable driver { 0 };
+    InstanceDispatchTable driver {};
 };

@@ -27,23 +27,25 @@
 
 #include <vulkan/vulkan.h>
 
-#include "instance_functions.hpp"
+#include "framework/instance_functions.hpp"
+#include "utils/misc.hpp"
+
 #if __has_include ("layer_instance_functions.hpp")
     #include "layer_instance_functions.hpp"
 #endif
 
 /**
- * \brief Interception table lookup entry.
+ * @brief Interception table lookup entry.
  */
 struct InstanceInterceptTableEntry
 {
     /**
-     * \brief The function entrypoint name.
+     * @brief The function entrypoint name.
      */
     const char* name;
 
     /**
-     * \brief The layer function pointer.
+     * @brief The layer function pointer.
      */
     PFN_vkVoidFunction function;
 };
@@ -51,7 +53,7 @@ struct InstanceInterceptTableEntry
 #define ENTRY(fnc) { STR(fnc), reinterpret_cast<PFN_vkVoidFunction>(layer_##fnc<user_tag>) }
 
 /**
- * \brief The instance dispatch table used to call the driver.
+ * @brief The instance dispatch table used to call the driver.
  */
 static const struct InstanceInterceptTableEntry instanceIntercepts[] = {
 #if defined(VK_USE_PLATFORM_ANDROID_KHR)
@@ -131,7 +133,7 @@ static const struct InstanceInterceptTableEntry instanceIntercepts[] = {
 #undef ENTRY
 
 /**
- * \brief The instance dispatch table used to call the driver.
+ * @brief The instance dispatch table used to call the driver.
  */
 struct InstanceDispatchTable {
     PFN_vkGetInstanceProcAddr vkGetInstanceProcAddr;
@@ -212,11 +214,11 @@ struct InstanceDispatchTable {
 #define ENTRY(fnc) table.fnc = (PFN_##fnc)getProcAddr(instance, STR(fnc))
 
 /**
- * \brief Initialize the instance dispatch table with driver function pointers.
+ * @brief Initialize the instance dispatch table with driver function pointers.
  *
- * \param instance      The instance handle.
- * \param getProcAddr   The function getter for the driver/next layer down.
- * \param table         The table to populate.
+ * @param instance      The instance handle.
+ * @param getProcAddr   The function getter for the driver/next layer down.
+ * @param table         The table to populate.
  */
 static inline void initDriverInstanceDispatchTable(
     VkInstance instance,

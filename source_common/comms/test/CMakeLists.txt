@@ -64,9 +64,11 @@ target_link_libraries(
         lib_layer_comms
         gtest_main)
 
-add_test(
-    NAME ${TEST_BINARY}
-    COMMAND ${TEST_BINARY})
+# Exclude from ctest for now because it needs user to manually run the
+# external server program before the test can pass
+#add_test(
+#    NAME ${TEST_BINARY}
+#    COMMAND ${TEST_BINARY})
 
 install(
     TARGETS ${TEST_BINARY}

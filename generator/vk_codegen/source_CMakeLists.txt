@@ -21,18 +21,6 @@
 # SOFTWARE.
 # -----------------------------------------------------------------------------
 
-# Compiler accepts GNU-style command line options
-set(is_gnu_fe1 "$<STREQUAL:${CMAKE_CXX_COMPILER_FRONTEND_VARIANT},GNU>")
-
-# Compiler accepts AppleClang-style command line options, which is also GNU-style
-set(is_gnu_fe2 "$<STREQUAL:${CMAKE_CXX_COMPILER_FRONTEND_VARIANT},AppleClang>")
-
-# Compiler accepts GNU-style command line options
-set(is_gnu_fe "$<OR:${is_gnu_fe1},${is_gnu_fe2}>")
-
-# Compiler is upstream clang with the standard frontend
-set(is_clang "$<AND:${is_gnu_fe},$<CXX_COMPILER_ID:Clang,AppleClang>>")
-
 # Set output file names
 if (CMAKE_BUILD_TYPE STREQUAL "Release")
     set(VK_LAYER {LAYER_NAME}_sym)
@@ -59,7 +47,7 @@ add_library(
 
 target_include_directories(
     ${VK_LAYER} PRIVATE
-        ${PROJECT_SOURCE_DIR}/../source_common/framework
+        ${PROJECT_SOURCE_DIR}/../source_common
         ${CMAKE_CURRENT_BINARY_DIR}
         .)
 
@@ -67,16 +55,7 @@ target_include_directories(
     ${VK_LAYER} SYSTEM PRIVATE
         ../../khronos/vulkan/include)
 
-target_compile_options(
-    ${VK_LAYER} PRIVATE
-        -fvisibility=hidden
-        -fvisibility-inlines-hidden
-        -fno-exceptions
-        -fno-rtti
-        -Wall
-        -Wextra
-        -Wno-missing-field-initializers
-        $<${is_clang}:-Wdocumentation>)
+lgl_set_build_options(${VK_LAYER})
 
 target_compile_definitions(
     ${VK_LAYER} PRIVATE
@@ -85,7 +64,7 @@ target_compile_definitions(
 
 target_link_libraries(
     ${VK_LAYER}
-        layer_common
+        lib_layer_framework
         $<$<PLATFORM_ID:Android>:log>)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Release")
