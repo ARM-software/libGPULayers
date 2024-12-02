@@ -21,9 +21,22 @@
 # SOFTWARE.
 # -----------------------------------------------------------------------------
 
-# Note: The framework component cannot be built as a common library, because it
-# depends on per-layer implementations of the root intercept Instance and
-# Device classes which get specialized for each use case.
+# This module implements the server-side communications module service that
+# implements a basic message endpoint for testing.
 
-add_subdirectory(comms)
-add_subdirectory(trackers)
+from lglpy.server import Message
+
+class GPUTimelineService:
+
+    def __init__(self):
+        pass
+
+    def get_service_name(self) -> str:
+        return 'GPUTimeline'
+
+    def handle_message(self, message: Message):
+        payload = message.payload.decode('utf-8')
+
+        print(f'{message.message_type.name}: {payload} ({len(payload)} bytes)')
+
+        return None

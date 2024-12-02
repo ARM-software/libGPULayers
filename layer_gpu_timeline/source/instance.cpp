@@ -23,39 +23,54 @@
  * ----------------------------------------------------------------------------
  */
 
-#include <vulkan/vulkan.h>
+#include <cassert>
 
 #include "framework/utils.hpp"
 
-/* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass<user_tag>(
-    VkCommandBuffer commandBuffer,
-    const VkRenderPassBeginInfo* pRenderPassBegin,
-    VkSubpassContents contents);
+#include "instance.hpp"
 
-/* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass2<user_tag>(
-    VkCommandBuffer commandBuffer,
-    const VkRenderPassBeginInfo* pRenderPassBegin,
-    const VkSubpassBeginInfo* pSubpassBeginInfo);
+static std::unordered_map<void*, std::unique_ptr<Instance>> g_instances;
 
-/* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass2KHR<user_tag>(
-    VkCommandBuffer commandBuffer,
-    const VkRenderPassBeginInfo* pRenderPassBegin,
-    const VkSubpassBeginInfo* pSubpassBeginInfo);
+/* See header for documentation. */
+void Instance::store(
+    VkInstance handle,
+    std::unique_ptr<Instance>& instance
+) {
+    void* key = getDispatchKey(handle);
+    g_instances.insert({ key, std::move(instance) });
+}
 
-/* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRendering<user_tag>(
-    VkCommandBuffer commandBuffer,
-    const VkRenderingInfo* pRenderingInfo);
+/* See header for documentation. */
+Instance* Instance::retrieve(
+    VkInstance handle)
+{
+    void* key = getDispatchKey(handle);
+    assert(isInMap(key, g_instances));
+    return g_instances.at(key).get();
+}
 
-/* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderingKHR<user_tag>(
-    VkCommandBuffer commandBuffer,
-    const VkRenderingInfo* pRenderingInfo);
+/* See header for documentation. */
+Instance* Instance::retrieve(
+    VkPhysicalDevice handle)
+{
+    void* key = getDispatchKey(handle);
+    assert(isInMap(key, g_instances));
+    return g_instances.at(key).get();
+}
+
+/* See header for documentation. */
+void Instance::destroy(
+    Instance* instance
+) {
+    g_instances.erase(getDispatchKey(instance->instance));
+}
+
+/* See header for documentation. */
+Instance::Instance(
+    VkInstance _instance,
+    PFN_vkGetInstanceProcAddr _nlayerGetProcAddress) :
+    instance(_instance),
+    nlayerGetProcAddress(_nlayerGetProcAddress)
+{
+    initDriverInstanceDispatchTable(instance, nlayerGetProcAddress, driver);
+}

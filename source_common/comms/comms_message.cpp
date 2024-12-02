@@ -23,39 +23,27 @@
  * ----------------------------------------------------------------------------
  */
 
-#include <vulkan/vulkan.h>
+/**
+ * @file
+ * The declaration of the communication module internal message types.
+ */
 
-#include "framework/utils.hpp"
+#include "comms/comms_message.hpp"
 
-/* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass<user_tag>(
-    VkCommandBuffer commandBuffer,
-    const VkRenderPassBeginInfo* pRenderPassBegin,
-    VkSubpassContents contents);
+namespace Comms
+{
 
-/* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass2<user_tag>(
-    VkCommandBuffer commandBuffer,
-    const VkRenderPassBeginInfo* pRenderPassBegin,
-    const VkSubpassBeginInfo* pSubpassBeginInfo);
+Message::Message(
+    EndpointID _endpointID,
+    MessageType _messageType,
+    MessageID _messageID,
+    std::unique_ptr<MessageData> _transmitData) :
+    endpointID(_endpointID),
+    messageType(_messageType),
+    messageID(_messageID),
+    transmitData(std::move(_transmitData))
+{
 
-/* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass2KHR<user_tag>(
-    VkCommandBuffer commandBuffer,
-    const VkRenderPassBeginInfo* pRenderPassBegin,
-    const VkSubpassBeginInfo* pSubpassBeginInfo);
+}
 
-/* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRendering<user_tag>(
-    VkCommandBuffer commandBuffer,
-    const VkRenderingInfo* pRenderingInfo);
-
-/* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderingKHR<user_tag>(
-    VkCommandBuffer commandBuffer,
-    const VkRenderingInfo* pRenderingInfo);
+}

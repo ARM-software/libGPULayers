@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024 Arm Limited
+ * Copyright (c) 2022-2024 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -23,39 +23,45 @@
  * ----------------------------------------------------------------------------
  */
 
-#include <vulkan/vulkan.h>
+#include <cassert>
 
-#include "framework/utils.hpp"
+#include "trackers/queue.hpp"
 
-/* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass<user_tag>(
-    VkCommandBuffer commandBuffer,
-    const VkRenderPassBeginInfo* pRenderPassBegin,
-    VkSubpassContents contents);
+namespace Tracker
+{
+/* See header for details. */
+std::atomic<uint64_t> Queue::nextSubmitID { 1 };
 
-/* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass2<user_tag>(
-    VkCommandBuffer commandBuffer,
-    const VkRenderPassBeginInfo* pRenderPassBegin,
-    const VkSubpassBeginInfo* pSubpassBeginInfo);
+/* See header for details. */
+Queue::Queue(
+    VkQueue _handle):
+    handle(_handle) { };
 
-/* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass2KHR<user_tag>(
-    VkCommandBuffer commandBuffer,
-    const VkRenderPassBeginInfo* pRenderPassBegin,
-    const VkSubpassBeginInfo* pSubpassBeginInfo);
+/* See header for details. */
+void Queue::runSubmitCommandStream(
+    const std::vector<LCSInstruction>& stream,
+    std::function<void(const std::string&)> callback
+) {
+    for (auto& instr: stream)
+    {
+        LCSOpcode opCode = instr.first;
+        const LCSWorkload* opData = instr.second.get();
 
-/* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRendering<user_tag>(
-    VkCommandBuffer commandBuffer,
-    const VkRenderingInfo* pRenderingInfo);
+        if (opCode == LCSOpcode::MARKER_BEGIN)
+        {
+            debugStack.push_back(opData->getMetadata());
+        }
+        else if (opCode == LCSOpcode::MARKER_END)
+        {
+            debugStack.pop_back();
+        }
+        else if (opCode == LCSOpcode::RENDERPASS_BEGIN)
+        {
+            auto* workload = dynamic_cast<const LCSRenderPass*>(opData);
+            callback(workload->getMetadata());
+            std::string log = joinString(debugStack, "|");
+        }
+    }
+}
 
-/* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderingKHR<user_tag>(
-    VkCommandBuffer commandBuffer,
-    const VkRenderingInfo* pRenderingInfo);
+}

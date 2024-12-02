@@ -34,6 +34,7 @@
 #include <cstring>
 #include <mutex>
 #include <thread>
+#include <vulkan/vulkan.h>
 
 #include "framework/instance_functions_manual.hpp"
 #include "framework/utils.hpp"
