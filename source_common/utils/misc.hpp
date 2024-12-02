@@ -31,7 +31,10 @@
 #pragma once
 
 #include <cassert>
+#include <cinttypes>
+#include <sstream>
 #include <string>
+#include <vector>
 
 /**
  * @brief Macro to stringize a value.
@@ -50,7 +53,7 @@
  * @param args     The variadic values used to populate the template.
  */
 template<typename ... Args>
-std::string fmt_string(
+std::string formatString(
     const std::string& format,
     Args ... args
 ) {
@@ -66,6 +69,29 @@ std::string fmt_string(
     std::unique_ptr<char[]> buf(new char[size]);
     std::snprintf(buf.get(), size, format.c_str(), args ...);
     return std::string(buf.get(), buf.get() + size - 1);
+}
+
+/**
+ * @brief Join a string of parts.
+ *
+ * @param parts       The list of string parts to join.
+ * @param separator   The delimiter to use when joining the parts.
+ */
+[[maybe_unused]] static std::string joinString(
+    const std::vector<std::string>& parts,
+    const std::string& separator
+) {
+    std::stringstream out;
+    for (size_t i = 0; i < parts.size(); i++)
+    {
+        out << parts[i];
+        if (i != parts.size() - 1)
+        {
+            out << separator;
+        }
+    }
+
+    return out.str();
 }
 
 /**

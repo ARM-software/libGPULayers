@@ -21,9 +21,18 @@
 # SOFTWARE.
 # -----------------------------------------------------------------------------
 
-# Note: The framework component cannot be built as a common library, because it
-# depends on per-layer implementations of the root intercept Instance and
-# Device classes which get specialized for each use case.
+cmake_minimum_required(VERSION 3.17)
 
-add_subdirectory(comms)
-add_subdirectory(trackers)
+set(CMAKE_CXX_STANDARD 20)
+
+project(VkLayerGPUTimeline VERSION 1.0.0)
+
+# Common configuration
+set(LGL_LOG_TAG, "VkLayerGPUTimeline")
+include(../source_common/compiler_helper.cmake)
+
+# Build steps
+add_subdirectory(../source_common/comms source_common/comms)
+add_subdirectory(../source_common/framework source_common/framework)
+add_subdirectory(../source_common/trackers source_common/trackers)
+add_subdirectory(source)
