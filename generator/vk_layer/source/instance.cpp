@@ -25,7 +25,8 @@
 
 #include <cassert>
 
-#include "utils.hpp"
+#include "framework/utils.hpp"
+
 #include "instance.hpp"
 
 static std::unordered_map<void*, std::unique_ptr<Instance>> g_instances;
@@ -66,10 +67,10 @@ void Instance::destroy(
 
 /* See header for documentation. */
 Instance::Instance(
-    VkInstance instance,
-    PFN_vkGetInstanceProcAddr nlayerGetProcAddress) :
-    instance(instance),
-    nlayerGetProcAddress(nlayerGetProcAddress)
+    VkInstance _instance,
+    PFN_vkGetInstanceProcAddr _nlayerGetProcAddress) :
+    instance(_instance),
+    nlayerGetProcAddress(_nlayerGetProcAddress)
 {
     initDriverInstanceDispatchTable(instance, nlayerGetProcAddress, driver);
 }

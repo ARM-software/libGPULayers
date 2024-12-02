@@ -25,88 +25,96 @@
 
 /**
  * @file
- * This module implements layer tracking for VkDevice objects.
+ * Declares the root class for layer management of VkDevice objects.
  *
  * Role summary
  * ============
  *
- * Devices represent the core context used by the application to connect to the underlying graphics
- * driver. A device object is the dispatch root for the Vulkan driver, so device commands all take
- * some form of dispatchable handle that can be resolved into a unique per-device key. For the
- * driver this key would simply be a pointer directly to the driver-internal device object, but for
- * our layer we use a device dispatch key as an index in to the map to find the layer's driver
- * object.
+ * Devices represent the core context used by the application to connect to the
+ * underlying graphics driver. A device object is the dispatch root for the
+ * Vulkan driver, so device commands all take some form of dispatchable handle
+ * that can be resolved into a unique per-device key. For the driver this key
+ * would simply be a pointer directly to the driver-internal device object, but
+ * for our layer we use a device dispatch key as an index in to the map to find
+ * the layer's driver object.
  *
  * Key properties
  * ==============
  *
- * Unlike EGL contexts, Vulkan devices are designed to be used concurrently by multiple application
- * threads. An application can have multiple concurrent devices (although this is less common than
- * with OpenGL ES applications), and use each device from multiple threads.
+ * Unlike EGL contexts, Vulkan devices are designed to be used concurrently by
+ * multiple application threads. An application can have multiple concurrent
+ * devices (although this is less common than with OpenGL ES applications), and
+ * use each device from multiple threads.
+ *
+ * Access to the layer driver structures must therefore be kept thread-safe.
+ * For sake of simplicity, we generally implement this by:
+ *   - Holding a global lock whenever any thread is inside layer code.
+ *   - Releasing the global lock whenever the layer calls a driver function.
  */
 
 #pragma once
 
 #include <vulkan/vk_layer.h>
 
+#include "framework/device_dispatch_table.hpp"
+
 #include "instance.hpp"
-#include "device_dispatch_table.hpp"
 
 /**
- * \brief This class implements the layer state tracker for a single device.
+ * @brief This class implements the layer state tracker for a single device.
  */
 class Device
 {
 public:
     /**
-     * \brief Store a new device into the global store of dispatchable devices.
+     * @brief Store a new device into the global store of dispatchable devices.
      *
-     * \param handle   The dispatchable device handle to use as an indirect key.
-     * \param device   The \c Device object to store.
+     * @param handle   The dispatchable device handle to use as an indirect key.
+     * @param device   The @c Device object to store.
      */
     static void store(
         VkDevice handle,
         std::unique_ptr<Device> device);
 
     /**
-     * \brief Fetch a device from the global store of dispatchable devices.
+     * @brief Fetch a device from the global store of dispatchable devices.
      *
-     * \param handle   The dispatchable device handle to use as an indirect lookup.
+     * @param handle   The dispatchable device handle to use as an indirect lookup.
      */
     static Device* retrieve(
         VkDevice handle);
 
     /**
-     * \brief Fetch a device from the global store of dispatchable devices.
+     * @brief Fetch a device from the global store of dispatchable devices.
      *
-     * \param handle   The dispatchable queue handle to use as an indirect lookup.
+     * @param handle   The dispatchable queue handle to use as an indirect lookup.
      */
     static Device* retrieve(
         VkQueue handle);
 
     /**
-     * \brief Fetch a device from the global store of dispatchable devices.
+     * @brief Fetch a device from the global store of dispatchable devices.
      *
-     * \param handle   The dispatchable command buffer handle to use as an indirect lookup.
+     * @param handle   The dispatchable command buffer handle to use as an indirect lookup.
      */
     static Device* retrieve(
         VkCommandBuffer handle);
 
     /**
-     * \brief Drop a device from the global store of dispatchable devices.
+     * @brief Drop a device from the global store of dispatchable devices.
      *
-     * \param device   The device to drop.
+     * @param device   The device to drop.
      */
     static void destroy(
         Device* device);
 
     /**
-     * \brief Create a new layer device object.
+     * @brief Create a new layer device object.
      *
-     * \param instance               The layer instance object this device is created with.
-     * \param physicalDevice         The physical device this logical device is for.
-     * \param device                 The device handle this device is created with.
-     * \param nlayerGetProcAddress   The vkGetProcAddress function in the driver/next layer down.
+     * @param instance               The layer instance object this device is created with.
+     * @param physicalDevice         The physical device this logical device is for.
+     * @param device                 The device handle this device is created with.
+     * @param nlayerGetProcAddress   The vkGetProcAddress function in the driver/next layer down.
      */
     Device(
         Instance* instance,
@@ -115,28 +123,28 @@ public:
         PFN_vkGetDeviceProcAddr nlayerGetProcAddress);
 
     /**
-     * \brief Destroy this layer device object.
+     * @brief Destroy this layer device object.
      */
     ~Device();
 
 public:
     /**
-     * \brief The instance this device is created with.
+     * @brief The instance this device is created with.
      */
     const Instance* instance;
 
     /**
-     * \brief The physical device this device is created with.
+     * @brief The physical device this device is created with.
      */
     const VkPhysicalDevice physicalDevice;
 
     /**
-     * \brief The device handle this device is created with.
+     * @brief The device handle this device is created with.
      */
     const VkDevice device;
 
     /**
-     * \brief The driver function dispatch table.
+     * @brief The driver function dispatch table.
      */
-    DeviceDispatchTable driver { 0 };
+    DeviceDispatchTable driver {};
 };

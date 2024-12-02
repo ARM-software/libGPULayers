@@ -27,9 +27,10 @@
 #include <mutex>
 #include <thread>
 
-#include "utils.hpp"
+#include "framework/device_functions.hpp"
+#include "framework/utils.hpp"
+
 #include "device.hpp"
-#include "device_functions.hpp"
 
 extern std::mutex g_vulkanLock;
 
@@ -40,14 +41,12 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass<user_tag>(
     const VkRenderPassBeginInfo* pRenderPassBegin,
     VkSubpassContents contents);
 
-
 /* See Vulkan API for documentation. */
 template <>
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass2<user_tag>(
     VkCommandBuffer commandBuffer,
     const VkRenderPassBeginInfo* pRenderPassBegin,
     const VkSubpassBeginInfo* pSubpassBeginInfo);
-
 
 /* See Vulkan API for documentation. */
 template <>
@@ -56,13 +55,11 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass2KHR<user_tag>(
     const VkRenderPassBeginInfo* pRenderPassBegin,
     const VkSubpassBeginInfo* pSubpassBeginInfo);
 
-
 /* See Vulkan API for documentation. */
 template <>
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRendering<user_tag>(
     VkCommandBuffer commandBuffer,
     const VkRenderingInfo* pRenderingInfo);
-
 
 /* See Vulkan API for documentation. */
 template <>

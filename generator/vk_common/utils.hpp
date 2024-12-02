@@ -47,9 +47,9 @@
 struct user_tag {};
 
 /**
- * \brief Convert a dispatchable API handle to the underlying dispatch key.
+ * @brief Convert a dispatchable API handle to the underlying dispatch key.
  *
- * \param ptr   The dispatchable handle from the API.
+ * @param ptr   The dispatchable handle from the API.
  *
  * \return The dispatch key.
  */
@@ -60,22 +60,12 @@ static inline void* getDispatchKey(
 }
 
 /**
- * \brief Macro to stringize a value.
- */
-#define STR(x) #x
-
-/**
- * \brief Macro to mark a variable as unused.
- */
-#define UNUSED(x) ((void)x);
-
-/**
- * \brief Enable to enable API entrypoint tracing to the log/logcat.
+ * @brief Enable to enable API entrypoint tracing to the log/logcat.
  */
 #define CONFIG_TRACE 0
 
 /**
- * \brief Enable to enable layer logging to the log/logcat.
+ * @brief Enable to enable layer logging to the log/logcat.
  */
 #define CONFIG_LOG 1
 
@@ -109,88 +99,3 @@ static inline void* getDispatchKey(
     #define LAYER_LOG(...)
     #define LAYER_ERR(...)
 #endif
-
-/**
- * \brief Format a string using printf formatting template strings.
- *
- * \param format   The template string.
- * \param args     The variadic values used to populate the template.
- */
-template<typename ... Args>
-std::string fmt_string(
-    const std::string& format,
-    Args ... args
-) {
-    // Determine size, adding one for the trailing nul
-    int size = std::snprintf(nullptr, 0, format.c_str(), args ...) + 1;
-    if (size <= 0)
-    {
-        assert(false);
-        return "";
-    }
-
-    // Create the return string
-    std::unique_ptr<char[]> buf(new char[size]);
-    std::snprintf(buf.get(), size, format.c_str(), args ...);
-    return std::string(buf.get(), buf.get() + size - 1);
-}
-
-/**
- * \brief Test if an element exists in an iterable container.
- *
- * \param elem   The element to search for.
- * \param cont   The container to search.
- *
- * \return \c true if the item was found, else \c false.
- */
-template<typename E, typename C>
-bool isIn(const E& elem, const C& cont)
-{
-    return std::find(std::begin(cont), std::end(cont), elem) != std::end(cont);
-}
-
-/**
- * \brief Test if an element exists in a mappable container.
- *
- * \param elem   The element to search for.
- * \param cont   The container to search.
- *
- * \return \c true if the item was found, else \c false.
- */
-template<typename E, typename C>
-bool isInMap(const E& elem, const C& cont)
-{
-    return cont.find(elem) != cont.end();
-}
-
-/**
- * \brief Get the current time in seconds since an arbitrary epoch.
- *
- * \return The current time.
- */
-static inline double getTime()
-{
-    timeval tv;
-    gettimeofday(&tv, 0);
-    return static_cast<double>(tv.tv_sec) + static_cast<double>(tv.tv_usec) * 1.0e-6;
-}
-
-/**
- * \brief Get a displayable pointer.
- *
- * On 64-bit systems this strips the MTE tag.
- *
- * \return The displayable pointer
- */
-static inline uintptr_t getDisplayPointer(
-    void* pointer
-) {
-    uintptr_t dispPointer = reinterpret_cast<uintptr_t>(pointer);
-
-    if constexpr(sizeof(uintptr_t) == 8)
-    {
-        dispPointer &= 0x00FFFFFFFFFFFFFFull;
-    }
-
-    return dispPointer;
-}

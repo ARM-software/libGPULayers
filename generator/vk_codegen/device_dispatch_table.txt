@@ -2,23 +2,25 @@
 
 #include <vulkan/vulkan.h>
 
-#include "device_functions.hpp"
+#include "framework/device_functions.hpp"
+#include "utils/misc.hpp"
+
 #if __has_include ("layer_device_functions.hpp")
     #include "layer_device_functions.hpp"
 #endif
 
 /**
- * \brief Interception table lookup entry.
+ * @brief Interception table lookup entry.
  */
 struct DeviceInterceptTableEntry
 {
     /**
-     * \brief The function entrypoint name.
+     * @brief The function entrypoint name.
      */
     const char* name;
 
     /**
-     * \brief The layer function pointer.
+     * @brief The layer function pointer.
      */
     PFN_vkVoidFunction function;
 };
@@ -26,7 +28,7 @@ struct DeviceInterceptTableEntry
 #define ENTRY(fnc) { STR(fnc), reinterpret_cast<PFN_vkVoidFunction>(layer_##fnc<user_tag>) }
 
 /**
- * \brief The device dispatch table used to call the driver.
+ * @brief The device dispatch table used to call the driver.
  */
 static const struct DeviceInterceptTableEntry deviceIntercepts[] = {
 {ITABLE_MEMBERS}
@@ -44,11 +46,11 @@ struct DeviceDispatchTable {
 #define ENTRY(fnc) table.fnc = (PFN_##fnc)getProcAddr(device, STR(fnc))
 
 /**
- * \brief Initialize the device dispatch table with driver function pointers.
+ * @brief Initialize the device dispatch table with driver function pointers.
  *
- * \param device        The device handle.
- * \param getProcAddr   The function getter for the driver/next layer down.
- * \param table         The table to populate.
+ * @param device        The device handle.
+ * @param getProcAddr   The function getter for the driver/next layer down.
+ * @param table         The table to populate.
  */
 static inline void initDriverDeviceDispatchTable(
     VkDevice device,

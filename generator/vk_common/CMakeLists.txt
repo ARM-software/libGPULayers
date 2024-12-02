@@ -21,54 +21,32 @@
 # SOFTWARE.
 # -----------------------------------------------------------------------------
 
-# Compiler accepts GNU-style command line options
-set(is_gnu_fe1 "$<STREQUAL:${CMAKE_CXX_COMPILER_FRONTEND_VARIANT},GNU>")
-
-# Compiler accepts AppleClang-style command line options, which is also GNU-style
-set(is_gnu_fe2 "$<STREQUAL:${CMAKE_CXX_COMPILER_FRONTEND_VARIANT},AppleClang>")
-
-# Compiler accepts GNU-style command line options
-set(is_gnu_fe "$<OR:${is_gnu_fe1},${is_gnu_fe2}>")
-
-# Compiler is upstream clang with the standard frontend
-set(is_clang "$<AND:${is_gnu_fe},$<CXX_COMPILER_ID:Clang,AppleClang>>")
-
-set(DIR_TARGET layer_common)
+set(BUILD_TARGET lib_layer_framework)
 
 add_library(
-    ${DIR_TARGET} STATIC
+    ${BUILD_TARGET} STATIC
         device_functions.cpp
         instance_functions.cpp)
 
 target_include_directories(
-    ${DIR_TARGET} PRIVATE
+    ${BUILD_TARGET} PRIVATE
         # Note, this includes from the layer-specific tree
         ${PROJECT_SOURCE_DIR}/source
-        .)
+        ../)
 
 target_include_directories(
-    ${DIR_TARGET} SYSTEM PRIVATE
+    ${BUILD_TARGET} SYSTEM PRIVATE
         ../../khronos/vulkan/include)
 
-target_compile_options(
-    ${DIR_TARGET} PRIVATE
-        -fvisibility=hidden
-        -fvisibility-inlines-hidden
-        -fno-exceptions
-        -fno-rtti
-        -fpic
-        -Wall
-        -Wextra
-        -Wno-missing-field-initializers
-        $<${is_clang}:-Wdocumentation>)
+lgl_set_build_options(${BUILD_TARGET})
 
 # TODO: Log tag needs to come from child project
 target_compile_definitions(
-    ${DIR_TARGET} PRIVATE
+    ${BUILD_TARGET} PRIVATE
         $<$<PLATFORM_ID:Android>:VK_USE_PLATFORM_ANDROID_KHR=1>
         $<$<PLATFORM_ID:Android>:LGL_LOG_TAG="${LGL_LOG_TAG}">)
 
 # TODO: Remove this?
 target_link_libraries(
-    ${DIR_TARGET}
+    ${BUILD_TARGET}
         $<$<PLATFORM_ID:Android>:log>)

@@ -25,10 +25,11 @@ cmake_minimum_required(VERSION 3.17)
 
 set(CMAKE_CXX_STANDARD 20)
 
-project(Example VERSION 1.0.0)
+project(VkLayerExample VERSION 1.0.0)
 
 # Common configuration
 set(LGL_LOG_TAG, "VkLayerExample")
+include(../source_common/compiler_helper.cmake)
 
 # Build steps
 add_subdirectory(source)
