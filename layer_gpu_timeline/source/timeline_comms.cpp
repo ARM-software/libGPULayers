@@ -23,39 +23,29 @@
  * ----------------------------------------------------------------------------
  */
 
-#include <vulkan/vulkan.h>
+#include <memory>
 
-#include "framework/utils.hpp"
+#include "timeline_comms.hpp"
 
-/* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass<user_tag>(
-    VkCommandBuffer commandBuffer,
-    const VkRenderPassBeginInfo* pRenderPassBegin,
-    VkSubpassContents contents);
+TimelineComms::TimelineComms(
+    Comms::CommsInterface& commsIf)
+{
+    comms = &commsIf;
+    if (comms->isConnected())
+    {
+        endpoint = comms->getEndpointID("GPUTimeline");
+    }
+}
 
-/* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass2<user_tag>(
-    VkCommandBuffer commandBuffer,
-    const VkRenderPassBeginInfo* pRenderPassBegin,
-    const VkSubpassBeginInfo* pSubpassBeginInfo);
+void TimelineComms::txMessage(
+    const std::string& message)
+{
+    // Message endpoint is not available
+    if (endpoint == 0)
+    {
+        return;
+    }
 
-/* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass2KHR<user_tag>(
-    VkCommandBuffer commandBuffer,
-    const VkRenderPassBeginInfo* pRenderPassBegin,
-    const VkSubpassBeginInfo* pSubpassBeginInfo);
-
-/* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRendering<user_tag>(
-    VkCommandBuffer commandBuffer,
-    const VkRenderingInfo* pRenderingInfo);
-
-/* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderingKHR<user_tag>(
-    VkCommandBuffer commandBuffer,
-    const VkRenderingInfo* pRenderingInfo);
+    auto data = std::make_unique<Comms::MessageData>(message.begin(), message.end());
+    comms->txAsync(endpoint, std::move(data));
+}

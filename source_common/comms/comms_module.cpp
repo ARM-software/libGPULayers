@@ -46,6 +46,7 @@ namespace Comms
 CommsModule::CommsModule(
     const std::string& domainAddress
 ) {
+    LAYER_LOG("Client UDS socket create");
     sockfd = socket(AF_UNIX, SOCK_STREAM, 0);
     if (sockfd < 0)
     {
@@ -60,6 +61,7 @@ CommsModule::CommsModule(
     std::strcpy(servAddr.sun_path + 1, domainAddress.c_str());
     servAddr.sun_path[0] = '\0';
 
+    LAYER_LOG("Client UDS connect");
     int conn = connect(
         sockfd,
         reinterpret_cast<const struct sockaddr*>(&servAddr),
@@ -72,8 +74,13 @@ CommsModule::CommsModule(
         return;
     }
 
+    LAYER_LOG("Client make transmitter");
     transmitter = std::make_unique<Transmitter>(*this);
+
+    LAYER_LOG("Client make receiver");
     receiver = std::make_unique<Receiver>(*this);
+
+    LAYER_LOG("Client make complete");
 }
 
 /** See header for documentation. */

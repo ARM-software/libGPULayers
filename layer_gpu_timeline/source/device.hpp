@@ -56,9 +56,12 @@
 
 #include <vulkan/vk_layer.h>
 
+#include "comms/comms_module.hpp"
 #include "framework/device_dispatch_table.hpp"
+#include "trackers/device.hpp"
 
 #include "instance.hpp"
+#include "timeline_comms.hpp"
 
 /**
  * @brief This class implements the layer state tracker for a single device.
@@ -127,7 +130,29 @@ public:
      */
     ~Device();
 
+    /**
+     * @brief Callback for sending messages
+     */
+    void onWorkloadSubmit(const std::string& message)
+    {
+        commsWrapper->txMessage(message);
+    }
+
+    /**
+     * @brief Get the cumulative stats for this device.
+     */
+    Tracker::Device& getStateTracker()
+    {
+        return stateTracker;
+    }
+
 public:
+    /**
+     * @brief The driver function dispatch table.
+     */
+    DeviceDispatchTable driver {};
+
+private:
     /**
      * @brief The instance this device is created with.
      */
@@ -144,7 +169,17 @@ public:
     const VkDevice device;
 
     /**
-     * @brief The driver function dispatch table.
+     * @brief State tracking for this device;
      */
-    DeviceDispatchTable driver {};
+    Tracker::Device stateTracker;
+
+    /**
+     * @brief Communications module.
+     */
+    static std::unique_ptr<Comms::CommsModule> commsModule;
+
+    /**
+     * @brief Communications module message encoder.
+     */
+    static std::unique_ptr<TimelineComms> commsWrapper;
 };

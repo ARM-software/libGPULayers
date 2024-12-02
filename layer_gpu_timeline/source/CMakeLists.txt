@@ -43,7 +43,16 @@ add_library(
     ${VK_LAYER} SHARED
         ${PROJECT_SOURCE_DIR}/../source_common/framework/entry.cpp
         device.cpp
-        instance.cpp)
+        instance.cpp
+        layer_device_functions_command_buffer.cpp
+        layer_device_functions_command_pool.cpp
+        layer_device_functions_debug.cpp
+        layer_device_functions_dispatch.cpp
+        layer_device_functions_draw_call.cpp
+        layer_device_functions_queue.cpp
+        layer_device_functions_render_pass.cpp
+        layer_device_functions_trace_rays.cpp
+        timeline_comms.cpp)
 
 target_include_directories(
     ${VK_LAYER} PRIVATE
@@ -59,7 +68,9 @@ lgl_set_build_options(${VK_LAYER})
 
 target_link_libraries(
     ${VK_LAYER}
+        lib_layer_comms
         lib_layer_framework
+        lib_layer_trackers
         $<$<PLATFORM_ID:Android>:log>)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Release")

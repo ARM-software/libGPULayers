@@ -21,9 +21,26 @@
 # SOFTWARE.
 # -----------------------------------------------------------------------------
 
-# Note: The framework component cannot be built as a common library, because it
-# depends on per-layer implementations of the root intercept Instance and
-# Device classes which get specialized for each use case.
+set(LIB_BINARY lib_layer_trackers)
 
-add_subdirectory(comms)
-add_subdirectory(trackers)
+add_library(
+    ${LIB_BINARY} STATIC
+        command_buffer.cpp
+        device.cpp
+        layer_command_stream.cpp
+        queue.cpp
+        render_pass.cpp)
+
+target_include_directories(
+    ${LIB_BINARY} PRIVATE
+        ../../khronos/vulkan/include
+        ../../source_third_party
+        ../)
+
+lgl_set_build_options(${LIB_BINARY})
+
+# No unit tests for this module yet
+#if(${LGL_UNITTEST})
+#    add_subdirectory(test)
+#endif()
+
