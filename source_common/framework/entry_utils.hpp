@@ -43,6 +43,7 @@
 #include "device_dispatch_table.hpp"
 #include "device_functions.hpp"
 
+extern std::mutex g_vulkanLock;
 
 #define VK_LAYER_EXPORT __attribute__((visibility("default")))
 
