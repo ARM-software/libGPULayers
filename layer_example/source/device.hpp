@@ -25,7 +25,7 @@
 
 /**
  * @file
- * Declares the root class for layer management of managing VkDevice objects.
+ * Declares the root class for layer management of VkDevice objects.
  *
  * Role summary
  * ============
@@ -70,7 +70,7 @@ public:
      * @brief Store a new device into the global store of dispatchable devices.
      *
      * @param handle   The dispatchable device handle to use as an indirect key.
-     * @param device   The \c Device object to store.
+     * @param device   The @c Device object to store.
      */
     static void store(
         VkDevice handle,

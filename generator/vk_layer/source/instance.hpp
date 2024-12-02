@@ -25,7 +25,7 @@
 
 /**
  * @file
- * Declares the root class for layer management of managing VkInstance objects.
+ * Declares the root class for layer management of VkInstance objects.
  *
  * Role summary
  * ============
@@ -77,7 +77,7 @@ public:
      * @brief Store a new instance into the global store of dispatchable instances.
      *
      * @param handle     The dispatchable instance handle to use as an indirect key.
-     * @param instance   The \c Instance object to store.
+     * @param instance   The @c Instance object to store.
      */
     static void store(
         VkInstance handle,
