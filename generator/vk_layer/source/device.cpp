@@ -81,13 +81,13 @@ void Device::destroy(
 
 /* See header for documentation. */
 Device::Device(
-    Instance* instance,
-    VkPhysicalDevice physicalDevice,
-    VkDevice device,
+    Instance* _instance,
+    VkPhysicalDevice _physicalDevice,
+    VkDevice _device,
     PFN_vkGetDeviceProcAddr nlayerGetProcAddress
-):  instance(instance),
-    physicalDevice(physicalDevice),
-    device(device)
+):  instance(_instance),
+    physicalDevice(_physicalDevice),
+    device(_device)
 {
     initDriverDeviceDispatchTable(device, nlayerGetProcAddress, driver);
 }

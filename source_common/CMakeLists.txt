@@ -26,3 +26,4 @@
 # Device classes which get specialized for each use case.
 
 add_subdirectory(comms)
+add_subdirectory(trackers)

@@ -67,10 +67,10 @@ void Instance::destroy(
 
 /* See header for documentation. */
 Instance::Instance(
-    VkInstance instance,
-    PFN_vkGetInstanceProcAddr nlayerGetProcAddress) :
-    instance(instance),
-    nlayerGetProcAddress(nlayerGetProcAddress)
+    VkInstance _instance,
+    PFN_vkGetInstanceProcAddr _nlayerGetProcAddress) :
+    instance(_instance),
+    nlayerGetProcAddress(_nlayerGetProcAddress)
 {
     initDriverInstanceDispatchTable(instance, nlayerGetProcAddress, driver);
 }
