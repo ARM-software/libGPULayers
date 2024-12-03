@@ -48,27 +48,27 @@ public:
     /**
      * @brief Construct a new message.
      *
-     * @param endpoint_id     The destination endpoint.
-     * @param message_type    The type of the message.
+     * @param endpointID     The destination endpoint.
+     * @param messageType    The type of the message.
      * @param data            The received data.
      */
     TestMessage(
-        Comms::EndpointID endpoint_id,
-        Comms::MessageType message_type,
+        Comms::EndpointID endpointID,
+        Comms::MessageType messageType,
         std::unique_ptr<Comms::MessageData> data) :
-        endpoint_id(endpoint_id),
-        message_type(message_type),
+        endpointID(endpointID),
+        messageType(messageType),
         data(std::move(data)) { }
 
     /**
      * @brief The endpoint of the message.
      */
-    Comms::EndpointID endpoint_id;
+    Comms::EndpointID endpointID;
 
     /**
      * @brief The type of the message.
      */
-    Comms::MessageType message_type;
+    Comms::MessageType messageType;
 
     /**
      * @brief The received data.
@@ -86,10 +86,10 @@ public:
      * Note that the UDS address given here must exclude the leading NUL, to
      * avoid it being seen as a zero-length string literal.
      *
-     * @param domain_address   The unix domain address to use.
+     * @param domainAddress   The unix domain address to use.
      */
     CommsTestServer(
-        const std::string& domain_address);
+        const std::string& domainAddress);
 
     /**
      * @brief Construct a new server listening on TCP/IP socket.
@@ -117,33 +117,33 @@ private:
     /**
      * @brief Entrypoint for the worker thread.
      */
-    void run_server();
+    void runServer();
 
     /**
      * @brief Receive N bytes of data from the socket.
      *
-     * @param sockfd      The client connection socket.
-     * @param data        The data storage to write to.
-     * @param data_size   The number of bytes expected in the message.
+     * @param sockfd     The client connection socket.
+     * @param data       The data storage to write to.
+     * @param dataSize   The number of bytes expected in the message.
      *
      * @return @c true if we received a message, @c false otherwise.
      */
-    bool receive_data(
+    bool receiveData(
         int sockfd,
         uint8_t* data,
-        size_t data_size);
+        size_t dataSize);
 
     /**
      * @brief Send N bytes of data to the socket.
      *
-     * @param sockfd      The client connection socket.
-     * @param data        The data to send.
-     * @param data_size   The number of bytes in the data.
+     * @param sockfd     The client connection socket.
+     * @param data       The data to send.
+     * @param dataSize   The number of bytes in the data.
      */
     void send_data(
         int sockfd,
         uint8_t* data,
-        size_t data_size);
+        size_t dataSize);
 
 public:
     /**
@@ -155,14 +155,14 @@ private:
     /**
      * @brief The socket for listening for connections.
      */
-    int listen_sockfd { -1 };
+    int listenSockfd { -1 };
 
     /**
      * @brief Pipe used to unblock the read socket rather than use timeouts.
      *
      * Pipe fds are not duplex: [0] is read fd, [1] is write fd.
      */
-    int stop_request_pipe[2] {-1, -1};
+    int stopRequestPipe[2] {-1, -1};
 
     /**
      * @brief The transmitter - runs with its own worker thread.
@@ -172,7 +172,7 @@ private:
     /**
      * @brief Has the worker been asked to stop?
      */
-    std::atomic<bool> stop_requested;
+    std::atomic<bool> stopRequested;
 };
 
 }

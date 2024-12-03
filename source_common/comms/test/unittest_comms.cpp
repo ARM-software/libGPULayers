@@ -40,21 +40,21 @@
 
 using namespace CommsTest;
 
-std::unique_ptr<Comms::MessageData> make_test_payload(
+std::unique_ptr<Comms::MessageData> makeTestPayload(
     const std::string& str
 ) {
     auto data = std::make_unique<Comms::MessageData>(str.begin(), str.end());
     return data;
 }
 
-std::string decode_test_payload(
+std::string decodeTestPayload(
     std::unique_ptr<Comms::MessageData> data
 ) {
     std::string str(data->begin(), data->end());
     return str;
 }
 
-std::string decode_test_payload(
+std::string decodeTestPayload(
     TestMessage& msg
 ) {
     std::string str(msg.data->begin(), msg.data->end());
@@ -82,13 +82,13 @@ TEST(Comms, test_uds_tx_0b)
     client.tx(1, std::move(data));
 
     // Ensure server processes the earlier message
-    data = make_test_payload("");
-    client.tx_rx(2, std::move(data));
+    data = makeTestPayload("");
+    client.txRx(2, std::move(data));
 
     // Validate it was received correctly
     EXPECT_EQ(server.received.size(), 2);
 
-    EXPECT_EQ(server.received[0].endpoint_id, 1);
+    EXPECT_EQ(server.received[0].endpointID, 1);
     EXPECT_EQ(server.received[0].data->size(), 0);
 }
 
@@ -99,19 +99,19 @@ TEST(Comms, test_uds_tx_nb)
     Comms::CommsModule client("commstest");
 
     // Send a non-zero byte payload
-    auto data = make_test_payload("abcd");
+    auto data = makeTestPayload("abcd");
     client.tx(2, std::move(data));
 
     // Ensure server processes the earlier message
-    data = make_test_payload("");
-    client.tx_rx(2, std::move(data));
+    data = makeTestPayload("");
+    client.txRx(2, std::move(data));
 
     // Validate it was received correctly
     EXPECT_EQ(server.received.size(), 2);
 
-    EXPECT_EQ(server.received[0].endpoint_id, 2);
+    EXPECT_EQ(server.received[0].endpointID, 2);
     EXPECT_EQ(server.received[0].data->size(), 4);
-    EXPECT_EQ(decode_test_payload(server.received[0]),"abcd");
+    EXPECT_EQ(decodeTestPayload(server.received[0]),"abcd");
 }
 
 /** @brief Test lifecycle with a TX_ASYNC sent message. */
@@ -122,21 +122,21 @@ TEST(Comms, test_uds_tx_async_0b)
 
     // Send a zero byte payload
     auto data = std::make_unique<std::vector<uint8_t>>();
-    client.tx_async(1, std::move(data));
+    client.txAsync(1, std::move(data));
 
     // Ensure server processes the earlier message
-    data = make_test_payload("abcd");
-    client.tx_rx(2, std::move(data));
+    data = makeTestPayload("abcd");
+    client.txRx(2, std::move(data));
 
     // Validate it was received correctly
     EXPECT_EQ(server.received.size(), 2);
 
-    EXPECT_EQ(server.received[0].endpoint_id, 1);
+    EXPECT_EQ(server.received[0].endpointID, 1);
     EXPECT_EQ(server.received[0].data->size(), 0);
 
-    EXPECT_EQ(server.received[1].endpoint_id, 2);
+    EXPECT_EQ(server.received[1].endpointID, 2);
     EXPECT_EQ(server.received[1].data->size(), 4);
-    EXPECT_EQ(decode_test_payload(server.received[1]),"abcd");
+    EXPECT_EQ(decodeTestPayload(server.received[1]),"abcd");
 }
 
 /** @brief Test lifecycle with a TX_ASYNC sent message. */
@@ -146,23 +146,23 @@ TEST(Comms, test_uds_tx_async_nb)
     Comms::CommsModule client("commstest");
 
     // Send a non-zero byte payload
-    auto datab = make_test_payload("abcd");
-    client.tx_async(1, std::move(datab));
+    auto datab = makeTestPayload("abcd");
+    client.txAsync(1, std::move(datab));
 
     // Ensure server processes the earlier message
-    datab = make_test_payload("efg");
-    client.tx_rx(2, std::move(datab));
+    datab = makeTestPayload("efg");
+    client.txRx(2, std::move(datab));
 
     // Validate it was received correctly
     EXPECT_EQ(server.received.size(), 2);
 
-    EXPECT_EQ(server.received[0].endpoint_id, 1);
+    EXPECT_EQ(server.received[0].endpointID, 1);
     EXPECT_EQ(server.received[0].data->size(), 4);
-    EXPECT_EQ(decode_test_payload(server.received[0]),"abcd");
+    EXPECT_EQ(decodeTestPayload(server.received[0]),"abcd");
 
-    EXPECT_EQ(server.received[1].endpoint_id, 2);
+    EXPECT_EQ(server.received[1].endpointID, 2);
     EXPECT_EQ(server.received[1].data->size(), 3);
-    EXPECT_EQ(decode_test_payload(server.received[1]),"efg");
+    EXPECT_EQ(decodeTestPayload(server.received[1]),"efg");
 }
 
 /** @brief Test lifecycle with a TX_RX sent message. */
@@ -173,13 +173,13 @@ TEST(Comms, test_uds_tx_rx_0b)
 
     // Send a zero byte payload
     auto data = std::make_unique<std::vector<uint8_t>>();
-    auto resp = client.tx_rx(1, std::move(data));
-    auto resps = decode_test_payload(std::move(resp));
+    auto resp = client.txRx(1, std::move(data));
+    auto resps = decodeTestPayload(std::move(resp));
 
     // Validate it was received correctly
     EXPECT_EQ(server.received.size(), 1);
 
-    EXPECT_EQ(server.received[0].endpoint_id, 1);
+    EXPECT_EQ(server.received[0].endpointID, 1);
     EXPECT_EQ(server.received[0].data->size(), 0);
 
     // Validate it was responded to correctly
@@ -193,16 +193,16 @@ TEST(Comms, test_uds_tx_rx_nb)
     Comms::CommsModule client("commstest");
 
     // Send a non-zero byte payload
-    auto datab = make_test_payload("abcd");
-    auto resp = client.tx_rx(1, std::move(datab));
-    auto resps = decode_test_payload(std::move(resp));
+    auto datab = makeTestPayload("abcd");
+    auto resp = client.txRx(1, std::move(datab));
+    auto resps = decodeTestPayload(std::move(resp));
 
     // Validate it was received correctly
     EXPECT_EQ(server.received.size(), 1);
 
-    EXPECT_EQ(server.received[0].endpoint_id, 1);
+    EXPECT_EQ(server.received[0].endpointID, 1);
     EXPECT_EQ(server.received[0].data->size(), 4);
-    EXPECT_EQ(decode_test_payload(server.received[0]),"abcd");
+    EXPECT_EQ(decodeTestPayload(server.received[0]),"abcd");
 
     // Validate it was responded to correctly
     EXPECT_EQ(resps.size(), 4);
@@ -229,13 +229,13 @@ TEST(Comms, test_tcp_tx_0b)
     client.tx(1, std::move(data));
 
     // Ensure server processes the earlier message
-    data = make_test_payload("");
-    client.tx_rx(2, std::move(data));
+    data = makeTestPayload("");
+    client.txRx(2, std::move(data));
 
     // Validate it was received correctly
     EXPECT_EQ(server.received.size(), 2);
 
-    EXPECT_EQ(server.received[0].endpoint_id, 1);
+    EXPECT_EQ(server.received[0].endpointID, 1);
     EXPECT_EQ(server.received[0].data->size(), 0);
 }
 
@@ -246,19 +246,19 @@ TEST(Comms, test_tcp_tx_nb)
     Comms::CommsModule client("127.0.0.1", 63412);
 
     // Send a non-zero byte payload
-    auto data = make_test_payload("abcd");
+    auto data = makeTestPayload("abcd");
     client.tx(2, std::move(data));
 
     // Ensure server processes the earlier message
-    data = make_test_payload("");
-    client.tx_rx(2, std::move(data));
+    data = makeTestPayload("");
+    client.txRx(2, std::move(data));
 
     // Validate it was received correctly
     EXPECT_EQ(server.received.size(), 2);
 
-    EXPECT_EQ(server.received[0].endpoint_id, 2);
+    EXPECT_EQ(server.received[0].endpointID, 2);
     EXPECT_EQ(server.received[0].data->size(), 4);
-    EXPECT_EQ(decode_test_payload(server.received[0]),"abcd");
+    EXPECT_EQ(decodeTestPayload(server.received[0]),"abcd");
 }
 
 /** @brief Test lifecycle with a TX_ASYNC sent message. */
@@ -269,21 +269,21 @@ TEST(Comms, test_tcp_tx_async_0b)
 
     // Send a zero byte payload
     auto data = std::make_unique<std::vector<uint8_t>>();
-    client.tx_async(1, std::move(data));
+    client.txAsync(1, std::move(data));
 
     // Ensure server processes the earlier message
-    data = make_test_payload("abcd");
-    client.tx_rx(2, std::move(data));
+    data = makeTestPayload("abcd");
+    client.txRx(2, std::move(data));
 
     // Validate it was received correctly
     EXPECT_EQ(server.received.size(), 2);
 
-    EXPECT_EQ(server.received[0].endpoint_id, 1);
+    EXPECT_EQ(server.received[0].endpointID, 1);
     EXPECT_EQ(server.received[0].data->size(), 0);
 
-    EXPECT_EQ(server.received[1].endpoint_id, 2);
+    EXPECT_EQ(server.received[1].endpointID, 2);
     EXPECT_EQ(server.received[1].data->size(), 4);
-    EXPECT_EQ(decode_test_payload(server.received[1]),"abcd");
+    EXPECT_EQ(decodeTestPayload(server.received[1]),"abcd");
 }
 
 /** @brief Test lifecycle with a TX_ASYNC sent message. */
@@ -293,23 +293,23 @@ TEST(Comms, test_tcp_tx_async_nb)
     Comms::CommsModule client("127.0.0.1", 63412);
 
     // Send a non-zero byte payload
-    auto datab = make_test_payload("abcd");
-    client.tx_async(1, std::move(datab));
+    auto datab = makeTestPayload("abcd");
+    client.txAsync(1, std::move(datab));
 
     // Ensure server processes the earlier message
-    datab = make_test_payload("efg");
-    client.tx_rx(2, std::move(datab));
+    datab = makeTestPayload("efg");
+    client.txRx(2, std::move(datab));
 
     // Validate it was received correctly
     EXPECT_EQ(server.received.size(), 2);
 
-    EXPECT_EQ(server.received[0].endpoint_id, 1);
+    EXPECT_EQ(server.received[0].endpointID, 1);
     EXPECT_EQ(server.received[0].data->size(), 4);
-    EXPECT_EQ(decode_test_payload(server.received[0]),"abcd");
+    EXPECT_EQ(decodeTestPayload(server.received[0]),"abcd");
 
-    EXPECT_EQ(server.received[1].endpoint_id, 2);
+    EXPECT_EQ(server.received[1].endpointID, 2);
     EXPECT_EQ(server.received[1].data->size(), 3);
-    EXPECT_EQ(decode_test_payload(server.received[1]),"efg");
+    EXPECT_EQ(decodeTestPayload(server.received[1]),"efg");
 }
 
 /** @brief Test lifecycle with a TX_RX sent message. */
@@ -320,13 +320,13 @@ TEST(Comms, test_tcp_tx_rx_0b)
 
     // Send a zero byte payload
     auto data = std::make_unique<std::vector<uint8_t>>();
-    auto resp = client.tx_rx(1, std::move(data));
-    auto resps = decode_test_payload(std::move(resp));
+    auto resp = client.txRx(1, std::move(data));
+    auto resps = decodeTestPayload(std::move(resp));
 
     // Validate it was received correctly
     EXPECT_EQ(server.received.size(), 1);
 
-    EXPECT_EQ(server.received[0].endpoint_id, 1);
+    EXPECT_EQ(server.received[0].endpointID, 1);
     EXPECT_EQ(server.received[0].data->size(), 0);
 
     // Validate it was responded to correctly
@@ -340,16 +340,16 @@ TEST(Comms, test_tcp_tx_rx_nb)
     Comms::CommsModule client("127.0.0.1", 63412);
 
     // Send a non-zero byte payload
-    auto datab = make_test_payload("abcd");
-    auto resp = client.tx_rx(1, std::move(datab));
-    auto resps = decode_test_payload(std::move(resp));
+    auto datab = makeTestPayload("abcd");
+    auto resp = client.txRx(1, std::move(datab));
+    auto resps = decodeTestPayload(std::move(resp));
 
     // Validate it was received correctly
     EXPECT_EQ(server.received.size(), 1);
 
-    EXPECT_EQ(server.received[0].endpoint_id, 1);
+    EXPECT_EQ(server.received[0].endpointID, 1);
     EXPECT_EQ(server.received[0].data->size(), 4);
-    EXPECT_EQ(decode_test_payload(server.received[0]),"abcd");
+    EXPECT_EQ(decodeTestPayload(server.received[0]),"abcd");
 
     // Validate it was responded to correctly
     EXPECT_EQ(resps.size(), 4);

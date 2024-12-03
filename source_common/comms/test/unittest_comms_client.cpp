@@ -40,14 +40,14 @@
 #include "comms/comms_interface.hpp"
 #include "comms/comms_module.hpp"
 
-std::unique_ptr<Comms::MessageData> make_test_payload(
+std::unique_ptr<Comms::MessageData> makeTestPayload(
     const std::string& str
 ) {
     auto data = std::make_unique<Comms::MessageData>(str.begin(), str.end());
     return data;
 }
 
-std::string decode_test_payload(
+std::string decodeTestPayload(
     std::unique_ptr<Comms::MessageData> data
 ) {
     std::string str(data->begin(), data->end());
@@ -65,7 +65,7 @@ TEST(CommsClient, test_tcp_no_data)
 TEST(CommsClient, test_tcp_registry)
 {
     Comms::CommsModule client("127.0.0.1", 63412);
-    client.get_endpoint_id("dave");
+    client.getEndpointID("dave");
 }
 
 /** @brief Test lifecycle with a TX sent message. */
@@ -84,7 +84,7 @@ TEST(CommsClient, test_tcp_tx_nb)
     Comms::CommsModule client("127.0.0.1", 63412);
 
     // Send a 4 byte payload
-    auto data = make_test_payload("abcd");
+    auto data = makeTestPayload("abcd");
     client.tx(1, std::move(data));
 }
 
@@ -95,7 +95,7 @@ TEST(CommsClient, test_tcp_tx_async_0b)
 
     // Send a zero byte payload
     auto data = std::make_unique<std::vector<uint8_t>>();
-    client.tx_async(1, std::move(data));
+    client.txAsync(1, std::move(data));
 }
 
 /** @brief Test lifecycle with a TX_ASYNC sent message. */
@@ -104,8 +104,8 @@ TEST(CommsClient, test_tcp_tx_async_nb)
     Comms::CommsModule client("127.0.0.1", 63412);
 
     // Send a 4 byte payload
-    auto data = make_test_payload("abcd");
-    client.tx_async(1, std::move(data));
+    auto data = makeTestPayload("abcd");
+    client.txAsync(1, std::move(data));
 }
 
 /** @brief Test lifecycle with a TX_RX sent message. */
@@ -115,12 +115,11 @@ TEST(CommsClient, test_tcp_tx_rx_0b)
 
     // Send a zero byte payload
     auto data = std::make_unique<std::vector<uint8_t>>();
-    auto resp = client.tx_rx(1, std::move(data));
-    auto resps = decode_test_payload(std::move(resp));
+    auto resp = client.txRx(1, std::move(data));
+    auto resps = decodeTestPayload(std::move(resp));
 
     // Validate it was responded to correctly
     EXPECT_EQ(resps.size(), 0);
-
 }
 
 /** @brief Test lifecycle with a TX_RX sent message. */
@@ -129,9 +128,9 @@ TEST(CommsClient, test_tcp_tx_rx_nb)
     Comms::CommsModule client("127.0.0.1", 63412);
 
     // Send a 4 byte payload
-    auto data = make_test_payload("abcd");
-     auto resp = client.tx_rx(1, std::move(data));
-    auto resps = decode_test_payload(std::move(resp));
+    auto data = makeTestPayload("abcd");
+    auto resp = client.txRx(1, std::move(data));
+    auto resps = decodeTestPayload(std::move(resp));
 
     // Validate it was responded to correctly
     EXPECT_EQ(resps.size(), 4);

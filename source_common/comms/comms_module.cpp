@@ -43,7 +43,7 @@ namespace Comms
 
 /** See header for documentation. */
 CommsModule::CommsModule(
-    const std::string& domain_address
+    const std::string& domainAddress
 ) {
     sockfd = socket(AF_UNIX, SOCK_STREAM, 0);
     if (sockfd < 0)
@@ -52,17 +52,17 @@ CommsModule::CommsModule(
         return;
     }
 
-    struct sockaddr_un serv_addr {};
-    serv_addr.sun_family = AF_UNIX;
+    struct sockaddr_un servAddr {};
+    servAddr.sun_family = AF_UNIX;
 
     // Copy the domain address, inserting leading NUL needed for abstract UDS
-    std::strcpy(serv_addr.sun_path + 1, domain_address.c_str());
-    serv_addr.sun_path[0] = '\0';
+    std::strcpy(servAddr.sun_path + 1, domainAddress.c_str());
+    servAddr.sun_path[0] = '\0';
 
     int conn = connect(
         sockfd,
-        reinterpret_cast<const struct sockaddr*>(&serv_addr),
-        sizeof(serv_addr));
+        reinterpret_cast<const struct sockaddr*>(&servAddr),
+        sizeof(servAddr));
     if (conn != 0)
     {
         std::cout << "  - ERROR: Client connection failed" << std::endl;
@@ -77,7 +77,7 @@ CommsModule::CommsModule(
 
 /** See header for documentation. */
 CommsModule::CommsModule(
-    const std::string& host_address,
+    const std::string& hostAddress,
     int port
 ) {
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -87,15 +87,15 @@ CommsModule::CommsModule(
         return;
     }
 
-    struct sockaddr_in serv_addr {};
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_port = htons(port);
-    serv_addr.sin_addr.s_addr = inet_addr(host_address.c_str());
+    struct sockaddr_in servAddr {};
+    servAddr.sin_family = AF_INET;
+    servAddr.sin_port = htons(port);
+    servAddr.sin_addr.s_addr = inet_addr(hostAddress.c_str());
 
     int conn = connect(
         sockfd,
-        reinterpret_cast<const struct sockaddr*>(&serv_addr),
-        sizeof(serv_addr));
+        reinterpret_cast<const struct sockaddr*>(&servAddr),
+        sizeof(servAddr));
     if (conn != 0)
     {
         std::cout << "  - ERROR: Client connection failed" << std::endl;
@@ -132,21 +132,21 @@ CommsModule::~CommsModule()
 }
 
 /** See header for documentation. */
-bool CommsModule::is_connected()
+bool CommsModule::isConnected()
 {
     return sockfd >= 0;
 }
 
 /** See header for documentation. */
-EndpointID CommsModule::get_endpoint_id(
+EndpointID CommsModule::getEndpointID(
     const std::string& name
 ) {
-    std::lock_guard<std::mutex> lock(registry_lock);
+    std::lock_guard<std::mutex> lock(registryLock);
     if (registry.empty())
     {
         // Request the registry from the host
         auto data = std::make_unique<std::vector<uint8_t>>();
-        auto resp = tx_rx(0, std::move(data));
+        auto resp = txRx(0, std::move(data));
 
         // Process the response
         while (resp->size())
@@ -192,7 +192,7 @@ EndpointID CommsModule::get_endpoint_id(
 }
 
 /** See header for documentation. */
-void CommsModule::tx_async(
+void CommsModule::txAsync(
     EndpointID endpoint,
     std::unique_ptr<MessageData> data
 ) {
@@ -202,7 +202,7 @@ void CommsModule::tx_async(
         0,
         std::move(data));
 
-    enqueue_message(std::move(message));
+    enqueueMessage(std::move(message));
 }
 
 /** See header for documentation. */
@@ -216,44 +216,44 @@ void CommsModule::tx(
         0,
         std::move(data));
 
-    enqueue_message(message);
+    enqueueMessage(message);
     message->wait();
 }
 
 /** See header for documentation. */
-std::unique_ptr<MessageData> CommsModule::tx_rx(
+std::unique_ptr<MessageData> CommsModule::txRx(
     EndpointID endpoint,
     std::unique_ptr<MessageData> data
 ) {
     auto message = std::make_shared<Message>(
         endpoint,
         MessageType::TX_RX,
-        assign_message_id(),
+        assignMessageID(),
         std::move(data));
 
-    enqueue_message(message);
+    enqueueMessage(message);
     message->wait();
 
-    return std::move(message->response_data);
+    return std::move(message->responseData);
 }
 
 /** See header for documentation. */
-MessageID CommsModule::assign_message_id()
+MessageID CommsModule::assignMessageID()
 {
-    return next_message_id.fetch_add(1, std::memory_order_relaxed);
+    return nextMessageID.fetch_add(1, std::memory_order_relaxed);
 }
 
 /** See header for documentation. */
-void CommsModule::enqueue_message(
+void CommsModule::enqueueMessage(
     std::shared_ptr<Message> message
 ) {
-    message_queue.put(std::move(message));
+    messageQueue.put(std::move(message));
 }
 
 /** See header for documentation. */
-std::shared_ptr<Message> CommsModule::dequeue_message()
+std::shared_ptr<Message> CommsModule::dequeueMessage()
 {
-    return message_queue.get();
+    return messageQueue.get();
 }
 
 }

@@ -99,19 +99,19 @@ public:
      * here must NOT include the leading NUL character needed to create an
      * abstract domain socket.
      *
-     * @param domain_address   The unix domain address to use.
+     * @param domainAddress   The unix domain address to use.
      */
     CommsModule(
-        const std::string& domain_address);
+        const std::string& domainAddress);
 
     /**
      * @brief Construct a new instance using a TCP/IP socket.
      *
-     * @param host_address   The host name or IP address to use.
-     * @param port           The port number to use.
+     * @param hostAddress   The host name or IP address to use.
+     * @param port          The port number to use.
      */
     CommsModule(
-        const std::string& host_address,
+        const std::string& hostAddress,
         int port);
 
     /**
@@ -124,14 +124,14 @@ public:
     virtual ~CommsModule();
 
     /** See @c comms_interface.hpp for documentation. */
-    virtual bool is_connected();
+    virtual bool isConnected();
 
     /** See @c comms_interface.hpp for documentation. */
-    virtual EndpointID get_endpoint_id(
+    virtual EndpointID getEndpointID(
         const std::string& name);
 
     /** See @c comms_interface.hpp for documentation. */
-    virtual void tx_async(
+    virtual void txAsync(
         EndpointID endpoint,
         std::unique_ptr<MessageData> data);
 
@@ -141,7 +141,7 @@ public:
         std::unique_ptr<MessageData> data);
 
     /** See @c comms_interface.hpp for documentation. */
-    virtual std::unique_ptr<MessageData> tx_rx(
+    virtual std::unique_ptr<MessageData> txRx(
         EndpointID endpoint,
         std::unique_ptr<MessageData> data);
 
@@ -155,14 +155,14 @@ private:
      *
      * @return The message ID nonce to use.
      */
-    MessageID assign_message_id();
+    MessageID assignMessageID();
 
     /**
      * @brief Add a message to the end of outbound message task queue.
      *
      * @param message   The message to queue.
      */
-    void enqueue_message(
+    void enqueueMessage(
         std::shared_ptr<Message> message);
 
     /**
@@ -170,14 +170,14 @@ private:
      *
      * @return The message to send.
      */
-    std::shared_ptr<Message> dequeue_message();
+    std::shared_ptr<Message> dequeueMessage();
 
     /**
      * @brief Get the host service endpoint list.
      *
      * @return The message to send.
      */
-    void get_host_service_endpoints();
+    void getHostServiceEndpoints();
 
 private:
     /**
@@ -186,14 +186,14 @@ private:
     int sockfd { -1 };
 
     /**
-     * @brief The last message ID nonce used.
+     * @brief The next message ID nonce to use.
      */
-    std::atomic<MessageID> next_message_id { 1 };
+    std::atomic<MessageID> nextMessageID { 1 };
 
     /**
      * @brief The FIFO queue of messages to send.
      */
-    TaskQueue<std::shared_ptr<Message>> message_queue;
+    TaskQueue<std::shared_ptr<Message>> messageQueue;
 
     /**
      * @brief The transmitter - runs with its own worker thread.
@@ -208,7 +208,7 @@ private:
     /**
      * @brief Lock protecting the registry.
      */
-    std::mutex registry_lock;
+    std::mutex registryLock;
 
     /**
      * @brief Host endpoint registry.
