@@ -71,25 +71,25 @@ private:
     /**
      * @brief Entrypoint for the worker thread.
      */
-    void run_transmitter();
+    void runTransmitter();
 
     /**
      * @brief Send a message on the socket.
      *
      * @param message   The message to send.
      */
-    void send_message(
+    void sendMessage(
         const Message& message);
 
     /**
      * @brief Send N bytes of data to the socket.
      *
-     * @param data        The data to send.
-     * @param data_size   The number of bytes in the data.
+     * @param data       The data to send.
+     * @param dataSize   The number of bytes in the data.
      */
-    void send_data(
+    void sendData(
         uint8_t* data,
-        size_t data_size);
+        size_t dataSize);
 
 private:
     /**
@@ -105,7 +105,7 @@ private:
     /**
      * @brief Has the worker been asked to stop?
      */
-    std::atomic<bool> stop_requested;
+    std::atomic<bool> stopRequested;
 };
 
 }

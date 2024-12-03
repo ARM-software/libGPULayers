@@ -59,10 +59,10 @@ enum class MessageType: uint8_t {
  */
 typedef struct __attribute__((packed))
 {
-    uint8_t  message_type;  // Is this tx_async (0), tx (1), or tx_rx (2)?
-    uint8_t  endpoint_id;   // The endpoint service address.
-    uint64_t message_id;    // The unique message ID for a tx_rx pair.
-    uint32_t payload_size;  // The size of the payload in bytes.
+    uint8_t  messageType;  // Is this tx_async (0), tx (1), or tx_rx (2)?
+    uint8_t  endpointID;   // The endpoint service address.
+    uint64_t messageID;    // The unique message ID for a tx_rx pair.
+    uint32_t payloadSize;  // The size of the payload in bytes.
 } MessageHeader;
 
 /**
@@ -74,53 +74,53 @@ public:
     /**
      * @brief Construct a new message.
      *
-     * @param endpoint_id     The destination endpoint.
-     * @param message_type    The type of the message.
-     * @param message_id      The sequence ID of the message.
-     * @param transmit_data   The data to transmit.
+     * @param endpointID     The destination endpoint.
+     * @param messageType    The type of the message.
+     * @param messageID      The sequence ID of the message.
+     * @param transmitData   The data to transmit.
      */
     Message(
-        EndpointID endpoint_id,
-        MessageType message_type,
-        MessageID message_id,
-        std::unique_ptr<MessageData> transmit_data) :
-        endpoint_id(endpoint_id),
-        message_type(message_type),
-        message_id(message_id),
-        transmit_data(std::move(transmit_data)) { }
+        EndpointID endpointID,
+        MessageType messageType,
+        MessageID messageID,
+        std::unique_ptr<MessageData> transmitData) :
+        endpointID(endpointID),
+        messageType(messageType),
+        messageID(messageID),
+        transmitData(std::move(transmitData)) { }
 
     /**
      * @brief The type of the message.
      */
-    EndpointID endpoint_id;
+    EndpointID endpointID;
 
     /**
      * @brief The type of the message.
      */
-    MessageType message_type;
+    MessageType messageType;
 
     /**
      * @brief The sequence ID of the message.
      *
-     * Only required if @c message_type is @c TX_RX and we have to match a
+     * Only required if @c messageType is @c TX_RX and we have to match a
      * response to a triggering message.
      */
-    MessageID message_id;
+    MessageID messageID;
 
     /**
      * @brief The data to transmit.
      *
      * Can be reset and data discarded once the data is transmitted.
      */
-    std::unique_ptr<MessageData> transmit_data;
+    std::unique_ptr<MessageData> transmitData;
 
     /**
      * @brief The data that was received.
      *
-     * Only present if @c message_type is @c TX_RX and we have received a
+     * Only present if @c messageType is @c TX_RX and we have received a
      * response from the host.
      */
-    std::unique_ptr<MessageData> response_data;
+    std::unique_ptr<MessageData> responseData;
 };
 
 }

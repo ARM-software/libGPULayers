@@ -42,232 +42,232 @@ namespace CommsTest
 
 /** See header for documentation. */
 CommsTestServer::CommsTestServer(
-    const std::string& domain_address
+    const std::string& domainAddress
 ) {
-    int pipe_err = pipe(stop_request_pipe);
-    if (pipe_err)
+    int pipeErr = pipe(stopRequestPipe);
+    if (pipeErr)
     {
         std::cout << "  - ERROR: Svr pipe create failed" << std::endl;
         return;
     }
 
-    listen_sockfd = socket(AF_UNIX, SOCK_STREAM, 0);
-    if (listen_sockfd < 0)
+    listenSockfd = socket(AF_UNIX, SOCK_STREAM, 0);
+    if (listenSockfd < 0)
     {
         std::cout << "  - ERROR: Svr socket create failed" << std::endl;
         return;
     }
 
     // Build the address to listen on
-    struct sockaddr_un serv_addr {};
-    serv_addr.sun_family = AF_UNIX;
+    struct sockaddr_un servAddr {};
+    servAddr.sun_family = AF_UNIX;
 
     // Copy the domain address, inserting leading NUL needed for abstract UDS
-    std::strcpy(serv_addr.sun_path + 1, domain_address.c_str());
-    serv_addr.sun_path[0] = '\0';
+    std::strcpy(servAddr.sun_path + 1, domainAddress.c_str());
+    servAddr.sun_path[0] = '\0';
 
     // Bind the socket to the address
-    int bind_err = bind(
-        listen_sockfd,
-        reinterpret_cast<const struct sockaddr*>(&serv_addr),
+    int bindErr = bind(
+        listenSockfd,
+        reinterpret_cast<const struct sockaddr*>(&servAddr),
         sizeof(struct sockaddr_un));
-    if (bind_err)
+    if (bindErr)
     {
         std::cout << "  - ERROR: Svr socket bind failed" << std::endl;
-        close(listen_sockfd);
-        listen_sockfd = -1;
+        close(listenSockfd);
+        listenSockfd = -1;
         return;
     }
 
     // Listen on the socket
-    int listen_err = listen(listen_sockfd,  5);
-    if(listen_err)
+    int listenErr = listen(listenSockfd,  5);
+    if(listenErr)
     {
         std::cout << "  - ERROR: Svr socket listen failed" << std::endl;
-        close(listen_sockfd);
-        listen_sockfd = -1;
+        close(listenSockfd);
+        listenSockfd = -1;
         return;
     }
 
     // Create and start a worker thread so we can respond while the test
     // thread is blocked waiting for a response to a tx_rx message
-    worker = std::thread(&CommsTestServer::run_server, this);
+    worker = std::thread(&CommsTestServer::runServer, this);
 }
 
 /** See header for documentation. */
 CommsTestServer::CommsTestServer(
     int port
 ) {
-    int pipe_err = pipe(stop_request_pipe);
-    if (pipe_err)
+    int pipeErr = pipe(stopRequestPipe);
+    if (pipeErr)
     {
         std::cout << "  - ERROR: Svr pipe create failed" << std::endl;
         return;
     }
 
-    listen_sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (listen_sockfd < 0)
+    listenSockfd = socket(AF_INET, SOCK_STREAM, 0);
+    if (listenSockfd < 0)
     {
         std::cout << "  - ERROR: Svr socket create failed" << std::endl;
         return;
     }
 
     int reuse = 1;
-    int result = setsockopt(listen_sockfd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
+    int result = setsockopt(listenSockfd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
     if (result < 0)
     {
         std::cout << "  - WARN: Svr socket setsockopt failed" << std::endl;
     }
 
-    struct sockaddr_in serv_addr {};
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_port = htons(port);
-    serv_addr.sin_addr.s_addr = INADDR_ANY;
+    struct sockaddr_in servAddr {};
+    servAddr.sin_family = AF_INET;
+    servAddr.sin_port = htons(port);
+    servAddr.sin_addr.s_addr = INADDR_ANY;
 
     // Bind the socket to the address
-    int bind_err = bind(
-        listen_sockfd,
-        reinterpret_cast<const struct sockaddr*>(&serv_addr),
+    int bindErr = bind(
+        listenSockfd,
+        reinterpret_cast<const struct sockaddr*>(&servAddr),
         sizeof(struct sockaddr_in));
-    if (bind_err)
+    if (bindErr)
     {
         std::cout << "  - ERROR: Svr socket bind failed " << std::endl;
-        close(listen_sockfd);
-        listen_sockfd = -1;
+        close(listenSockfd);
+        listenSockfd = -1;
         return;
     }
 
     // Listen on the socket
-    int listen_err = listen(listen_sockfd,  5);
-    if(listen_err)
+    int listenErr = listen(listenSockfd,  5);
+    if(listenErr)
     {
         std::cout << "  - ERROR: Svr socket listen failed" << std::endl;
-        close(listen_sockfd);
-        listen_sockfd = -1;
+        close(listenSockfd);
+        listenSockfd = -1;
         return;
     }
 
     // Create and start a worker thread so we can respond while the test
     // thread is blocked waiting for a response to a tx_rx message
-    worker = std::thread(&CommsTestServer::run_server, this);
+    worker = std::thread(&CommsTestServer::runServer, this);
 }
 
 /** See header for documentation. */
 CommsTestServer::~CommsTestServer()
 {
     // Stop the worker thread if it's not stopped already
-    if (!stop_requested)
+    if (!stopRequested)
     {
         stop();
     }
 
     // Close all the sockets
-    if (listen_sockfd > 0)
+    if (listenSockfd > 0)
     {
-        close(listen_sockfd);
+        close(listenSockfd);
     }
 
     // Close the pipes
-    close(stop_request_pipe[0]);
-    close(stop_request_pipe[1]);
+    close(stopRequestPipe[0]);
+    close(stopRequestPipe[1]);
 }
 
 /** See header for documentation. */
 void CommsTestServer::stop()
 {
     // Mark the engine as stopping
-    stop_requested = true;
+    stopRequested = true;
 
     // Wake the worker thread if it is blocked on socket read
     int data = 0xdead;
-    write(stop_request_pipe[1], &data, sizeof(int));
+    write(stopRequestPipe[1], &data, sizeof(int));
 
     // Wait for the worker to finish
     worker.join();
 }
 
 /** See header for documentation. */
-void CommsTestServer::run_server()
+void CommsTestServer::runServer()
 {
-    int data_sockfd = accept(listen_sockfd, NULL, NULL);
-    if(data_sockfd < 0)
+    int dataSockfd = accept(listenSockfd, NULL, NULL);
+    if(dataSockfd < 0)
     {
         std::cout << "  - ERROR: Svr socket accept failed" << std::endl;
-        close(listen_sockfd);
+        close(listenSockfd);
         return;
     }
 
-    while (!stop_requested)
+    while (!stopRequested)
     {
-        bool data_ok;
+        bool dataOk;
 
         // Read the fixed size message header
         Comms::MessageHeader header;
-        data_ok = receive_data(data_sockfd, reinterpret_cast<uint8_t*>(&header), sizeof(header));
-        if (!data_ok)
+        dataOk = receiveData(dataSockfd, reinterpret_cast<uint8_t*>(&header), sizeof(header));
+        if (!dataOk)
         {
             break;
         }
 
         // Read the a payload based on the data size in the header
-        size_t payload_size = header.payload_size;
-        auto payload = std::make_unique<Comms::MessageData>(payload_size);
-        data_ok = receive_data(data_sockfd, payload->data(), payload_size);
-        if (!data_ok)
+        size_t payloadSize = header.payloadSize;
+        auto payload = std::make_unique<Comms::MessageData>(payloadSize);
+        dataOk = receiveData(dataSockfd, payload->data(), payloadSize);
+        if (!dataOk)
         {
             break;
         }
 
         // Store the message for later checking
-        std::string decoded_payload(payload->begin(), payload->end());
+        std::string decodedPayload(payload->begin(), payload->end());
         received.emplace_back(
-            static_cast<Comms::EndpointID>(header.endpoint_id),
-            static_cast<Comms::MessageType>(header.message_type),
+            static_cast<Comms::EndpointID>(header.endpointID),
+            static_cast<Comms::MessageType>(header.messageType),
             std::move(payload));
 
         // If this is a tx_rx message reverse payload and send it back ...
-        if (header.message_type == static_cast<uint8_t>(Comms::MessageType::TX_RX))
+        if (header.messageType == static_cast<uint8_t>(Comms::MessageType::TX_RX))
         {
             // Response data is same size as request data so we can reuse header
             std::vector<uint8_t> response_data;
-            if (decoded_payload.size() > 0)
+            if (decodedPayload.size() > 0)
             {
-                size_t data_len = decoded_payload.size();
+                size_t data_len = decodedPayload.size();
                 for (size_t i = 0; i < data_len; i++)
                 {
-                    response_data.push_back(decoded_payload[data_len - i - 1]);
+                    response_data.push_back(decodedPayload[data_len - i - 1]);
                 }
             }
 
             // Send the packet header
-            uint8_t* header_data = reinterpret_cast<uint8_t*>(&header);
-            send_data(data_sockfd, header_data, sizeof(header));
+            uint8_t* headerData = reinterpret_cast<uint8_t*>(&header);
+            send_data(dataSockfd, headerData, sizeof(header));
 
             // Send the packet data
-            send_data(data_sockfd, response_data.data(), payload_size);
+            send_data(dataSockfd, response_data.data(), payloadSize);
         }
     }
 
-    close(data_sockfd);
+    close(dataSockfd);
 }
 
 /** See header for documentation. */
-bool CommsTestServer::receive_data(
+bool CommsTestServer::receiveData(
     int sockfd,
     uint8_t* data,
-    size_t data_size
+    size_t dataSize
 ) {
-    int pipefd = stop_request_pipe[0];
-    int max_fd = std::max(sockfd, pipefd);
+    int pipefd = stopRequestPipe[0];
+    int maxfd = std::max(sockfd, pipefd);
 
-    while (data_size)
+    while (dataSize)
     {
-        fd_set read_fds;
-        FD_ZERO(&read_fds);
-        FD_SET(sockfd, &read_fds);
-        FD_SET(pipefd, &read_fds);
+        fd_set readfds;
+        FD_ZERO(&readfds);
+        FD_SET(sockfd, &readfds);
+        FD_SET(pipefd, &readfds);
 
-        int sel_resp = select(max_fd + 1, &read_fds, NULL, NULL, NULL);
+        int sel_resp = select(maxfd + 1, &readfds, NULL, NULL, NULL);
         // Error
         if (sel_resp <= 0)
         {
@@ -276,22 +276,22 @@ bool CommsTestServer::receive_data(
         }
 
         // Received a stop event on the pipe so exit
-        if (FD_ISSET(pipefd, &read_fds))
+        if (FD_ISSET(pipefd, &readfds))
         {
             return false;
         }
 
         // Otherwise keep reading bytes until we've read them all
-        int read_bytes = read(sockfd, data, data_size);
+        int readBytes = read(sockfd, data, dataSize);
 
         // Has the client-side of the connection been closed?
-        if (read_bytes <= 0)
+        if (readBytes <= 0)
         {
             return false;
         }
 
-        data += read_bytes;
-        data_size -= read_bytes;
+        data += readBytes;
+        dataSize -= readBytes;
     }
 
     return true;
@@ -301,21 +301,21 @@ bool CommsTestServer::receive_data(
 void CommsTestServer::send_data(
     int sockfd,
     uint8_t* data,
-    size_t data_size
+    size_t dataSize
 ) {
-    while(data_size)
+    while(dataSize)
     {
-        ssize_t sent_size = send(sockfd, data, data_size, 0);
+        ssize_t sentSize = send(sockfd, data, dataSize, 0);
         // An error occurred
-        if (sent_size < 0)
+        if (sentSize < 0)
         {
             std::cout << "  - ERROR: Svr socket send failed" << std::endl;
             return;
         }
 
         // Update to indicate remaining data
-        data_size -= sent_size;
-        data += sent_size;
+        dataSize -= sentSize;
+        data += sentSize;
     }
 }
 

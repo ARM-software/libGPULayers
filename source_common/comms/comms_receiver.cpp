@@ -43,141 +43,141 @@ Receiver::Receiver(
     CommsModule& parent
 ) : parent(parent)
 {
-    int pipe_err = pipe(stop_request_pipe);
+    int pipe_err = pipe(stopRequestPipe);
     if (pipe_err)
     {
         std::cout << "  - ERROR: Client pipe create failed" << std::endl;
     }
 
     // Create and start a worker thread
-    worker = std::thread(&Receiver::run_receiver, this);
+    worker = std::thread(&Receiver::runReceiver, this);
 }
 
 /** See header for documentation. */
 Receiver::~Receiver()
 {
     // Stop the worker thread if it's not stopped already
-    if (!stop_requested)
+    if (!stopRequested)
     {
         stop();
     }
 
     // Close the pipes
-    close(stop_request_pipe[0]);
-    close(stop_request_pipe[1]);
+    close(stopRequestPipe[0]);
+    close(stopRequestPipe[1]);
 }
 
 /** See header for documentation. */
 void Receiver::stop()
 {
     // Mark the engine as stopping
-    stop_requested = true;
+    stopRequested = true;
 
     // Poke the pipe to wake the worker thread if it is blocked on a read
     int data = 0xdead;
-    write(stop_request_pipe[1], &data, sizeof(int));
+    write(stopRequestPipe[1], &data, sizeof(int));
 
     // Join on the worker thread
     worker.join();
 }
 
 /** See header for documentation. */
-void Receiver::park_message(
+void Receiver::parkMessage(
     std::shared_ptr<Message> message
 ) {
-    std::lock_guard<std::mutex> lock(parking_lock);
-    parking_buffer.insert({ message->message_id, std::move(message) });
+    std::lock_guard<std::mutex> lock(parkingLock);
+    parkingBuffer.insert({ message->messageID, std::move(message) });
 }
 
 /** See header for documentation. */
-void Receiver::run_receiver()
+void Receiver::runReceiver()
 {
-    while (!stop_requested)
+    while (!stopRequested)
     {
-        bool data_ok;
+        bool dataOk;
 
         // Read the fixed size message header
         MessageHeader header;
-        data_ok = receive_data(reinterpret_cast<uint8_t*>(&header), sizeof(header));
-        if (!data_ok)
+        dataOk = receiveData(reinterpret_cast<uint8_t*>(&header), sizeof(header));
+        if (!dataOk)
         {
             break;
         }
 
         // Read the a payload based on the data size in the header
-        size_t payload_size = header.payload_size;
+        size_t payload_size = header.payloadSize;
         auto payload = std::make_unique<MessageData>(payload_size);
-        data_ok = receive_data(payload->data(), payload_size);
-        if (!data_ok)
+        dataOk = receiveData(payload->data(), payload_size);
+        if (!dataOk)
         {
             break;
         }
 
-        wake_message(header.message_id, std::move(payload));
+        wakeMessage(header.messageID, std::move(payload));
     }
 }
 
 /** See header for documentation. */
-void Receiver::wake_message(
-    MessageID message_id,
+void Receiver::wakeMessage(
+    MessageID messageID,
     std::unique_ptr<MessageData> data
 ) {
-    std::lock_guard<std::mutex> lock(parking_lock);
+    std::lock_guard<std::mutex> lock(parkingLock);
 
     // Handle message not found ...
-    if (parking_buffer.count(message_id) == 0)
+    if (parkingBuffer.count(messageID) == 0)
     {
-        std::cout << "  - ERROR: Cln: Message " << message_id << " not found" << std::endl;
+        std::cout << "  - ERROR: Cln: Message " << messageID << " not found" << std::endl;
         return;
     }
 
     // Extract the message and remove from the parking buffer map
-    auto message = parking_buffer[message_id];
-    parking_buffer.erase(message_id);
+    auto message = parkingBuffer[messageID];
+    parkingBuffer.erase(messageID);
 
     // Notify the sending thread that the response is available
-    message->response_data = std::move(data);
+    message->responseData = std::move(data);
     message->notify();
 }
 
 /** See header for documentation. */
-bool Receiver::receive_data(
+bool Receiver::receiveData(
     uint8_t* data,
-    size_t data_size
+    size_t dataSize
 ) {
     int sockfd = parent.sockfd;
-    int pipefd = stop_request_pipe[0];
-    int max_fd = std::max(sockfd, pipefd);
+    int pipefd = stopRequestPipe[0];
+    int maxfd = std::max(sockfd, pipefd);
 
-    while (data_size)
+    while (dataSize)
     {
-        fd_set read_fds;
-        FD_ZERO(&read_fds);
-        FD_SET(sockfd, &read_fds);
-        FD_SET(pipefd, &read_fds);
+        fd_set readfds;
+        FD_ZERO(&readfds);
+        FD_SET(sockfd, &readfds);
+        FD_SET(pipefd, &readfds);
 
-        int sel_resp = select(max_fd + 1, &read_fds, NULL, NULL, NULL);
+        int selResp = select(maxfd + 1, &readfds, NULL, NULL, NULL);
         // Error
-        if (sel_resp <= 0)
+        if (selResp <= 0)
         {
             return false;
         }
 
         // Received a stop event on the pipe so exit
-        if (FD_ISSET(pipefd, &read_fds))
+        if (FD_ISSET(pipefd, &readfds))
         {
             return false;
         }
 
         // Otherwise keep reading bytes until we've read them all
-        int read_bytes = read(sockfd, data, data_size);
-        if (read_bytes <= 0)
+        int readBytes = read(sockfd, data, dataSize);
+        if (readBytes <= 0)
         {
             return false;
         }
 
-        data += read_bytes;
-        data_size -= read_bytes;
+        data += readBytes;
+        dataSize -= readBytes;
     }
 
     return true;

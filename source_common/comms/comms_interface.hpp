@@ -70,7 +70,7 @@ public:
      *
      * @return Returns @c true if connected, @c false otherwise.
      */
-    virtual bool is_connected() = 0;
+    virtual bool isConnected() = 0;
 
     /**
      * @brief Get the service endpoint address for the named service.
@@ -79,7 +79,7 @@ public:
      *
      * @return The service address, or @c NO_ENDPOINT if service is not found.
      */
-    virtual EndpointID get_endpoint_id(
+    virtual EndpointID getEndpointID(
         const std::string& name) = 0;
 
     /**
@@ -91,7 +91,7 @@ public:
      * @param endpoint   The address of the destination service.
      * @param data       The data to transmit.
      */
-    virtual void tx_async(
+    virtual void txAsync(
         EndpointID endpoint,
         std::unique_ptr<MessageData> data) = 0;
 
@@ -122,7 +122,7 @@ public:
      *
      * @return The response message data payload.
      */
-    virtual std::unique_ptr<MessageData> tx_rx(
+    virtual std::unique_ptr<MessageData> txRx(
         EndpointID endpoint,
         std::unique_ptr<MessageData> data) = 0;
 };

@@ -42,44 +42,44 @@ Transmitter::Transmitter(
 ) : parent(parent)
 {
     // Create and start a worker thread
-    worker = std::thread(&Transmitter::run_transmitter, this);
+    worker = std::thread(&Transmitter::runTransmitter, this);
 }
 
 /** See header for documentation. */
 Transmitter::~Transmitter()
 {
     // Stop the worker thread if it's not stopped already
-    if (!stop_requested)
+    if (!stopRequested)
     {
         stop();
     }
 }
 
 /** See header for documentation. */
-void Transmitter::run_transmitter()
+void Transmitter::runTransmitter()
 {
     // Keep looping until we are told to stop and message queue is empty
-    while (!stop_requested || !parent.message_queue.is_empty())
+    while (!stopRequested || !parent.messageQueue.is_empty())
     {
-        auto message = parent.dequeue_message();
+        auto message = parent.dequeueMessage();
 
         // Stop messages are just used to wake the thread so do nothing
-        if (message->message_type == MessageType::STOP)
+        if (message->messageType == MessageType::STOP)
         {
             continue;
         }
 
         // TX_RX messages need to be parked waiting for a response before
         // we send the message to avoid a race condition
-        if (message->message_type == MessageType::TX_RX)
+        if (message->messageType == MessageType::TX_RX)
         {
-            parent.receiver->park_message(message);
+            parent.receiver->parkMessage(message);
         }
 
-        send_message(*message);
+        sendMessage(*message);
 
         // Notify TX messages to wake up the caller
-        if (message->message_type == MessageType::TX)
+        if (message->messageType == MessageType::TX)
         {
             message->notify();
         }
@@ -90,56 +90,56 @@ void Transmitter::run_transmitter()
 void Transmitter::stop()
 {
     // Mark the engine as stopping
-    stop_requested = true;
+    stopRequested = true;
 
     // Use a dummy message to wake worker thread if blocked on the queue
-    auto stop_data = std::make_unique<MessageData>();
+    auto stopData = std::make_unique<MessageData>();
     auto message = std::make_shared<Message>(
-        0, MessageType::STOP, 0, std::move(stop_data));
-    parent.enqueue_message(message);
+        0, MessageType::STOP, 0, std::move(stopData));
+    parent.enqueueMessage(message);
 
     // Join on the worker thread
     worker.join();
 }
 
 /** See header for documentation. */
-void Transmitter::send_message(
+void Transmitter::sendMessage(
     const Message& message
 ) {
-    uint8_t* data = message.transmit_data->data();
-    size_t data_size = message.transmit_data->size();
+    uint8_t* data = message.transmitData->data();
+    size_t dataSize = message.transmitData->size();
 
     MessageHeader header;
-    header.message_type = static_cast<uint8_t>(message.message_type);
-    header.endpoint_id = message.endpoint_id;
-    header.message_id = message.message_id;
-    header.payload_size = static_cast<uint32_t>(data_size);
+    header.messageType = static_cast<uint8_t>(message.messageType);
+    header.endpointID = message.endpointID;
+    header.messageID = message.messageID;
+    header.payloadSize = static_cast<uint32_t>(dataSize);
 
     // Send the packet header
-    uint8_t* header_data = reinterpret_cast<uint8_t*>(&header);
-    send_data(header_data, sizeof(header));
+    uint8_t* headerData = reinterpret_cast<uint8_t*>(&header);
+    sendData(headerData, sizeof(header));
 
     // Send the packet data
-    send_data(data, data_size);
+    sendData(data, dataSize);
 }
 
 /** See header for documentation. */
-void Transmitter::send_data(
+void Transmitter::sendData(
     uint8_t* data,
-    size_t data_size
+    size_t dataSize
 ) {
-    while(data_size)
+    while(dataSize)
     {
-        ssize_t sent_size = send(parent.sockfd, data, data_size, 0);
+        ssize_t sentSize = send(parent.sockfd, data, dataSize, 0);
         // An error occurred or server disconnected
-        if (sent_size < 0)
+        if (sentSize < 0)
         {
             return;
         }
 
         // Update to indicate remaining data
-        data_size -= sent_size;
-        data += sent_size;
+        dataSize -= sentSize;
+        data += sentSize;
     }
 }
 

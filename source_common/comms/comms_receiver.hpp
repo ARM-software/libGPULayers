@@ -72,36 +72,36 @@ public:
      *
      * @param message   The message waiting for a response.
      */
-    void park_message(
+    void parkMessage(
         std::shared_ptr<Message> message);
 
 private:
     /**
      * @brief Entrypoint for the worker thread.
      */
-    void run_receiver();
+    void runReceiver();
 
     /**
      * @brief Wake a message with the given message ID.
      *
-     * @param message_id   The message to wake.
-     * @param data         The response data payload from the host.
+     * @param messageID   The message to wake.
+     * @param data        The response data payload from the host.
      */
-    void wake_message(
-        MessageID message_id,
+    void wakeMessage(
+        MessageID messageID,
         std::unique_ptr<MessageData> data);
 
     /**
      * @brief Receive N bytes of data from the socket.
      *
-     * @param data        The data storage to write to.
-     * @param data_size   The number of bytes expected in the message.
+     * @param data       The data storage to write to.
+     * @param dataSize   The number of bytes expected in the message.
      *
      * @return @c true if we received a message, @c false otherwise.
      */
-    bool receive_data(
+    bool receiveData(
         uint8_t* data,
-        size_t data_size);
+        size_t dataSize);
 
 private:
     /**
@@ -117,24 +117,24 @@ private:
     /**
      * @brief Has the worker been asked to stop?
      */
-    std::atomic<bool> stop_requested;
+    std::atomic<bool> stopRequested;
 
     /**
      * @brief Pipe used to unblock the read socket rather than use timeouts.
      *
      * Pipe fds are not duplex: [0] is read fd, [1] is write fd.
      */
-    int stop_request_pipe[2] {-1, -1};
+    int stopRequestPipe[2] {-1, -1};
 
     /**
      * @brief Lock protecting the parking buffer.
      */
-    std::mutex parking_lock;
+    std::mutex parkingLock;
 
     /**
      * @brief Parking buffer holding messages waiting for responses.
      */
-    std::unordered_map<MessageID, std::shared_ptr<Message>> parking_buffer;
+    std::unordered_map<MessageID, std::shared_ptr<Message>> parkingBuffer;
 };
 
 }
