@@ -61,7 +61,11 @@ macro(lgl_set_build_options BUILD_TARGET_NAME)
             $<${is_clang}:-Wdocumentation>
 
             # Feature disabled
-            $<${is_gnu_fe}:-fno-exceptions>
-            $<${is_gnu_fe}:-fno-rtti>)
+            $<${is_gnu_fe}:-fno-exceptions>)
+
+    target_compile_definitions(
+        ${BUILD_TARGET_NAME} PRIVATE
+            $<$<PLATFORM_ID:Android>:VK_USE_PLATFORM_ANDROID_KHR=1>
+            $<$<PLATFORM_ID:Android>:LGL_LOG_TAG="${LGL_LOG_TAG}">)
 
 endmacro()

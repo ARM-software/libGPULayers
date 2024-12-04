@@ -21,32 +21,21 @@
 # SOFTWARE.
 # -----------------------------------------------------------------------------
 
-set(BUILD_TARGET lib_layer_framework)
+set(LIB_BINARY lib_layer_framework)
 
 add_library(
-    ${BUILD_TARGET} STATIC
+    ${LIB_BINARY} STATIC
         device_functions.cpp
         instance_functions.cpp)
 
 target_include_directories(
-    ${BUILD_TARGET} PRIVATE
+    ${LIB_BINARY} PRIVATE
         # Note, this includes from the layer-specific tree
         ${PROJECT_SOURCE_DIR}/source
         ../)
 
 target_include_directories(
-    ${BUILD_TARGET} SYSTEM PRIVATE
+    ${LIB_BINARY} SYSTEM PRIVATE
         ../../khronos/vulkan/include)
 
-lgl_set_build_options(${BUILD_TARGET})
-
-# TODO: Log tag needs to come from child project
-target_compile_definitions(
-    ${BUILD_TARGET} PRIVATE
-        $<$<PLATFORM_ID:Android>:VK_USE_PLATFORM_ANDROID_KHR=1>
-        $<$<PLATFORM_ID:Android>:LGL_LOG_TAG="${LGL_LOG_TAG}">)
-
-# TODO: Remove this?
-target_link_libraries(
-    ${BUILD_TARGET}
-        $<$<PLATFORM_ID:Android>:log>)
+lgl_set_build_options(${LIB_BINARY})
