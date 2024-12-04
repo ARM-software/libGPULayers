@@ -23,16 +23,7 @@
  * ----------------------------------------------------------------------------
  */
 
-#include <memory>
-#include <mutex>
-#include <thread>
-
-#include "framework/device_functions.hpp"
 #include "framework/utils.hpp"
-
-#include "device.hpp"
-
-extern std::mutex g_vulkanLock;
 
 /* See Vulkan API for documentation. */
 template <>

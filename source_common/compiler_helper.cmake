@@ -52,11 +52,11 @@ macro(lgl_set_build_options BUILD_TARGET_NAME)
 
     target_compile_options(
         ${BUILD_TARGET_NAME} PRIVATE
-            # Minimized visibility warnings
+            # Minimize symbol visibility
             $<${is_gnu_fe}:-fvisibility=hidden>
             $<${is_gnu_fe}:-fvisibility-inlines-hidden>
 
-            # Strict warnings
+            # Enable stricter warnings
             $<${is_gnu_fe}:-Wall>
             $<${is_gnu_fe}:-Wextra>
             $<${is_gnu_fe}:-Wpedantic>
@@ -65,7 +65,10 @@ macro(lgl_set_build_options BUILD_TARGET_NAME)
             $<${is_gnu_fe}:-Wdouble-promotion>
             $<${is_clang}:-Wdocumentation>
 
-            # Feature disabled
+            # Disable warnings we don't want
+            $<${is_gnu_fe}:-Wno-unused-private-field>
+
+            # Disable features we don't want
             $<${is_gnu_fe}:-fno-exceptions>)
 
     target_compile_definitions(
