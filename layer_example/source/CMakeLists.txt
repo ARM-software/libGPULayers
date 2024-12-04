@@ -58,11 +58,6 @@ target_include_directories(
 
 lgl_set_build_options(${VK_LAYER})
 
-target_compile_definitions(
-    ${VK_LAYER} PRIVATE
-        $<$<PLATFORM_ID:Android>:VK_USE_PLATFORM_ANDROID_KHR=1>
-        $<$<PLATFORM_ID:Android>:LGL_LOG_TAG="${LGL_LOG_TAG}">)
-
 target_link_libraries(
     ${VK_LAYER}
         lib_layer_framework
