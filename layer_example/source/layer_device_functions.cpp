@@ -27,8 +27,6 @@
 #include <mutex>
 #include <thread>
 
-#include "framework/utils.hpp"
-
 #include "device.hpp"
 #include "layer_device_functions.hpp"
 
