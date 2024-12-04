@@ -42,8 +42,13 @@ set(is_clangcl "$<AND:${is_msvc_fe},$<CXX_COMPILER_ID:Clang>>")
 # Compiler is upstream clang with the standard frontend
 set(is_clang "$<AND:${is_gnu_fe},$<CXX_COMPILER_ID:Clang,AppleClang>>")
 
-# Utility macro to set standard compiler options
+# Utility macro to set standard compiler and linker options
 macro(lgl_set_build_options BUILD_TARGET_NAME)
+
+    # Layers are shared objects so must be position independent
+    set_property(
+        TARGET ${BUILD_TARGET_NAME}
+        PROPERTY POSITION_INDEPENDENT_CODE ON)
 
     target_compile_options(
         ${BUILD_TARGET_NAME} PRIVATE
@@ -67,5 +72,4 @@ macro(lgl_set_build_options BUILD_TARGET_NAME)
         ${BUILD_TARGET_NAME} PRIVATE
             $<$<PLATFORM_ID:Android>:VK_USE_PLATFORM_ANDROID_KHR=1>
             $<$<PLATFORM_ID:Android>:LGL_LOG_TAG="${LGL_LOG_TAG}">)
-
 endmacro()
