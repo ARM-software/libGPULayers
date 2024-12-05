@@ -55,11 +55,12 @@ def main():
     serverThread.start()
 
     # Press to exit
-    input("Press any key to exit ...")
-    server.stop()
+    try:
+        input("Press any key to exit ...")
+    except KeyboardInterrupt:
+        server.stop()
 
     return 0
-
 
 if __name__ == '__main__':
     sys.exit(main())
