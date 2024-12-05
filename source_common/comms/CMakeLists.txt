@@ -33,6 +33,8 @@ target_include_directories(
     ${LIB_BINARY} PRIVATE
         ../)
 
+lgl_set_build_options(${LIB_BINARY})
+
 if(${LGL_UNITTEST})
     add_subdirectory(test)
 endif()

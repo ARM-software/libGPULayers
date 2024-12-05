@@ -27,11 +27,12 @@
  * @file
  * The implementation of the communications module transmitter worker.
  */
-#include "comms_transmitter.hpp"
-#include "comms_module.hpp"
-
 #include <iostream>
 #include <sys/socket.h>
+
+#include "comms/comms_transmitter.hpp"
+#include "comms/comms_module.hpp"
+#include "framework/utils.hpp"
 
 namespace Comms
 {

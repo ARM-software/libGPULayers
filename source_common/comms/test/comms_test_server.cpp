@@ -70,7 +70,7 @@ CommsTestServer::CommsTestServer(
     int bindErr = bind(
         listenSockfd,
         reinterpret_cast<const struct sockaddr*>(&servAddr),
-        sizeof(struct sockaddr_un));
+        offsetof(struct sockaddr_un, sun_path) + domainAddress.size() + 1);
     if (bindErr)
     {
         std::cout << "  - ERROR: Svr socket bind failed" << std::endl;

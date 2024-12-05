@@ -28,14 +28,15 @@
  * The implementation of the main communications module.
  */
 
-#include "comms_module.hpp"
-
 #include <arpa/inet.h>
 #include <iostream>
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <unistd.h>
 #include <cstring>
+
+#include "framework/utils.hpp"
+#include "comms_module.hpp"
 
 
 namespace Comms
@@ -48,7 +49,7 @@ CommsModule::CommsModule(
     sockfd = socket(AF_UNIX, SOCK_STREAM, 0);
     if (sockfd < 0)
     {
-        std::cout << "  - ERROR: Client socket create failed" << std::endl;
+        LAYER_LOG("  - ERROR: Client UDS socket create failed");
         return;
     }
 
@@ -62,10 +63,10 @@ CommsModule::CommsModule(
     int conn = connect(
         sockfd,
         reinterpret_cast<const struct sockaddr*>(&servAddr),
-        sizeof(servAddr));
+        offsetof(struct sockaddr_un, sun_path) + domainAddress.size() + 1);
     if (conn != 0)
     {
-        std::cout << "  - ERROR: Client connection failed" << std::endl;
+        LAYER_LOG("  - ERROR: Client UDS connection failed");
         close(sockfd);
         sockfd = -1;
         return;
@@ -83,7 +84,7 @@ CommsModule::CommsModule(
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0)
     {
-        std::cout << "  - ERROR: Client socket create failed" << std::endl;
+        LAYER_LOG("  - ERROR: Client TCP socket create failed");
         return;
     }
 
@@ -98,7 +99,7 @@ CommsModule::CommsModule(
         sizeof(servAddr));
     if (conn != 0)
     {
-        std::cout << "  - ERROR: Client connection failed" << std::endl;
+        LAYER_LOG("  - ERROR: Client TCP connection failed");
         close(sockfd);
         sockfd = -1;
         return;
@@ -157,7 +158,7 @@ EndpointID CommsModule::getEndpointID(
                 break;
             }
 
-            uint8_t id = (*resp)[0];
+            uint8_t svcId = (*resp)[0];
             size_t size = static_cast<size_t>((*resp)[4] << 24)
                         | static_cast<size_t>((*resp)[3] << 16)
                         | static_cast<size_t>((*resp)[2] << 8)
@@ -169,13 +170,13 @@ EndpointID CommsModule::getEndpointID(
                 break;
             }
 
-            std::string name(resp->begin() + 5, resp->begin() + 5 + size);
+            std::string svcName(resp->begin() + 5, resp->begin() + 5 + size);
 
             // Remove the entry we've read
             resp->erase(resp->begin(), resp->begin() + 5 + size);
 
             // Store the persistent registry entry
-            registry[name] = id;
+            registry[svcName] = svcId;
         }
     }
 

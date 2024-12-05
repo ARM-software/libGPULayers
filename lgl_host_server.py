@@ -23,8 +23,14 @@
 
 # This module implements a host server that provides services over the network
 # to a layer running on a remote device.
+#
+# Run with ...
+#    adb reverse localabstract:lglcomms tcp:63412
+#
 
 import sys
+import threading
+
 import lglpy.server
 import lglpy.service_test
 import lglpy.service_log
@@ -45,7 +51,12 @@ def main():
     print()
 
     # Start it running
-    server.run()
+    serverThread = threading.Thread(target=server.run)
+    serverThread.start()
+
+    # Press to exit
+    input("Press any key to exit ...")
+    server.stop()
 
     return 0
 

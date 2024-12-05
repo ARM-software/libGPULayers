@@ -28,13 +28,15 @@
  * The implementation of the communications module receiver worker.
  */
 
+#include <cinttypes>
 #include <iostream>
 #include <sys/socket.h>
 #include <unistd.h>
 #include <unordered_map>
 
 #include "comms/comms_receiver.hpp"
-#include "comms_module.hpp"
+#include "comms/comms_module.hpp"
+#include "framework/utils.hpp"
 
 namespace Comms
 {
@@ -46,7 +48,7 @@ Receiver::Receiver(
     int pipe_err = pipe(stopRequestPipe);
     if (pipe_err)
     {
-        std::cout << "  - ERROR: Client pipe create failed" << std::endl;
+        LAYER_LOG("  - ERROR: Client pipe create failed");
     }
 
     // Create and start a worker thread
@@ -127,7 +129,7 @@ void Receiver::wakeMessage(
     // Handle message not found ...
     if (parkingBuffer.count(messageID) == 0)
     {
-        std::cout << "  - ERROR: Cln: Message " << messageID << " not found" << std::endl;
+        LAYER_LOG("  - ERROR: Client message %" PRIu64 " not found", messageID);
         return;
     }
 

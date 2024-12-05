@@ -91,6 +91,10 @@ class CommsServer:
         self.endpoints = {}
         self.register_endpoint(self)
 
+        self.shutdown = False
+        self.listen_sockfd = None
+        self.data_sockfd = None
+
     def get_service_name(self) -> str:
         return 'registry'
 
@@ -115,14 +119,20 @@ class CommsServer:
         listen_sockfd.bind(('localhost', self.port))
         listen_sockfd.listen(1)
 
+        self.listen_sockfd = listen_sockfd
+
         # Accept connections from outside
-        while True:
+        while not self.shutdown:
             print('Waiting for connection')
-            sockfd, _ = listen_sockfd.accept()
+            try:
+                sockfd, _ = listen_sockfd.accept()
+            except OSError:
+                continue
+
+            self.data_sockfd = sockfd
             print('  + Client connected')
 
-            # TODO: Add shutdown code to the loop
-            while True:
+            while not self.shutdown:
                 # Read the header
                 data = self.receive_data(sockfd, 14)
                 if not data:
@@ -150,7 +160,20 @@ class CommsServer:
                     if not sent:
                         break
 
+            sockfd.close()
+            self.data_sockfd = None
+
         listen_sockfd.close()
+        self.listen_sockfd = None
+
+    def stop(self):
+        self.shutdown = True
+
+        if self.listen_sockfd is not None:
+            self.listen_sockfd.close()
+
+        if self.data_sockfd is not None:
+            self.data_sockfd.shutdown(socket.SHUT_RDWR)
 
     def receive_data(self, sockfd, byte_count):
         data = b''
