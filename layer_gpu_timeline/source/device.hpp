@@ -135,8 +135,8 @@ public:
      */
     void onWorkloadSubmit(const std::string& message)
     {
-        LAYER_LOG("%s", message.c_str());
-        //commsWrapper.txMessage(message);
+        //LAYER_LOG("%s", message.c_str());
+        commsWrapper.txMessage(message);
     }
 
     /**
@@ -177,7 +177,7 @@ private:
     /**
      * @brief Communications module for this layer
      */
-    Comms::CommsModule commsModule { "libGPULayersUDS" };
+    Comms::CommsModule commsModule { "lglcomms" };
 
     /**
      * @brief Communications module message encoder wrapper for this layer
