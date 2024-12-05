@@ -172,13 +172,6 @@ private:
      */
     std::shared_ptr<Message> dequeueMessage();
 
-    /**
-     * @brief Get the host service endpoint list.
-     *
-     * @return The message to send.
-     */
-    void getHostServiceEndpoints();
-
 private:
     /**
      * @brief The socket for communications.

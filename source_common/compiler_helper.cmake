@@ -66,10 +66,7 @@ macro(lgl_set_build_options BUILD_TARGET_NAME)
             $<${is_clang}:-Wdocumentation>
 
             # Disable warnings we don't want
-            $<${is_gnu_fe}:-Wno-unused-private-field>
-
-            # Disable features we don't want
-            $<${is_gnu_fe}:-fno-exceptions>)
+            $<${is_gnu_fe}:-Wno-unused-private-field>)
 
     target_compile_definitions(
         ${BUILD_TARGET_NAME} PRIVATE
