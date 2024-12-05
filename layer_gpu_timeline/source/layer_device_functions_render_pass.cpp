@@ -29,7 +29,9 @@
 
 #include "device.hpp"
 #include "layer_device_functions.hpp"
+
 #include "framework/utils.hpp"
+#include "trackers/render_pass.hpp"
 
 extern std::mutex g_vulkanLock;
 
@@ -49,7 +51,17 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateRenderPass<user_tag>(
 
     // Release the lock to call into the driver
     lock.unlock();
-    return layer->driver.vkCreateRenderPass(device, pCreateInfo, pAllocator, pRenderPass);
+    VkResult ret = layer->driver.vkCreateRenderPass(device, pCreateInfo, pAllocator, pRenderPass);
+    if (ret != VK_SUCCESS)
+    {
+        return ret;
+    }
+
+    // Retake the lock to access layer-wide global store
+    lock.lock();
+    auto& tracker = layer->getStateTracker();
+    tracker.createRenderPass(*pRenderPass, *pCreateInfo);
+    return VK_SUCCESS;
 }
 
 /* See Vulkan API for documentation. */
@@ -68,7 +80,17 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateRenderPass2<user_tag>(
 
     // Release the lock to call into the driver
     lock.unlock();
-    return layer->driver.vkCreateRenderPass2(device, pCreateInfo, pAllocator, pRenderPass);
+    VkResult ret = layer->driver.vkCreateRenderPass2(device, pCreateInfo, pAllocator, pRenderPass);
+    if (ret != VK_SUCCESS)
+    {
+        return ret;
+    }
+
+    // Retake the lock to access layer-wide global store
+    lock.lock();
+    auto& tracker = layer->getStateTracker();
+    tracker.createRenderPass(*pRenderPass, *pCreateInfo);
+    return VK_SUCCESS;
 }
 
 /* See Vulkan API for documentation. */
@@ -87,7 +109,17 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateRenderPass2KHR<user_tag>(
 
     // Release the lock to call into the driver
     lock.unlock();
-    return layer->driver.vkCreateRenderPass2KHR(device, pCreateInfo, pAllocator, pRenderPass);
+    VkResult ret = layer->driver.vkCreateRenderPass2KHR(device, pCreateInfo, pAllocator, pRenderPass);
+    if (ret != VK_SUCCESS)
+    {
+        return ret;
+    }
+
+    // Retake the lock to access layer-wide global store
+    lock.lock();
+    auto& tracker = layer->getStateTracker();
+    tracker.createRenderPass(*pRenderPass, *pCreateInfo);
+    return VK_SUCCESS;
 }
 
 /* See Vulkan API for documentation. */
@@ -102,6 +134,9 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyRenderPass<user_tag>(
     // Hold the lock to access layer-wide global store
     std::unique_lock<std::mutex> lock { g_vulkanLock };
     auto* layer = Device::retrieve(device);
+
+    auto& tracker = layer->getStateTracker();
+    tracker.destroyRenderPass(renderPass);
 
     // Release the lock to call into the driver
     lock.unlock();
@@ -124,8 +159,12 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass<user_tag>(
     auto& tracker = layer->getStateTracker();
     auto& cb = tracker.getCommandBuffer(commandBuffer);
 
+    auto& rp = tracker.getRenderPass(pRenderPassBegin->renderPass);
+    uint32_t width = pRenderPassBegin->renderArea.extent.width;
+    uint32_t height = pRenderPassBegin->renderArea.extent.height;
+
     // Notify the command buffer we are starting a new render pass
-    uint64_t tagID = cb.renderPassBegin();
+    uint64_t tagID = cb.renderPassBegin(rp, width, height);
 
     // Emit the unique workload tag into the command stream
     std::string tagLabel = formatString("t%" PRIu64, tagID);
@@ -158,8 +197,12 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass2<user_tag>(
     auto& tracker = layer->getStateTracker();
     auto& cb = tracker.getCommandBuffer(commandBuffer);
 
+    auto& rp = tracker.getRenderPass(pRenderPassBegin->renderPass);
+    uint32_t width = pRenderPassBegin->renderArea.extent.width;
+    uint32_t height = pRenderPassBegin->renderArea.extent.height;
+
     // Notify the command buffer we are starting a new render pass
-    uint64_t tagID = cb.renderPassBegin();
+    uint64_t tagID = cb.renderPassBegin(rp, width, height);
 
     // Emit the unique workload tag into the command stream
     std::string tagLabel = formatString("t%" PRIu64, tagID);
@@ -192,8 +235,12 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass2KHR<user_tag>(
     auto& tracker = layer->getStateTracker();
     auto& cb = tracker.getCommandBuffer(commandBuffer);
 
+    auto& rp = tracker.getRenderPass(pRenderPassBegin->renderPass);
+    uint32_t width = pRenderPassBegin->renderArea.extent.width;
+    uint32_t height = pRenderPassBegin->renderArea.extent.height;
+
     // Notify the command buffer we are starting a new render pass
-    uint64_t tagID = cb.renderPassBegin();
+    uint64_t tagID = cb.renderPassBegin(rp, width, height);
 
     // Emit the unique workload tag into the command stream
     std::string tagLabel = formatString("t%" PRIu64, tagID);
@@ -228,8 +275,14 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRendering<user_tag>(
     bool resuming = pRenderingInfo->flags & VK_RENDERING_RESUMING_BIT;
     bool suspending = pRenderingInfo->flags & VK_RENDERING_SUSPENDING_BIT;
 
+    // Extract metadata for later use ...
+    Tracker::RenderPass rp(*pRenderingInfo);
+    uint32_t width = pRenderingInfo->renderArea.extent.width;
+    uint32_t height = pRenderingInfo->renderArea.extent.height;
+
     // Notify the command buffer we are starting a new render pass
-    uint64_t tagID = cb.renderPassBegin(resuming, suspending);
+    uint64_t tagID = cb.renderPassBegin(
+        rp, width, height, resuming, suspending);
 
     // Release the lock to call into the driver
     lock.unlock();
@@ -270,8 +323,14 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderingKHR<user_tag>(
     bool resuming = pRenderingInfo->flags & VK_RENDERING_RESUMING_BIT;
     bool suspending = pRenderingInfo->flags & VK_RENDERING_SUSPENDING_BIT;
 
+    // Extract metadata for later use ...
+    Tracker::RenderPass rp(*pRenderingInfo);
+    uint32_t width = pRenderingInfo->renderArea.extent.width;
+    uint32_t height = pRenderingInfo->renderArea.extent.height;
+
     // Notify the command buffer we are starting a new render pass
-    uint64_t tagID = cb.renderPassBegin(resuming, suspending);
+    uint64_t tagID = cb.renderPassBegin(
+        rp, width, height, resuming, suspending);
 
     // Release the lock to call into the driver
     lock.unlock();

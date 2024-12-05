@@ -54,6 +54,13 @@ CommandPool& Device::getCommandPool(
 }
 
 /* See header for documentation. */
+void Device::destroyCommandPool(
+    VkCommandPool commandPool
+) {
+    commandPools.erase(commandPool);
+}
+
+/* See header for documentation. */
 void Device::allocateCommandBuffer(
     VkCommandPool commandPool,
     VkCommandBuffer commandBuffer
@@ -93,10 +100,40 @@ CommandBuffer& Device::getCommandBuffer(
 }
 
 /* See header for documentation. */
-void Device::destroyCommandPool(
-    VkCommandPool commandPool
+void Device::createRenderPass(
+    VkRenderPass renderPass,
+    const VkRenderPassCreateInfo& createInfo
 ) {
-    commandPools.erase(commandPool);
+    renderPasses.insert({
+        renderPass,
+        std::make_unique<RenderPass>(renderPass, createInfo)
+    });
+}
+
+/* See header for documentation. */
+void Device::createRenderPass(
+    VkRenderPass renderPass,
+    const VkRenderPassCreateInfo2& createInfo
+) {
+    renderPasses.insert({
+        renderPass,
+        std::make_unique<RenderPass>(renderPass, createInfo)
+    });
+}
+
+/* See header for documentation. */
+RenderPass& Device::getRenderPass(
+    VkRenderPass renderPass
+) {
+    assert(isInMap(renderPass, renderPasses));
+    return *renderPasses.at(renderPass);
+}
+
+/* See header for documentation. */
+void Device::destroyRenderPass(
+    VkRenderPass renderPass
+) {
+    renderPasses.erase(renderPass);
 }
 
 /* See header for documentation. */

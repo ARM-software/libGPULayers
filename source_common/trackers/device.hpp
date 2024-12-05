@@ -43,6 +43,7 @@
 
 #include "trackers/command_buffer.hpp"
 #include "trackers/queue.hpp"
+#include "trackers/render_pass.hpp"
 
 namespace Tracker
 {
@@ -54,17 +55,17 @@ class Device
 {
 public:
     /**
-     * @brief Create a new command pool within this device.
+     * @brief Create a new command pool tracker within this device.
      *
-     * @param commandPool   The command pool handle to create.
+     * @param commandPool   The native handle to track.
      */
     void createCommandPool(
         VkCommandPool commandPool);
 
     /**
-     * @brief Get the command pool tracker for a Vulkan command pool.
+     * @brief Get the tracker for a native command pool.
      *
-     * @param commandPool   The device handle the layer is tracking.
+     * @param commandPool   The native handle we are tracking.
      */
     CommandPool& getCommandPool(
         VkCommandPool commandPool);
@@ -72,8 +73,8 @@ public:
     /**
      * @brief Create a new command buffer in a pool within this device.
      *
-     * @param commandPool     The owning command pool.
-     * @param commandBuffer   The device handle the layer is tracking.
+     * @param commandPool     The native parent command pool handle.
+     * @param commandBuffer   The native handle to track.
      */
     void allocateCommandBuffer(
         VkCommandPool commandPool,
@@ -82,17 +83,17 @@ public:
     /**
      * @brief Free a command buffer in a pool within this device.
      *
-     * @param commandPool     The owning command pool.
-     * @param commandBuffer   The device handle the layer is tracking.
+     * @param commandPool     The native parent command pool handle.
+     * @param commandBuffer   The native handle to stop tracking.
      */
     void freeCommandBuffer(
         VkCommandPool commandPool,
         VkCommandBuffer commandBuffer);
 
     /**
-     * @brief Get the command pool tracker for a Vulkan command pool.
+     * @brief Get the tracker for native command buffer.
      *
-     * @param commandBuffer   The device handle the layer is tracking.
+     * @param commandBuffer   The native handle we are tracking.
      */
     CommandBuffer& getCommandBuffer(
         VkCommandBuffer commandBuffer);
@@ -100,26 +101,62 @@ public:
     /**
      * @brief Destroy a command pool within this device.
      *
-     * @param commandPool   The command pool handle to destroy.
+     * @param commandPool   The native handle to stop tracking.
      */
     void destroyCommandPool(
         VkCommandPool commandPool);
 
     /**
-     * @brief Get the queue tracker for a Vulkan queue.
+     * @brief Get the tracker for a native queue.
      *
-     * Note that queue trackers are created on the fly when the queue is
-     * first used.
+     * Note that queue trackers are created on the fly when a native queue is
+     * first used. We don't track queue creation as a distinct step.
      *
-     * @param queue   The queue handle the layer is tracking.
+     * @param queue   The native handle we are tracking.
      */
     Queue& getQueue(
         VkQueue queue);
 
     /**
+     * @brief Create a new render pass tracker within this device.
+     *
+     * @param renderPass   The native handle to track.
+     * @param createInfo   The render pass configuration information.
+     */
+    void createRenderPass(
+        VkRenderPass renderPass,
+        const VkRenderPassCreateInfo& createInfo);
+
+    /**
+     * @brief Create a new render pass tracker within this device.
+     *
+     * @param renderPass   The native handle to track.
+     * @param createInfo   The render pass configuration information.
+     */
+    void createRenderPass(
+        VkRenderPass renderPass,
+        const VkRenderPassCreateInfo2& createInfo);
+
+    /**
+     * @brief Get the tracker for a native render pass.
+     *
+     * @param renderPass   The native handle we are tracking.
+     */
+    RenderPass& getRenderPass(
+        VkRenderPass renderPass);
+
+    /**
+     * @brief Destroy a render pass within this device.
+     *
+     * @param renderPass   The native handle to stop tracking.
+     */
+    void destroyRenderPass(
+        VkRenderPass renderPass);
+
+    /**
      * @brief Submit a command buffer to a queue within this device.
      *
-     * @param commandBuffer   The command buffer handle to submit.
+     * @param commandBuffer   The native command buffer we are tracking.
      */
     void queueSubmit(
         VkCommandBuffer commandBuffer);
@@ -147,6 +184,11 @@ public:
      * must be removed before deleting the command pool that owns the buffer.
      */
     std::unordered_map<VkCommandBuffer, CommandBuffer&> commandBuffers;
+
+    /**
+     * @brief The set of all render passes allocated in this device.
+     */
+    std::unordered_map<VkRenderPass, std::unique_ptr<RenderPass>> renderPasses;
 
     /**
      * @brief The cumulative statistics for this device.

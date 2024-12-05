@@ -51,6 +51,7 @@
 #include <vector>
 #include <vulkan/vulkan.h>
 
+#include "trackers/render_pass.hpp"
 #include "trackers/stats.hpp"
 #include "utils/misc.hpp"
 
@@ -118,6 +119,9 @@ class LCSRenderPass : public LCSWorkload
 public:
     LCSRenderPass(
         uint64_t tagID,
+        const RenderPass& renderPass,
+        uint32_t width,
+        uint32_t height,
         bool suspending);
 
     virtual ~LCSRenderPass() = default;
@@ -133,7 +137,15 @@ public:
     };
 
 private:
+    uint32_t width;
+
+    uint32_t height;
+
     bool suspending;
+
+    unsigned int subpassCount;
+
+    std::vector<RenderPassAttachment> attachments;
 };
 
 /**

@@ -52,7 +52,7 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDebugMarkerBeginEXT<user_tag>(
 
     // Note that we do not call the driver for user labels - they are
     // emitted via the comms side-channel for each workload to avoid
-    // polluting the driver tag labelling
+    // polluting the layer's use of the driver for tag labelling
 }
 
 /* See Vulkan API for documentation. */
@@ -74,5 +74,5 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDebugMarkerEndEXT<user_tag>(
 
     // Note that we do not call the driver for user labels - they are
     // emitted via the comms side-channel for each workload to avoid
-    // polluting the driver tag labelling
+    // polluting the layer's use of the driver for tag labelling
 }

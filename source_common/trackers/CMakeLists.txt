@@ -28,7 +28,8 @@ add_library(
         command_buffer.cpp
         device.cpp
         layer_command_stream.cpp
-        queue.cpp)
+        queue.cpp
+        render_pass.cpp)
 
 target_include_directories(
     ${LIB_BINARY} PRIVATE

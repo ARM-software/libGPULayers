@@ -77,6 +77,9 @@ void CommandBuffer::debugMarkerEnd()
  * @brief End a user render pass.
  */
 uint64_t CommandBuffer::renderPassBegin(
+    const RenderPass& renderPass,
+    uint32_t width,
+    uint32_t height,
     bool resuming,
     bool suspending
 ) {
@@ -91,8 +94,7 @@ uint64_t CommandBuffer::renderPassBegin(
 
     // TODO: Populate render pass with config information
     auto workload = std::make_shared<LCSRenderPass>(
-        tagID,
-        suspending);
+        tagID, renderPass, width, height, suspending);
     workloads.push_back(workload);
 
     auto instr = std::make_pair(LCSOpcode::RENDERPASS_BEGIN, workload);

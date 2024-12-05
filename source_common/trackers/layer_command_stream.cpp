@@ -49,11 +49,18 @@ LCSMarker::LCSMarker(
 
 LCSRenderPass::LCSRenderPass(
     uint64_t _tagID,
+    const RenderPass& renderPass,
+    uint32_t _width,
+    uint32_t _height,
     bool _suspending) :
     LCSWorkload(_tagID),
+    width(_width),
+    height(_height),
     suspending(_suspending)
 {
-
+    // Copy these as the renderpass object may be transient.
+    subpassCount = renderPass.getSubpassCount();
+    attachments = renderPass.getAttachments();
 }
 
 }

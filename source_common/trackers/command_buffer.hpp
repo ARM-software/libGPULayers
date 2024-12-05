@@ -90,6 +90,9 @@ public:
     /**
      * @brief Begin recording a render pass.
      *
+     * @param renderPass   Render pass creation info.
+     * @param width        Render pass extent width in pixels.
+     * @param height       Render pass extent height in pixels.
      * @param resuming     If @c true this recording starts with a resume.
      * @param suspending   If @c true this recording ends with a suspend.
      *
@@ -97,6 +100,9 @@ public:
      *         if @c resuming an existing workload.
      */
     uint64_t renderPassBegin(
+        const RenderPass& renderPass,
+        uint32_t width,
+        uint32_t height,
         bool resuming=false,
         bool suspending=false);
 
