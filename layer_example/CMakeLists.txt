@@ -28,7 +28,7 @@ set(CMAKE_CXX_STANDARD 20)
 project(VkLayerExample VERSION 1.0.0)
 
 # Common configuration
-set(LGL_LOG_TAG, "VkLayerExample")
+set(LGL_LOG_TAG "VkLayerExample")
 include(../source_common/compiler_helper.cmake)
 
 # Build steps

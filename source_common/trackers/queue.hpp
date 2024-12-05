@@ -60,8 +60,7 @@ class Queue
 {
 public:
     Queue(
-        VkQueue handle):
-        handle(handle) { };
+        VkQueue handle);
 
     /**
      * @brief Execute a layer command stream.

@@ -32,6 +32,14 @@ namespace Tracker
 {
 
 /* See header for documentation. */
+CommandBuffer::CommandBuffer(
+    VkCommandBuffer _handle) :
+    handle(_handle)
+{
+
+};
+
+/* See header for documentation. */
 void CommandBuffer::reset()
 {
     stats.reset();
@@ -105,6 +113,14 @@ bool CommandBuffer::renderPassEnd()
     // TODO: Merge stats since begin into the workload object
     return renderpass->isSuspending();
 }
+
+/* See header for documentation. */
+CommandPool::CommandPool(
+    VkCommandPool _handle) :
+    handle(_handle)
+{
+
+};
 
 /* See header for documentation. */
 CommandBuffer& CommandPool::allocateCommandBuffer(

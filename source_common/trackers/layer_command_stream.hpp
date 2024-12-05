@@ -79,8 +79,7 @@ class LCSWorkload
 {
 public:
     LCSWorkload(
-        uint64_t tagID):
-        tagID(tagID) { };
+        uint64_t tagID);
 
     virtual ~LCSWorkload() = default;
 
@@ -119,10 +118,7 @@ class LCSRenderPass : public LCSWorkload
 public:
     LCSRenderPass(
         uint64_t tagID,
-        bool suspending) :
-        LCSWorkload(tagID),
-        suspending(suspending) { };
-
+        bool suspending);
 
     virtual ~LCSRenderPass() = default;
 
@@ -147,11 +143,7 @@ class LCSMarker : public LCSWorkload
 {
 public:
     LCSMarker(
-        const std::string& label) :
-        LCSWorkload(0),
-        label(label) {
-
-    };
+        const std::string& label);
 
     virtual ~LCSMarker() = default;
 

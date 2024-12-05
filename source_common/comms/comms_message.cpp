@@ -23,35 +23,25 @@
  * ----------------------------------------------------------------------------
  */
 
-#include <cassert>
+/**
+ * @file
+ * The declaration of the communication module internal message types.
+ */
 
-#include "trackers/layer_command_stream.hpp"
+#include "comms/comms_message.hpp"
 
-namespace Tracker
-{
-/* See header for details. */
-std::atomic<uint64_t> LCSWorkload::nextTagID { 1 };
-
-LCSWorkload::LCSWorkload(
-    uint64_t _tagID):
-    tagID(_tagID)
+namespace Comms
 {
 
-}
-
-LCSMarker::LCSMarker(
-    const std::string& _label) :
-    LCSWorkload(0),
-    label(_label)
-{
-
-};
-
-LCSRenderPass::LCSRenderPass(
-    uint64_t _tagID,
-    bool _suspending) :
-    LCSWorkload(_tagID),
-    suspending(_suspending)
+Message::Message(
+    EndpointID _endpointID,
+    MessageType _messageType,
+    MessageID _messageID,
+    std::unique_ptr<MessageData> _transmitData) :
+    endpointID(_endpointID),
+    messageType(_messageType),
+    messageID(_messageID),
+    transmitData(std::move(_transmitData))
 {
 
 }

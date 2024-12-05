@@ -69,8 +69,7 @@ public:
      * @param handle   The Vulkan command buffer handle we are tracking.
      */
     CommandBuffer(
-        VkCommandBuffer handle) :
-        handle(handle) { };
+        VkCommandBuffer handle);
 
     /**
      * @brief Get the stats object for this command buffer;
@@ -159,8 +158,7 @@ public:
      * @param handle       The Vulkan pool buffer handle we are wrapping.
      */
     CommandPool(
-        VkCommandPool handle) :
-        handle(handle) { };
+        VkCommandPool handle);
 
     /**
      * @brief Allocate a command buffer in the pool with the given handle.

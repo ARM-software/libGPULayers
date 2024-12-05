@@ -25,6 +25,7 @@ set(LIB_BINARY lib_layer_comms)
 
 add_library(
     ${LIB_BINARY} STATIC
+        comms_message.cpp
         comms_module.cpp
         comms_receiver.cpp
         comms_transmitter.cpp)

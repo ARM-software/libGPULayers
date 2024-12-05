@@ -28,7 +28,7 @@ set(CMAKE_CXX_STANDARD 20)
 project(VkLayerGPUTimeline VERSION 1.0.0)
 
 # Common configuration
-set(LGL_LOG_TAG, "VkLayerGPUTimeline")
+set(LGL_LOG_TAG "VkLayerGPUTimeline")
 include(../source_common/compiler_helper.cmake)
 
 # Build steps
