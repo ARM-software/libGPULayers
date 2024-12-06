@@ -340,6 +340,7 @@ def generate_layer_instance_dispatch_table(file, mapping, commands):
     itable_members = []
     dispatch_table_members = []
     dispatch_table_inits = []
+
     for command in commands:
         # Skip commands that are not instance commands
         if command.dispatch_type != 'instance':
@@ -368,7 +369,6 @@ def generate_layer_instance_dispatch_table(file, mapping, commands):
             if plat_define:
                 dispatch_table_members.append('#endif')
                 dispatch_table_inits.append('#endif')
-
 
     data = data.replace('{ITABLE_MEMBERS}', '\n'.join(itable_members))
     data = data.replace('{DTABLE_MEMBERS}', '\n'.join(dispatch_table_members))

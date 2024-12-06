@@ -98,16 +98,18 @@ struct DispatchTableEntry
  * \return The layer function pointer, or \c nullptr if the layer doesn't
  *         intercept the function.
  */
-static PFN_vkVoidFunction get_instance_layer_function(
+static PFN_vkVoidFunction get_fixed_instance_layer_function(
     const char* name
 ) {
-    static const DispatchTableEntry layer_functions[] = {
+    static const DispatchTableEntry layerFunctions[] = {
         VK_TABLE_ENTRY(vkGetInstanceProcAddr),
+        VK_TABLE_ENTRY(vkEnumerateDeviceLayerProperties),
+        VK_TABLE_ENTRY(vkEnumerateDeviceExtensionProperties),
         VK_TABLE_ENTRY(vkEnumerateInstanceLayerProperties),
         VK_TABLE_ENTRY(vkEnumerateInstanceExtensionProperties),
     };
 
-    for (auto &function : instanceIntercepts)
+    for (auto &function : layerFunctions)
     {
         if (!strcmp(function.name, name))
         {
@@ -115,9 +117,23 @@ static PFN_vkVoidFunction get_instance_layer_function(
         }
     }
 
-    for (auto &function : layer_functions)
+    return nullptr;
+}
+
+/**
+ * @brief Fetch the layer function for a given instance entrypoint name.
+ *
+ * @param name   The layer entry point name.
+ *
+ * \return The layer function pointer, or \c nullptr if the layer doesn't
+ *         intercept the function.
+ */
+static PFN_vkVoidFunction get_instance_layer_function(
+    const char* name
+) {
+    for (auto &function : instanceIntercepts)
     {
-        if (strcmp(function.name, name) == 0)
+        if (!strcmp(function.name, name))
         {
             return function.function;
         }
@@ -136,13 +152,13 @@ static PFN_vkVoidFunction get_instance_layer_function(
 static PFN_vkVoidFunction get_device_layer_function(
     const char* name
 ) {
-    static const DispatchTableEntry layer_functions[] = {
+    static const DispatchTableEntry layerFunctions[] = {
         VK_TABLE_ENTRY(vkGetDeviceProcAddr),
         VK_TABLE_ENTRY(vkEnumerateDeviceExtensionProperties),
         VK_TABLE_ENTRY(vkEnumerateDeviceLayerProperties),
     };
 
-    for (auto &function : deviceIntercepts)
+    for (auto &function : layerFunctions)
     {
         if (!strcmp(function.name, name))
         {
@@ -150,7 +166,7 @@ static PFN_vkVoidFunction get_device_layer_function(
         }
     }
 
-    for (auto &function : layer_functions)
+    for (auto &function : deviceIntercepts)
     {
         if (!strcmp(function.name, name))
         {
@@ -175,12 +191,14 @@ static PFN_vkVoidFunction vkGetDeviceProcAddr_default(
     // queryable interface behavior seen by the application
     auto driver_function = layer->driver.vkGetDeviceProcAddr(device, pName);
     auto layer_function = get_device_layer_function(pName);
+
+    // If driver exposes it and the layer has one, use the layer function
     if (driver_function && layer_function)
     {
         return layer_function;
     }
 
-    // This may be nullptr if the driver doesn't expose the function
+    // Otherwise just use the driver function, which may be nullptr
     return driver_function;
 }
 
@@ -189,32 +207,35 @@ static PFN_vkVoidFunction vkGetInstanceProcAddr_default(
     VkInstance instance,
     const char* pName
 ) {
-    // Always return layer instance functions
-    auto layer_function = get_instance_layer_function(pName);
-    if (layer_function)
+    // Always expose these functions ...
+    PFN_vkVoidFunction layerFunction = get_fixed_instance_layer_function(pName);
+    if (layerFunction)
     {
-        return layer_function;
+        return layerFunction;
     }
 
-    // If this is an instance method hold the lock to access layer-wide global store
-    PFN_vkVoidFunction driver_function { nullptr };
+    // Otherwise, only expose functions that the driver exposes to avoid
+    // changing queryable interface behavior seen by the application
+    layerFunction = get_instance_layer_function(pName);
     if (instance) {
         std::unique_lock<std::mutex> lock { g_vulkanLock };
         auto* layer = Instance::retrieve(instance);
 
         // Don't hold the lock while calling the driver
         lock.unlock();
-        driver_function = layer->nlayerGetProcAddress(layer->instance, pName);
+        PFN_vkVoidFunction driverFunction = layer->nlayerGetProcAddress(layer->instance, pName);
+
+        // If driver exposes it and the layer has one, use the layer function
+        if (driverFunction && layerFunction)
+        {
+            return layerFunction;
+        }
+
+        // Otherwise just use the driver function, which may be nullptr
+        return driverFunction;
     }
 
-    layer_function = get_device_layer_function(pName);
-    if ((!instance || driver_function) && layer_function)
-    {
-        return layer_function;
-    }
-
-    // This may be nullptr if the driver doesn't expose the function
-    return driver_function;
+    return layerFunction;
 }
 
 /** See Vulkan API for documentation. */
