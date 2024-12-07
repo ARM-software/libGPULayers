@@ -127,21 +127,42 @@ bool isInMap(
 }
 
 /**
+ * @brief Append all values in one vector to the back of another.
+ *
+ * @param src   The destination vector to append to.
+ * @param dst   The source vector; must not be src vector.
+ */
+template<typename T>
+void vecAppend(
+    std::vector<T>& dst,
+    const std::vector<T>& src
+) {
+    // Perform a resize with some room for growth
+    size_t newSize = dst.size() + src.size();
+    dst.reserve(newSize);
+
+    // Merge secondary into this command buffer
+    dst.insert(std::end(dst), std::begin(src), std::end(src));
+}
+
+/**
  * @brief Get a displayable pointer.
  *
- * On 64-bit systems this strips the MTE tag.
+ * On 64-bit Arm systems this strips the MTE tag in the top byte.
  *
- * @return The displayable pointer
+ * @return The displayable pointer.
  */
 static inline uintptr_t getDisplayPointer(
     void* pointer
 ) {
     uintptr_t dispPointer = reinterpret_cast<uintptr_t>(pointer);
 
-    if constexpr(sizeof(uintptr_t) == 8)
-    {
-        dispPointer &= 0x00FFFFFFFFFFFFFFull;
-    }
+    #if defined(__aarch64__)
+        if constexpr(sizeof(uintptr_t) == 8)
+        {
+            dispPointer &= 0x00FFFFFFFFFFFFFFull;
+        }
+    #endif
 
     return dispPointer;
 }
