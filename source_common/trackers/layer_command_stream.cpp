@@ -23,39 +23,44 @@
  * ----------------------------------------------------------------------------
  */
 
-#include <vulkan/vulkan.h>
+#include <cassert>
 
-#include "framework/utils.hpp"
+#include "trackers/layer_command_stream.hpp"
 
-/* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass<user_tag>(
-    VkCommandBuffer commandBuffer,
-    const VkRenderPassBeginInfo* pRenderPassBegin,
-    VkSubpassContents contents);
+namespace Tracker
+{
+/* See header for details. */
+std::atomic<uint64_t> LCSWorkload::nextTagID { 1 };
 
-/* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass2<user_tag>(
-    VkCommandBuffer commandBuffer,
-    const VkRenderPassBeginInfo* pRenderPassBegin,
-    const VkSubpassBeginInfo* pSubpassBeginInfo);
+LCSWorkload::LCSWorkload(
+    uint64_t _tagID):
+    tagID(_tagID)
+{
 
-/* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass2KHR<user_tag>(
-    VkCommandBuffer commandBuffer,
-    const VkRenderPassBeginInfo* pRenderPassBegin,
-    const VkSubpassBeginInfo* pSubpassBeginInfo);
+}
 
-/* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRendering<user_tag>(
-    VkCommandBuffer commandBuffer,
-    const VkRenderingInfo* pRenderingInfo);
+LCSMarker::LCSMarker(
+    const std::string& _label) :
+    LCSWorkload(0),
+    label(_label)
+{
 
-/* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderingKHR<user_tag>(
-    VkCommandBuffer commandBuffer,
-    const VkRenderingInfo* pRenderingInfo);
+};
+
+LCSRenderPass::LCSRenderPass(
+    uint64_t _tagID,
+    const RenderPass& renderPass,
+    uint32_t _width,
+    uint32_t _height,
+    bool _suspending) :
+    LCSWorkload(_tagID),
+    width(_width),
+    height(_height),
+    suspending(_suspending)
+{
+    // Copy these as the renderpass object may be transient.
+    subpassCount = renderPass.getSubpassCount();
+    attachments = renderPass.getAttachments();
+}
+
+}

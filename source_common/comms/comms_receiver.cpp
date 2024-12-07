@@ -42,8 +42,8 @@ namespace Comms
 {
 /** See header for documentation. */
 Receiver::Receiver(
-    CommsModule& parent
-) : parent(parent)
+    CommsModule& _parent
+) : parent(_parent)
 {
     int pipe_err = pipe(stopRequestPipe);
     if (pipe_err)
@@ -77,7 +77,7 @@ void Receiver::stop()
 
     // Poke the pipe to wake the worker thread if it is blocked on a read
     int data = 0xdead;
-    write(stopRequestPipe[1], &data, sizeof(int));
+    [[maybe_unused]] int _ = write(stopRequestPipe[1], &data, sizeof(int));
 
     // Join on the worker thread
     worker.join();
