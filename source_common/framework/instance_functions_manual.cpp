@@ -30,9 +30,51 @@
  * implementations on a per-layer basis if needed.
  */
 
-#include "framework/entry_utils.hpp"
+#include "framework/instance_functions_manual.hpp"
 
-VkLayerInstanceCreateInfo* get_chain_info(
+/**
+ * @brief Shared globals.
+ */
+extern std::mutex g_vulkanLock;
+
+/**
+ * @brief The layer configuration.
+ */
+#define LGL_VERSION VK_MAKE_VERSION(LGL_VER_MAJOR, LGL_VER_MINOR, LGL_VER_PATCH)
+
+static const std::array<VkLayerProperties, 1> layerProps = {
+    {{ LGL_LAYER_NAME, LGL_VERSION, 1, LGL_LAYER_DESC }},
+};
+
+/**
+ * @brief Dispatch table lookup entry.
+ */
+struct DispatchTableEntry
+{
+    /**
+     * @brief The function entrypoint name.
+     */
+    const char* name;
+
+    /**
+     * @brief The function pointer.
+     */
+    PFN_vkVoidFunction function;
+};
+
+/**
+ * @brief Utility macro to define a lookup for a core function.
+ */
+#define VK_TABLE_ENTRY(func) \
+    { STR(func), reinterpret_cast<PFN_vkVoidFunction>(func) }
+
+/**
+ * @brief Utility macro to define a lookup for a layer-dispatch-only function.
+ */
+#define VK_TABLE_ENTRYL(func) \
+    { STR(func), reinterpret_cast<PFN_vkVoidFunction>(layer_##func) }
+
+VkLayerInstanceCreateInfo* getChainInfo(
     const VkInstanceCreateInfo* pCreateInfo,
     VkLayerFunction func
 ) {
@@ -45,7 +87,7 @@ VkLayerInstanceCreateInfo* get_chain_info(
     return const_cast<VkLayerInstanceCreateInfo*>(info);
 }
 
-VkLayerDeviceCreateInfo* get_chain_info(
+VkLayerDeviceCreateInfo* getChainInfo(
     const VkDeviceCreateInfo* pCreateInfo,
     VkLayerFunction func
 ) {
@@ -66,7 +108,7 @@ VkLayerDeviceCreateInfo* get_chain_info(
  * \return The layer function pointer, or \c nullptr if the layer doesn't
  *         intercept the function.
  */
-PFN_vkVoidFunction get_fixed_instance_layer_function(
+PFN_vkVoidFunction getFixedInstanceLayerFunction(
     const char* name
 ) {
     static const DispatchTableEntry layerFunctions[] = {
@@ -96,7 +138,7 @@ PFN_vkVoidFunction get_fixed_instance_layer_function(
  * \return The layer function pointer, or \c nullptr if the layer doesn't
  *         intercept the function.
  */
-PFN_vkVoidFunction get_instance_layer_function(
+PFN_vkVoidFunction getInstanceLayerFunction(
     const char* name
 ) {
     for (auto &function : instanceIntercepts)
@@ -117,7 +159,7 @@ PFN_vkVoidFunction get_instance_layer_function(
  *
  * \return The layer function pointer, or \c nullptr if the layer doesn't intercept the function.
  */
-PFN_vkVoidFunction get_device_layer_function(
+PFN_vkVoidFunction getDeviceLayerFunction(
     const char* name
 ) {
     static const DispatchTableEntry layerFunctions[] = {
@@ -158,7 +200,7 @@ PFN_vkVoidFunction vkGetDeviceProcAddr_default(
     // Only expose functions that the driver exposes to avoid changing
     // queryable interface behavior seen by the application
     auto driver_function = layer->driver.vkGetDeviceProcAddr(device, pName);
-    auto layer_function = get_device_layer_function(pName);
+    auto layer_function = getDeviceLayerFunction(pName);
 
     // If driver exposes it and the layer has one, use the layer function
     if (driver_function && layer_function)
@@ -176,7 +218,7 @@ PFN_vkVoidFunction vkGetInstanceProcAddr_default(
     const char* pName
 ) {
     // Always expose these functions ...
-    PFN_vkVoidFunction layerFunction = get_fixed_instance_layer_function(pName);
+    PFN_vkVoidFunction layerFunction = getFixedInstanceLayerFunction(pName);
     if (layerFunction)
     {
         return layerFunction;
@@ -184,7 +226,7 @@ PFN_vkVoidFunction vkGetInstanceProcAddr_default(
 
     // Otherwise, only expose functions that the driver exposes to avoid
     // changing queryable interface behavior seen by the application
-    layerFunction = get_instance_layer_function(pName);
+    layerFunction = getInstanceLayerFunction(pName);
     if (instance) {
         std::unique_lock<std::mutex> lock { g_vulkanLock };
         auto* layer = Instance::retrieve(instance);
@@ -213,7 +255,7 @@ std::vector<std::string> getInstanceExtensionList(
     std::vector<std::string> foundExtensions;
 
     // Get layer chain info, and save next pointer so we can restore later
-    auto* chainInfo = get_chain_info(pCreateInfo, VK_LAYER_LINK_INFO);
+    auto* chainInfo = getChainInfo(pCreateInfo, VK_LAYER_LINK_INFO);
 
     // Fetch the functions needed to query extensions availability
     auto fpGetProcAddr = chainInfo->u.pLayerInfo->pfnNextGetInstanceProcAddr;

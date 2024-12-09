@@ -2,11 +2,14 @@
 #include <mutex>
 #include <thread>
 
+// Include from per-layer code
 #include "device.hpp"
-#include "entry_utils.hpp"
 #include "instance.hpp"
-#include "instance_functions.hpp"
-#include "utils.hpp"
+
+// Include from common code
+#include "framework/instance_functions_manual.hpp"
+#include "framework/instance_functions.hpp"
+#include "framework/utils.hpp"
 
 extern std::mutex g_vulkanLock;
 

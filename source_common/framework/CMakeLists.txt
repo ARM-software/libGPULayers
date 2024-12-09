@@ -26,8 +26,8 @@ set(LIB_BINARY lib_layer_framework)
 add_library(
     ${LIB_BINARY} STATIC
         device_functions.cpp
-        entry_utils.cpp
-        instance_functions.cpp)
+        instance_functions.cpp
+        instance_functions_manual.cpp)
 
 target_include_directories(
     ${LIB_BINARY} PRIVATE

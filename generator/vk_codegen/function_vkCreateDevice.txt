@@ -5,7 +5,7 @@
     // Release the lock to call into the driver
     lock.unlock();
 
-    auto* chainInfo = get_chain_info(pCreateInfo, VK_LAYER_LINK_INFO);
+    auto* chainInfo = getChainInfo(pCreateInfo, VK_LAYER_LINK_INFO);
     auto fpGetInstanceProcAddr = chainInfo->u.pLayerInfo->pfnNextGetInstanceProcAddr;
     auto fpGetDeviceProcAddr = chainInfo->u.pLayerInfo->pfnNextGetDeviceProcAddr;
     auto fpCreateDevice = reinterpret_cast<PFN_vkCreateDevice>(fpGetInstanceProcAddr(layer->instance, "vkCreateDevice"));

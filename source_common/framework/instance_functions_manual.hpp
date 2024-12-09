@@ -45,8 +45,6 @@
 #include "device_dispatch_table.hpp"
 #include "device_functions.hpp"
 
-extern std::mutex g_vulkanLock;
-
 #define VK_LAYER_EXPORT __attribute__((visibility("default")))
 
 #if defined(VK_USE_PLATFORM_ANDROID_KHR)
@@ -55,49 +53,11 @@ extern std::mutex g_vulkanLock;
     #define VK_LAYER_EXPORT_ANDROID
 #endif
 
-/**
- * @brief The layer configuration.
- */
-#define LGL_VERSION VK_MAKE_VERSION(LGL_VER_MAJOR, LGL_VER_MINOR, LGL_VER_PATCH)
-
-static const std::array<VkLayerProperties, 1> layerProps = {
-    {{ LGL_LAYER_NAME, LGL_VERSION, 1, LGL_LAYER_DESC }},
-};
-
-/**
- * @brief Dispatch table lookup entry.
- */
-struct DispatchTableEntry
-{
-    /**
-     * @brief The function entrypoint name.
-     */
-    const char* name;
-
-    /**
-     * @brief The function pointer.
-     */
-    PFN_vkVoidFunction function;
-};
-
-/**
- * @brief Utility macro to define a lookup for a core function.
- */
-#define VK_TABLE_ENTRY(func) \
-    { STR(func), reinterpret_cast<PFN_vkVoidFunction>(func) }
-
-/**
- * @brief Utility macro to define a lookup for a layer-dispatch-only function.
- */
-#define VK_TABLE_ENTRYL(func) \
-    { STR(func), reinterpret_cast<PFN_vkVoidFunction>(layer_##func) }
-
-
-VkLayerInstanceCreateInfo* get_chain_info(
+VkLayerInstanceCreateInfo* getChainInfo(
     const VkInstanceCreateInfo* pCreateInfo,
     VkLayerFunction func);
 
-VkLayerDeviceCreateInfo* get_chain_info(
+VkLayerDeviceCreateInfo* getChainInfo(
     const VkDeviceCreateInfo* pCreateInfo,
     VkLayerFunction func);
 
@@ -109,7 +69,7 @@ VkLayerDeviceCreateInfo* get_chain_info(
  * \return The layer function pointer, or \c nullptr if the layer doesn't
  *         intercept the function.
  */
-PFN_vkVoidFunction get_fixed_instance_layer_function(
+PFN_vkVoidFunction getFixedInstanceLayerFunction(
     const char* name);
 
 /**
@@ -120,7 +80,7 @@ PFN_vkVoidFunction get_fixed_instance_layer_function(
  * \return The layer function pointer, or \c nullptr if the layer doesn't
  *         intercept the function.
  */
-PFN_vkVoidFunction get_instance_layer_function(
+PFN_vkVoidFunction getInstanceLayerFunction(
     const char* name);
 
 /**
@@ -130,8 +90,12 @@ PFN_vkVoidFunction get_instance_layer_function(
  *
  * \return The layer function pointer, or \c nullptr if the layer doesn't intercept the function.
  */
-PFN_vkVoidFunction get_device_layer_function(
+PFN_vkVoidFunction getDeviceLayerFunction(
     const char* name);
+
+/* TODO. */
+std::vector<std::string> getInstanceExtensionList(
+    const VkInstanceCreateInfo* pCreateInfo);
 
 /** See Vulkan API for documentation. */
 PFN_vkVoidFunction vkGetDeviceProcAddr_default(
@@ -142,10 +106,6 @@ PFN_vkVoidFunction vkGetDeviceProcAddr_default(
 PFN_vkVoidFunction vkGetInstanceProcAddr_default(
     VkInstance instance,
     const char* pName);
-
-/* TODO. */
-std::vector<std::string> getInstanceExtensionList(
-    const VkInstanceCreateInfo* pCreateInfo);
 
 /** See Vulkan API for documentation. */
 VkResult vkEnumerateInstanceExtensionProperties_default(

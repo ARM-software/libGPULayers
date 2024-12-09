@@ -1,4 +1,4 @@
-    auto* chainInfo = get_chain_info(pCreateInfo, VK_LAYER_LINK_INFO);
+    auto* chainInfo = getChainInfo(pCreateInfo, VK_LAYER_LINK_INFO);
 
     auto fpGetInstanceProcAddr = chainInfo->u.pLayerInfo->pfnNextGetInstanceProcAddr;
     auto fpCreateInstance = reinterpret_cast<PFN_vkCreateInstance>(fpGetInstanceProcAddr(nullptr, "vkCreateInstance"));

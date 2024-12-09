@@ -27,11 +27,14 @@
 #include <mutex>
 #include <thread>
 
+// Include from per-layer code
 #include "device.hpp"
-#include "entry_utils.hpp"
 #include "instance.hpp"
-#include "instance_functions.hpp"
-#include "utils.hpp"
+
+// Include from common code
+#include "framework/instance_functions_manual.hpp"
+#include "framework/instance_functions.hpp"
+#include "framework/utils.hpp"
 
 extern std::mutex g_vulkanLock;
 
@@ -109,7 +112,7 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDevice_default(
     // Release the lock to call into the driver
     lock.unlock();
 
-    auto* chainInfo = get_chain_info(pCreateInfo, VK_LAYER_LINK_INFO);
+    auto* chainInfo = getChainInfo(pCreateInfo, VK_LAYER_LINK_INFO);
     auto fpGetInstanceProcAddr = chainInfo->u.pLayerInfo->pfnNextGetInstanceProcAddr;
     auto fpGetDeviceProcAddr = chainInfo->u.pLayerInfo->pfnNextGetDeviceProcAddr;
     auto fpCreateDevice = reinterpret_cast<PFN_vkCreateDevice>(fpGetInstanceProcAddr(layer->instance, "vkCreateDevice"));
@@ -179,7 +182,7 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateInstance_default(
 ) {
     LAYER_TRACE(__func__);
 
-    auto* chainInfo = get_chain_info(pCreateInfo, VK_LAYER_LINK_INFO);
+    auto* chainInfo = getChainInfo(pCreateInfo, VK_LAYER_LINK_INFO);
 
     auto fpGetInstanceProcAddr = chainInfo->u.pLayerInfo->pfnNextGetInstanceProcAddr;
     auto fpCreateInstance = reinterpret_cast<PFN_vkCreateInstance>(fpGetInstanceProcAddr(nullptr, "vkCreateInstance"));
