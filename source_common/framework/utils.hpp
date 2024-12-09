@@ -89,8 +89,8 @@ static inline void* getDispatchKey(
         #error "LGL_LOG_TAG not defined"
     #endif
 
-    #define LAYER_LOG(...) __android_log_print(ANDROID_LOG_DEBUG, LGL_LOG_TAG, __VA_ARGS__)
-    #define LAYER_ERR(...) __android_log_print(ANDROID_LOG_ERROR, LGL_LOG_TAG, __VA_ARGS__)
+    #define LAYER_LOG(...) __android_log_print(ANDROID_LOG_INFO, LGL_LOG_TAG, __VA_ARGS__)
+    #define LAYER_ERR(...) __android_log_print(ANDROID_LOG_INFO, LGL_LOG_TAG, __VA_ARGS__)
   #else
     #define LAYER_LOG(...) printf(__VA_ARGS__); printf("\n");
     #define LAYER_ERR(...) printf(__VA_ARGS__); printf("\n");

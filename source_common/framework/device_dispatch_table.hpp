@@ -28,6 +28,7 @@
 #include <vulkan/vulkan.h>
 
 #include "framework/device_functions.hpp"
+#include "framework/utils.hpp"
 #include "utils/misc.hpp"
 
 #if __has_include ("layer_device_functions.hpp")

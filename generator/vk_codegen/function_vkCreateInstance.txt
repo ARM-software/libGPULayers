@@ -14,7 +14,7 @@
         return res;
     }
 
-    // Hold the lock to access layer-wide global store
+    // Retake the lock to access layer-wide global store
     auto instance = std::make_unique<Instance>(*pInstance, fpGetInstanceProcAddr);
     {
         std::lock_guard<std::mutex> lock { g_vulkanLock };

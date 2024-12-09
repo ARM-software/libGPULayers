@@ -685,15 +685,6 @@ def main():
     base_dir = os.path.dirname(__file__)
     outdir = os.path.join(base_dir, '..', 'source_common', 'framework')
 
-    # Clean the output directory if needed
-    if os.path.exists(outdir):
-        if not os.path.isdir(outdir):
-            print(f'ERROR: Output location "{outdir}" is not a directory')
-            return 1
-
-        shutil.rmtree(outdir, ignore_errors=True)
-        os.makedirs(outdir)
-
     # Parse the XML headers
     tree = ET.parse('./khronos/vulkan/registry/vk.xml')
     root = tree.getroot()
@@ -731,11 +722,6 @@ def main():
 
     # Load hand written function bodies
     manual_commands = load_handwritten_commands()
-
-    # Generate static resources
-    base_dir = os.path.dirname(__file__)
-    source_dir = os.path.join(base_dir, 'vk_common')
-    copy_resource(source_dir, outdir)
 
     # Generate dynamic resources
     outfile = os.path.join(outdir, 'instance_dispatch_table.hpp')

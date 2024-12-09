@@ -16,17 +16,15 @@
 
     // Advance the link info for the next element on the chain
     chainInfo->u.pLayerInfo = chainInfo->u.pLayerInfo->pNext;
-
     auto res = fpCreateDevice(physicalDevice, pCreateInfo, pAllocator, pDevice);
     if (res != VK_SUCCESS)
     {
         return res;
     }
 
-    auto device = std::make_unique<Device>(layer, physicalDevice, *pDevice, fpGetDeviceProcAddr);
-
-    // Hold the lock to access layer-wide global store
+    // Retake the lock to access layer-wide global store
     lock.lock();
+    auto device = std::make_unique<Device>(layer, physicalDevice, *pDevice, fpGetDeviceProcAddr);
     Device::store(*pDevice, std::move(device));
 
     return VK_SUCCESS;

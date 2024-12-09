@@ -27,38 +27,13 @@
 #include <mutex>
 #include <thread>
 
-#include "utils.hpp"
-#include "instance.hpp"
 #include "device.hpp"
+#include "entry_utils.hpp"
+#include "instance.hpp"
 #include "instance_functions.hpp"
+#include "utils.hpp"
 
 extern std::mutex g_vulkanLock;
-
-static VkLayerInstanceCreateInfo* get_chain_info(
-    const VkInstanceCreateInfo* pCreateInfo,
-    VkLayerFunction func
-) {
-    auto* info = static_cast<const VkLayerInstanceCreateInfo*>(pCreateInfo->pNext);
-    while (info && !(info->sType == VK_STRUCTURE_TYPE_LOADER_INSTANCE_CREATE_INFO && info->function == func))
-    {
-        info = static_cast<const VkLayerInstanceCreateInfo*>(info->pNext);
-    }
-
-    return const_cast<VkLayerInstanceCreateInfo*>(info);
-}
-
-static VkLayerDeviceCreateInfo* get_chain_info(
-    const VkDeviceCreateInfo* pCreateInfo,
-    VkLayerFunction func
-) {
-    auto* info = static_cast<const VkLayerDeviceCreateInfo*>(pCreateInfo->pNext);
-    while (info && !(info->sType == VK_STRUCTURE_TYPE_LOADER_DEVICE_CREATE_INFO && info->function == func))
-    {
-        info = static_cast<const VkLayerDeviceCreateInfo*>(info->pNext);
-    }
-
-    return const_cast<VkLayerDeviceCreateInfo*>(info);
-}
 
 #if defined(VK_USE_PLATFORM_ANDROID_KHR)
 
@@ -145,17 +120,15 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDevice_default(
 
     // Advance the link info for the next element on the chain
     chainInfo->u.pLayerInfo = chainInfo->u.pLayerInfo->pNext;
-
     auto res = fpCreateDevice(physicalDevice, pCreateInfo, pAllocator, pDevice);
     if (res != VK_SUCCESS)
     {
         return res;
     }
 
-    auto device = std::make_unique<Device>(layer, physicalDevice, *pDevice, fpGetDeviceProcAddr);
-
-    // Hold the lock to access layer-wide global store
+    // Retake the lock to access layer-wide global store
     lock.lock();
+    auto device = std::make_unique<Device>(layer, physicalDevice, *pDevice, fpGetDeviceProcAddr);
     Device::store(*pDevice, std::move(device));
 
     return VK_SUCCESS;
@@ -222,7 +195,7 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateInstance_default(
         return res;
     }
 
-    // Hold the lock to access layer-wide global store
+    // Retake the lock to access layer-wide global store
     auto instance = std::make_unique<Instance>(*pInstance, fpGetInstanceProcAddr);
     {
         std::lock_guard<std::mutex> lock { g_vulkanLock };
