@@ -87,6 +87,10 @@ jobs:
           cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
           make -j4
 
+      - name: Check unexpected diffs
+        run: |
+          git diff --exit-code
+
   build-ubuntu-x64-clang-new-project:
     name: Ubuntu x64 generate new layer
     runs-on: ubuntu-22.04

@@ -26,12 +26,15 @@ set(LIB_BINARY lib_layer_framework)
 add_library(
     ${LIB_BINARY} STATIC
         device_functions.cpp
-        instance_functions.cpp)
+        instance_functions.cpp
+        instance_functions_manual.cpp)
 
 target_include_directories(
     ${LIB_BINARY} PRIVATE
-        # Note, this includes from the layer-specific tree
+        # Include from the layer-specific tree
         ${PROJECT_SOURCE_DIR}/source
+        # Needed for CMake generated version.hpp
+        ${PROJECT_BINARY_DIR}/source
         ../)
 
 target_include_directories(

@@ -29,29 +29,13 @@
  * implemented as library code which can be swapped for alternative
  * implementations on a per-layer basis if needed.
  */
-#include <array>
-#include <cstring>
-#include <mutex>
-#include <thread>
 
-#include "utils.hpp"
-#include "version.hpp"
+#include "framework/instance_functions_manual.hpp"
 
-#include "instance.hpp"
-#include "instance_functions.hpp"
-#include "device.hpp"
-#include "device_dispatch_table.hpp"
-#include "device_functions.hpp"
-
+/**
+ * @brief Shared globals.
+ */
 extern std::mutex g_vulkanLock;
-
-#define VK_LAYER_EXPORT __attribute__((visibility("default")))
-
-#if defined(VK_USE_PLATFORM_ANDROID_KHR)
-    #define VK_LAYER_EXPORT_ANDROID VK_LAYER_EXPORT
-#else
-    #define VK_LAYER_EXPORT_ANDROID
-#endif
 
 /**
  * @brief The layer configuration.
@@ -90,15 +74,48 @@ struct DispatchTableEntry
 #define VK_TABLE_ENTRYL(func) \
     { STR(func), reinterpret_cast<PFN_vkVoidFunction>(layer_##func) }
 
-/**
- * @brief Fetch the layer function for a given instance entrypoint name.
- *
- * @param name   The layer entry point name.
- *
- * \return The layer function pointer, or \c nullptr if the layer doesn't
- *         intercept the function.
- */
-static PFN_vkVoidFunction get_fixed_instance_layer_function(
+/* See header for documentation. */
+VkLayerInstanceCreateInfo* getChainInfo(
+    const VkInstanceCreateInfo* pCreateInfo
+) {
+    auto* info = static_cast<const VkLayerInstanceCreateInfo*>(pCreateInfo->pNext);
+    while (info)
+    {
+        bool isType = info->sType == VK_STRUCTURE_TYPE_LOADER_INSTANCE_CREATE_INFO;
+        bool isFunction = info->function == VK_LAYER_LINK_INFO;
+        if (isType && isFunction)
+        {
+            break;
+        }
+
+        info = static_cast<const VkLayerInstanceCreateInfo*>(info->pNext);
+    }
+
+    return const_cast<VkLayerInstanceCreateInfo*>(info);
+}
+
+/* See header for documentation. */
+VkLayerDeviceCreateInfo* getChainInfo(
+    const VkDeviceCreateInfo* pCreateInfo
+) {
+    auto* info = static_cast<const VkLayerDeviceCreateInfo*>(pCreateInfo->pNext);
+    while (info)
+    {
+        bool isType = info->sType == VK_STRUCTURE_TYPE_LOADER_DEVICE_CREATE_INFO;
+        bool isFunction = info->function == VK_LAYER_LINK_INFO;
+        if (isType && isFunction)
+        {
+            break;
+        }
+
+        info = static_cast<const VkLayerDeviceCreateInfo*>(info->pNext);
+    }
+
+    return const_cast<VkLayerDeviceCreateInfo*>(info);
+}
+
+/* See header for documentation. */
+PFN_vkVoidFunction getFixedInstanceLayerFunction(
     const char* name
 ) {
     static const DispatchTableEntry layerFunctions[] = {
@@ -120,15 +137,8 @@ static PFN_vkVoidFunction get_fixed_instance_layer_function(
     return nullptr;
 }
 
-/**
- * @brief Fetch the layer function for a given instance entrypoint name.
- *
- * @param name   The layer entry point name.
- *
- * \return The layer function pointer, or \c nullptr if the layer doesn't
- *         intercept the function.
- */
-static PFN_vkVoidFunction get_instance_layer_function(
+/* See header for documentation. */
+PFN_vkVoidFunction getInstanceLayerFunction(
     const char* name
 ) {
     for (auto &function : instanceIntercepts)
@@ -142,14 +152,8 @@ static PFN_vkVoidFunction get_instance_layer_function(
     return nullptr;
 }
 
-/**
- * @brief Fetch the layer function for a given device entrypoint name.
- *
- * @param name   The layer entry point name.
- *
- * \return The layer function pointer, or \c nullptr if the layer doesn't intercept the function.
- */
-static PFN_vkVoidFunction get_device_layer_function(
+/* See header for documentation. */
+PFN_vkVoidFunction getDeviceLayerFunction(
     const char* name
 ) {
     static const DispatchTableEntry layerFunctions[] = {
@@ -177,8 +181,73 @@ static PFN_vkVoidFunction get_device_layer_function(
     return nullptr;
 }
 
+/* See header for documentation. */
+std::vector<std::string> getInstanceExtensionList(
+    const VkInstanceCreateInfo* pCreateInfo
+) {
+    std::vector<std::string> foundExtensions;
+
+    // Fetch the functions needed to query extensions availability
+    auto* chainInfo = getChainInfo(pCreateInfo);
+    auto fpGetProcAddr = chainInfo->u.pLayerInfo->pfnNextGetInstanceProcAddr;
+    auto fpGetExtensionsRaw = fpGetProcAddr(nullptr, "vkEnumerateInstanceExtensionProperties");
+    auto fpGetExtensions = reinterpret_cast<PFN_vkEnumerateInstanceExtensionProperties>(fpGetExtensionsRaw);
+    if (!fpGetExtensions)
+    {
+        return foundExtensions;
+    }
+
+    // Query number of extensions
+    uint32_t count;
+    fpGetExtensions(nullptr, &count, nullptr);
+
+    // Reserve memory for, and then query, the extensions
+    std::vector<VkExtensionProperties> extensions;
+    extensions.resize(count);
+    fpGetExtensions(nullptr, &count, extensions.data());
+
+    // Build the function return list
+    for (uint32_t i = 0; i < count; i++)
+    {
+        foundExtensions.emplace_back(extensions[i].extensionName);
+    }
+
+    return foundExtensions;
+}
+
+/* See header for documentation. */
+bool isInExtensionList(
+    const std::string& target,
+    uint32_t extensionCount,
+    const char* const* extensionList
+) {
+    for(uint32_t i = 0; i < extensionCount; i++)
+    {
+        if (target == extensionList[i])
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/* See header for documentation. */
+std::vector<const char*> cloneExtensionList(
+    uint32_t extensionCount,
+    const char* const* extensionList
+) {
+    std::vector<const char*> data;
+    for(uint32_t i = 0; i < extensionCount; i++)
+    {
+        data.emplace_back(extensionList[i]);
+    }
+
+    return data;
+}
+
 /** See Vulkan API for documentation. */
-static PFN_vkVoidFunction vkGetDeviceProcAddr_default(
+PFN_vkVoidFunction vkGetDeviceProcAddr_default(
     VkDevice device,
     const char* pName
 ) {
@@ -190,7 +259,7 @@ static PFN_vkVoidFunction vkGetDeviceProcAddr_default(
     // Only expose functions that the driver exposes to avoid changing
     // queryable interface behavior seen by the application
     auto driver_function = layer->driver.vkGetDeviceProcAddr(device, pName);
-    auto layer_function = get_device_layer_function(pName);
+    auto layer_function = getDeviceLayerFunction(pName);
 
     // If driver exposes it and the layer has one, use the layer function
     if (driver_function && layer_function)
@@ -203,12 +272,12 @@ static PFN_vkVoidFunction vkGetDeviceProcAddr_default(
 }
 
 /** See Vulkan API for documentation. */
-static PFN_vkVoidFunction vkGetInstanceProcAddr_default(
+PFN_vkVoidFunction vkGetInstanceProcAddr_default(
     VkInstance instance,
     const char* pName
 ) {
     // Always expose these functions ...
-    PFN_vkVoidFunction layerFunction = get_fixed_instance_layer_function(pName);
+    PFN_vkVoidFunction layerFunction = getFixedInstanceLayerFunction(pName);
     if (layerFunction)
     {
         return layerFunction;
@@ -216,7 +285,7 @@ static PFN_vkVoidFunction vkGetInstanceProcAddr_default(
 
     // Otherwise, only expose functions that the driver exposes to avoid
     // changing queryable interface behavior seen by the application
-    layerFunction = get_instance_layer_function(pName);
+    layerFunction = getInstanceLayerFunction(pName);
     if (instance) {
         std::unique_lock<std::mutex> lock { g_vulkanLock };
         auto* layer = Instance::retrieve(instance);
@@ -239,7 +308,7 @@ static PFN_vkVoidFunction vkGetInstanceProcAddr_default(
 }
 
 /** See Vulkan API for documentation. */
-static VkResult vkEnumerateInstanceExtensionProperties_default(
+VkResult vkEnumerateInstanceExtensionProperties_default(
     const char* pLayerName,
     uint32_t* pPropertyCount,
     VkExtensionProperties* pProperties
@@ -258,7 +327,7 @@ static VkResult vkEnumerateInstanceExtensionProperties_default(
 }
 
 /** See Vulkan API for documentation. */
-static VkResult vkEnumerateDeviceExtensionProperties_default(
+VkResult vkEnumerateDeviceExtensionProperties_default(
     VkPhysicalDevice gpu,
     const char* pLayerName,
     uint32_t* pPropertyCount,
@@ -293,7 +362,7 @@ static VkResult vkEnumerateDeviceExtensionProperties_default(
 }
 
 /** See Vulkan API for documentation. */
-static VkResult vkEnumerateInstanceLayerProperties_default(
+VkResult vkEnumerateInstanceLayerProperties_default(
     uint32_t* pPropertyCount,
     VkLayerProperties* pProperties
 ) {
@@ -317,7 +386,7 @@ static VkResult vkEnumerateInstanceLayerProperties_default(
 }
 
 /** See Vulkan API for documentation. */
-static VkResult vkEnumerateDeviceLayerProperties_default(
+VkResult vkEnumerateDeviceLayerProperties_default(
     VkPhysicalDevice gpu,
     uint32_t* pPropertyCount,
     VkLayerProperties* pProperties

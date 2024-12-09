@@ -1,4 +1,5 @@
-    auto* chainInfo = get_chain_info(pCreateInfo, VK_LAYER_LINK_INFO);
+    auto* chainInfo = getChainInfo(pCreateInfo);
+    auto supportedExtensions = getInstanceExtensionList(pCreateInfo);
 
     auto fpGetInstanceProcAddr = chainInfo->u.pLayerInfo->pfnNextGetInstanceProcAddr;
     auto fpCreateInstance = reinterpret_cast<PFN_vkCreateInstance>(fpGetInstanceProcAddr(nullptr, "vkCreateInstance"));
@@ -7,14 +8,45 @@
         return VK_ERROR_INITIALIZATION_FAILED;
     }
 
+    // Create a copy we can write
+    VkInstanceCreateInfo newCreateInfo = *pCreateInfo;
+
+    // Query extension state
+    std::string targetExt("VK_EXT_debug_utils");
+    bool targetSupported = isIn(targetExt, supportedExtensions);
+    bool targetEnabled = isInExtensionList(
+        targetExt,
+        pCreateInfo->enabledExtensionCount,
+        pCreateInfo->ppEnabledExtensionNames);
+
+    if (!targetSupported)
+    {
+        LAYER_LOG("WARNING: Cannot enable additional extension: %s", targetExt.c_str());
+    }
+
+    // Enable the extension if we need to
+    std::vector<const char*> newExtList;
+    if (targetSupported && !targetEnabled)
+    {
+        LAYER_LOG("Enabling additional extension: %s", targetExt.c_str());
+        newExtList = cloneExtensionList(
+            pCreateInfo->enabledExtensionCount,
+            pCreateInfo->ppEnabledExtensionNames);
+
+        newExtList.push_back(targetExt.c_str());
+
+        newCreateInfo.enabledExtensionCount = newExtList.size();
+        newCreateInfo.ppEnabledExtensionNames = newExtList.data();
+    }
+
     chainInfo->u.pLayerInfo = chainInfo->u.pLayerInfo->pNext;
-    auto res = fpCreateInstance(pCreateInfo, pAllocator, pInstance);
+    auto res = fpCreateInstance(&newCreateInfo, pAllocator, pInstance);
     if (res != VK_SUCCESS)
     {
         return res;
     }
 
-    // Hold the lock to access layer-wide global store
+    // Retake the lock to access layer-wide global store
     auto instance = std::make_unique<Instance>(*pInstance, fpGetInstanceProcAddr);
     {
         std::lock_guard<std::mutex> lock { g_vulkanLock };

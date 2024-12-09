@@ -27,38 +27,16 @@
 #include <mutex>
 #include <thread>
 
-#include "utils.hpp"
-#include "instance.hpp"
+// Include from per-layer code
 #include "device.hpp"
-#include "instance_functions.hpp"
+#include "instance.hpp"
+
+// Include from common code
+#include "framework/instance_functions_manual.hpp"
+#include "framework/instance_functions.hpp"
+#include "framework/utils.hpp"
 
 extern std::mutex g_vulkanLock;
-
-static VkLayerInstanceCreateInfo* get_chain_info(
-    const VkInstanceCreateInfo* pCreateInfo,
-    VkLayerFunction func
-) {
-    auto* info = static_cast<const VkLayerInstanceCreateInfo*>(pCreateInfo->pNext);
-    while (info && !(info->sType == VK_STRUCTURE_TYPE_LOADER_INSTANCE_CREATE_INFO && info->function == func))
-    {
-        info = static_cast<const VkLayerInstanceCreateInfo*>(info->pNext);
-    }
-
-    return const_cast<VkLayerInstanceCreateInfo*>(info);
-}
-
-static VkLayerDeviceCreateInfo* get_chain_info(
-    const VkDeviceCreateInfo* pCreateInfo,
-    VkLayerFunction func
-) {
-    auto* info = static_cast<const VkLayerDeviceCreateInfo*>(pCreateInfo->pNext);
-    while (info && !(info->sType == VK_STRUCTURE_TYPE_LOADER_DEVICE_CREATE_INFO && info->function == func))
-    {
-        info = static_cast<const VkLayerDeviceCreateInfo*>(info->pNext);
-    }
-
-    return const_cast<VkLayerDeviceCreateInfo*>(info);
-}
 
 #if defined(VK_USE_PLATFORM_ANDROID_KHR)
 
@@ -134,7 +112,7 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDevice_default(
     // Release the lock to call into the driver
     lock.unlock();
 
-    auto* chainInfo = get_chain_info(pCreateInfo, VK_LAYER_LINK_INFO);
+    auto* chainInfo = getChainInfo(pCreateInfo);
     auto fpGetInstanceProcAddr = chainInfo->u.pLayerInfo->pfnNextGetInstanceProcAddr;
     auto fpGetDeviceProcAddr = chainInfo->u.pLayerInfo->pfnNextGetDeviceProcAddr;
     auto fpCreateDevice = reinterpret_cast<PFN_vkCreateDevice>(fpGetInstanceProcAddr(layer->instance, "vkCreateDevice"));
@@ -145,17 +123,15 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDevice_default(
 
     // Advance the link info for the next element on the chain
     chainInfo->u.pLayerInfo = chainInfo->u.pLayerInfo->pNext;
-
     auto res = fpCreateDevice(physicalDevice, pCreateInfo, pAllocator, pDevice);
     if (res != VK_SUCCESS)
     {
         return res;
     }
 
-    auto device = std::make_unique<Device>(layer, physicalDevice, *pDevice, fpGetDeviceProcAddr);
-
-    // Hold the lock to access layer-wide global store
+    // Retake the lock to access layer-wide global store
     lock.lock();
+    auto device = std::make_unique<Device>(layer, physicalDevice, *pDevice, fpGetDeviceProcAddr);
     Device::store(*pDevice, std::move(device));
 
     return VK_SUCCESS;
@@ -206,7 +182,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateInstance_default(
 ) {
     LAYER_TRACE(__func__);
 
-    auto* chainInfo = get_chain_info(pCreateInfo, VK_LAYER_LINK_INFO);
+    auto* chainInfo = getChainInfo(pCreateInfo);
+    auto supportedExtensions = getInstanceExtensionList(pCreateInfo);
 
     auto fpGetInstanceProcAddr = chainInfo->u.pLayerInfo->pfnNextGetInstanceProcAddr;
     auto fpCreateInstance = reinterpret_cast<PFN_vkCreateInstance>(fpGetInstanceProcAddr(nullptr, "vkCreateInstance"));
@@ -215,14 +192,45 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateInstance_default(
         return VK_ERROR_INITIALIZATION_FAILED;
     }
 
+    // Create a copy we can write
+    VkInstanceCreateInfo newCreateInfo = *pCreateInfo;
+
+    // Query extension state
+    std::string targetExt("VK_EXT_debug_utils");
+    bool targetSupported = isIn(targetExt, supportedExtensions);
+    bool targetEnabled = isInExtensionList(
+        targetExt,
+        pCreateInfo->enabledExtensionCount,
+        pCreateInfo->ppEnabledExtensionNames);
+
+    if (!targetSupported)
+    {
+        LAYER_LOG("WARNING: Cannot enable additional extension: %s", targetExt.c_str());
+    }
+
+    // Enable the extension if we need to
+    std::vector<const char*> newExtList;
+    if (targetSupported && !targetEnabled)
+    {
+        LAYER_LOG("Enabling additional extension: %s", targetExt.c_str());
+        newExtList = cloneExtensionList(
+            pCreateInfo->enabledExtensionCount,
+            pCreateInfo->ppEnabledExtensionNames);
+
+        newExtList.push_back(targetExt.c_str());
+
+        newCreateInfo.enabledExtensionCount = newExtList.size();
+        newCreateInfo.ppEnabledExtensionNames = newExtList.data();
+    }
+
     chainInfo->u.pLayerInfo = chainInfo->u.pLayerInfo->pNext;
-    auto res = fpCreateInstance(pCreateInfo, pAllocator, pInstance);
+    auto res = fpCreateInstance(&newCreateInfo, pAllocator, pInstance);
     if (res != VK_SUCCESS)
     {
         return res;
     }
 
-    // Hold the lock to access layer-wide global store
+    // Retake the lock to access layer-wide global store
     auto instance = std::make_unique<Instance>(*pInstance, fpGetInstanceProcAddr);
     {
         std::lock_guard<std::mutex> lock { g_vulkanLock };

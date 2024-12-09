@@ -27,9 +27,12 @@
 #include <mutex>
 #include <thread>
 
+// Include from per-layer code
 #include "utils.hpp"
 #include "device.hpp"
-#include "device_functions.hpp"
+
+// Include from common code
+#include "framework/device_functions.hpp"
 
 extern std::mutex g_vulkanLock;
 

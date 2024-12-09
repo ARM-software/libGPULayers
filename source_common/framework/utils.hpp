@@ -37,12 +37,26 @@
 #include <inttypes.h>
 #include <sys/time.h>
 
-#ifdef __ANDROID__
+#if defined(VK_USE_PLATFORM_ANDROID_KHR)
   #include <android/log.h>
 #endif
 
 /**
- * Tag type used for function dispatch;
+ * Annotation for exported symbol from shared object.
+ */
+#define VK_LAYER_EXPORT __attribute__((visibility("default")))
+
+/**
+ * Annotation for exported symbol from shared object on Android only.
+ */
+#if defined(VK_USE_PLATFORM_ANDROID_KHR)
+    #define VK_LAYER_EXPORT_ANDROID VK_LAYER_EXPORT
+#else
+    #define VK_LAYER_EXPORT_ANDROID
+#endif
+
+/**
+ * Tag type used for template function dispatch;
  */
 struct user_tag {};
 
@@ -51,7 +65,7 @@ struct user_tag {};
  *
  * @param ptr   The dispatchable handle from the API.
  *
- * \return The dispatch key.
+ * @return The dispatch key.
  */
 static inline void* getDispatchKey(
     void* ptr
@@ -89,8 +103,8 @@ static inline void* getDispatchKey(
         #error "LGL_LOG_TAG not defined"
     #endif
 
-    #define LAYER_LOG(...) __android_log_print(ANDROID_LOG_DEBUG, LGL_LOG_TAG, __VA_ARGS__)
-    #define LAYER_ERR(...) __android_log_print(ANDROID_LOG_ERROR, LGL_LOG_TAG, __VA_ARGS__)
+    #define LAYER_LOG(...) __android_log_print(ANDROID_LOG_INFO, LGL_LOG_TAG, __VA_ARGS__)
+    #define LAYER_ERR(...) __android_log_print(ANDROID_LOG_INFO, LGL_LOG_TAG, __VA_ARGS__)
   #else
     #define LAYER_LOG(...) printf(__VA_ARGS__); printf("\n");
     #define LAYER_ERR(...) printf(__VA_ARGS__); printf("\n");
