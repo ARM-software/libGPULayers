@@ -354,7 +354,7 @@ def generate_layer_instance_dispatch_table(file, mapping, commands):
             if plat_define:
                 itable_members.append(f'#if defined({plat_define})')
 
-            itable_members.append(f'   ENTRY({tname}),')
+            itable_members.append(f'    ENTRY({tname}),')
             if plat_define:
                 itable_members.append('#endif')
 

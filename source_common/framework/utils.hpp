@@ -76,12 +76,16 @@ static inline void* getDispatchKey(
 /**
  * @brief Enable to enable API entrypoint tracing to the log/logcat.
  */
-#define CONFIG_TRACE 0
+#if !defined(CONFIG_TRACE)
+  #define CONFIG_TRACE 0
+#endif
 
 /**
  * @brief Enable to enable layer logging to the log/logcat.
  */
-#define CONFIG_LOG 1
+#if !defined(CONFIG_LOG)
+  #define CONFIG_LOG 1
+#endif
 
 #if CONFIG_TRACE
   #ifdef __ANDROID__
