@@ -36,66 +36,114 @@
 #include <thread>
 #include <vector>
 
-#include "utils.hpp"
+#include "device.hpp"
+#include "instance.hpp"
 #include "version.hpp"
 
-#include "instance.hpp"
-#include "instance_functions.hpp"
-#include "device.hpp"
-#include "device_dispatch_table.hpp"
-#include "device_functions.hpp"
 
-#define VK_LAYER_EXPORT __attribute__((visibility("default")))
+#include "framework/instance_functions.hpp"
 
-#if defined(VK_USE_PLATFORM_ANDROID_KHR)
-    #define VK_LAYER_EXPORT_ANDROID VK_LAYER_EXPORT
-#else
-    #define VK_LAYER_EXPORT_ANDROID
-#endif
-
-VkLayerInstanceCreateInfo* getChainInfo(
-    const VkInstanceCreateInfo* pCreateInfo,
-    VkLayerFunction func);
-
-VkLayerDeviceCreateInfo* getChainInfo(
-    const VkDeviceCreateInfo* pCreateInfo,
-    VkLayerFunction func);
+#include "framework/device_dispatch_table.hpp"
+#include "framework/device_functions.hpp"
+#include "framework/utils.hpp"
 
 /**
- * @brief Fetch the layer function for a given instance entrypoint name.
+ * @brief Extract the layer chain info from the instance creation info.
  *
- * @param name   The layer entry point name.
+ * @param pCreateInfo   The instance creation data from the loader.
  *
- * \return The layer function pointer, or \c nullptr if the layer doesn't
+ * @return The instance creation info, or @c nullptr if not found.
+ */
+VkLayerInstanceCreateInfo* getChainInfo(
+    const VkInstanceCreateInfo* pCreateInfo);
+
+/**
+ * @brief Extract the layer chain info from the device creation info.
+ *
+ * @param pCreateInfo   The device creation data from the loader.
+ *
+ * @return The instance creation info, or @c nullptr if not found.
+ */
+VkLayerDeviceCreateInfo* getChainInfo(
+    const VkDeviceCreateInfo* pCreateInfo);
+
+/**
+ * @brief Fetch the function for a given static instance entrypoint name.
+ *
+ * This function is used for finding the fixed entrypoints that must exist and
+ * that can return a valid function pointer without needing a created instance.
+ *
+ * @param name   The Vulkan function name.
+ *
+ * @return The layer function pointer, or \c nullptr if the layer doesn't
  *         intercept the function.
  */
 PFN_vkVoidFunction getFixedInstanceLayerFunction(
     const char* name);
 
 /**
- * @brief Fetch the layer function for a given instance entrypoint name.
+ * @brief Fetch the function for a given dynamic instance entrypoint name.
  *
- * @param name   The layer entry point name.
+ * This function is used for finding the dynamic entrypoints that need a
+ * created instance to return a valid function pointer.
  *
- * \return The layer function pointer, or \c nullptr if the layer doesn't
+ * @param name   The Vulkan function name.
+ *
+ * @return The layer function pointer, or \c nullptr if the layer doesn't
  *         intercept the function.
  */
 PFN_vkVoidFunction getInstanceLayerFunction(
     const char* name);
 
 /**
- * @brief Fetch the layer function for a given device entrypoint name.
+ * @brief Fetch the function for a given dynamic instance entrypoint name.
  *
- * @param name   The layer entry point name.
+ * This function is used for finding the dynamic entrypoints that need a
+ * created device to return a valid function pointer.
  *
- * \return The layer function pointer, or \c nullptr if the layer doesn't intercept the function.
+ * @param name   The Vulkan function name.
+ *
+ * @return The layer function pointer, or \c nullptr if the layer doesn't
+ *         intercept the function.
  */
 PFN_vkVoidFunction getDeviceLayerFunction(
     const char* name);
 
-/* TODO. */
+/**
+ * @brief Fetch the list of supported extensions from the instance.
+ *
+ * @param pCreateInfo   The instance creation data from the loader.
+ *
+ * @return The list of supported extensions; empty list on failure.
+ */
 std::vector<std::string> getInstanceExtensionList(
     const VkInstanceCreateInfo* pCreateInfo);
+
+/**
+ * @brief Is an extension in the passed extension list.
+ *
+ * @param target           The target extension to look for.
+ * @param extensionCount   The number of extensions in the list.
+ * @param extensionList    The list of extensions.
+ *
+ * @return @c true if @c target is found in @c extensionList.
+ */
+bool isInExtensionList(
+    const std::string& target,
+    uint32_t extensionCount,
+    const char* const* extensionList);
+
+/**
+ * @brief Clone the target extension list.
+ *
+ * @param extensionCount   The number of extensions in the list.
+ * @param extensionList    The list of extensions.
+ *
+ * @return the cloned list.
+ */
+std::vector<const char*> cloneExtensionList(
+    uint32_t extensionCount,
+    const char* const* extensionList);
 
 /** See Vulkan API for documentation. */
 PFN_vkVoidFunction vkGetDeviceProcAddr_default(

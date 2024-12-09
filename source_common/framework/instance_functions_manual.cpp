@@ -74,40 +74,47 @@ struct DispatchTableEntry
 #define VK_TABLE_ENTRYL(func) \
     { STR(func), reinterpret_cast<PFN_vkVoidFunction>(layer_##func) }
 
+/* See header for documentation. */
 VkLayerInstanceCreateInfo* getChainInfo(
-    const VkInstanceCreateInfo* pCreateInfo,
-    VkLayerFunction func
+    const VkInstanceCreateInfo* pCreateInfo
 ) {
     auto* info = static_cast<const VkLayerInstanceCreateInfo*>(pCreateInfo->pNext);
-    while (info && !(info->sType == VK_STRUCTURE_TYPE_LOADER_INSTANCE_CREATE_INFO && info->function == func))
+    while (info)
     {
+        bool isType = info->sType == VK_STRUCTURE_TYPE_LOADER_INSTANCE_CREATE_INFO;
+        bool isFunction = info->function == VK_LAYER_LINK_INFO;
+        if (isType && isFunction)
+        {
+            break;
+        }
+
         info = static_cast<const VkLayerInstanceCreateInfo*>(info->pNext);
     }
 
     return const_cast<VkLayerInstanceCreateInfo*>(info);
 }
 
+/* See header for documentation. */
 VkLayerDeviceCreateInfo* getChainInfo(
-    const VkDeviceCreateInfo* pCreateInfo,
-    VkLayerFunction func
+    const VkDeviceCreateInfo* pCreateInfo
 ) {
     auto* info = static_cast<const VkLayerDeviceCreateInfo*>(pCreateInfo->pNext);
-    while (info && !(info->sType == VK_STRUCTURE_TYPE_LOADER_DEVICE_CREATE_INFO && info->function == func))
+    while (info)
     {
+        bool isType = info->sType == VK_STRUCTURE_TYPE_LOADER_DEVICE_CREATE_INFO;
+        bool isFunction = info->function == VK_LAYER_LINK_INFO;
+        if (isType && isFunction)
+        {
+            break;
+        }
+
         info = static_cast<const VkLayerDeviceCreateInfo*>(info->pNext);
     }
 
     return const_cast<VkLayerDeviceCreateInfo*>(info);
 }
 
-/**
- * @brief Fetch the layer function for a given instance entrypoint name.
- *
- * @param name   The layer entry point name.
- *
- * \return The layer function pointer, or \c nullptr if the layer doesn't
- *         intercept the function.
- */
+/* See header for documentation. */
 PFN_vkVoidFunction getFixedInstanceLayerFunction(
     const char* name
 ) {
@@ -130,14 +137,7 @@ PFN_vkVoidFunction getFixedInstanceLayerFunction(
     return nullptr;
 }
 
-/**
- * @brief Fetch the layer function for a given instance entrypoint name.
- *
- * @param name   The layer entry point name.
- *
- * \return The layer function pointer, or \c nullptr if the layer doesn't
- *         intercept the function.
- */
+/* See header for documentation. */
 PFN_vkVoidFunction getInstanceLayerFunction(
     const char* name
 ) {
@@ -152,13 +152,7 @@ PFN_vkVoidFunction getInstanceLayerFunction(
     return nullptr;
 }
 
-/**
- * @brief Fetch the layer function for a given device entrypoint name.
- *
- * @param name   The layer entry point name.
- *
- * \return The layer function pointer, or \c nullptr if the layer doesn't intercept the function.
- */
+/* See header for documentation. */
 PFN_vkVoidFunction getDeviceLayerFunction(
     const char* name
 ) {
@@ -185,6 +179,71 @@ PFN_vkVoidFunction getDeviceLayerFunction(
     }
 
     return nullptr;
+}
+
+/* See header for documentation. */
+std::vector<std::string> getInstanceExtensionList(
+    const VkInstanceCreateInfo* pCreateInfo
+) {
+    std::vector<std::string> foundExtensions;
+
+    // Fetch the functions needed to query extensions availability
+    auto* chainInfo = getChainInfo(pCreateInfo);
+    auto fpGetProcAddr = chainInfo->u.pLayerInfo->pfnNextGetInstanceProcAddr;
+    auto fpGetExtensionsRaw = fpGetProcAddr(nullptr, "vkEnumerateInstanceExtensionProperties");
+    auto fpGetExtensions = reinterpret_cast<PFN_vkEnumerateInstanceExtensionProperties>(fpGetExtensionsRaw);
+    if (!fpGetExtensions)
+    {
+        return foundExtensions;
+    }
+
+    // Query number of extensions
+    uint32_t count;
+    fpGetExtensions(nullptr, &count, nullptr);
+
+    // Reserve memory for, and then query, the extensions
+    std::vector<VkExtensionProperties> extensions;
+    extensions.resize(count);
+    fpGetExtensions(nullptr, &count, extensions.data());
+
+    // Build the function return list
+    for (uint32_t i = 0; i < count; i++)
+    {
+        foundExtensions.emplace_back(extensions[i].extensionName);
+    }
+
+    return foundExtensions;
+}
+
+/* See header for documentation. */
+bool isInExtensionList(
+    const std::string& target,
+    uint32_t extensionCount,
+    const char* const* extensionList
+) {
+    for(uint32_t i = 0; i < extensionCount; i++)
+    {
+        if (target == extensionList[i])
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/* See header for documentation. */
+std::vector<const char*> cloneExtensionList(
+    uint32_t extensionCount,
+    const char* const* extensionList
+) {
+    std::vector<const char*> data;
+    for(uint32_t i = 0; i < extensionCount; i++)
+    {
+        data.emplace_back(extensionList[i]);
+    }
+
+    return data;
 }
 
 /** See Vulkan API for documentation. */
@@ -246,42 +305,6 @@ PFN_vkVoidFunction vkGetInstanceProcAddr_default(
     }
 
     return layerFunction;
-}
-
-/* TODO. */
-std::vector<std::string> getInstanceExtensionList(
-    const VkInstanceCreateInfo* pCreateInfo
-) {
-    std::vector<std::string> foundExtensions;
-
-    // Get layer chain info, and save next pointer so we can restore later
-    auto* chainInfo = getChainInfo(pCreateInfo, VK_LAYER_LINK_INFO);
-
-    // Fetch the functions needed to query extensions availability
-    auto fpGetProcAddr = chainInfo->u.pLayerInfo->pfnNextGetInstanceProcAddr;
-    auto fpGetExtensionsRaw = fpGetProcAddr(nullptr, "vkEnumerateDeviceExtensionProperties");
-    auto fpGetExtensions = reinterpret_cast<PFN_vkEnumerateInstanceExtensionProperties>(fpGetExtensionsRaw);
-    if (!fpGetExtensions)
-    {
-        return foundExtensions;
-    }
-
-    // Query number of extensions
-    uint32_t count;
-    fpGetExtensions(nullptr, &count, nullptr);
-
-    // Reserve memory for, and then query, the extensions
-    std::vector<VkExtensionProperties> extensions;
-    extensions.resize(count);
-    fpGetExtensions(nullptr, &count, extensions.data());
-
-    // Build the function return list
-    for (uint32_t i = 0; i < count; i++)
-    {
-        foundExtensions.emplace_back(extensions[i].extensionName);
-    }
-
-    return foundExtensions;
 }
 
 /** See Vulkan API for documentation. */

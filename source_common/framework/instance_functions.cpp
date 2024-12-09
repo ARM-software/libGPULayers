@@ -112,7 +112,7 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDevice_default(
     // Release the lock to call into the driver
     lock.unlock();
 
-    auto* chainInfo = getChainInfo(pCreateInfo, VK_LAYER_LINK_INFO);
+    auto* chainInfo = getChainInfo(pCreateInfo);
     auto fpGetInstanceProcAddr = chainInfo->u.pLayerInfo->pfnNextGetInstanceProcAddr;
     auto fpGetDeviceProcAddr = chainInfo->u.pLayerInfo->pfnNextGetDeviceProcAddr;
     auto fpCreateDevice = reinterpret_cast<PFN_vkCreateDevice>(fpGetInstanceProcAddr(layer->instance, "vkCreateDevice"));
@@ -182,7 +182,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateInstance_default(
 ) {
     LAYER_TRACE(__func__);
 
-    auto* chainInfo = getChainInfo(pCreateInfo, VK_LAYER_LINK_INFO);
+    auto* chainInfo = getChainInfo(pCreateInfo);
+    auto supportedExtensions = getInstanceExtensionList(pCreateInfo);
 
     auto fpGetInstanceProcAddr = chainInfo->u.pLayerInfo->pfnNextGetInstanceProcAddr;
     auto fpCreateInstance = reinterpret_cast<PFN_vkCreateInstance>(fpGetInstanceProcAddr(nullptr, "vkCreateInstance"));
@@ -191,8 +192,39 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateInstance_default(
         return VK_ERROR_INITIALIZATION_FAILED;
     }
 
+    // Create a copy we can write
+    VkInstanceCreateInfo newCreateInfo = *pCreateInfo;
+
+    // Query extension state
+    std::string targetExt("VK_EXT_debug_utils");
+    bool targetSupported = isIn(targetExt, supportedExtensions);
+    bool targetEnabled = isInExtensionList(
+        targetExt,
+        pCreateInfo->enabledExtensionCount,
+        pCreateInfo->ppEnabledExtensionNames);
+
+    if (!targetSupported)
+    {
+        LAYER_LOG("WARNING: Cannot enable additional extension: %s", targetExt.c_str());
+    }
+
+    // Enable the extension if we need to
+    std::vector<const char*> newExtList;
+    if (targetSupported && !targetEnabled)
+    {
+        LAYER_LOG("Enabling additional extension: %s", targetExt.c_str());
+        newExtList = cloneExtensionList(
+            pCreateInfo->enabledExtensionCount,
+            pCreateInfo->ppEnabledExtensionNames);
+
+        newExtList.push_back(targetExt.c_str());
+
+        newCreateInfo.enabledExtensionCount = newExtList.size();
+        newCreateInfo.ppEnabledExtensionNames = newExtList.data();
+    }
+
     chainInfo->u.pLayerInfo = chainInfo->u.pLayerInfo->pNext;
-    auto res = fpCreateInstance(pCreateInfo, pAllocator, pInstance);
+    auto res = fpCreateInstance(&newCreateInfo, pAllocator, pInstance);
     if (res != VK_SUCCESS)
     {
         return res;

@@ -37,12 +37,26 @@
 #include <inttypes.h>
 #include <sys/time.h>
 
-#ifdef __ANDROID__
+#if defined(VK_USE_PLATFORM_ANDROID_KHR)
   #include <android/log.h>
 #endif
 
 /**
- * Tag type used for function dispatch;
+ * Annotation for exported symbol from shared object.
+ */
+#define VK_LAYER_EXPORT __attribute__((visibility("default")))
+
+/**
+ * Annotation for exported symbol from shared object on Android only.
+ */
+#if defined(VK_USE_PLATFORM_ANDROID_KHR)
+    #define VK_LAYER_EXPORT_ANDROID VK_LAYER_EXPORT
+#else
+    #define VK_LAYER_EXPORT_ANDROID
+#endif
+
+/**
+ * Tag type used for template function dispatch;
  */
 struct user_tag {};
 
@@ -51,7 +65,7 @@ struct user_tag {};
  *
  * @param ptr   The dispatchable handle from the API.
  *
- * \return The dispatch key.
+ * @return The dispatch key.
  */
 static inline void* getDispatchKey(
     void* ptr
