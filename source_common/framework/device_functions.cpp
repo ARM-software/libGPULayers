@@ -5955,8 +5955,6 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceImageMemoryRequirementsKHR_default(
 ) {
     LAYER_TRACE(__func__);
 
-    LAYER_TRACE(__func__);
-
     // Hold the lock to access layer-wide global store
     std::unique_lock<std::mutex> lock { g_vulkanLock };
     auto* layer = Device::retrieve(device);
