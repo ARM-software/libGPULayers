@@ -32,6 +32,7 @@ import sys
 import threading
 
 import lglpy.server
+import lglpy.service_gpu_timeline
 import lglpy.service_test
 import lglpy.service_log
 
@@ -41,13 +42,18 @@ def main():
 
     # Register all the services with it
     print(f'Registering host services:')
-    test_service = lglpy.service_test.TestService()
-    endpoint_id = server.register_endpoint(test_service)
-    print(f'  - [{endpoint_id}] = {test_service.get_service_name()}')
+    service = lglpy.service_test.TestService()
+    endpoint_id = server.register_endpoint(service)
+    print(f'  - [{endpoint_id}] = {service.get_service_name()}')
 
-    log_service = lglpy.service_log.LogService()
-    endpoint_id = server.register_endpoint(log_service)
-    print(f'  - [{endpoint_id}] = {log_service.get_service_name()}')
+    service = lglpy.service_log.LogService()
+    endpoint_id = server.register_endpoint(service)
+    print(f'  - [{endpoint_id}] = {service.get_service_name()}')
+
+    service = lglpy.service_gpu_timeline.GPUTimelineService()
+    endpoint_id = server.register_endpoint(service)
+    print(f'  - [{endpoint_id}] = {service.get_service_name()}')
+
     print()
 
     # Start it running
