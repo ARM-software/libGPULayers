@@ -2,6 +2,7 @@
 
 #include <vulkan/vulkan.h>
 
+#include "framework/device_functions.hpp"
 #include "framework/instance_functions.hpp"
 #include "framework/utils.hpp"
 #include "utils/misc.hpp"
