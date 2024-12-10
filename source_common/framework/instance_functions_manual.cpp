@@ -258,17 +258,17 @@ PFN_vkVoidFunction vkGetDeviceProcAddr_default(
 
     // Only expose functions that the driver exposes to avoid changing
     // queryable interface behavior seen by the application
-    auto driver_function = layer->driver.vkGetDeviceProcAddr(device, pName);
-    auto layer_function = getDeviceLayerFunction(pName);
+    auto driverFunction = layer->driver.vkGetDeviceProcAddr(device, pName);
+    auto layerFunction = getDeviceLayerFunction(pName);
 
     // If driver exposes it and the layer has one, use the layer function
-    if (driver_function && layer_function)
+    if (driverFunction && layerFunction)
     {
-        return layer_function;
+        return layerFunction;
     }
 
     // Otherwise just use the driver function, which may be nullptr
-    return driver_function;
+    return driverFunction;
 }
 
 /** See Vulkan API for documentation. */
@@ -292,7 +292,7 @@ PFN_vkVoidFunction vkGetInstanceProcAddr_default(
 
         // Don't hold the lock while calling the driver
         lock.unlock();
-        PFN_vkVoidFunction driverFunction = layer->nlayerGetProcAddress(layer->instance, pName);
+        PFN_vkVoidFunction driverFunction = layer->nlayerGetProcAddress(instance, pName);
 
         // If driver exposes it and the layer has one, use the layer function
         if (driverFunction && layerFunction)

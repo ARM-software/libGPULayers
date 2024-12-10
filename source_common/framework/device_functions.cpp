@@ -5959,6 +5959,18 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceImageMemoryRequirementsKHR_default(
     std::unique_lock<std::mutex> lock { g_vulkanLock };
     auto* layer = Device::retrieve(device);
 
+    // Workaround Unreal Engine trying to invoke this via a function pointer
+    // queried from a Vulkan 1.1 instance with vkInstanceGetProcAddress() with
+    // device created from a later a Vulkan 1.0 context where the function is
+    // not available ...
+    if (!layer->driver.vkGetDeviceImageMemoryRequirementsKHR)
+    {
+        pMemoryRequirements->memoryRequirements.size = 0;
+        pMemoryRequirements->memoryRequirements.alignment = 0;
+        pMemoryRequirements->memoryRequirements.memoryTypeBits = 0;
+        return;
+    }
+
     // Release the lock to call into the driver
     lock.unlock();
     layer->driver.vkGetDeviceImageMemoryRequirementsKHR(device, pInfo, pMemoryRequirements);
