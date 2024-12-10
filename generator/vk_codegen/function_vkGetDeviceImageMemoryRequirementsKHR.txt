@@ -3,9 +3,9 @@
     auto* layer = Device::retrieve(device);
 
     // Workaround Unreal Engine trying to invoke this via a function pointer
-    // queried from a Vulkan 1.1 instance with vkInstanceGetProcAddress() with
-    // device created from a later a Vulkan 1.0 context where the function is
-    // not available ...
+    // queried from a Vulkan 1.1 instance with vkGetInstanceProcAddress() using
+    // a device created from a later a Vulkan 1.0 context for which the
+    // function is unavailable because VK_KHR_maintenance4 requires Vulkan 1.1
     if (!layer->driver.vkGetDeviceImageMemoryRequirementsKHR)
     {
         pMemoryRequirements->memoryRequirements.size = 0;
