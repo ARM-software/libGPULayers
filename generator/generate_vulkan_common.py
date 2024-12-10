@@ -162,7 +162,7 @@ class VersionMapping(dict):
                 continue
 
             # Omit extensions that are from other vendors
-            vendor = ext_name.split("_")[1]
+            vendor = ext_name.split('_')[1]
             if vendor in EXTENSION_VENDOR_FILTER:
                 continue
 
@@ -337,7 +337,7 @@ def generate_layer_instance_dispatch_table(file, mapping, commands):
     data = load_template('instance_dispatch_table.txt')
 
     # Create a listing of API versions and API extensions
-    itable_members = []
+    itable_members = ['// Instance functions']
     dispatch_table_members = []
     dispatch_table_inits = []
 
@@ -354,7 +354,7 @@ def generate_layer_instance_dispatch_table(file, mapping, commands):
             if plat_define:
                 itable_members.append(f'#if defined({plat_define})')
 
-            itable_members.append(f'   ENTRY({tname}),')
+            itable_members.append(f'    ENTRY({tname}),')
             if plat_define:
                 itable_members.append('#endif')
 
@@ -369,6 +369,24 @@ def generate_layer_instance_dispatch_table(file, mapping, commands):
             if plat_define:
                 dispatch_table_members.append('#endif')
                 dispatch_table_inits.append('#endif')
+
+    itable_members.append('\n// Device functions')
+
+    for command in commands:
+        if command.dispatch_type != 'device':
+            continue
+
+        plat_define = mapping.get_platform_define(command.name)
+        ttype = f'PFN_{command.name}'
+        tname = command.name
+
+        if plat_define:
+            itable_members.append(f'#if defined({plat_define})')
+
+        itable_members.append(f'    ENTRY({tname}),')
+
+        if plat_define:
+            itable_members.append('#endif')
 
     data = data.replace('{ITABLE_MEMBERS}', '\n'.join(itable_members))
     data = data.replace('{DTABLE_MEMBERS}', '\n'.join(dispatch_table_members))
@@ -389,7 +407,7 @@ def generate_layer_instance_layer_decls(file, mapping, commands):
 
     # Create a listing of API versions and API extensions
     for command in commands:
-        if command.dispatch_type != "instance":
+        if command.dispatch_type != 'instance':
             continue
 
         lines = []
@@ -426,7 +444,7 @@ def generate_layer_instance_layer_decls(file, mapping, commands):
             parl = f'    {ptype} {pname}{array}{ending}'
             lines.append(parl)
 
-        parmfwd = ", ".join([x[1] for x in command.params])
+        parmfwd = ', '.join([x[1] for x in command.params])
         retfwd = 'return ' if command.rtype != 'void' else ''
         lines.append(') {')
         lines.append(f'    {retfwd}layer_{command.name}_default({parmfwd});')
@@ -449,7 +467,7 @@ def generate_layer_instance_layer_defs(file, mapping, commands, manual_commands)
     # Create a listing of API versions and API extensions
     lines = []
     for command in commands:
-        if command.dispatch_type != "instance":
+        if command.dispatch_type != 'instance':
             continue
 
         plat_define = mapping.get_platform_define(command.name)
@@ -468,7 +486,7 @@ def generate_layer_instance_layer_defs(file, mapping, commands, manual_commands)
             lines.append(parl)
 
         dispatch = command.params[0][1]
-        parmfwd = ", ".join([x[1] for x in command.params])
+        parmfwd = ', '.join([x[1] for x in command.params])
         retfwd = 'return ' if command.rtype != 'void' else ''
 
         lines.append(') {')
@@ -506,7 +524,7 @@ def generate_layer_device_dispatch_table(file, mapping, commands):
     dispatch_table_members = []
     dispatch_table_inits = []
     for command in commands:
-        if command.dispatch_type != "device":
+        if command.dispatch_type != 'device':
             continue
 
         plat_define = mapping.get_platform_define(command.name)
@@ -546,7 +564,7 @@ def generate_layer_device_layer_decls(file, mapping, commands):
 
     # Create a listing of API versions and API extensions
     for command in commands:
-        if command.dispatch_type != "device":
+        if command.dispatch_type != 'device':
             continue
 
         lines = []
@@ -582,7 +600,7 @@ def generate_layer_device_layer_decls(file, mapping, commands):
             parl = f'    {ptype} {pname}{array}{ending}'
             lines.append(parl)
 
-        parmfwd = ", ".join([x[1] for x in command.params])
+        parmfwd = ', '.join([x[1] for x in command.params])
         retfwd = 'return ' if command.rtype != 'void' else ''
         lines.append(') {')
         lines.append(f'    {retfwd}layer_{command.name}_default({parmfwd});')
@@ -605,7 +623,7 @@ def generate_layer_device_layer_defs(file, mapping, commands, manual_commands):
     # Create a listing of API versions and API extensions
     lines = []
     for command in commands:
-        if command.dispatch_type != "device":
+        if command.dispatch_type != 'device':
             continue
 
         plat_define = mapping.get_platform_define(command.name)
@@ -625,7 +643,7 @@ def generate_layer_device_layer_defs(file, mapping, commands, manual_commands):
             lines.append(parl)
 
         dispatch = command.params[0][1]
-        parmfwd = ", ".join([x[1] for x in command.params])
+        parmfwd = ', '.join([x[1] for x in command.params])
         retfwd = 'return ' if command.rtype != 'void' else ''
 
         lines.append(') {')
