@@ -74,7 +74,7 @@ public:
      *
      * @return The assigned ID.
      */
-    static uint64_t getSubmitID()
+    static uint64_t assignSubmitID()
     {
         return nextSubmitID.fetch_add(1, std::memory_order_relaxed);
     }
@@ -86,14 +86,21 @@ private:
     VkQueue handle;
 
     /**
-     * @brief The stack of debug labels in the tool.
+     * @brief The stack of user debug labels for this queue.
      */
     std::vector<std::string> debugStack;
+
+    /**
+     * @brief The last non-zero renderpass tagID submitted.
+     */
+    uint64_t lastRenderPassTagID { 0 };
 
     /**
      * @brief The command buffer submitID allocator.
      */
     static std::atomic<uint64_t> nextSubmitID;
+
+
 };
 
 }

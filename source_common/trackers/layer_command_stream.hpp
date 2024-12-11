@@ -65,8 +65,7 @@ enum class LCSOpcode
 {
     MARKER_BEGIN,
     MARKER_END,
-    RENDERPASS_BEGIN,
-    RENDERPASS_END, // TODO: Does this need to be an opcode?
+    RENDER_PASS,
     DISPATCH,
     TRACE_RAYS,
     BUFFER_TRANSFER,
@@ -85,15 +84,26 @@ public:
     virtual ~LCSWorkload() = default;
 
     virtual std::string getMetadata(
+        const std::string* debugLabel=nullptr,
         uint64_t tagIDContinuation=0,
         uint64_t submitID=0) const = 0;
+
+    /**
+     * @brief Get this workloads tagID.
+     *
+     * @return The assigned ID.
+     */
+    uint64_t getTagID() const
+    {
+        return tagID;
+    }
 
     /**
      * @brief Get a unique tagID to label a workload in a command buffer.
      *
      * @return The assigned ID.
      */
-    static uint64_t getTagID()
+    static uint64_t assignTagID()
     {
         return nextTagID.fetch_add(1, std::memory_order_relaxed);
     }
@@ -139,15 +149,18 @@ public:
     };
 
     virtual std::string getMetadata(
+        const std::string* debugLabel=nullptr,
         uint64_t tagIDContinuation=0,
         uint64_t submitID=0) const;
 
 private:
     std::string getBeginMetadata(
+        const std::string* debugLabel=nullptr,
         uint64_t submitID=0) const;
 
     std::string getContinuationMetadata(
-        uint64_t tagIDContinuation,
+        const std::string* debugLabel=nullptr,
+        uint64_t tagIDContinuation=0,
         uint64_t submitID=0) const;
 
     uint32_t width;
@@ -175,9 +188,11 @@ public:
     virtual ~LCSMarker() = default;
 
     virtual std::string getMetadata(
+        const std::string* debugLabel=nullptr,
         uint64_t tagIDContinuation=0,
         uint64_t submitID=0) const
     {
+        UNUSED(debugLabel);
         UNUSED(tagIDContinuation);
         UNUSED(submitID);
         return label;

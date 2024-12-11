@@ -133,6 +133,14 @@ public:
     /**
      * @brief Callback for sending messages
      */
+    void onFrame(const std::string& message)
+    {
+        commsWrapper->txMessage(message);
+    }
+
+    /**
+     * @brief Callback for sending messages
+     */
     void onWorkloadSubmit(const std::string& message)
     {
         commsWrapper->txMessage(message);

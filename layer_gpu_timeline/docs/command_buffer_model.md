@@ -21,7 +21,7 @@ performed.
 
 * Pop the latest marker from the queue debug label stack.
 
-**RENDERPASS_BEGIN(const json\*):**
+**RENDER_PASS(const json\*):**
 
 * Set the current workload to a new render pass with the passed metadata.
 

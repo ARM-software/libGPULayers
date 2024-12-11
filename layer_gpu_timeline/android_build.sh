@@ -67,7 +67,7 @@ cmake \
     -DCMAKE_TOOLCHAIN_FILE="${ANDROID_NDK_HOME}/build/cmake/android.toolchain.cmake" \
     ..
 
-make -j1
+make -j8
 
 popd
 

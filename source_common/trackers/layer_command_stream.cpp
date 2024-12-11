@@ -71,6 +71,7 @@ LCSRenderPass::LCSRenderPass(
 
 /* See header for details. */
 std::string LCSRenderPass::getBeginMetadata(
+    const std::string* debugLabel,
     uint64_t submitID) const
 {
     json metadata = {
@@ -84,6 +85,11 @@ std::string LCSRenderPass::getBeginMetadata(
     if (submitID != 0)
     {
         metadata["sid"] = submitID;
+    }
+
+    if (debugLabel && debugLabel->size())
+    {
+        metadata["label"] = *debugLabel;
     }
 
     // Default is 1, so only store if we need it
@@ -126,6 +132,7 @@ std::string LCSRenderPass::getBeginMetadata(
 
 /* See header for details. */
 std::string LCSRenderPass::getContinuationMetadata(
+    const std::string* debugLabel,
     uint64_t tagIDContinuation,
     uint64_t submitID) const
 {
@@ -134,6 +141,11 @@ std::string LCSRenderPass::getContinuationMetadata(
         { "tid", tagIDContinuation },
         { "drawCallCount", drawCallCount }
     };
+
+    if (debugLabel && debugLabel->size())
+    {
+        metadata["label"] = *debugLabel;
+    }
 
     if (submitID != 0)
     {
@@ -145,17 +157,18 @@ std::string LCSRenderPass::getContinuationMetadata(
 
 /* See header for details. */
 std::string LCSRenderPass::getMetadata(
+    const std::string* debugLabel,
     uint64_t tagIDContinuation,
     uint64_t submitID) const
 {
     if (tagID)
     {
         assert(tagIDContinuation == 0);
-        return getBeginMetadata(submitID);
+        return getBeginMetadata(debugLabel, submitID);
     }
 
     assert(tagIDContinuation != 0);
-    return getContinuationMetadata(tagIDContinuation, submitID);
+    return getContinuationMetadata(debugLabel, tagIDContinuation, submitID);
 }
 
 }

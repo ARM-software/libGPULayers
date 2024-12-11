@@ -55,11 +55,36 @@ void Queue::runSubmitCommandStream(
         {
             debugStack.pop_back();
         }
-        else if (opCode == LCSOpcode::RENDERPASS_BEGIN)
+        else if (opCode == LCSOpcode::RENDER_PASS)
         {
             auto* workload = dynamic_cast<const LCSRenderPass*>(opData);
-            callback(workload->getMetadata());
+            uint64_t tagID = workload->getTagID();
+
+            // Build the debug info
             std::string log = joinString(debugStack, "|");
+
+            // Workload is a new render pass
+            if (tagID > 0)
+            {
+                assert(lastRenderPassTagID == 0);
+                callback(workload->getMetadata(&log));
+
+                lastRenderPassTagID = 0;
+                if (workload->isSuspending())
+                {
+                    lastRenderPassTagID = tagID;
+                }
+            }
+            // Workload is a continuation
+            else
+            {
+                assert(lastRenderPassTagID != 0);
+                callback(workload->getMetadata(nullptr, lastRenderPassTagID));
+                if (!workload->isSuspending())
+                {
+                    lastRenderPassTagID = 0;
+                }
+            }
         }
     }
 }

@@ -27,9 +27,15 @@
 #include <mutex>
 #include <thread>
 
+#include "utils/misc.hpp"
+#include "nlohmann/json.hpp"
+
 #include "device.hpp"
 #include "layer_device_functions.hpp"
-#include "utils/misc.hpp"
+
+using json = nlohmann::json;
+
+using namespace std::placeholders;
 
 extern std::mutex g_vulkanLock;
 
@@ -47,6 +53,15 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueuePresentKHR<user_tag>(
 
     auto& tracker = layer->getStateTracker();
     tracker.queuePresent();
+
+    // This is run with the lock held to ensure that all queue submit
+    // messages are sent sequentially to the host tool
+    json frame {
+        { "type", "frame" },
+        { "fid", tracker.totalStats.getFrameCount() }
+    };
+
+    layer->onFrame(frame.dump());
 
     // Release the lock to call into the driver
     lock.unlock();
@@ -67,12 +82,13 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit<user_tag>(
     std::unique_lock<std::mutex> lock { g_vulkanLock };
     auto* layer = Device::retrieve(queue);
 
-    using namespace std::placeholders;
     auto onSubmit = std::bind(&Device::onWorkloadSubmit, layer, _1);
 
     auto& tracker = layer->getStateTracker();
     auto& trackQueue = tracker.getQueue(queue);
 
+    // This is run with the lock held to ensure that all queue submit
+    // messages are sent sequentially to the host tool
     for (uint32_t i = 0; i < submitCount; i++)
     {
         const auto& submit = pSubmits[i];
@@ -80,7 +96,6 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit<user_tag>(
         {
             auto& trackCB = tracker.getCommandBuffer(submit.pCommandBuffers[j]);
             const auto& LCS = trackCB.getSubmitCommandStream();
-
             trackQueue.runSubmitCommandStream(LCS, onSubmit);
         }
     }
@@ -104,6 +119,24 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit2<user_tag>(
     std::unique_lock<std::mutex> lock { g_vulkanLock };
     auto* layer = Device::retrieve(queue);
 
+    auto onSubmit = std::bind(&Device::onWorkloadSubmit, layer, _1);
+
+    auto& tracker = layer->getStateTracker();
+    auto& trackQueue = tracker.getQueue(queue);
+
+    // This is run with the lock held to ensure that all queue submit
+    // messages are sent sequentially to the host tool
+    for (uint32_t i = 0; i < submitCount; i++)
+    {
+        const auto& submit = pSubmits[i];
+        for (uint32_t j = 0; j < submit.commandBufferInfoCount; j++)
+        {
+            auto& trackCB = tracker.getCommandBuffer(submit.pCommandBufferInfos[j].commandBuffer);
+            const auto& LCS = trackCB.getSubmitCommandStream();
+            trackQueue.runSubmitCommandStream(LCS, onSubmit);
+        }
+    }
+
     // Release the lock to call into the driver
     lock.unlock();
     return layer->driver.vkQueueSubmit2(queue, submitCount, pSubmits, fence);
@@ -122,6 +155,24 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit2KHR<user_tag>(
     // Hold the lock to access layer-wide global store
     std::unique_lock<std::mutex> lock { g_vulkanLock };
     auto* layer = Device::retrieve(queue);
+
+    auto onSubmit = std::bind(&Device::onWorkloadSubmit, layer, _1);
+
+    auto& tracker = layer->getStateTracker();
+    auto& trackQueue = tracker.getQueue(queue);
+
+    // This is run with the lock held to ensure that all queue submit
+    // messages are sent sequentially to the host tool
+    for (uint32_t i = 0; i < submitCount; i++)
+    {
+        const auto& submit = pSubmits[i];
+        for (uint32_t j = 0; j < submit.commandBufferInfoCount; j++)
+        {
+            auto& trackCB = tracker.getCommandBuffer(submit.pCommandBufferInfos[j].commandBuffer);
+            const auto& LCS = trackCB.getSubmitCommandStream();
+            trackQueue.runSubmitCommandStream(LCS, onSubmit);
+        }
+    }
 
     // Release the lock to call into the driver
     lock.unlock();

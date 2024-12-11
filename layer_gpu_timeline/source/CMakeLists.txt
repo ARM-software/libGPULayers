@@ -57,6 +57,7 @@ add_library(
 target_include_directories(
     ${VK_LAYER} PRIVATE
         ${PROJECT_SOURCE_DIR}/../source_common
+        ${PROJECT_SOURCE_DIR}/../source_third_party
         ${CMAKE_CURRENT_BINARY_DIR}
         .)
 

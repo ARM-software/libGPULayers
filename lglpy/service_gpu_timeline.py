@@ -25,18 +25,69 @@
 # implements a basic message endpoint for testing.
 
 from lglpy.server import Message
+import json
+import struct
 
 class GPUTimelineService:
 
     def __init__(self):
-        pass
+        self.frame = {
+            "frame": 0,
+            "workloads": [
+
+            ]
+        }
+
+        # TODO: Make file name configurable
+        self.fileHandle = open('malivision.gputl', 'wb')
 
     def get_service_name(self) -> str:
         return 'GPUTimeline'
 
+    def handle_frame(self, msg):
+        print(json.dumps(self.frame, indent=4))
+
+        # Write frame packet to the file
+        lastFrame = json.dumps(self.frame).encode('utf-8')
+        length = struct.pack('<I', len(lastFrame))
+
+        self.fileHandle.write(length)
+        self.fileHandle.write(lastFrame)
+
+        # Reset the local frame state for the next frame
+        self.frame = {
+            'frame': msg['fid'],
+            'workloads': []
+        }
+
+    def handle_renderpass(self, msg):
+        # Find the last workload
+        lastRenderPass = None
+        if len(self.frame['workloads']):
+            lastWorkload = self.frame['workloads'][-1]
+            if lastWorkload['type'] == 'renderpass':
+                lastRenderPass = lastWorkload
+
+        # Continuation
+        if lastRenderPass and lastRenderPass['tid'] == msg['tid']:
+            lastRenderPass['drawCallCount'] += msg['drawCallCount']
+        # New render pass
+        else:
+            self.frame['workloads'].append(msg)
+
     def handle_message(self, message: Message):
         payload = message.payload.decode('utf-8')
+        parsedPayload = json.loads(payload)
 
-        print(f'{message.message_type.name}: {payload} ({len(payload)} bytes)')
+        payloadType = parsedPayload['type']
+
+        if payloadType == 'frame':
+            self.handle_frame(parsedPayload)
+
+        elif payloadType == 'renderpass':
+            self.handle_renderpass(parsedPayload)
+
+        else:
+            assert False, f'Unknown payload type {payloadType}'
 
         return None

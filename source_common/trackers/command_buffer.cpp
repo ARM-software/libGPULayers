@@ -91,7 +91,7 @@ uint64_t CommandBuffer::renderPassBegin(
     // Assign ID and update the stats tracker for new render passes only
     if (!resuming)
     {
-        tagID = Tracker::LCSWorkload::getTagID();
+        tagID = Tracker::LCSWorkload::assignTagID();
         stats.incRenderPassCount();
     }
 
@@ -105,7 +105,7 @@ uint64_t CommandBuffer::renderPassBegin(
     workloads.push_back(workload);
 
     // Add a command to the layer-side command stream
-    auto instr = std::make_pair(LCSOpcode::RENDERPASS_BEGIN, workload);
+    auto instr = std::make_pair(LCSOpcode::RENDER_PASS, workload);
     workloadCommandStream.push_back(instr);
 
     return tagID;

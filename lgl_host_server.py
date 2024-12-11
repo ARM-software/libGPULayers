@@ -57,14 +57,15 @@ def main():
     print()
 
     # Start it running
-    serverThread = threading.Thread(target=server.run)
+    serverThread = threading.Thread(target=server.run, daemon=True)
     serverThread.start()
 
     # Press to exit
     try:
-        input("Press any key to exit ...")
+        input("Press any key to exit ...\n\n")
     except KeyboardInterrupt:
-        server.stop()
+        print("Exiting ...")
+        sys.exit(0)
 
     return 0
 
