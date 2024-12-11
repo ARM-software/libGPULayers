@@ -30,6 +30,14 @@ jobs:
           cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
           make -j4
 
+      - name: Build layer_gpu_timeline
+        run: |
+          export CXX=clang++
+          mkdir layer_gpu_timeline/build_rel
+          cd layer_gpu_timeline/build_rel
+          cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
+          make -j4
+
       - name: Build and run unit tests
         run: |
           export CXX=clang++
@@ -53,6 +61,14 @@ jobs:
           export CXX=g++
           mkdir layer_example/build_rel
           cd layer_example/build_rel
+          cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
+          make -j4
+
+      - name: Build layer_gpu_timeline
+        run: |
+          export CXX=g++
+          mkdir layer_gpu_timeline/build_rel
+          cd layer_gpu_timeline/build_rel
           cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
           make -j4
 

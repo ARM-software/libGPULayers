@@ -25,10 +25,10 @@ cmake_minimum_required(VERSION 3.17)
 
 set(CMAKE_CXX_STANDARD 20)
 
-project(VkLayerExample VERSION 1.0.0)
+project(VkLayerGPUTimeline VERSION 1.0.0)
 
 # Common configuration
-set(LGL_LOG_TAG "VkLayerExample")
+set(LGL_LOG_TAG "VkLayerGPUTimeline")
 set(LGL_CONFIG_TRACE 0)
 set(LGL_CONFIG_LOG 1)
 

@@ -21,19 +21,52 @@
 # SOFTWARE.
 # -----------------------------------------------------------------------------
 
-cmake_minimum_required(VERSION 3.17)
+# Set output file names
+if (CMAKE_BUILD_TYPE STREQUAL "Release")
+    set(VK_LAYER VkLayerGPUTimeline_sym)
+    set(VK_LAYER_STRIP libVkLayerGPUTimeline.so)
+else()
+    set(VK_LAYER VkLayerGPUTimeline)
+endif()
 
-set(CMAKE_CXX_STANDARD 20)
+# Set strings used by configure
+set(LGL_LAYER_NAME_STR "VK_LAYER_LGL_GPUTIMELINE")
+set(LGL_LAYER_DESC_STR "VkLayerGPUTimeline by LGL")
 
-project(VkLayerExample VERSION 1.0.0)
+# Vulkan layer library
+configure_file(
+    version.hpp.in
+    version.hpp
+    ESCAPE_QUOTES @ONLY)
 
-# Common configuration
-set(LGL_LOG_TAG "VkLayerExample")
-set(LGL_CONFIG_TRACE 0)
-set(LGL_CONFIG_LOG 1)
+add_library(
+    ${VK_LAYER} SHARED
+        device.cpp
+        entry.cpp
+        instance.cpp)
 
-include(../source_common/compiler_helper.cmake)
+target_include_directories(
+    ${VK_LAYER} PRIVATE
+        ${PROJECT_SOURCE_DIR}/../source_common
+        ${CMAKE_CURRENT_BINARY_DIR}
+        .)
 
-# Build steps
-add_subdirectory(source)
-add_subdirectory(../source_common/framework source_common/framework)
+target_include_directories(
+    ${VK_LAYER} SYSTEM PRIVATE
+        ../../khronos/vulkan/include)
+
+lgl_set_build_options(${VK_LAYER})
+
+target_link_libraries(
+    ${VK_LAYER}
+        lib_layer_framework
+        $<$<PLATFORM_ID:Android>:log>)
+
+if (CMAKE_BUILD_TYPE STREQUAL "Release")
+    add_custom_command(
+        TARGET "${VK_LAYER}" POST_BUILD
+        DEPENDS "${VK_LAYER}"
+        COMMAND ${CMAKE_STRIP}
+        ARGS --strip-all -o ${VK_LAYER_STRIP} $<TARGET_FILE:${VK_LAYER}>
+        COMMENT "Stripped lib${VK_LAYER}.so to ${VK_LAYER_STRIP}")
+endif()
