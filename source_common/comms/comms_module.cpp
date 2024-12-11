@@ -186,7 +186,7 @@ EndpointID CommsModule::getEndpointID(
         return registry[name];
     }
     // Service not found
-    catch(std::out_of_range)
+    catch(std::out_of_range const&)
     {
         return NO_ENDPOINT;
     }

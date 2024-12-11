@@ -83,11 +83,7 @@ public:
         EndpointID endpointID,
         MessageType messageType,
         MessageID messageID,
-        std::unique_ptr<MessageData> transmitData) :
-        endpointID(endpointID),
-        messageType(messageType),
-        messageID(messageID),
-        transmitData(std::move(transmitData)) { }
+        std::unique_ptr<MessageData> transmitData);
 
     /**
      * @brief The type of the message.

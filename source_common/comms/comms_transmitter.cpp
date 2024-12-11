@@ -39,8 +39,8 @@ namespace Comms
 
 /** See header for documentation. */
 Transmitter::Transmitter(
-    CommsModule& parent
-) : parent(parent)
+    CommsModule& _parent
+) : parent(_parent)
 {
     // Create and start a worker thread
     worker = std::thread(&Transmitter::runTransmitter, this);
