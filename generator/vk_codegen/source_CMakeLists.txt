@@ -41,8 +41,8 @@ configure_file(
 
 add_library(
     ${VK_LAYER} SHARED
+        ${PROJECT_SOURCE_DIR}/../source_common/framework/entry.cpp
         device.cpp
-        entry.cpp
         instance.cpp)
 
 target_include_directories(
