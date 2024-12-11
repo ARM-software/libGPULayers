@@ -27,11 +27,12 @@ set(CMAKE_CXX_STANDARD 20)
 
 project(libGPULayers_UnitTests VERSION 1.0.0)
 
-# Standard CMake components
-include(source_common/compiler_helper.cmake)
-
-# Build steps
+# Common configuration
 set(LGL_UNITTEST ON)
+set(LGL_CONFIG_TRACE 1)
+set(LGL_CONFIG_LOG 1)
+
+include(source_common/compiler_helper.cmake)
 
 # Build GoogleTest framework
 set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)

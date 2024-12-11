@@ -71,5 +71,7 @@ macro(lgl_set_build_options BUILD_TARGET_NAME)
     target_compile_definitions(
         ${BUILD_TARGET_NAME} PRIVATE
             $<$<PLATFORM_ID:Android>:VK_USE_PLATFORM_ANDROID_KHR=1>
-            $<$<PLATFORM_ID:Android>:LGL_LOG_TAG="${LGL_LOG_TAG}">)
+            $<$<PLATFORM_ID:Android>:LGL_LOG_TAG="${LGL_LOG_TAG}">
+            CONFIG_TRACE=${LGL_CONFIG_TRACE}
+            CONFIG_LOG=${LGL_CONFIG_LOG})
 endmacro()

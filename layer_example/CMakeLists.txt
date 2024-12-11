@@ -29,6 +29,9 @@ project(VkLayerExample VERSION 1.0.0)
 
 # Common configuration
 set(LGL_LOG_TAG "VkLayerExample")
+set(LGL_CONFIG_TRACE 1)
+set(LGL_CONFIG_LOG 1)
+
 include(../source_common/compiler_helper.cmake)
 
 # Build steps
