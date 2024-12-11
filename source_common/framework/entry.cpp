@@ -32,8 +32,13 @@
  */
 #include <mutex>
 
-#include "framework/instance_functions_manual.hpp"
+#include "framework/device_functions.hpp"
+#include "framework/instance_functions.hpp"
 #include "framework/utils.hpp"
+
+#if __has_include ("layer_device_functions.hpp")
+    #include "layer_device_functions.hpp"
+#endif
 
 #if __has_include ("layer_instance_functions.hpp")
     #include "layer_instance_functions.hpp"

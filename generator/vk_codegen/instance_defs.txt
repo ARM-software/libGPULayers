@@ -7,7 +7,7 @@
 #include "instance.hpp"
 
 // Include from common code
-#include "framework/instance_functions_manual.hpp"
+#include "framework/manual_functions.hpp"
 #include "framework/instance_functions.hpp"
 #include "framework/utils.hpp"
 

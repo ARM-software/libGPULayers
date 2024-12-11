@@ -32,30 +32,48 @@ import shutil
 import sys
 import xml.etree.ElementTree as ET
 
-# These functions are manually created as fully exported entry points in the
-# layer library, and are not part of the dynamic dispatch behavior
-MANUAL_FUNCTIONS = {
-    # Exposed by loader so not handled by the layer
+# These functions are not part of the layer implementation
+EXCLUDED_FUNCTIONS = {
+    # Functions exposed by loader not the implementation
     'vkEnumerateInstanceVersion',
-    # Exposed as symbols managed by the loader so not handled by the layer
-    'vkGetInstanceProcAddr',
+}
+
+# These functions are excluded from generated intercept and dispatch tables
+NO_INTERCEPT_OR_DISPATCH_FUNCTIONS = {
+    # Functions resolved by the loaded not the implementation
     'vkGetDeviceProcAddr',
-    # Exposed by layer as explicit entry points
+    'vkGetInstanceProcAddr',
+}
+
+# These functions are excluded from generated intercept tables
+NO_INTERCEPT_FUNCTIONS = {
+    # Functions exported as shared object exports and resolved by loader
+    'vkEnumerateDeviceExtensionProperties',
     'vkEnumerateDeviceLayerProperties',
     'vkEnumerateInstanceExtensionProperties',
     'vkEnumerateInstanceLayerProperties',
 }
 
-# These functions are manually exported, but we can use driver forwarding
-FORWARD_WITHOUT_INTERCEPT = {
-    'vkEnumerateDeviceExtensionProperties',
-    'vkEnumerateInstanceExtensionProperties',
-}
-
-# These functions are found via the loader-injected chain info
-INTERCEPT_WITHOUT_FORWARD = {
+# These functions are excluded from generated dispatch tables
+NO_DISPATCH_FUNCTIONS = {
+    # Functions resolved by the loaded not the implementation
     'vkCreateDevice',
     'vkCreateInstance',
+}
+
+# These functions are excluded from generated declarations
+CUSTOM_FUNCTIONS = {
+    'vkCreateDevice',
+    'vkCreateInstance',
+    'vkDestroyDevice',
+    'vkDestroyInstance',
+    'vkGetDeviceProcAddr',
+    'vkGetInstanceProcAddr',
+    'vkEnumerateDeviceExtensionProperties',
+    'vkEnumerateDeviceLayerProperties',
+    'vkEnumerateInstanceExtensionProperties',
+    'vkEnumerateInstanceLayerProperties',
+    'vkGetDeviceImageMemoryRequirementsKHR',
 }
 
 # Filter out extensions from these vendors by default
@@ -284,7 +302,7 @@ class Command:
                 self.params.append((ptype, text, tail))
 
         # Filter out functions that are not dynamically dispatched
-        if self.name in MANUAL_FUNCTIONS:
+        if self.name in EXCLUDED_FUNCTIONS:
             raise NotImplementedError
 
         # Filter out functions that are not in our supported mapping
@@ -299,7 +317,10 @@ class Command:
             elif dispatch_type in DEVICE_FUNCTION_PARAM_TYPE:
                 self.dispatch_type = 'device'
             else:
-                assert False, f'Unknown dispatch: {dispatch_type} {self.name}'
+                if self.name.startswith('vkEnumerateInstance'):
+                    self.dispatch_type = 'instance'
+                else:
+                    assert False, f'Unknown dispatch: {dispatch_type} {self.name}'
 
 
 def load_template(path):
@@ -346,11 +367,15 @@ def generate_layer_instance_dispatch_table(file, mapping, commands):
         if command.dispatch_type != 'instance':
             continue
 
+        tname = command.name
+        if tname in NO_INTERCEPT_OR_DISPATCH_FUNCTIONS:
+            continue
+
         plat_define = mapping.get_platform_define(command.name)
 
         ttype = f'PFN_{command.name}'
-        tname = command.name
-        if tname not in FORWARD_WITHOUT_INTERCEPT:
+
+        if tname not in NO_INTERCEPT_FUNCTIONS:
             if plat_define:
                 itable_members.append(f'#if defined({plat_define})')
 
@@ -358,7 +383,7 @@ def generate_layer_instance_dispatch_table(file, mapping, commands):
             if plat_define:
                 itable_members.append('#endif')
 
-        if tname not in INTERCEPT_WITHOUT_FORWARD:
+        if tname not in NO_DISPATCH_FUNCTIONS:
             if plat_define:
                 dispatch_table_members.append(f'#if defined({plat_define})')
                 dispatch_table_inits.append(f'#if defined({plat_define})')
@@ -410,10 +435,6 @@ def generate_layer_instance_layer_decls(file, mapping, commands):
         if command.dispatch_type != 'instance':
             continue
 
-        tname = command.name
-        if tname in FORWARD_WITHOUT_INTERCEPT:
-            continue
-
         lines = []
 
         plat_define = mapping.get_platform_define(command.name)
@@ -461,7 +482,7 @@ def generate_layer_instance_layer_decls(file, mapping, commands):
         file.write('\n')
 
 
-def generate_layer_instance_layer_defs(file, mapping, commands, manual_commands):
+def generate_layer_instance_layer_defs(file, mapping, commands):
 
     # Write the copyright header to the file
     write_copyright_header(file)
@@ -475,7 +496,10 @@ def generate_layer_instance_layer_defs(file, mapping, commands, manual_commands)
             continue
 
         tname = command.name
-        if tname in FORWARD_WITHOUT_INTERCEPT:
+        if tname in NO_INTERCEPT_FUNCTIONS:
+            continue
+
+        if tname in CUSTOM_FUNCTIONS:
             continue
 
         plat_define = mapping.get_platform_define(command.name)
@@ -500,16 +524,13 @@ def generate_layer_instance_layer_defs(file, mapping, commands, manual_commands)
         lines.append(') {')
         lines.append('    LAYER_TRACE(__func__);\n')
 
-        if command.name in manual_commands:
-            lines.append(manual_commands[command.name])
-        else:
-            lines.append('    // Hold the lock to access layer-wide global store')
-            lines.append('    std::unique_lock<std::mutex> lock { g_vulkanLock };')
-            lines.append(f'    auto* layer = Instance::retrieve({dispatch});\n')
+        lines.append('    // Hold the lock to access layer-wide global store')
+        lines.append('    std::unique_lock<std::mutex> lock { g_vulkanLock };')
+        lines.append(f'    auto* layer = Instance::retrieve({dispatch});\n')
 
-            lines.append('    // Release the lock to call into the driver')
-            lines.append('    lock.unlock();')
-            lines.append(f'    {retfwd}layer->driver.{command.name}({parmfwd});')
+        lines.append('    // Release the lock to call into the driver')
+        lines.append('    lock.unlock();')
+        lines.append(f'    {retfwd}layer->driver.{command.name}({parmfwd});')
 
         lines.append('}\n')
 
@@ -535,9 +556,12 @@ def generate_layer_device_dispatch_table(file, mapping, commands):
         if command.dispatch_type != 'device':
             continue
 
+        tname = command.name
+        if tname in NO_INTERCEPT_OR_DISPATCH_FUNCTIONS:
+            continue
+
         plat_define = mapping.get_platform_define(command.name)
         ttype = f'PFN_{command.name}'
-        tname = command.name
 
         if plat_define:
             itable_members.append(f'#if defined({plat_define})')
@@ -621,7 +645,7 @@ def generate_layer_device_layer_decls(file, mapping, commands):
         file.write('\n')
 
 
-def generate_layer_device_layer_defs(file, mapping, commands, manual_commands):
+def generate_layer_device_layer_defs(file, mapping, commands):
 
     # Write the copyright header to the file
     write_copyright_header(file)
@@ -632,6 +656,10 @@ def generate_layer_device_layer_defs(file, mapping, commands, manual_commands):
     lines = []
     for command in commands:
         if command.dispatch_type != 'device':
+            continue
+
+        tname = command.name
+        if tname in CUSTOM_FUNCTIONS:
             continue
 
         plat_define = mapping.get_platform_define(command.name)
@@ -657,16 +685,13 @@ def generate_layer_device_layer_defs(file, mapping, commands, manual_commands):
         lines.append(') {')
         lines.append('    LAYER_TRACE(__func__);\n')
 
-        if command.name in manual_commands:
-            lines.append(manual_commands[command.name])
-        else:
-            lines.append('    // Hold the lock to access layer-wide global store')
-            lines.append('    std::unique_lock<std::mutex> lock { g_vulkanLock };')
-            lines.append(f'    auto* layer = Device::retrieve({dispatch});\n')
+        lines.append('    // Hold the lock to access layer-wide global store')
+        lines.append('    std::unique_lock<std::mutex> lock { g_vulkanLock };')
+        lines.append(f'    auto* layer = Device::retrieve({dispatch});\n')
 
-            lines.append('    // Release the lock to call into the driver')
-            lines.append('    lock.unlock();')
-            lines.append(f'    {retfwd}layer->driver.{command.name}({parmfwd});')
+        lines.append('    // Release the lock to call into the driver')
+        lines.append('    lock.unlock();')
+        lines.append(f'    {retfwd}layer->driver.{command.name}({parmfwd});')
 
         lines.append('}\n')
 
@@ -675,23 +700,6 @@ def generate_layer_device_layer_defs(file, mapping, commands, manual_commands):
 
     data = data.replace('{FUNCTION_DEFS}', '\n'.join(lines))
     file.write(data)
-
-
-def load_handwritten_commands():
-    '''
-    Load the small number of hand-written functions from template files.
-    '''
-    script_dir = os.path.dirname(__file__)
-    template_dir = os.path.join(script_dir, 'vk_codegen')
-    pattern = re.compile(r'^function_(.*)\.txt$')
-
-    commands = {}
-    for path in os.listdir(template_dir):
-        match = pattern.match(path)
-        if match:
-            commands[match.group(1)] = load_template(path)
-
-    return commands
 
 
 def copy_resource(src_dir, out_dir):
@@ -746,9 +754,6 @@ def main():
     # Sort functions into alphabetical order
     commands.sort(key=lambda x: x.name)
 
-    # Load hand written function bodies
-    manual_commands = load_handwritten_commands()
-
     # Generate dynamic resources
     outfile = os.path.join(outdir, 'instance_dispatch_table.hpp')
     with open(outfile, 'w', encoding='utf-8', newline='\n') as handle:
@@ -764,7 +769,7 @@ def main():
 
     outfile = os.path.join(outdir, 'instance_functions.cpp')
     with open(outfile, 'w', encoding='utf-8', newline='\n') as handle:
-        generate_layer_instance_layer_defs(handle, mapping, commands, manual_commands)
+        generate_layer_instance_layer_defs(handle, mapping, commands)
 
     outfile = os.path.join(outdir, 'device_functions.hpp')
     with open(outfile, 'w', encoding='utf-8', newline='\n') as handle:
@@ -772,7 +777,7 @@ def main():
 
     outfile = os.path.join(outdir, 'device_functions.cpp')
     with open(outfile, 'w', encoding='utf-8', newline='\n') as handle:
-        generate_layer_device_layer_defs(handle, mapping, commands, manual_commands)
+        generate_layer_device_layer_defs(handle, mapping, commands)
 
     return 0
 

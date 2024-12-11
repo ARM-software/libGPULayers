@@ -259,6 +259,74 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroySurfaceKHR(
 
 /* See Vulkan API for documentation. */
 /* Default common code pass-through implementation. */
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkEnumerateDeviceExtensionProperties_default(
+    VkPhysicalDevice physicalDevice,
+    const char* pLayerName,
+    uint32_t* pPropertyCount,
+    VkExtensionProperties* pProperties);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkEnumerateDeviceExtensionProperties(
+    VkPhysicalDevice physicalDevice,
+    const char* pLayerName,
+    uint32_t* pPropertyCount,
+    VkExtensionProperties* pProperties
+) {
+    return layer_vkEnumerateDeviceExtensionProperties_default(physicalDevice, pLayerName, pPropertyCount, pProperties);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkEnumerateDeviceLayerProperties_default(
+    VkPhysicalDevice physicalDevice,
+    uint32_t* pPropertyCount,
+    VkLayerProperties* pProperties);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkEnumerateDeviceLayerProperties(
+    VkPhysicalDevice physicalDevice,
+    uint32_t* pPropertyCount,
+    VkLayerProperties* pProperties
+) {
+    return layer_vkEnumerateDeviceLayerProperties_default(physicalDevice, pPropertyCount, pProperties);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkEnumerateInstanceExtensionProperties_default(
+    const char* pLayerName,
+    uint32_t* pPropertyCount,
+    VkExtensionProperties* pProperties);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkEnumerateInstanceExtensionProperties(
+    const char* pLayerName,
+    uint32_t* pPropertyCount,
+    VkExtensionProperties* pProperties
+) {
+    return layer_vkEnumerateInstanceExtensionProperties_default(pLayerName, pPropertyCount, pProperties);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkEnumerateInstanceLayerProperties_default(
+    uint32_t* pPropertyCount,
+    VkLayerProperties* pProperties);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkEnumerateInstanceLayerProperties(
+    uint32_t* pPropertyCount,
+    VkLayerProperties* pProperties
+) {
+    return layer_vkEnumerateInstanceLayerProperties_default(pPropertyCount, pProperties);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkEnumeratePhysicalDeviceGroups_default(
     VkInstance instance,
     uint32_t* pPhysicalDeviceGroupCount,
@@ -420,6 +488,21 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetDisplayPlaneSupportedDisplaysKHR(
     VkDisplayKHR* pDisplays
 ) {
     return layer_vkGetDisplayPlaneSupportedDisplaysKHR_default(physicalDevice, planeIndex, pDisplayCount, pDisplays);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
+VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL layer_vkGetInstanceProcAddr_default(
+    VkInstance instance,
+    const char* pName);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL layer_vkGetInstanceProcAddr(
+    VkInstance instance,
+    const char* pName
+) {
+    return layer_vkGetInstanceProcAddr_default(instance, pName);
 }
 
 /* See Vulkan API for documentation. */

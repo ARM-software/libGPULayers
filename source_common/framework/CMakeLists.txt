@@ -27,7 +27,7 @@ add_library(
     ${LIB_BINARY} STATIC
         device_functions.cpp
         instance_functions.cpp
-        instance_functions_manual.cpp)
+        manual_functions.cpp)
 
 target_include_directories(
     ${LIB_BINARY} PRIVATE
