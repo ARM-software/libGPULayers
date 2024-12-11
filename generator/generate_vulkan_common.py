@@ -410,6 +410,10 @@ def generate_layer_instance_layer_decls(file, mapping, commands):
         if command.dispatch_type != 'instance':
             continue
 
+        tname = command.name
+        if tname in FORWARD_WITHOUT_INTERCEPT:
+            continue
+
         lines = []
 
         plat_define = mapping.get_platform_define(command.name)
@@ -468,6 +472,10 @@ def generate_layer_instance_layer_defs(file, mapping, commands, manual_commands)
     lines = []
     for command in commands:
         if command.dispatch_type != 'instance':
+            continue
+
+        tname = command.name
+        if tname in FORWARD_WITHOUT_INTERCEPT:
             continue
 
         plat_define = mapping.get_platform_define(command.name)

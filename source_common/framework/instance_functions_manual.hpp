@@ -146,35 +146,93 @@ std::vector<const char*> cloneExtensionList(
     const char* const* extensionList);
 
 /** See Vulkan API for documentation. */
-PFN_vkVoidFunction vkGetDeviceProcAddr_default(
+PFN_vkVoidFunction layer_vkGetDeviceProcAddr_default(
     VkDevice device,
     const char* pName);
 
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL layer_vkGetDeviceProcAddr(
+    VkDevice device,
+    const char* pName
+) {
+    return layer_vkGetDeviceProcAddr_default(device, pName);
+}
+
 /** See Vulkan API for documentation. */
-PFN_vkVoidFunction vkGetInstanceProcAddr_default(
+PFN_vkVoidFunction layer_vkGetInstanceProcAddr_default(
     VkInstance instance,
     const char* pName);
 
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL layer_vkGetInstanceProcAddr(
+    VkInstance instance,
+    const char* pName
+) {
+    return layer_vkGetInstanceProcAddr_default(instance, pName);
+}
+
 /** See Vulkan API for documentation. */
-VkResult vkEnumerateInstanceExtensionProperties_default(
+VkResult layer_vkEnumerateInstanceExtensionProperties_default(
     const char* pLayerName,
     uint32_t* pPropertyCount,
     VkExtensionProperties* pProperties);
 
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkEnumerateInstanceExtensionProperties(
+    const char* pLayerName,
+    uint32_t* pPropertyCount,
+    VkExtensionProperties* pProperties
+) {
+    return layer_vkEnumerateInstanceExtensionProperties_default(pLayerName, pPropertyCount, pProperties);
+}
+
 /** See Vulkan API for documentation. */
-VkResult vkEnumerateDeviceExtensionProperties_default(
+VkResult layer_vkEnumerateDeviceExtensionProperties_default(
     VkPhysicalDevice gpu,
     const char* pLayerName,
     uint32_t* pPropertyCount,
     VkExtensionProperties* pProperties);
 
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkEnumerateDeviceExtensionProperties(
+    VkPhysicalDevice gpu,
+    const char* pLayerName,
+    uint32_t* pPropertyCount,
+    VkExtensionProperties* pProperties
+) {
+    return layer_vkEnumerateDeviceExtensionProperties_default(gpu, pLayerName, pPropertyCount, pProperties);
+}
+
 /** See Vulkan API for documentation. */
-VkResult vkEnumerateInstanceLayerProperties_default(
+VkResult layer_vkEnumerateInstanceLayerProperties_default(
     uint32_t* pPropertyCount,
     VkLayerProperties* pProperties);
 
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkEnumerateInstanceLayerProperties(
+    uint32_t* pPropertyCount,
+    VkLayerProperties* pProperties
+) {
+    return layer_vkEnumerateInstanceLayerProperties_default(pPropertyCount, pProperties);
+}
+
 /** See Vulkan API for documentation. */
-VkResult vkEnumerateDeviceLayerProperties_default(
+VkResult layer_vkEnumerateDeviceLayerProperties_default(
     VkPhysicalDevice gpu,
     uint32_t* pPropertyCount,
     VkLayerProperties* pProperties);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkEnumerateDeviceLayerProperties(
+    VkPhysicalDevice gpu,
+    uint32_t* pPropertyCount,
+    VkLayerProperties* pProperties
+) {
+    return layer_vkEnumerateDeviceLayerProperties_default(gpu, pPropertyCount, pProperties);
+}

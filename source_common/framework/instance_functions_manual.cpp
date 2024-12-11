@@ -247,7 +247,7 @@ std::vector<const char*> cloneExtensionList(
 }
 
 /** See Vulkan API for documentation. */
-PFN_vkVoidFunction vkGetDeviceProcAddr_default(
+PFN_vkVoidFunction layer_vkGetDeviceProcAddr_default(
     VkDevice device,
     const char* pName
 ) {
@@ -272,7 +272,7 @@ PFN_vkVoidFunction vkGetDeviceProcAddr_default(
 }
 
 /** See Vulkan API for documentation. */
-PFN_vkVoidFunction vkGetInstanceProcAddr_default(
+PFN_vkVoidFunction layer_vkGetInstanceProcAddr_default(
     VkInstance instance,
     const char* pName
 ) {
@@ -308,7 +308,7 @@ PFN_vkVoidFunction vkGetInstanceProcAddr_default(
 }
 
 /** See Vulkan API for documentation. */
-VkResult vkEnumerateInstanceExtensionProperties_default(
+VkResult layer_vkEnumerateInstanceExtensionProperties_default(
     const char* pLayerName,
     uint32_t* pPropertyCount,
     VkExtensionProperties* pProperties
@@ -327,7 +327,7 @@ VkResult vkEnumerateInstanceExtensionProperties_default(
 }
 
 /** See Vulkan API for documentation. */
-VkResult vkEnumerateDeviceExtensionProperties_default(
+VkResult layer_vkEnumerateDeviceExtensionProperties_default(
     VkPhysicalDevice gpu,
     const char* pLayerName,
     uint32_t* pPropertyCount,
@@ -362,7 +362,7 @@ VkResult vkEnumerateDeviceExtensionProperties_default(
 }
 
 /** See Vulkan API for documentation. */
-VkResult vkEnumerateInstanceLayerProperties_default(
+VkResult layer_vkEnumerateInstanceLayerProperties_default(
     uint32_t* pPropertyCount,
     VkLayerProperties* pProperties
 ) {
@@ -386,7 +386,7 @@ VkResult vkEnumerateInstanceLayerProperties_default(
 }
 
 /** See Vulkan API for documentation. */
-VkResult vkEnumerateDeviceLayerProperties_default(
+VkResult layer_vkEnumerateDeviceLayerProperties_default(
     VkPhysicalDevice gpu,
     uint32_t* pPropertyCount,
     VkLayerProperties* pProperties

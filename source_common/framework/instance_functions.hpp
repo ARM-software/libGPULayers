@@ -259,25 +259,6 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroySurfaceKHR(
 
 /* See Vulkan API for documentation. */
 /* Default common code pass-through implementation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkEnumerateDeviceExtensionProperties_default(
-    VkPhysicalDevice physicalDevice,
-    const char* pLayerName,
-    uint32_t* pPropertyCount,
-    VkExtensionProperties* pProperties);
-
-/* Match-all template to use default implementation. */
-template <typename T>
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkEnumerateDeviceExtensionProperties(
-    VkPhysicalDevice physicalDevice,
-    const char* pLayerName,
-    uint32_t* pPropertyCount,
-    VkExtensionProperties* pProperties
-) {
-    return layer_vkEnumerateDeviceExtensionProperties_default(physicalDevice, pLayerName, pPropertyCount, pProperties);
-}
-
-/* See Vulkan API for documentation. */
-/* Default common code pass-through implementation. */
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkEnumeratePhysicalDeviceGroups_default(
     VkInstance instance,
     uint32_t* pPhysicalDeviceGroupCount,

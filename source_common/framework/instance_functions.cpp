@@ -335,24 +335,6 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroySurfaceKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkEnumerateDeviceExtensionProperties_default(
-    VkPhysicalDevice physicalDevice,
-    const char* pLayerName,
-    uint32_t* pPropertyCount,
-    VkExtensionProperties* pProperties
-) {
-    LAYER_TRACE(__func__);
-
-    // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
-    auto* layer = Instance::retrieve(physicalDevice);
-
-    // Release the lock to call into the driver
-    lock.unlock();
-    return layer->driver.vkEnumerateDeviceExtensionProperties(physicalDevice, pLayerName, pPropertyCount, pProperties);
-}
-
-/* See Vulkan API for documentation. */
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkEnumeratePhysicalDeviceGroups_default(
     VkInstance instance,
     uint32_t* pPhysicalDeviceGroupCount,

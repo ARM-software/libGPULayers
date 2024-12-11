@@ -30,10 +30,7 @@
  * Note that the Android loader requires more functions to be exposed as
  * library symbols than other Vulkan loaders.
  */
-#include <array>
-#include <cstring>
 #include <mutex>
-#include <thread>
 
 #include "framework/instance_functions_manual.hpp"
 #include "framework/utils.hpp"
@@ -47,7 +44,7 @@ VK_LAYER_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetDeviceProcAddr(
     VkDevice device,
     const char* pName
 ) {
-    return vkGetDeviceProcAddr_default(device, pName);
+    return layer_vkGetDeviceProcAddr<user_tag>(device, pName);
 }
 
 /** See Vulkan API for documentation. */
@@ -55,7 +52,7 @@ VK_LAYER_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetInstanceProcAddr(
     VkInstance instance,
     const char* pName
 ) {
-    return vkGetInstanceProcAddr_default(instance, pName);
+    return layer_vkGetInstanceProcAddr<user_tag>(instance, pName);
 }
 
 /** See Vulkan API for documentation. */
@@ -64,7 +61,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateInstanceExtensionPrope
     uint32_t* pPropertyCount,
     VkExtensionProperties* pProperties
 ) {
-    return vkEnumerateInstanceExtensionProperties_default(pLayerName, pPropertyCount, pProperties);
+    return layer_vkEnumerateInstanceExtensionProperties<user_tag>(pLayerName, pPropertyCount, pProperties);
 }
 
 /** See Vulkan API for documentation. */
@@ -74,7 +71,7 @@ VK_LAYER_EXPORT_ANDROID VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceExtensio
     uint32_t* pPropertyCount,
     VkExtensionProperties* pProperties
 ) {
-    return vkEnumerateDeviceExtensionProperties_default(gpu, pLayerName, pPropertyCount, pProperties);
+    return layer_vkEnumerateDeviceExtensionProperties<user_tag>(gpu, pLayerName, pPropertyCount, pProperties);
 }
 
 /** See Vulkan API for documentation. */
@@ -82,7 +79,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateInstanceLayerPropertie
     uint32_t* pPropertyCount,
     VkLayerProperties* pProperties
 ) {
-    return vkEnumerateInstanceLayerProperties_default(pPropertyCount, pProperties);
+    return layer_vkEnumerateInstanceLayerProperties<user_tag>(pPropertyCount, pProperties);
 }
 
 /** See Vulkan API for documentation. */
@@ -91,7 +88,7 @@ VK_LAYER_EXPORT_ANDROID VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceLayerPro
     uint32_t* pPropertyCount,
     VkLayerProperties* pProperties
 ) {
-    return vkEnumerateDeviceLayerProperties_default(gpu, pPropertyCount, pProperties);
+    return layer_vkEnumerateDeviceLayerProperties<user_tag>(gpu, pPropertyCount, pProperties);
 }
 
 }
