@@ -35,8 +35,8 @@
 #include <mutex>
 #include <thread>
 
-#include "framework/utils.hpp"
 #include "framework/instance_functions_manual.hpp"
+#include "framework/utils.hpp"
 
 std::mutex g_vulkanLock;
 
