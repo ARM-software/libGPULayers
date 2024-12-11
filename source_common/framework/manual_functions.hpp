@@ -144,37 +144,3 @@ bool isInExtensionList(
 std::vector<const char*> cloneExtensionList(
     uint32_t extensionCount,
     const char* const* extensionList);
-
-/** See Vulkan API for documentation. */
-PFN_vkVoidFunction vkGetDeviceProcAddr_default(
-    VkDevice device,
-    const char* pName);
-
-/** See Vulkan API for documentation. */
-PFN_vkVoidFunction vkGetInstanceProcAddr_default(
-    VkInstance instance,
-    const char* pName);
-
-/** See Vulkan API for documentation. */
-VkResult vkEnumerateInstanceExtensionProperties_default(
-    const char* pLayerName,
-    uint32_t* pPropertyCount,
-    VkExtensionProperties* pProperties);
-
-/** See Vulkan API for documentation. */
-VkResult vkEnumerateDeviceExtensionProperties_default(
-    VkPhysicalDevice gpu,
-    const char* pLayerName,
-    uint32_t* pPropertyCount,
-    VkExtensionProperties* pProperties);
-
-/** See Vulkan API for documentation. */
-VkResult vkEnumerateInstanceLayerProperties_default(
-    uint32_t* pPropertyCount,
-    VkLayerProperties* pProperties);
-
-/** See Vulkan API for documentation. */
-VkResult vkEnumerateDeviceLayerProperties_default(
-    VkPhysicalDevice gpu,
-    uint32_t* pPropertyCount,
-    VkLayerProperties* pProperties);

@@ -481,6 +481,7 @@ static const struct InstanceInterceptTableEntry instanceIntercepts[] = {
     ENTRY(vkGetDeviceMemoryOpaqueCaptureAddress),
     ENTRY(vkGetDeviceMemoryOpaqueCaptureAddressKHR),
     ENTRY(vkGetDeviceMicromapCompatibilityEXT),
+    ENTRY(vkGetDeviceProcAddr),
     ENTRY(vkGetDeviceQueue),
     ENTRY(vkGetDeviceQueue2),
     ENTRY(vkGetEventStatus),
@@ -603,6 +604,9 @@ struct InstanceDispatchTable {
     PFN_vkDestroyInstance vkDestroyInstance;
     PFN_vkDestroySurfaceKHR vkDestroySurfaceKHR;
     PFN_vkEnumerateDeviceExtensionProperties vkEnumerateDeviceExtensionProperties;
+    PFN_vkEnumerateDeviceLayerProperties vkEnumerateDeviceLayerProperties;
+    PFN_vkEnumerateInstanceExtensionProperties vkEnumerateInstanceExtensionProperties;
+    PFN_vkEnumerateInstanceLayerProperties vkEnumerateInstanceLayerProperties;
     PFN_vkEnumeratePhysicalDeviceGroups vkEnumeratePhysicalDeviceGroups;
     PFN_vkEnumeratePhysicalDeviceGroupsKHR vkEnumeratePhysicalDeviceGroupsKHR;
     PFN_vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR;
@@ -692,6 +696,9 @@ static inline void initDriverInstanceDispatchTable(
     ENTRY(vkDestroyInstance);
     ENTRY(vkDestroySurfaceKHR);
     ENTRY(vkEnumerateDeviceExtensionProperties);
+    ENTRY(vkEnumerateDeviceLayerProperties);
+    ENTRY(vkEnumerateInstanceExtensionProperties);
+    ENTRY(vkEnumerateInstanceLayerProperties);
     ENTRY(vkEnumeratePhysicalDeviceGroups);
     ENTRY(vkEnumeratePhysicalDeviceGroupsKHR);
     ENTRY(vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR);

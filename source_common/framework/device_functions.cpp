@@ -4924,26 +4924,6 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyDescriptorUpdateTemplateKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroyDevice_default(
-    VkDevice device,
-    const VkAllocationCallbacks* pAllocator
-) {
-    LAYER_TRACE(__func__);
-
-    // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
-    auto* layer = Device::retrieve(device);
-
-    // Layer proxy must be destroyed before the driver version
-    // so we can clean up any layer-owned resources
-    Device::destroy(layer);
-
-    // Release the lock to call into the driver
-    lock.unlock();
-    layer->driver.vkDestroyDevice(device, pAllocator);
-}
-
-/* See Vulkan API for documentation. */
 VKAPI_ATTR void VKAPI_CALL layer_vkDestroyEvent_default(
     VkDevice device,
     VkEvent event,
@@ -5945,35 +5925,6 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceImageMemoryRequirements_default(
     // Release the lock to call into the driver
     lock.unlock();
     layer->driver.vkGetDeviceImageMemoryRequirements(device, pInfo, pMemoryRequirements);
-}
-
-/* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceImageMemoryRequirementsKHR_default(
-    VkDevice device,
-    const VkDeviceImageMemoryRequirements* pInfo,
-    VkMemoryRequirements2* pMemoryRequirements
-) {
-    LAYER_TRACE(__func__);
-
-    // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
-    auto* layer = Device::retrieve(device);
-
-    // Workaround Unreal Engine trying to invoke this via a function pointer
-    // queried from a Vulkan 1.1 instance with vkGetInstanceProcAddress() using
-    // a device created from a later a Vulkan 1.0 context for which the
-    // function is unavailable because VK_KHR_maintenance4 requires Vulkan 1.1
-    if (!layer->driver.vkGetDeviceImageMemoryRequirementsKHR)
-    {
-        pMemoryRequirements->memoryRequirements.size = 0;
-        pMemoryRequirements->memoryRequirements.alignment = 0;
-        pMemoryRequirements->memoryRequirements.memoryTypeBits = 0;
-        return;
-    }
-
-    // Release the lock to call into the driver
-    lock.unlock();
-    layer->driver.vkGetDeviceImageMemoryRequirementsKHR(device, pInfo, pMemoryRequirements);
 }
 
 /* See Vulkan API for documentation. */

@@ -32,7 +32,7 @@
 #include "instance.hpp"
 
 // Include from common code
-#include "framework/instance_functions_manual.hpp"
+#include "framework/manual_functions.hpp"
 #include "framework/instance_functions.hpp"
 #include "framework/utils.hpp"
 
@@ -97,47 +97,6 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDebugUtilsMessengerEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDevice_default(
-    VkPhysicalDevice physicalDevice,
-    const VkDeviceCreateInfo* pCreateInfo,
-    const VkAllocationCallbacks* pAllocator,
-    VkDevice* pDevice
-) {
-    LAYER_TRACE(__func__);
-
-    // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
-    auto* layer = Instance::retrieve(physicalDevice);
-
-    // Release the lock to call into the driver
-    lock.unlock();
-
-    auto* chainInfo = getChainInfo(pCreateInfo);
-    auto fpGetInstanceProcAddr = chainInfo->u.pLayerInfo->pfnNextGetInstanceProcAddr;
-    auto fpGetDeviceProcAddr = chainInfo->u.pLayerInfo->pfnNextGetDeviceProcAddr;
-    auto fpCreateDevice = reinterpret_cast<PFN_vkCreateDevice>(fpGetInstanceProcAddr(layer->instance, "vkCreateDevice"));
-    if (!fpCreateDevice)
-    {
-        return VK_ERROR_INITIALIZATION_FAILED;
-    }
-
-    // Advance the link info for the next element on the chain
-    chainInfo->u.pLayerInfo = chainInfo->u.pLayerInfo->pNext;
-    auto res = fpCreateDevice(physicalDevice, pCreateInfo, pAllocator, pDevice);
-    if (res != VK_SUCCESS)
-    {
-        return res;
-    }
-
-    // Retake the lock to access layer-wide global store
-    lock.lock();
-    auto device = std::make_unique<Device>(layer, physicalDevice, *pDevice, fpGetDeviceProcAddr);
-    Device::store(*pDevice, std::move(device));
-
-    return VK_SUCCESS;
-}
-
-/* See Vulkan API for documentation. */
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDisplayModeKHR_default(
     VkPhysicalDevice physicalDevice,
     VkDisplayKHR display,
@@ -172,72 +131,6 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDisplayPlaneSurfaceKHR_default(
     // Release the lock to call into the driver
     lock.unlock();
     return layer->driver.vkCreateDisplayPlaneSurfaceKHR(instance, pCreateInfo, pAllocator, pSurface);
-}
-
-/* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateInstance_default(
-    const VkInstanceCreateInfo* pCreateInfo,
-    const VkAllocationCallbacks* pAllocator,
-    VkInstance* pInstance
-) {
-    LAYER_TRACE(__func__);
-
-    auto* chainInfo = getChainInfo(pCreateInfo);
-    auto supportedExtensions = getInstanceExtensionList(pCreateInfo);
-
-    auto fpGetInstanceProcAddr = chainInfo->u.pLayerInfo->pfnNextGetInstanceProcAddr;
-    auto fpCreateInstance = reinterpret_cast<PFN_vkCreateInstance>(fpGetInstanceProcAddr(nullptr, "vkCreateInstance"));
-    if (!fpCreateInstance)
-    {
-        return VK_ERROR_INITIALIZATION_FAILED;
-    }
-
-    // Create a copy we can write
-    VkInstanceCreateInfo newCreateInfo = *pCreateInfo;
-
-    // Query extension state
-    std::string targetExt("VK_EXT_debug_utils");
-    bool targetSupported = isIn(targetExt, supportedExtensions);
-    bool targetEnabled = isInExtensionList(
-        targetExt,
-        pCreateInfo->enabledExtensionCount,
-        pCreateInfo->ppEnabledExtensionNames);
-
-    if (!targetSupported)
-    {
-        LAYER_LOG("WARNING: Cannot enable additional extension: %s", targetExt.c_str());
-    }
-
-    // Enable the extension if we need to
-    std::vector<const char*> newExtList;
-    if (targetSupported && !targetEnabled)
-    {
-        LAYER_LOG("Enabling additional extension: %s", targetExt.c_str());
-        newExtList = cloneExtensionList(
-            pCreateInfo->enabledExtensionCount,
-            pCreateInfo->ppEnabledExtensionNames);
-
-        newExtList.push_back(targetExt.c_str());
-
-        newCreateInfo.enabledExtensionCount = newExtList.size();
-        newCreateInfo.ppEnabledExtensionNames = newExtList.data();
-    }
-
-    chainInfo->u.pLayerInfo = chainInfo->u.pLayerInfo->pNext;
-    auto res = fpCreateInstance(&newCreateInfo, pAllocator, pInstance);
-    if (res != VK_SUCCESS)
-    {
-        return res;
-    }
-
-    // Retake the lock to access layer-wide global store
-    auto instance = std::make_unique<Instance>(*pInstance, fpGetInstanceProcAddr);
-    {
-        std::lock_guard<std::mutex> lock { g_vulkanLock };
-        Instance::store(*pInstance, instance);
-    }
-
-    return VK_SUCCESS;
 }
 
 /* See Vulkan API for documentation. */
@@ -297,27 +190,6 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyDebugUtilsMessengerEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroyInstance_default(
-    VkInstance instance,
-    const VkAllocationCallbacks* pAllocator
-) {
-    LAYER_TRACE(__func__);
-
-    // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
-    auto* layer = Instance::retrieve(instance);
-
-    // Layer proxy must be destroyed before the driver version
-    // so we can clean up any layer-owned resources
-    Instance::destroy(layer);
-
-    // Release the lock to call into the driver
-    lock.unlock();
-    layer->driver.vkDestroyInstance(instance, pAllocator);
-
-}
-
-/* See Vulkan API for documentation. */
 VKAPI_ATTR void VKAPI_CALL layer_vkDestroySurfaceKHR_default(
     VkInstance instance,
     VkSurfaceKHR surface,
@@ -332,24 +204,6 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroySurfaceKHR_default(
     // Release the lock to call into the driver
     lock.unlock();
     layer->driver.vkDestroySurfaceKHR(instance, surface, pAllocator);
-}
-
-/* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkEnumerateDeviceExtensionProperties_default(
-    VkPhysicalDevice physicalDevice,
-    const char* pLayerName,
-    uint32_t* pPropertyCount,
-    VkExtensionProperties* pProperties
-) {
-    LAYER_TRACE(__func__);
-
-    // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
-    auto* layer = Instance::retrieve(physicalDevice);
-
-    // Release the lock to call into the driver
-    lock.unlock();
-    return layer->driver.vkEnumerateDeviceExtensionProperties(physicalDevice, pLayerName, pPropertyCount, pProperties);
 }
 
 /* See Vulkan API for documentation. */

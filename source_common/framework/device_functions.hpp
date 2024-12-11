@@ -6199,6 +6199,21 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceMicromapCompatibilityEXT(
 
 /* See Vulkan API for documentation. */
 /* Default common code pass-through implementation. */
+VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL layer_vkGetDeviceProcAddr_default(
+    VkDevice device,
+    const char* pName);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL layer_vkGetDeviceProcAddr(
+    VkDevice device,
+    const char* pName
+) {
+    return layer_vkGetDeviceProcAddr_default(device, pName);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
 VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceQueue_default(
     VkDevice device,
     uint32_t queueFamilyIndex,
