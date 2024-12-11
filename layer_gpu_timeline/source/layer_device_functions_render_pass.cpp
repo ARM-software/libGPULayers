@@ -156,20 +156,16 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass<user_tag>(
     std::unique_lock<std::mutex> lock { g_vulkanLock };
     auto* layer = Device::retrieve(commandBuffer);
 
-    LAYER_LOG("A");
     auto& tracker = layer->getStateTracker();
     auto& cb = tracker.getCommandBuffer(commandBuffer);
 
-    LAYER_LOG("B");
     auto& rp = tracker.getRenderPass(pRenderPassBegin->renderPass);
     uint32_t width = pRenderPassBegin->renderArea.extent.width;
     uint32_t height = pRenderPassBegin->renderArea.extent.height;
 
     // Notify the command buffer we are starting a new render pass
-    LAYER_LOG("C");
     uint64_t tagID = cb.renderPassBegin(rp, width, height);
 
-    LAYER_LOG("D");
     // Emit the unique workload tag into the command stream
     std::string tagLabel = formatString("t%" PRIu64, tagID);
     [[maybe_unused]] VkDebugUtilsLabelEXT tagInfo {
@@ -179,11 +175,9 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass<user_tag>(
         .color = { 0.0f, 0.0f, 0.0f, 0.0f }
     };
 
-    LAYER_LOG("E");
     // Release the lock to call into the driver
     lock.unlock();
     layer->driver.vkCmdBeginDebugUtilsLabelEXT(commandBuffer, &tagInfo);
-    LAYER_LOG("F");
     layer->driver.vkCmdBeginRenderPass(commandBuffer, pRenderPassBegin, contents);
 }
 
@@ -372,7 +366,6 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderPass<user_tag>(
 
     // Update the layer command stream in the tracker
     auto& tracker = layer->getStateTracker();
-    LAYER_LOG(" - Command buffer: %p", (void*)commandBuffer);
     auto& cb = tracker.getCommandBuffer(commandBuffer);
     cb.renderPassEnd();
 
