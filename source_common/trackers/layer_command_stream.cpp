@@ -24,8 +24,7 @@
  */
 
 #include <cassert>
-
-#include "nlohmann/json.hpp"
+#include <nlohmann/json.hpp>
 
 #include "trackers/layer_command_stream.hpp"
 
@@ -37,7 +36,8 @@ namespace Tracker
 std::atomic<uint64_t> LCSWorkload::nextTagID { 1 };
 
 LCSWorkload::LCSWorkload(
-    uint64_t _tagID):
+    uint64_t _tagID
+):
     tagID(_tagID)
 {
 
@@ -45,7 +45,8 @@ LCSWorkload::LCSWorkload(
 
 /* See header for details. */
 LCSMarker::LCSMarker(
-    const std::string& _label) :
+    const std::string& _label
+) :
     LCSWorkload(0),
     label(_label)
 {
@@ -59,14 +60,15 @@ LCSRenderPass::LCSRenderPass(
     uint32_t _width,
     uint32_t _height,
     bool _suspending,
-    bool _oneTimeSubmit) :
+    bool _oneTimeSubmit
+) :
     LCSWorkload(_tagID),
     width(_width),
     height(_height),
     suspending(_suspending),
     oneTimeSubmit(_oneTimeSubmit)
 {
-    // Copy these as the renderpass object may be transient.
+    // Copy these as the render pass object may be transient.
     subpassCount = renderPass.getSubpassCount();
     attachments = renderPass.getAttachments();
 }
@@ -188,7 +190,8 @@ LCSDispatch::LCSDispatch(
     uint64_t _tagID,
     int64_t _xGroups,
     int64_t _yGroups,
-    int64_t _zGroups) :
+    int64_t _zGroups
+) :
     LCSWorkload(_tagID),
     xGroups(_xGroups),
     yGroups(_yGroups),
@@ -227,7 +230,8 @@ LCSTraceRays::LCSTraceRays(
     uint64_t _tagID,
     int64_t _xItems,
     int64_t _yItems,
-    int64_t _zItems) :
+    int64_t _zItems
+) :
     LCSWorkload(_tagID),
     xItems(_xItems),
     yItems(_yItems),
@@ -265,7 +269,8 @@ std::string LCSTraceRays::getMetadata(
 LCSImageTransfer::LCSImageTransfer(
     uint64_t _tagID,
     const std::string& _transferType,
-    int64_t _pixelCount):
+    int64_t _pixelCount
+):
     LCSWorkload(_tagID),
     transferType(_transferType),
     pixelCount(_pixelCount)
@@ -301,7 +306,8 @@ std::string LCSImageTransfer::getMetadata(
 LCSBufferTransfer::LCSBufferTransfer(
     uint64_t _tagID,
     const std::string& _transferType,
-    int64_t _byteCount):
+    int64_t _byteCount
+):
     LCSWorkload(_tagID),
     transferType(_transferType),
     byteCount(_byteCount)

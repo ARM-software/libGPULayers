@@ -43,7 +43,6 @@
 
 #pragma once
 
-#include <atomic>
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -168,6 +167,8 @@ public:
 
     /**
      * @brief Begin a user debug marker range.
+     *
+     * @param marker   The marker label.
      */
     void debugMarkerBegin(
         std::string marker);
@@ -191,7 +192,7 @@ public:
     /**
      * @brief Begin recording back into the @a Recording state.
      *
-     * @param oneTimeSubmit   Is this a one-time submit recording.
+     * @param oneTimeSubmit   Is this a one-time submit recording?
      */
     void begin(
         bool oneTimeSubmit);
@@ -254,14 +255,16 @@ public:
      *
      * \return The layer wrapper object for the command buffer.
      */
-    CommandBuffer& allocateCommandBuffer(VkCommandBuffer commandBuffer);
+    CommandBuffer& allocateCommandBuffer(
+        VkCommandBuffer commandBuffer);
 
     /**
      * @brief Free the command buffer in the pool with the given handle.
      *
      * @param commandBuffer   The Vulkan handle of the command buffer to free.
      */
-    void freeCommandBuffer(VkCommandBuffer commandBuffer);
+    void freeCommandBuffer(
+        VkCommandBuffer commandBuffer);
 
     /**
      * @brief Reset all allocated command buffers into the @a Initial state.

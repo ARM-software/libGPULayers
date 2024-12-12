@@ -35,6 +35,9 @@
 #include "device.hpp"
 #include "instance.hpp"
 
+/**
+ * @brief The dispatch lookup for all of the created Vulkan devices.
+ */
 static std::unordered_map<void*, std::unique_ptr<Device>> g_devices;
 
 /* See header for documentation. */
@@ -54,8 +57,8 @@ void Device::store(
 
 /* See header for documentation. */
 Device* Device::retrieve(
-    VkDevice handle)
-{
+    VkDevice handle
+) {
     void* key = getDispatchKey(handle);
     assert(isInMap(key, g_devices));
     return g_devices.at(key).get();
@@ -63,8 +66,8 @@ Device* Device::retrieve(
 
 /* See header for documentation. */
 Device* Device::retrieve(
-    VkQueue handle)
-{
+    VkQueue handle
+) {
     void* key = getDispatchKey(handle);
     assert(isInMap(key, g_devices));
     return g_devices.at(key).get();
@@ -72,8 +75,8 @@ Device* Device::retrieve(
 
 /* See header for documentation. */
 Device* Device::retrieve(
-    VkCommandBuffer handle)
-{
+    VkCommandBuffer handle
+) {
     void* key = getDispatchKey(handle);
     assert(isInMap(key, g_devices));
     return g_devices.at(key).get();
@@ -92,7 +95,8 @@ Device::Device(
     VkPhysicalDevice _physicalDevice,
     VkDevice _device,
     PFN_vkGetDeviceProcAddr nlayerGetProcAddress
-):  instance(_instance),
+):
+    instance(_instance),
     physicalDevice(_physicalDevice),
     device(_device)
 {
@@ -104,10 +108,4 @@ Device::Device(
         commsModule = std::make_unique<Comms::CommsModule>("lglcomms");
         commsWrapper = std::make_unique<TimelineComms>(*commsModule);
     }
-}
-
-/* See header for documentation. */
-Device::~Device()
-{
-
 }

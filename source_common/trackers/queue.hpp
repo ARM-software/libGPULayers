@@ -64,6 +64,9 @@ public:
 
     /**
      * @brief Execute a layer command stream.
+     *
+     * @param stream     The layer command stream to execute.
+     * @param callback   The callback to pass submitted workloads to.
      */
     void runSubmitCommandStream(
         const std::vector<LCSInstruction>& stream,
@@ -91,7 +94,7 @@ private:
     std::vector<std::string> debugStack;
 
     /**
-     * @brief The last non-zero renderpass tagID submitted.
+     * @brief The last non-zero render pass tagID submitted.
      */
     uint64_t lastRenderPassTagID { 0 };
 
@@ -99,8 +102,6 @@ private:
      * @brief The command buffer submitID allocator.
      */
     static std::atomic<uint64_t> nextSubmitID;
-
-
 };
 
 }

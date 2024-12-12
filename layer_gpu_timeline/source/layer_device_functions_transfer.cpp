@@ -28,10 +28,21 @@
 #include <thread>
 
 #include "device.hpp"
+#include "device_utils.hpp"
 #include "layer_device_functions.hpp"
 
 extern std::mutex g_vulkanLock;
 
+/**
+ * @brief Register a transfer to a buffer with the tracker.
+ *
+ * @param layer           The layer context for the device.
+ * @param commandBuffer   The command buffer we are recording.
+ * @param transferType    The type of transfer being performed.
+ * @param byteCount       The number of bytes transferred.
+ *
+ * @return The assigned tagID for the workload.
+ */
 static uint64_t registerBufferTransfer(
     Device* layer,
     VkCommandBuffer commandBuffer,
@@ -43,6 +54,16 @@ static uint64_t registerBufferTransfer(
     return cb.bufferTransfer(transferType, byteCount);
 }
 
+/**
+ * @brief Register a transfer to an image with the tracker.
+ *
+ * @param layer           The layer context for the device.
+ * @param commandBuffer   The command buffer we are recording.
+ * @param transferType    The type of transfer being performed.
+ * @param pixelCount      The number of pixels transferred.
+ *
+ * @return The assigned tagID for the workload.
+ */
 static uint64_t registerImageTransfer(
     Device* layer,
     VkCommandBuffer commandBuffer,
@@ -52,23 +73,6 @@ static uint64_t registerImageTransfer(
     auto& tracker = layer->getStateTracker();
     auto& cb = tracker.getCommandBuffer(commandBuffer);
     return cb.imageTransfer(transferType, pixelCount);
-}
-
-static void emitStartTag(
-    Device* layer,
-    VkCommandBuffer commandBuffer,
-    uint64_t tagID
-) {
-    // Emit the unique workload tag into the command stream
-    std::string tagLabel = formatString("t%" PRIu64, tagID);
-    VkDebugUtilsLabelEXT tagInfo {
-        .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT,
-        .pNext = nullptr,
-        .pLabelName = tagLabel.c_str(),
-        .color = { 0.0f, 0.0f, 0.0f, 0.0f }
-    };
-
-    layer->driver.vkCmdBeginDebugUtilsLabelEXT(commandBuffer, &tagInfo);
 }
 
 // Commands for transfers

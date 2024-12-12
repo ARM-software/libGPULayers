@@ -32,6 +32,12 @@
 
 extern std::mutex g_vulkanLock;
 
+/**
+ * @brief Register a draw call with the tracker.
+ *
+ * @param layer           The layer context for the device.
+ * @param commandBuffer   The command buffer we are recording.
+ */
 static void registerDrawCall(
     Device* layer,
     VkCommandBuffer commandBuffer

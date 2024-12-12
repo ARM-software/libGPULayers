@@ -23,6 +23,8 @@
  * ----------------------------------------------------------------------------
  */
 
+#pragma once
+
 #include <vulkan/vulkan.h>
 
 #include "framework/utils.hpp"

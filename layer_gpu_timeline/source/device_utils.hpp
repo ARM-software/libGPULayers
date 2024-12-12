@@ -23,28 +23,34 @@
  * ----------------------------------------------------------------------------
  */
 
+#pragma once
+
+#include <vulkan/vulkan.h>
+
+#include "framework/utils.hpp"
+
+#include "device.hpp"
+
 /**
- * @file
- * The declaration of the communication module internal message types.
+ * @brief Emit a start tag via a driver debug utils label.
+ *
+ * @param layer           The layer context for the device.
+ * @param commandBuffer   The command buffer we are recording.
+ * @param tagID           The tagID to emit into the label.
  */
+[[maybe_unused]] static void emitStartTag(
+    Device* layer,
+    VkCommandBuffer commandBuffer,
+    uint64_t tagID
+) {
+    // Emit the unique workload tag into the command stream
+    std::string tagLabel = formatString("t%" PRIu64, tagID);
+    VkDebugUtilsLabelEXT tagInfo {
+        .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT,
+        .pNext = nullptr,
+        .pLabelName = tagLabel.c_str(),
+        .color = { 0.0f, 0.0f, 0.0f, 0.0f }
+    };
 
-#include "comms/comms_message.hpp"
-
-namespace Comms
-{
-
-Message::Message(
-    EndpointID _endpointID,
-    MessageType _messageType,
-    MessageID _messageID,
-    std::unique_ptr<MessageData> _transmitData
-) :
-    endpointID(_endpointID),
-    messageType(_messageType),
-    messageID(_messageID),
-    transmitData(std::move(_transmitData))
-{
-
-}
-
+    layer->driver.vkCmdBeginDebugUtilsLabelEXT(commandBuffer, &tagInfo);
 }

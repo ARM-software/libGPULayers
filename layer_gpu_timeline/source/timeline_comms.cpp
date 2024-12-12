@@ -27,16 +27,19 @@
 
 #include "timeline_comms.hpp"
 
+/* See header for documentation. */
 TimelineComms::TimelineComms(
-    Comms::CommsInterface& commsIf)
+    Comms::CommsInterface& _comms
+):
+    comms(_comms)
 {
-    comms = &commsIf;
-    if (comms->isConnected())
+    if (comms.isConnected())
     {
-        endpoint = comms->getEndpointID("GPUTimeline");
+        endpoint = comms.getEndpointID("GPUTimeline");
     }
 }
 
+/* See header for documentation. */
 void TimelineComms::txMessage(
     const std::string& message)
 {
@@ -47,5 +50,5 @@ void TimelineComms::txMessage(
     }
 
     auto data = std::make_unique<Comms::MessageData>(message.begin(), message.end());
-    comms->txAsync(endpoint, std::move(data));
+    comms.txAsync(endpoint, std::move(data));
 }

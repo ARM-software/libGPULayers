@@ -37,13 +37,15 @@
 #include "comms/comms_receiver.hpp"
 #include "comms/comms_module.hpp"
 #include "framework/utils.hpp"
+#include "utils/misc.hpp"
 
 namespace Comms
 {
-/** See header for documentation. */
+/* See header for documentation. */
 Receiver::Receiver(
     CommsModule& _parent
-) : parent(_parent)
+) :
+    parent(_parent)
 {
     int pipe_err = pipe(stopRequestPipe);
     if (pipe_err)
@@ -55,7 +57,7 @@ Receiver::Receiver(
     worker = std::thread(&Receiver::runReceiver, this);
 }
 
-/** See header for documentation. */
+/* See header for documentation. */
 Receiver::~Receiver()
 {
     // Stop the worker thread if it's not stopped already
@@ -69,7 +71,7 @@ Receiver::~Receiver()
     close(stopRequestPipe[1]);
 }
 
-/** See header for documentation. */
+/* See header for documentation. */
 void Receiver::stop()
 {
     // Mark the engine as stopping
@@ -77,13 +79,14 @@ void Receiver::stop()
 
     // Poke the pipe to wake the worker thread if it is blocked on a read
     int data = 0xdead;
-    [[maybe_unused]] int _ = write(stopRequestPipe[1], &data, sizeof(int));
+    int ret = write(stopRequestPipe[1], &data, sizeof(int));
+    UNUSED(ret);
 
     // Join on the worker thread
     worker.join();
 }
 
-/** See header for documentation. */
+/* See header for documentation. */
 void Receiver::parkMessage(
     std::shared_ptr<Message> message
 ) {
@@ -91,7 +94,7 @@ void Receiver::parkMessage(
     parkingBuffer.insert({ message->messageID, std::move(message) });
 }
 
-/** See header for documentation. */
+/* See header for documentation. */
 void Receiver::runReceiver()
 {
     while (!stopRequested)
@@ -119,7 +122,7 @@ void Receiver::runReceiver()
     }
 }
 
-/** See header for documentation. */
+/* See header for documentation. */
 void Receiver::wakeMessage(
     MessageID messageID,
     std::unique_ptr<MessageData> data
@@ -142,7 +145,7 @@ void Receiver::wakeMessage(
     message->notify();
 }
 
-/** See header for documentation. */
+/* See header for documentation. */
 bool Receiver::receiveData(
     uint8_t* data,
     size_t dataSize

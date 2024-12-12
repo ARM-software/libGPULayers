@@ -29,6 +29,9 @@
 
 #include "instance.hpp"
 
+/**
+ * @brief The dispatch lookup for all of the created Vulkan instances.
+ */
 static std::unordered_map<void*, std::unique_ptr<Instance>> g_instances;
 
 /* See header for documentation. */
@@ -42,8 +45,8 @@ void Instance::store(
 
 /* See header for documentation. */
 Instance* Instance::retrieve(
-    VkInstance handle)
-{
+    VkInstance handle
+) {
     void* key = getDispatchKey(handle);
     assert(isInMap(key, g_instances));
     return g_instances.at(key).get();
@@ -51,8 +54,8 @@ Instance* Instance::retrieve(
 
 /* See header for documentation. */
 Instance* Instance::retrieve(
-    VkPhysicalDevice handle)
-{
+    VkPhysicalDevice handle
+) {
     void* key = getDispatchKey(handle);
     assert(isInMap(key, g_instances));
     return g_instances.at(key).get();
@@ -68,7 +71,8 @@ void Instance::destroy(
 /* See header for documentation. */
 Instance::Instance(
     VkInstance _instance,
-    PFN_vkGetInstanceProcAddr _nlayerGetProcAddress) :
+    PFN_vkGetInstanceProcAddr _nlayerGetProcAddress
+) :
     instance(_instance),
     nlayerGetProcAddress(_nlayerGetProcAddress)
 {

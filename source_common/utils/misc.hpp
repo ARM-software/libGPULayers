@@ -130,8 +130,8 @@ bool isInMap(
 /**
  * @brief Append all values in one vector to the back of another.
  *
- * @param src   The destination vector to append to.
- * @param dst   The source vector; must not be src vector.
+ * @param dst   The destination vector to append to; must not be source vector.
+ * @param src   The source vector to append.
  */
 template<typename T>
 void vecAppend(
@@ -149,7 +149,12 @@ void vecAppend(
 /**
  * @brief Get a displayable pointer.
  *
- * On 64-bit Arm systems this strips the MTE tag in the top byte.
+ * On 64-bit Arm systems this strips the MTE tag in the top byte, which means
+ * that the pointer cannot be converted back into a usable pointer without
+ * triggering an MTE tag violation, so the returns value is for cosmetic use
+ * only.
+ *
+ * @param pointer   The pointer to display.
  *
  * @return The displayable pointer.
  */

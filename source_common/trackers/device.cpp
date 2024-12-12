@@ -23,12 +23,6 @@
  * ----------------------------------------------------------------------------
  */
 
-#include <array>
-#include <iostream>
-#include <fstream>
-#include <sys/stat.h>
-#include <vector>
-
 #include "trackers/device.hpp"
 #include "utils/misc.hpp"
 
@@ -70,12 +64,10 @@ void Device::allocateCommandBuffer(
     auto& buffer = pool.allocateCommandBuffer(commandBuffer);
 
     // Insert into the tracker lookup map
-    [[maybe_unused]] auto result = commandBuffers.insert({
+    commandBuffers.insert({
         commandBuffer,
         buffer
     });
-
-    assert(result.second);
 }
 
 /* See header for documentation. */

@@ -23,9 +23,7 @@
  * ----------------------------------------------------------------------------
  */
 
-#include <memory>
 #include <mutex>
-#include <thread>
 
 // Include from per-layer code
 #include "device.hpp"

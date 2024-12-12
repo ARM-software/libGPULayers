@@ -23,12 +23,10 @@
  * ----------------------------------------------------------------------------
  */
 
-#include <memory>
 #include <mutex>
-#include <thread>
+#include <nlohmann/json.hpp>
 
 #include "utils/misc.hpp"
-#include "nlohmann/json.hpp"
 
 #include "device.hpp"
 #include "layer_device_functions.hpp"

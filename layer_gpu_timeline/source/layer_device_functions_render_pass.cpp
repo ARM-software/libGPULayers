@@ -23,15 +23,14 @@
  * ----------------------------------------------------------------------------
  */
 
-#include <memory>
 #include <mutex>
-#include <thread>
-
-#include "device.hpp"
-#include "layer_device_functions.hpp"
 
 #include "framework/utils.hpp"
 #include "trackers/render_pass.hpp"
+
+#include "device.hpp"
+#include "device_utils.hpp"
+#include "layer_device_functions.hpp"
 
 extern std::mutex g_vulkanLock;
 
@@ -166,18 +165,9 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass<user_tag>(
     // Notify the command buffer we are starting a new render pass
     uint64_t tagID = cb.renderPassBegin(rp, width, height);
 
-    // Emit the unique workload tag into the command stream
-    std::string tagLabel = formatString("t%" PRIu64, tagID);
-    VkDebugUtilsLabelEXT tagInfo {
-        .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT,
-        .pNext = nullptr,
-        .pLabelName = tagLabel.c_str(),
-        .color = { 0.0f, 0.0f, 0.0f, 0.0f }
-    };
-
     // Release the lock to call into the driver
     lock.unlock();
-    layer->driver.vkCmdBeginDebugUtilsLabelEXT(commandBuffer, &tagInfo);
+    emitStartTag(layer, commandBuffer, tagID);
     layer->driver.vkCmdBeginRenderPass(commandBuffer, pRenderPassBegin, contents);
 }
 
@@ -204,18 +194,9 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass2<user_tag>(
     // Notify the command buffer we are starting a new render pass
     uint64_t tagID = cb.renderPassBegin(rp, width, height);
 
-    // Emit the unique workload tag into the command stream
-    std::string tagLabel = formatString("t%" PRIu64, tagID);
-    VkDebugUtilsLabelEXT tagInfo {
-        .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT,
-        .pNext = nullptr,
-        .pLabelName = tagLabel.c_str(),
-        .color = { 0.0f, 0.0f, 0.0f, 0.0f }
-    };
-
     // Release the lock to call into the driver
     lock.unlock();
-    layer->driver.vkCmdBeginDebugUtilsLabelEXT(commandBuffer, &tagInfo);
+    emitStartTag(layer, commandBuffer, tagID);
     layer->driver.vkCmdBeginRenderPass2(commandBuffer, pRenderPassBegin, pSubpassBeginInfo);
 }
 
@@ -242,18 +223,9 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass2KHR<user_tag>(
     // Notify the command buffer we are starting a new render pass
     uint64_t tagID = cb.renderPassBegin(rp, width, height);
 
-    // Emit the unique workload tag into the command stream
-    std::string tagLabel = formatString("t%" PRIu64, tagID);
-    VkDebugUtilsLabelEXT tagInfo {
-        .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT,
-        .pNext = nullptr,
-        .pLabelName = tagLabel.c_str(),
-        .color = { 0.0f, 0.0f, 0.0f, 0.0f }
-    };
-
     // Release the lock to call into the driver
     lock.unlock();
-    layer->driver.vkCmdBeginDebugUtilsLabelEXT(commandBuffer, &tagInfo);
+    emitStartTag(layer, commandBuffer, tagID);
     layer->driver.vkCmdBeginRenderPass2KHR(commandBuffer, pRenderPassBegin, pSubpassBeginInfo);
 }
 
@@ -286,22 +258,11 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRendering<user_tag>(
 
     // Release the lock to call into the driver
     lock.unlock();
-
     // Emit the label only for new render passes
     if (!resuming)
     {
-        // Emit the unique workload tag into the command stream
-        std::string tagLabel = formatString("t%" PRIu64, tagID);
-        VkDebugUtilsLabelEXT tagInfo {
-            .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT,
-            .pNext = nullptr,
-            .pLabelName = tagLabel.c_str(),
-            .color = { 0.0f, 0.0f, 0.0f, 0.0f }
-        };
-
-        layer->driver.vkCmdBeginDebugUtilsLabelEXT(commandBuffer, &tagInfo);
+        emitStartTag(layer, commandBuffer, tagID);
     }
-
     layer->driver.vkCmdBeginRendering(commandBuffer, pRenderingInfo);
 }
 
@@ -334,22 +295,11 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderingKHR<user_tag>(
 
     // Release the lock to call into the driver
     lock.unlock();
-
     // Emit the label only for new render passes
     if (!resuming)
     {
-        // Emit the unique workload tag into the command stream
-        std::string tagLabel = formatString("t%" PRIu64, tagID);
-        VkDebugUtilsLabelEXT tagInfo {
-            .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT,
-            .pNext = nullptr,
-            .pLabelName = tagLabel.c_str(),
-            .color = { 0.0f, 0.0f, 0.0f, 0.0f }
-        };
-
-        layer->driver.vkCmdBeginDebugUtilsLabelEXT(commandBuffer, &tagInfo);
+        emitStartTag(layer, commandBuffer, tagID);
     }
-
     layer->driver.vkCmdBeginRenderingKHR(commandBuffer, pRenderingInfo);
 }
 

@@ -24,8 +24,7 @@
  */
 
 /**
- * @file
- * Declares the root class for layer management of VkDevice objects.
+ * @file Declares the root class for layer management of VkDevice objects.
  *
  * Role summary
  * ============
@@ -41,10 +40,9 @@
  * Key properties
  * ==============
  *
- * Unlike EGL contexts, Vulkan devices are designed to be used concurrently by
- * multiple application threads. An application can have multiple concurrent
- * devices (although this is less common than with OpenGL ES applications), and
- * use each device from multiple threads.
+ * Vulkan devices are designed to be used concurrently by multiple application
+ * threads. An application can have multiple concurrent devices, and use each
+ * device from multiple threads.
  *
  * Access to the layer driver structures must therefore be kept thread-safe.
  * For sake of simplicity, we generally implement this by:
@@ -83,6 +81,8 @@ public:
      * @brief Fetch a device from the global store of dispatchable devices.
      *
      * @param handle   The dispatchable device handle to use as an indirect lookup.
+     *
+     * @return The layer device context.
      */
     static Device* retrieve(
         VkDevice handle);
@@ -91,6 +91,8 @@ public:
      * @brief Fetch a device from the global store of dispatchable devices.
      *
      * @param handle   The dispatchable queue handle to use as an indirect lookup.
+     *
+     * @return The layer device context.
      */
     static Device* retrieve(
         VkQueue handle);
@@ -99,6 +101,8 @@ public:
      * @brief Fetch a device from the global store of dispatchable devices.
      *
      * @param handle   The dispatchable command buffer handle to use as an indirect lookup.
+     *
+     * @return The layer device context.
      */
     static Device* retrieve(
         VkCommandBuffer handle);
@@ -117,7 +121,7 @@ public:
      * @param instance               The layer instance object this device is created with.
      * @param physicalDevice         The physical device this logical device is for.
      * @param device                 The device handle this device is created with.
-     * @param nlayerGetProcAddress   The vkGetProcAddress function in the driver/next layer down.
+     * @param nlayerGetProcAddress   The vkGetDeviceProcAddress function for the driver.
      */
     Device(
         Instance* instance,
@@ -128,21 +132,27 @@ public:
     /**
      * @brief Destroy this layer device object.
      */
-    ~Device();
+    ~Device() = default;
 
     /**
-     * @brief Callback for sending messages
+     * @brief Callback for sending messages on frame boundary.
+     *
+     * @param message   The message to send.
      */
-    void onFrame(const std::string& message)
-    {
+    void onFrame(
+        const std::string& message
+    ) {
         commsWrapper->txMessage(message);
     }
 
     /**
-     * @brief Callback for sending messages
+     * @brief Callback for sending messages on workload submit to a queue.
+     *
+     * @param message   The message to send.
      */
-    void onWorkloadSubmit(const std::string& message)
-    {
+    void onWorkloadSubmit(
+        const std::string& message
+    ) {
         commsWrapper->txMessage(message);
     }
 
@@ -177,17 +187,17 @@ private:
     const VkDevice device;
 
     /**
-     * @brief State tracking for this device;
+     * @brief State tracker for this device.
      */
     Tracker::Device stateTracker;
 
     /**
-     * @brief Communications module.
+     * @brief Shared network communications module.
      */
     static std::unique_ptr<Comms::CommsModule> commsModule;
 
     /**
-     * @brief Communications module message encoder.
+     * @brief Shared network communications message encoder.
      */
     static std::unique_ptr<TimelineComms> commsWrapper;
 };

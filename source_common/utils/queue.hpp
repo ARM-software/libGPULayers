@@ -36,7 +36,7 @@
 #include <condition_variable>
 
 /**
- * @brief Baseclass for a task.
+ * @brief Base class for a task.
  */
 class Task
 {
@@ -98,8 +98,9 @@ public:
      *
      * @param task   The new task to append to the queue.
      */
-    void put(T task)
-    {
+    void put(
+        T task
+    ) {
         std::lock_guard<std::mutex> lock(store_lock);
         store.push_back(task);
         condition.notify_one();

@@ -40,7 +40,7 @@
 namespace CommsTest
 {
 
-/** See header for documentation. */
+/* See header for documentation. */
 CommsTestServer::CommsTestServer(
     const std::string& domainAddress
 ) {
@@ -94,7 +94,7 @@ CommsTestServer::CommsTestServer(
     worker = std::thread(&CommsTestServer::runServer, this);
 }
 
-/** See header for documentation. */
+/* See header for documentation. */
 CommsTestServer::CommsTestServer(
     int port
 ) {
@@ -152,7 +152,7 @@ CommsTestServer::CommsTestServer(
     worker = std::thread(&CommsTestServer::runServer, this);
 }
 
-/** See header for documentation. */
+/* See header for documentation. */
 CommsTestServer::~CommsTestServer()
 {
     // Stop the worker thread if it's not stopped already
@@ -172,7 +172,7 @@ CommsTestServer::~CommsTestServer()
     close(stopRequestPipe[1]);
 }
 
-/** See header for documentation. */
+/* See header for documentation. */
 void CommsTestServer::stop()
 {
     // Mark the engine as stopping
@@ -186,7 +186,7 @@ void CommsTestServer::stop()
     worker.join();
 }
 
-/** See header for documentation. */
+/* See header for documentation. */
 void CommsTestServer::runServer()
 {
     int dataSockfd = accept(listenSockfd, NULL, NULL);
@@ -251,7 +251,7 @@ void CommsTestServer::runServer()
     close(dataSockfd);
 }
 
-/** See header for documentation. */
+/* See header for documentation. */
 bool CommsTestServer::receiveData(
     int sockfd,
     uint8_t* data,
@@ -297,7 +297,7 @@ bool CommsTestServer::receiveData(
     return true;
 }
 
-/** See header for documentation. */
+/* See header for documentation. */
 void CommsTestServer::send_data(
     int sockfd,
     uint8_t* data,

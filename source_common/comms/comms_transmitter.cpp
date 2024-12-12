@@ -37,16 +37,17 @@
 namespace Comms
 {
 
-/** See header for documentation. */
+/* See header for documentation. */
 Transmitter::Transmitter(
     CommsModule& _parent
-) : parent(_parent)
+) :
+    parent(_parent)
 {
     // Create and start a worker thread
     worker = std::thread(&Transmitter::runTransmitter, this);
 }
 
-/** See header for documentation. */
+/* See header for documentation. */
 Transmitter::~Transmitter()
 {
     // Stop the worker thread if it's not stopped already
@@ -56,7 +57,7 @@ Transmitter::~Transmitter()
     }
 }
 
-/** See header for documentation. */
+/* See header for documentation. */
 void Transmitter::runTransmitter()
 {
     // Keep looping until we are told to stop and message queue is empty
@@ -87,7 +88,7 @@ void Transmitter::runTransmitter()
     }
 }
 
-/** See header for documentation. */
+/* See header for documentation. */
 void Transmitter::stop()
 {
     // Mark the engine as stopping
@@ -103,7 +104,7 @@ void Transmitter::stop()
     worker.join();
 }
 
-/** See header for documentation. */
+/* See header for documentation. */
 void Transmitter::sendMessage(
     const Message& message
 ) {
@@ -124,7 +125,7 @@ void Transmitter::sendMessage(
     sendData(data, dataSize);
 }
 
-/** See header for documentation. */
+/* See header for documentation. */
 void Transmitter::sendData(
     uint8_t* data,
     size_t dataSize

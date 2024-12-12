@@ -35,7 +35,8 @@ RenderPassAttachment::RenderPassAttachment(
     RenderPassAttachName _name,
     VkAttachmentLoadOp _loadOp,
     VkAttachmentStoreOp _storeOp,
-    bool _resolve) :
+    bool _resolve
+) :
     name(_name),
     loadOp(_loadOp),
     storeOp(_storeOp),
@@ -45,9 +46,42 @@ RenderPassAttachment::RenderPassAttachment(
 }
 
 /* See header for details. */
+std::string RenderPassAttachment::getAttachmentStr() const
+{
+    switch(name)
+    {
+    case RenderPassAttachName::COLOR0:
+        return "C0";
+    case RenderPassAttachName::COLOR1:
+        return "C1";
+    case RenderPassAttachName::COLOR2:
+        return "C2";
+    case RenderPassAttachName::COLOR3:
+        return "C3";
+    case RenderPassAttachName::COLOR4:
+        return "C4";
+    case RenderPassAttachName::COLOR5:
+        return "C5";
+    case RenderPassAttachName::COLOR6:
+        return "C6";
+    case RenderPassAttachName::COLOR7:
+        return "C7";
+    case RenderPassAttachName::DEPTH:
+        return "D";
+    case RenderPassAttachName::STENCIL:
+        return "S";
+    default:
+        assert(false);
+    }
+
+    return "U";
+}
+
+/* See header for details. */
 RenderPass::RenderPass(
     VkRenderPass _handle,
-    const VkRenderPassCreateInfo& createInfo) :
+    const VkRenderPassCreateInfo& createInfo
+) :
     handle(_handle)
 {
     subpassCount = createInfo.subpassCount;
@@ -155,7 +189,8 @@ RenderPass::RenderPass(
 /* See header for details. */
 RenderPass::RenderPass(
     VkRenderPass _handle,
-    const VkRenderPassCreateInfo2& createInfo) :
+    const VkRenderPassCreateInfo2& createInfo
+) :
     handle(_handle)
 {
     subpassCount = createInfo.subpassCount;
@@ -262,7 +297,8 @@ RenderPass::RenderPass(
 
 /* See header for details. */
 RenderPass::RenderPass(
-    const VkRenderingInfo& createInfo) :
+    const VkRenderingInfo& createInfo
+) :
     handle(VK_NULL_HANDLE)
 {
     // No subpasses in dynamic rendering

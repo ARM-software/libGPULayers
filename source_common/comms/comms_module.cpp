@@ -42,7 +42,7 @@
 namespace Comms
 {
 
-/** See header for documentation. */
+/* See header for documentation. */
 CommsModule::CommsModule(
     const std::string& domainAddress
 ) {
@@ -76,7 +76,7 @@ CommsModule::CommsModule(
     receiver = std::make_unique<Receiver>(*this);
 }
 
-/** See header for documentation. */
+/* See header for documentation. */
 CommsModule::CommsModule(
     const std::string& hostAddress,
     int port
@@ -109,7 +109,7 @@ CommsModule::CommsModule(
     receiver = std::make_unique<Receiver>(*this);
 }
 
-/** See header for documentation. */
+/* See header for documentation. */
 CommsModule::~CommsModule()
 {
     // Stop async worker threads before closing the socket
@@ -132,13 +132,13 @@ CommsModule::~CommsModule()
     }
 }
 
-/** See header for documentation. */
+/* See header for documentation. */
 bool CommsModule::isConnected()
 {
     return sockfd >= 0;
 }
 
-/** See header for documentation. */
+/* See header for documentation. */
 EndpointID CommsModule::getEndpointID(
     const std::string& name
 ) {
@@ -192,7 +192,7 @@ EndpointID CommsModule::getEndpointID(
     }
 }
 
-/** See header for documentation. */
+/* See header for documentation. */
 void CommsModule::txAsync(
     EndpointID endpoint,
     std::unique_ptr<MessageData> data
@@ -206,7 +206,7 @@ void CommsModule::txAsync(
     enqueueMessage(std::move(message));
 }
 
-/** See header for documentation. */
+/* See header for documentation. */
 void CommsModule::tx(
     EndpointID endpoint,
     std::unique_ptr<MessageData> data
@@ -221,7 +221,7 @@ void CommsModule::tx(
     message->wait();
 }
 
-/** See header for documentation. */
+/* See header for documentation. */
 std::unique_ptr<MessageData> CommsModule::txRx(
     EndpointID endpoint,
     std::unique_ptr<MessageData> data
@@ -238,20 +238,20 @@ std::unique_ptr<MessageData> CommsModule::txRx(
     return std::move(message->responseData);
 }
 
-/** See header for documentation. */
+/* See header for documentation. */
 MessageID CommsModule::assignMessageID()
 {
     return nextMessageID.fetch_add(1, std::memory_order_relaxed);
 }
 
-/** See header for documentation. */
+/* See header for documentation. */
 void CommsModule::enqueueMessage(
     std::shared_ptr<Message> message
 ) {
     messageQueue.put(std::move(message));
 }
 
-/** See header for documentation. */
+/* See header for documentation. */
 std::shared_ptr<Message> CommsModule::dequeueMessage()
 {
     return messageQueue.get();

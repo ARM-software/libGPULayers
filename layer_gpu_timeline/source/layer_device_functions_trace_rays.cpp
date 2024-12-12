@@ -28,10 +28,22 @@
 #include <thread>
 
 #include "device.hpp"
+#include "device_utils.hpp"
 #include "layer_device_functions.hpp"
 
 extern std::mutex g_vulkanLock;
 
+/**
+ * @brief Register a trace rays dispatch with the tracker.
+ *
+ * @param layer           The layer context for the device.
+ * @param commandBuffer   The command buffer we are recording.
+ * @param itemsX          The X size of the dispatch in work items.
+ * @param itemsY          The Y size of the dispatch in work items.
+ * @param itemsZ          The Z size of the dispatch in work items.
+ *
+ * @return The assigned tagID for the workload.
+ */
 static uint64_t registerTraceRays(
     Device* layer,
     VkCommandBuffer commandBuffer,
@@ -42,23 +54,6 @@ static uint64_t registerTraceRays(
     auto& tracker = layer->getStateTracker();
     auto& cb = tracker.getCommandBuffer(commandBuffer);
     return cb.traceRays(itemsX, itemsY, itemsZ);
-}
-
-static void emitStartTag(
-    Device* layer,
-    VkCommandBuffer commandBuffer,
-    uint64_t tagID
-) {
-    // Emit the unique workload tag into the command stream
-    std::string tagLabel = formatString("t%" PRIu64, tagID);
-    VkDebugUtilsLabelEXT tagInfo {
-        .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT,
-        .pNext = nullptr,
-        .pLabelName = tagLabel.c_str(),
-        .color = { 0.0f, 0.0f, 0.0f, 0.0f }
-    };
-
-    layer->driver.vkCmdBeginDebugUtilsLabelEXT(commandBuffer, &tagInfo);
 }
 
 /* See Vulkan API for documentation. */
