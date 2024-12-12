@@ -42,9 +42,8 @@
  * Key properties
  * ==============
  *
- * Unlike EGL contexts, Vulkan instances are designed to be used concurrently
- * by multiple application threads. An application can have multiple concurrent
- * instances (although this is less common than with OpenGL ES applications),
+ * Vulkan instances are designed to be used concurrently by multiple
+ * application threads. An application can have multiple concurrent instances,
  * and use each instance from multiple threads.
  *
  * Access to the layer driver structures must therefore be kept thread-safe.
@@ -65,10 +64,6 @@
 
 /**
  * @brief This class implements the layer state tracker for a single instance.
- *
- * These objects are relatively light-weight, as they are rarely used once a VkDevice has been
- * created, but we need to track the chain-of-ownership as the instance is the root object that
- * the application creates when initializing a rendering context.
  */
 class Instance
 {
@@ -87,6 +82,8 @@ public:
      * @brief Fetch an instance from the global store of dispatchable instances.
      *
      * @param handle   The dispatchable instance handle to use as an indirect lookup.
+     *
+     * @return The layer instance context.
      */
     static Instance* retrieve(
         VkInstance handle);
@@ -95,6 +92,8 @@ public:
      * @brief Fetch an instance from the global store of dispatchable instances.
      *
      * @param handle   The dispatchable physical device handle to use as an indirect lookup.
+     *
+     * @return The layer instance context.
      */
     static Instance* retrieve(
         VkPhysicalDevice handle);
