@@ -207,6 +207,77 @@ private:
 /**
  * @brief Baseclass representing a GPU workload in the command stream.
  */
+class LCSTraceRays : public LCSWorkload
+{
+public:
+    LCSTraceRays(
+        uint64_t tagID,
+        int64_t xItems,
+        int64_t yItems,
+        int64_t zItems);
+
+    virtual ~LCSTraceRays() = default;
+
+    virtual std::string getMetadata(
+        const std::string* debugLabel=nullptr,
+        uint64_t tagIDContinuation=0,
+        uint64_t submitID=0) const;
+
+private:
+    int64_t xItems;
+    int64_t yItems;
+    int64_t zItems;
+};
+
+/**
+ * @brief Baseclass representing a GPU workload in the command stream.
+ */
+class LCSImageTransfer : public LCSWorkload
+{
+public:
+    LCSImageTransfer(
+        uint64_t tagID,
+        const std::string& transferType,
+        int64_t pixelCount);
+
+    virtual ~LCSImageTransfer() = default;
+
+    virtual std::string getMetadata(
+        const std::string* debugLabel=nullptr,
+        uint64_t tagIDContinuation=0,
+        uint64_t submitID=0) const;
+
+private:
+    std::string transferType;
+    int64_t pixelCount;
+};
+
+/**
+ * @brief Baseclass representing a GPU workload in the command stream.
+ */
+class LCSBufferTransfer : public LCSWorkload
+{
+public:
+    LCSBufferTransfer(
+        uint64_t tagID,
+        const std::string& transferType,
+        int64_t byteCount);
+
+    virtual ~LCSBufferTransfer() = default;
+
+    virtual std::string getMetadata(
+        const std::string* debugLabel=nullptr,
+        uint64_t tagIDContinuation=0,
+        uint64_t submitID=0) const;
+
+private:
+    std::string transferType;
+    int64_t byteCount;
+};
+
+/**
+ * @brief Baseclass representing a GPU workload in the command stream.
+ */
 class LCSMarker : public LCSWorkload
 {
 public:

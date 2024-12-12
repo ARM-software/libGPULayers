@@ -44,6 +44,23 @@ static uint64_t registerDispatch(
     return cb.dispatch(groupX, groupY, groupZ);
 }
 
+static void emitStartTag(
+    Device* layer,
+    VkCommandBuffer commandBuffer,
+    uint64_t tagID
+) {
+    // Emit the unique workload tag into the command stream
+    std::string tagLabel = formatString("t%" PRIu64, tagID);
+    VkDebugUtilsLabelEXT tagInfo {
+        .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT,
+        .pNext = nullptr,
+        .pLabelName = tagLabel.c_str(),
+        .color = { 0.0f, 0.0f, 0.0f, 0.0f }
+    };
+
+    layer->driver.vkCmdBeginDebugUtilsLabelEXT(commandBuffer, &tagInfo);
+}
+
 /* See Vulkan API for documentation. */
 template <>
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatch<user_tag>(
@@ -65,18 +82,9 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatch<user_tag>(
         static_cast<int64_t>(groupCountY),
         static_cast<int64_t>(groupCountZ));
 
-    // Emit the unique workload tag into the command stream
-    std::string tagLabel = formatString("t%" PRIu64, tagID);
-    VkDebugUtilsLabelEXT tagInfo {
-        .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT,
-        .pNext = nullptr,
-        .pLabelName = tagLabel.c_str(),
-        .color = { 0.0f, 0.0f, 0.0f, 0.0f }
-    };
-
     // Release the lock to call into the driver
     lock.unlock();
-    layer->driver.vkCmdBeginDebugUtilsLabelEXT(commandBuffer, &tagInfo);
+    emitStartTag(layer, commandBuffer, tagID);
     layer->driver.vkCmdDispatch(commandBuffer, groupCountX, groupCountY, groupCountZ);
     layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
 }
@@ -105,18 +113,9 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchBase<user_tag>(
         static_cast<int64_t>(groupCountY),
         static_cast<int64_t>(groupCountZ));
 
-    // Emit the unique workload tag into the command stream
-    std::string tagLabel = formatString("t%" PRIu64, tagID);
-    VkDebugUtilsLabelEXT tagInfo {
-        .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT,
-        .pNext = nullptr,
-        .pLabelName = tagLabel.c_str(),
-        .color = { 0.0f, 0.0f, 0.0f, 0.0f }
-    };
-
     // Release the lock to call into the driver
     lock.unlock();
-    layer->driver.vkCmdBeginDebugUtilsLabelEXT(commandBuffer, &tagInfo);
+    emitStartTag(layer, commandBuffer, tagID);
     layer->driver.vkCmdDispatchBase(commandBuffer, baseGroupX, baseGroupY, baseGroupZ, groupCountX, groupCountY, groupCountZ);
     layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
 }
@@ -145,18 +144,9 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchBaseKHR<user_tag>(
         static_cast<int64_t>(groupCountY),
         static_cast<int64_t>(groupCountZ));
 
-    // Emit the unique workload tag into the command stream
-    std::string tagLabel = formatString("t%" PRIu64, tagID);
-    VkDebugUtilsLabelEXT tagInfo {
-        .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT,
-        .pNext = nullptr,
-        .pLabelName = tagLabel.c_str(),
-        .color = { 0.0f, 0.0f, 0.0f, 0.0f }
-    };
-
     // Release the lock to call into the driver
     lock.unlock();
-    layer->driver.vkCmdBeginDebugUtilsLabelEXT(commandBuffer, &tagInfo);
+    emitStartTag(layer, commandBuffer, tagID);
     layer->driver.vkCmdDispatchBaseKHR(commandBuffer, baseGroupX, baseGroupY, baseGroupZ, groupCountX, groupCountY, groupCountZ);
     layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
 }
@@ -176,18 +166,9 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchIndirect<user_tag>(
 
     uint64_t tagID = registerDispatch(layer, commandBuffer, -1, -1, -1);
 
-    // Emit the unique workload tag into the command stream
-    std::string tagLabel = formatString("t%" PRIu64, tagID);
-    VkDebugUtilsLabelEXT tagInfo {
-        .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT,
-        .pNext = nullptr,
-        .pLabelName = tagLabel.c_str(),
-        .color = { 0.0f, 0.0f, 0.0f, 0.0f }
-    };
-
     // Release the lock to call into the driver
     lock.unlock();
-    layer->driver.vkCmdBeginDebugUtilsLabelEXT(commandBuffer, &tagInfo);
+    emitStartTag(layer, commandBuffer, tagID);
     layer->driver.vkCmdDispatchIndirect(commandBuffer, buffer, offset);
     layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
 }

@@ -331,6 +331,126 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdTraceRaysKHR<user_tag>(
     uint32_t height,
     uint32_t depth);
 
+
+// Commands for transfers
+
+/* See Vulkan API for documentation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdFillBuffer<user_tag>(
+    VkCommandBuffer commandBuffer,
+    VkBuffer dstBuffer,
+    VkDeviceSize dstOffset,
+    VkDeviceSize size,
+    uint32_t data);
+
+/* See Vulkan API for documentation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdClearColorImage<user_tag>(
+    VkCommandBuffer commandBuffer,
+    VkImage image,
+    VkImageLayout imageLayout,
+    const VkClearColorValue* pColor,
+    uint32_t rangeCount,
+    const VkImageSubresourceRange* pRanges);
+
+/* See Vulkan API for documentation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdClearDepthStencilImage<user_tag>(
+    VkCommandBuffer commandBuffer,
+    VkImage image,
+    VkImageLayout imageLayout,
+    const VkClearDepthStencilValue* pDepthStencil,
+    uint32_t rangeCount,
+    const VkImageSubresourceRange* pRanges);
+
+/* See Vulkan API for documentation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBuffer<user_tag>(
+    VkCommandBuffer commandBuffer,
+    VkBuffer srcBuffer,
+    VkBuffer dstBuffer,
+    uint32_t regionCount,
+    const VkBufferCopy* pRegions);
+
+/* See Vulkan API for documentation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBuffer2<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkCopyBufferInfo2* pCopyBufferInfo);
+
+/* See Vulkan API for documentation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBuffer2KHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkCopyBufferInfo2* pCopyBufferInfo);
+
+/* See Vulkan API for documentation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBufferToImage<user_tag>(
+    VkCommandBuffer commandBuffer,
+    VkBuffer srcBuffer,
+    VkImage dstImage,
+    VkImageLayout dstImageLayout,
+    uint32_t regionCount,
+    const VkBufferImageCopy* pRegions);
+
+/* See Vulkan API for documentation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBufferToImage2<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkCopyBufferToImageInfo2* pCopyBufferToImageInfo);
+
+/* See Vulkan API for documentation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBufferToImage2KHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkCopyBufferToImageInfo2* pCopyBufferToImageInfo);
+
+/* See Vulkan API for documentation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImage<user_tag>(
+    VkCommandBuffer commandBuffer,
+    VkImage srcImage,
+    VkImageLayout srcImageLayout,
+    VkImage dstImage,
+    VkImageLayout dstImageLayout,
+    uint32_t regionCount,
+    const VkImageCopy* pRegions);
+
+/* See Vulkan API for documentation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImage2<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkCopyImageInfo2* pCopyImageInfo);
+
+/* See Vulkan API for documentation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImage2KHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkCopyImageInfo2* pCopyImageInfo);
+
+/* See Vulkan API for documentation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImageToBuffer<user_tag>(
+    VkCommandBuffer commandBuffer,
+    VkImage srcImage,
+    VkImageLayout srcImageLayout,
+    VkBuffer dstBuffer,
+    uint32_t regionCount,
+    const VkBufferImageCopy* pRegions);
+
+/* See Vulkan API for documentation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImageToBuffer2<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkCopyImageToBufferInfo2* pCopyImageToBufferInfo);
+
+/* See Vulkan API for documentation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImageToBuffer2KHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkCopyImageToBufferInfo2* pCopyImageToBufferInfo);
+
 // Functions for debug
 
 /* See Vulkan API for documentation. */

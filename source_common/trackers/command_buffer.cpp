@@ -137,7 +137,6 @@ uint64_t CommandBuffer::dispatch(
     int64_t yGroups,
     int64_t zGroups
 ) {
-    LAYER_LOG("Creating LCSDispatch workload");
     uint64_t tagID = Tracker::LCSWorkload::assignTagID();
     stats.incDispatchCount();
 
@@ -148,6 +147,67 @@ uint64_t CommandBuffer::dispatch(
 
     // Add a command to the layer-side command stream
     auto instr = std::make_pair(LCSOpcode::DISPATCH, workload);
+    workloadCommandStream.push_back(instr);
+
+    return tagID;
+}
+
+/* See header for documentation. */
+uint64_t CommandBuffer::traceRays(
+    int64_t xItems,
+    int64_t yItems,
+    int64_t zItems
+) {
+    uint64_t tagID = Tracker::LCSWorkload::assignTagID();
+    stats.incTraceRaysCount();
+
+    // Add a workload to the render pass
+    auto workload = std::make_shared<LCSTraceRays>(
+        tagID, xItems, yItems, zItems);
+    workloads.push_back(workload);
+
+    // Add a command to the layer-side command stream
+    auto instr = std::make_pair(LCSOpcode::TRACE_RAYS, workload);
+    workloadCommandStream.push_back(instr);
+
+    return tagID;
+}
+
+/* See header for documentation. */
+uint64_t CommandBuffer::imageTransfer(
+    const std::string& transferType,
+    int64_t pixelCount
+) {
+    uint64_t tagID = Tracker::LCSWorkload::assignTagID();
+    stats.incImageTransferCount();
+
+    // Add a workload to the render pass
+    auto workload = std::make_shared<LCSImageTransfer>(
+        tagID, transferType, pixelCount);
+    workloads.push_back(workload);
+
+    // Add a command to the layer-side command stream
+    auto instr = std::make_pair(LCSOpcode::IMAGE_TRANSFER, workload);
+    workloadCommandStream.push_back(instr);
+
+    return tagID;
+}
+
+/* See header for documentation. */
+uint64_t CommandBuffer::bufferTransfer(
+    const std::string& transferType,
+    int64_t byteCount
+) {
+    uint64_t tagID = Tracker::LCSWorkload::assignTagID();
+    stats.incBufferTransferCount();
+
+    // Add a workload to the render pass
+    auto workload = std::make_shared<LCSBufferTransfer>(
+        tagID, transferType, byteCount);
+    workloads.push_back(workload);
+
+    // Add a command to the layer-side command stream
+    auto instr = std::make_pair(LCSOpcode::BUFFER_TRANSFER, workload);
     workloadCommandStream.push_back(instr);
 
     return tagID;

@@ -222,5 +222,115 @@ std::string LCSDispatch::getMetadata(
     return metadata.dump();
 }
 
+/* See header for details. */
+LCSTraceRays::LCSTraceRays(
+    uint64_t _tagID,
+    int64_t _xItems,
+    int64_t _yItems,
+    int64_t _zItems) :
+    LCSWorkload(_tagID),
+    xItems(_xItems),
+    yItems(_yItems),
+    zItems(_zItems)
+{
+
+}
+
+/* See header for details. */
+std::string LCSTraceRays::getMetadata(
+    const std::string* debugLabel,
+    uint64_t tagIDContinuation,
+    uint64_t submitID
+) const {
+    UNUSED(tagIDContinuation);
+    UNUSED(submitID);
+
+    json metadata = {
+        { "type", "tracerays" },
+        { "tid", tagID },
+        { "xItems", xItems },
+        { "yItems", yItems },
+        { "zItems", zItems }
+    };
+
+    if (debugLabel && debugLabel->size())
+    {
+        metadata["label"] = *debugLabel;
+    }
+
+    return metadata.dump();
+}
+
+/* See header for details. */
+LCSImageTransfer::LCSImageTransfer(
+    uint64_t _tagID,
+    const std::string& _transferType,
+    int64_t _pixelCount):
+    LCSWorkload(_tagID),
+    transferType(_transferType),
+    pixelCount(_pixelCount)
+{
+
+}
+
+/* See header for details. */
+std::string LCSImageTransfer::getMetadata(
+    const std::string* debugLabel,
+    uint64_t tagIDContinuation,
+    uint64_t submitID
+) const {
+    UNUSED(tagIDContinuation);
+    UNUSED(submitID);
+
+    json metadata = {
+        { "type", "imagetransfer" },
+        { "tid", tagID },
+        { "subtype", transferType },
+        { "pixels", pixelCount }
+    };
+
+    if (debugLabel && debugLabel->size())
+    {
+        metadata["label"] = *debugLabel;
+    }
+
+    return metadata.dump();
+}
+
+/* See header for details. */
+LCSBufferTransfer::LCSBufferTransfer(
+    uint64_t _tagID,
+    const std::string& _transferType,
+    int64_t _byteCount):
+    LCSWorkload(_tagID),
+    transferType(_transferType),
+    byteCount(_byteCount)
+{
+
+}
+
+/* See header for details. */
+std::string LCSBufferTransfer::getMetadata(
+    const std::string* debugLabel,
+    uint64_t tagIDContinuation,
+    uint64_t submitID
+) const {
+    UNUSED(tagIDContinuation);
+    UNUSED(submitID);
+
+    json metadata = {
+        { "type", "buffertransfer" },
+        { "tid", tagID },
+        { "subtype", transferType },
+        { "bytes", byteCount }
+    };
+
+    if (debugLabel && debugLabel->size())
+    {
+        metadata["label"] = *debugLabel;
+    }
+
+    return metadata.dump();
+}
 
 }

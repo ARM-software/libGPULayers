@@ -77,8 +77,7 @@ class GPUTimelineService:
         else:
             self.frame['workloads'].append(msg)
 
-    def handle_dispatch(self, msg):
-        # Find the last workload
+    def handle_generic(self, msg):
         self.frame['workloads'].append(msg)
 
     def handle_message(self, message: Message):
@@ -93,8 +92,8 @@ class GPUTimelineService:
         elif payloadType == 'renderpass':
             self.handle_renderpass(parsedPayload)
 
-        elif payloadType == 'dispatch':
-            self.handle_dispatch(parsedPayload)
+        elif payloadType in ('dispatch', 'tracerays', 'imagetransfer', 'buffertransfer'):
+            self.handle_generic(parsedPayload)
 
         else:
             assert False, f'Unknown payload type {payloadType}'

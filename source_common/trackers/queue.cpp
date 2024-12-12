@@ -86,7 +86,10 @@ void Queue::runSubmitCommandStream(
                 }
             }
         }
-        else if (opCode == LCSOpcode::DISPATCH)
+        else if ((opCode == LCSOpcode::DISPATCH) ||
+                 (opCode == LCSOpcode::TRACE_RAYS) ||
+                 (opCode == LCSOpcode::IMAGE_TRANSFER) ||
+                 (opCode == LCSOpcode::BUFFER_TRANSFER))
         {
             uint64_t tagID = opData->getTagID();
             std::string log = joinString(debugStack, "|");

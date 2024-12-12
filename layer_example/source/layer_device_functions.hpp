@@ -23,8 +23,6 @@
  * ----------------------------------------------------------------------------
  */
 
-#include <vulkan/vulkan.h>
-
 #include "framework/utils.hpp"
 
 /* See Vulkan API for documentation. */

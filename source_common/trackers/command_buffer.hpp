@@ -129,6 +129,44 @@ public:
         int64_t zGroups);
 
     /**
+     * @brief Capture a trace rays dispatch.
+     *
+     * @param xItems   Number of work items in X dimension, or -1 if unknown.
+     * @param yItems   Number of work items in Y dimension, or -1 if unknown.
+     * @param zItems   Number of work items in Z dimension, or -1 if unknown.
+     *
+     * @return Returns the tagID assigned to this workload.
+     */
+    uint64_t traceRays(
+        int64_t xItems,
+        int64_t yItems,
+        int64_t zItems);
+
+    /**
+     * @brief Capture a transfer where the destination is an image.
+     *
+     * @param transferType   The type of the transfer.
+     * @param pixelCount     The number of pixels written.
+     *
+     * @return Returns the tagID assigned to this workload.
+     */
+    uint64_t imageTransfer(
+        const std::string& transferType,
+        int64_t pixelCount);
+
+    /**
+     * @brief Capture a transfer where the destination is a buffer.
+     *
+     * @param transferType   The type of the transfer.
+     * @param byteCount      The number of pixels written.
+     *
+     * @return Returns the tagID assigned to this workload.
+     */
+    uint64_t bufferTransfer(
+        const std::string& transferType,
+        int64_t byteCount);
+
+    /**
      * @brief Begin a user debug marker range.
      */
     void debugMarkerBegin(

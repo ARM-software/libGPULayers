@@ -32,13 +32,33 @@
 
 extern std::mutex g_vulkanLock;
 
-static void registerTraceRays(
+static uint64_t registerTraceRays(
     Device* layer,
-    VkCommandBuffer commandBuffer
+    VkCommandBuffer commandBuffer,
+    int64_t itemsX,
+    int64_t itemsY,
+    int64_t itemsZ
 ) {
-    auto& state = layer->getStateTracker();
-    auto& stats = state.getCommandBuffer(commandBuffer).getStats();
-    stats.incTraceRaysCount();
+    auto& tracker = layer->getStateTracker();
+    auto& cb = tracker.getCommandBuffer(commandBuffer);
+    return cb.traceRays(itemsX, itemsY, itemsZ);
+}
+
+static void emitStartTag(
+    Device* layer,
+    VkCommandBuffer commandBuffer,
+    uint64_t tagID
+) {
+    // Emit the unique workload tag into the command stream
+    std::string tagLabel = formatString("t%" PRIu64, tagID);
+    VkDebugUtilsLabelEXT tagInfo {
+        .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT,
+        .pNext = nullptr,
+        .pLabelName = tagLabel.c_str(),
+        .color = { 0.0f, 0.0f, 0.0f, 0.0f }
+    };
+
+    layer->driver.vkCmdBeginDebugUtilsLabelEXT(commandBuffer, &tagInfo);
 }
 
 /* See Vulkan API for documentation. */
@@ -53,11 +73,13 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdTraceRaysIndirect2KHR<user_tag>(
     std::unique_lock<std::mutex> lock { g_vulkanLock };
     auto* layer = Device::retrieve(commandBuffer);
 
-    registerTraceRays(layer, commandBuffer);
+    uint64_t tagID = registerTraceRays(layer, commandBuffer, -1, -1, -1);
 
     // Release the lock to call into the driver
     lock.unlock();
+    emitStartTag(layer, commandBuffer, tagID);
     layer->driver.vkCmdTraceRaysIndirect2KHR(commandBuffer, indirectDeviceAddress);
+    layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
 }
 
 /* See Vulkan API for documentation. */
@@ -76,10 +98,11 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdTraceRaysIndirectKHR<user_tag>(
     std::unique_lock<std::mutex> lock { g_vulkanLock };
     auto* layer = Device::retrieve(commandBuffer);
 
-    registerTraceRays(layer, commandBuffer);
+    uint64_t tagID = registerTraceRays(layer, commandBuffer, -1, -1, -1);
 
     // Release the lock to call into the driver
     lock.unlock();
+    emitStartTag(layer, commandBuffer, tagID);
     layer->driver.vkCmdTraceRaysIndirectKHR(commandBuffer, pRaygenShaderBindingTable, pMissShaderBindingTable, pHitShaderBindingTable, pCallableShaderBindingTable, indirectDeviceAddress);
 }
 
@@ -101,9 +124,10 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdTraceRaysKHR<user_tag>(
     std::unique_lock<std::mutex> lock { g_vulkanLock };
     auto* layer = Device::retrieve(commandBuffer);
 
-    registerTraceRays(layer, commandBuffer);
+    uint64_t tagID = registerTraceRays(layer, commandBuffer, width, height, depth);
 
     // Release the lock to call into the driver
     lock.unlock();
+    emitStartTag(layer, commandBuffer, tagID);
     layer->driver.vkCmdTraceRaysKHR(commandBuffer, pRaygenShaderBindingTable, pMissShaderBindingTable, pHitShaderBindingTable, pCallableShaderBindingTable, width, height, depth);
 }
