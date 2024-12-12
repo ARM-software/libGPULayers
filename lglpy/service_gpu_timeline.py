@@ -33,9 +33,7 @@ class GPUTimelineService:
     def __init__(self):
         self.frame = {
             "frame": 0,
-            "workloads": [
-
-            ]
+            "workloads": []
         }
 
         # TODO: Make file name configurable
@@ -45,8 +43,6 @@ class GPUTimelineService:
         return 'GPUTimeline'
 
     def handle_frame(self, msg):
-        print(json.dumps(self.frame, indent=4))
-
         # Write frame packet to the file
         lastFrame = json.dumps(self.frame).encode('utf-8')
         length = struct.pack('<I', len(lastFrame))
@@ -55,10 +51,14 @@ class GPUTimelineService:
         self.fileHandle.write(lastFrame)
 
         # Reset the local frame state for the next frame
+        nextFrame = msg['fid']
         self.frame = {
-            'frame': msg['fid'],
+            'frame': nextFrame,
             'workloads': []
         }
+
+        if nextFrame % 100 == 0:
+            print(f'Starting frame {nextFrame} ...')
 
     def handle_renderpass(self, msg):
         # Find the last workload
@@ -70,10 +70,16 @@ class GPUTimelineService:
 
         # Continuation
         if lastRenderPass and lastRenderPass['tid'] == msg['tid']:
-            lastRenderPass['drawCallCount'] += msg['drawCallCount']
+            # Don't accumulate if tagID is not unique metadata tag
+            if lastRenderPass['drawCallCount'] != -1:
+                lastRenderPass['drawCallCount'] += msg['drawCallCount']
         # New render pass
         else:
             self.frame['workloads'].append(msg)
+
+    def handle_dispatch(self, msg):
+        # Find the last workload
+        self.frame['workloads'].append(msg)
 
     def handle_message(self, message: Message):
         payload = message.payload.decode('utf-8')
@@ -86,6 +92,9 @@ class GPUTimelineService:
 
         elif payloadType == 'renderpass':
             self.handle_renderpass(parsedPayload)
+
+        elif payloadType == 'dispatch':
+            self.handle_dispatch(parsedPayload)
 
         else:
             assert False, f'Unknown payload type {payloadType}'

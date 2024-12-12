@@ -58,11 +58,13 @@ LCSRenderPass::LCSRenderPass(
     const RenderPass& renderPass,
     uint32_t _width,
     uint32_t _height,
-    bool _suspending) :
+    bool _suspending,
+    bool _oneTimeSubmit) :
     LCSWorkload(_tagID),
     width(_width),
     height(_height),
-    suspending(_suspending)
+    suspending(_suspending),
+    oneTimeSubmit(_oneTimeSubmit)
 {
     // Copy these as the renderpass object may be transient.
     subpassCount = renderPass.getSubpassCount();
@@ -74,12 +76,22 @@ std::string LCSRenderPass::getBeginMetadata(
     const std::string* debugLabel,
     uint64_t submitID) const
 {
+    // Draw count for a multi-submit command buffer cannot be reliably
+    // associated with a single tagID if restartable across command buffer
+    // boundaries because different command buffer submit combinations can
+    // result in different draw counts for the same starting tagID.
+    int64_t drawCount = static_cast<int64_t>(drawCallCount);
+    if (!oneTimeSubmit && suspending)
+    {
+        drawCount = -1;
+    }
+
     json metadata = {
         { "type", "renderpass" },
         { "tid", tagID },
         { "width", width },
         { "height", height },
-        { "drawCallCount", drawCallCount }
+        { "drawCallCount", drawCount }
     };
 
     if (submitID != 0)
@@ -105,19 +117,19 @@ std::string LCSRenderPass::getBeginMetadata(
             { "binding", attachment.getAttachmentStr() },
         };
 
-        // Default is false, so only store if we need it
+        // Default is false, so only serialize if we need it
         if (attachment.isLoaded())
         {
             attachPoint["load"] = true;
         }
 
-        // Default is true, so only store if we need it
+        // Default is true, so only serialize if we need it
         if (!attachment.isStored())
         {
             attachPoint["store"] = false;
         }
 
-        // Default is false, so only store if we need it
+        // Default is false, so only serialize if we need it
         if (attachment.isResolved())
         {
             attachPoint["resolve"] = true;
@@ -170,5 +182,45 @@ std::string LCSRenderPass::getMetadata(
     assert(tagIDContinuation != 0);
     return getContinuationMetadata(debugLabel, tagIDContinuation, submitID);
 }
+
+/* See header for details. */
+LCSDispatch::LCSDispatch(
+    uint64_t _tagID,
+    int64_t _xGroups,
+    int64_t _yGroups,
+    int64_t _zGroups) :
+    LCSWorkload(_tagID),
+    xGroups(_xGroups),
+    yGroups(_yGroups),
+    zGroups(_zGroups)
+{
+
+}
+
+/* See header for details. */
+std::string LCSDispatch::getMetadata(
+    const std::string* debugLabel,
+    uint64_t tagIDContinuation,
+    uint64_t submitID
+) const {
+    UNUSED(tagIDContinuation);
+    UNUSED(submitID);
+
+    json metadata = {
+        { "type", "dispatch" },
+        { "tid", tagID },
+        { "xGroups", xGroups },
+        { "yGroups", yGroups },
+        { "zGroups", zGroups }
+    };
+
+    if (debugLabel && debugLabel->size())
+    {
+        metadata["label"] = *debugLabel;
+    }
+
+    return metadata.dump();
+}
+
 
 }

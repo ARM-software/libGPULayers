@@ -168,7 +168,7 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass<user_tag>(
 
     // Emit the unique workload tag into the command stream
     std::string tagLabel = formatString("t%" PRIu64, tagID);
-    [[maybe_unused]] VkDebugUtilsLabelEXT tagInfo {
+    VkDebugUtilsLabelEXT tagInfo {
         .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT,
         .pNext = nullptr,
         .pLabelName = tagLabel.c_str(),

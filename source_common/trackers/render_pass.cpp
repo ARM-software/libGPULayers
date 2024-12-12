@@ -341,7 +341,6 @@ RenderPass::RenderPass(
         }
     }
 
-
     // Stencil attachment
     if (createInfo.pStencilAttachment)
     {

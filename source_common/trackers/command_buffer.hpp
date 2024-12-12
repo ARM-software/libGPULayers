@@ -115,6 +115,20 @@ public:
     bool renderPassEnd();
 
     /**
+     * @brief Capture a compute dispatch.
+     *
+     * @param xGroups   Number of groups in X dimension, or -1 if unknown.
+     * @param yGroups   Number of groups in Y dimension, or -1 if unknown.
+     * @param zGroups   Number of groups in Z dimension, or -1 if unknown.
+     *
+     * @return Returns the tagID assigned to this workload.
+     */
+    uint64_t dispatch(
+        int64_t xGroups,
+        int64_t yGroups,
+        int64_t zGroups);
+
+    /**
      * @brief Begin a user debug marker range.
      */
     void debugMarkerBegin(
@@ -136,11 +150,24 @@ public:
      */
     void reset();
 
+    /**
+     * @brief Begin recording back into the @a Recording state.
+     *
+     * @param oneTimeSubmit   Is this a one-time submit recording.
+     */
+    void begin(
+        bool oneTimeSubmit);
+
 private:
     /**
      * @brief The Vulkan API handle of this command buffer.
      */
     const VkCommandBuffer handle;
+
+    /**
+     * @brief Is this command buffer recording one-time-submit?
+     */
+    bool oneTimeSubmit { false };
 
     /**
      * @brief The command buffer draw count at the start of the render pass.

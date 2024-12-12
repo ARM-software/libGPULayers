@@ -79,6 +79,7 @@ VKAPI_ATTR VkResult layer_vkBeginCommandBuffer<user_tag>(
     auto& tracker = layer->getStateTracker();
     auto& cmdBuffer = tracker.getCommandBuffer(commandBuffer);
     cmdBuffer.reset();
+    cmdBuffer.begin(pBeginInfo->flags & VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
 
     // Release the lock to call into the driver
     lock.unlock();

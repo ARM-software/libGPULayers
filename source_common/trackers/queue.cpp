@@ -86,6 +86,12 @@ void Queue::runSubmitCommandStream(
                 }
             }
         }
+        else if (opCode == LCSOpcode::DISPATCH)
+        {
+            uint64_t tagID = opData->getTagID();
+            std::string log = joinString(debugStack, "|");
+            callback(opData->getMetadata(&log, tagID));
+        }
     }
 }
 

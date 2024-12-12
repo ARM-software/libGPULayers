@@ -43,14 +43,21 @@ CommandBuffer::CommandBuffer(
 /* See header for documentation. */
 void CommandBuffer::reset()
 {
+    oneTimeSubmit = false;
     stats.reset();
     workloads.clear();
     workloadCommandStream.clear();
 }
 
-/**
- * @brief Begin a user debug marker range.
- */
+/* See header for documentation. */
+void CommandBuffer::begin(
+    bool _oneTimeSubmit
+)
+{
+    oneTimeSubmit = _oneTimeSubmit;
+}
+
+/* See header for documentation. */
 void CommandBuffer::debugMarkerBegin(
     std::string marker
 ) {
@@ -63,9 +70,7 @@ void CommandBuffer::debugMarkerBegin(
     workloadCommandStream.push_back(instr);
 }
 
-/**
- * @brief End a user debug marker range.
- */
+/* See header for documentation. */
 void CommandBuffer::debugMarkerEnd()
 {
     // Add command with empty workload to update queue debug stack on submit
@@ -74,9 +79,7 @@ void CommandBuffer::debugMarkerEnd()
     workloadCommandStream.push_back(instr);
 }
 
-/**
- * @brief End a user render pass.
- */
+/* See header for documentation. */
 uint64_t CommandBuffer::renderPassBegin(
     const RenderPass& renderPass,
     uint32_t width,
@@ -99,7 +102,7 @@ uint64_t CommandBuffer::renderPassBegin(
     renderPassStartDrawCount = stats.getDrawCallCount();
 
     auto workload = std::make_shared<LCSRenderPass>(
-        tagID, renderPass, width, height, suspending);
+        tagID, renderPass, width, height, suspending, oneTimeSubmit);
 
     currentRenderPass = workload;
     workloads.push_back(workload);
@@ -111,9 +114,7 @@ uint64_t CommandBuffer::renderPassBegin(
     return tagID;
 }
 
-/**
- * @brief End a user render pass.
- */
+/* See header for documentation. */
 bool CommandBuffer::renderPassEnd()
 {
     assert(currentRenderPass);
@@ -131,6 +132,28 @@ bool CommandBuffer::renderPassEnd()
 }
 
 /* See header for documentation. */
+uint64_t CommandBuffer::dispatch(
+    int64_t xGroups,
+    int64_t yGroups,
+    int64_t zGroups
+) {
+    LAYER_LOG("Creating LCSDispatch workload");
+    uint64_t tagID = Tracker::LCSWorkload::assignTagID();
+    stats.incDispatchCount();
+
+    // Add a workload to the render pass
+    auto workload = std::make_shared<LCSDispatch>(
+        tagID, xGroups, yGroups, zGroups);
+    workloads.push_back(workload);
+
+    // Add a command to the layer-side command stream
+    auto instr = std::make_pair(LCSOpcode::DISPATCH, workload);
+    workloadCommandStream.push_back(instr);
+
+    return tagID;
+}
+
+/* See header for documentation. */
 void CommandBuffer::executeCommands(
     CommandBuffer& secondary
 ) {
@@ -142,7 +165,7 @@ void CommandBuffer::executeCommands(
     vecAppend(workloadCommandStream, secondary.workloadCommandStream);
 }
 
-
+/* See header for documentation. */
 CommandPool::CommandPool(
     VkCommandPool _handle) :
     handle(_handle)

@@ -134,7 +134,8 @@ public:
         const RenderPass& renderPass,
         uint32_t width,
         uint32_t height,
-        bool suspending);
+        bool suspending,
+        bool oneTimeSubmit);
 
     virtual ~LCSRenderPass() = default;
 
@@ -169,11 +170,38 @@ private:
 
     bool suspending;
 
+    bool oneTimeSubmit;
+
     uint32_t subpassCount;
 
     uint64_t drawCallCount { 0 };
 
     std::vector<RenderPassAttachment> attachments;
+};
+
+/**
+ * @brief Baseclass representing a GPU workload in the command stream.
+ */
+class LCSDispatch : public LCSWorkload
+{
+public:
+    LCSDispatch(
+        uint64_t tagID,
+        int64_t xGroups,
+        int64_t yGroups,
+        int64_t zGroups);
+
+    virtual ~LCSDispatch() = default;
+
+    virtual std::string getMetadata(
+        const std::string* debugLabel=nullptr,
+        uint64_t tagIDContinuation=0,
+        uint64_t submitID=0) const;
+
+private:
+    int64_t xGroups;
+    int64_t yGroups;
+    int64_t zGroups;
 };
 
 /**

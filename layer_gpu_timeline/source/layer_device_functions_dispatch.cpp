@@ -32,13 +32,16 @@
 
 extern std::mutex g_vulkanLock;
 
-static void registerDispatch(
+static uint64_t registerDispatch(
     Device* layer,
-    VkCommandBuffer commandBuffer
+    VkCommandBuffer commandBuffer,
+    int64_t groupX,
+    int64_t groupY,
+    int64_t groupZ
 ) {
-    auto& state = layer->getStateTracker();
-    auto& stats = state.getCommandBuffer(commandBuffer).getStats();
-    stats.incDispatchCount();
+    auto& tracker = layer->getStateTracker();
+    auto& cb = tracker.getCommandBuffer(commandBuffer);
+    return cb.dispatch(groupX, groupY, groupZ);
 }
 
 /* See Vulkan API for documentation. */
@@ -55,11 +58,27 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatch<user_tag>(
     std::unique_lock<std::mutex> lock { g_vulkanLock };
     auto* layer = Device::retrieve(commandBuffer);
 
-    registerDispatch(layer, commandBuffer);
+    uint64_t tagID = registerDispatch(
+        layer,
+        commandBuffer,
+        static_cast<int64_t>(groupCountX),
+        static_cast<int64_t>(groupCountY),
+        static_cast<int64_t>(groupCountZ));
+
+    // Emit the unique workload tag into the command stream
+    std::string tagLabel = formatString("t%" PRIu64, tagID);
+    VkDebugUtilsLabelEXT tagInfo {
+        .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT,
+        .pNext = nullptr,
+        .pLabelName = tagLabel.c_str(),
+        .color = { 0.0f, 0.0f, 0.0f, 0.0f }
+    };
 
     // Release the lock to call into the driver
     lock.unlock();
+    layer->driver.vkCmdBeginDebugUtilsLabelEXT(commandBuffer, &tagInfo);
     layer->driver.vkCmdDispatch(commandBuffer, groupCountX, groupCountY, groupCountZ);
+    layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
 }
 
 /* See Vulkan API for documentation. */
@@ -79,11 +98,27 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchBase<user_tag>(
     std::unique_lock<std::mutex> lock { g_vulkanLock };
     auto* layer = Device::retrieve(commandBuffer);
 
-    registerDispatch(layer, commandBuffer);
+    uint64_t tagID = registerDispatch(
+        layer,
+        commandBuffer,
+        static_cast<int64_t>(groupCountX),
+        static_cast<int64_t>(groupCountY),
+        static_cast<int64_t>(groupCountZ));
+
+    // Emit the unique workload tag into the command stream
+    std::string tagLabel = formatString("t%" PRIu64, tagID);
+    VkDebugUtilsLabelEXT tagInfo {
+        .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT,
+        .pNext = nullptr,
+        .pLabelName = tagLabel.c_str(),
+        .color = { 0.0f, 0.0f, 0.0f, 0.0f }
+    };
 
     // Release the lock to call into the driver
     lock.unlock();
+    layer->driver.vkCmdBeginDebugUtilsLabelEXT(commandBuffer, &tagInfo);
     layer->driver.vkCmdDispatchBase(commandBuffer, baseGroupX, baseGroupY, baseGroupZ, groupCountX, groupCountY, groupCountZ);
+    layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
 }
 
 /* See Vulkan API for documentation. */
@@ -103,11 +138,27 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchBaseKHR<user_tag>(
     std::unique_lock<std::mutex> lock { g_vulkanLock };
     auto* layer = Device::retrieve(commandBuffer);
 
-    registerDispatch(layer, commandBuffer);
+    uint64_t tagID = registerDispatch(
+        layer,
+        commandBuffer,
+        static_cast<int64_t>(groupCountX),
+        static_cast<int64_t>(groupCountY),
+        static_cast<int64_t>(groupCountZ));
+
+    // Emit the unique workload tag into the command stream
+    std::string tagLabel = formatString("t%" PRIu64, tagID);
+    VkDebugUtilsLabelEXT tagInfo {
+        .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT,
+        .pNext = nullptr,
+        .pLabelName = tagLabel.c_str(),
+        .color = { 0.0f, 0.0f, 0.0f, 0.0f }
+    };
 
     // Release the lock to call into the driver
     lock.unlock();
+    layer->driver.vkCmdBeginDebugUtilsLabelEXT(commandBuffer, &tagInfo);
     layer->driver.vkCmdDispatchBaseKHR(commandBuffer, baseGroupX, baseGroupY, baseGroupZ, groupCountX, groupCountY, groupCountZ);
+    layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
 }
 
 /* See Vulkan API for documentation. */
@@ -123,9 +174,20 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchIndirect<user_tag>(
     std::unique_lock<std::mutex> lock { g_vulkanLock };
     auto* layer = Device::retrieve(commandBuffer);
 
-    registerDispatch(layer, commandBuffer);
+    uint64_t tagID = registerDispatch(layer, commandBuffer, -1, -1, -1);
+
+    // Emit the unique workload tag into the command stream
+    std::string tagLabel = formatString("t%" PRIu64, tagID);
+    VkDebugUtilsLabelEXT tagInfo {
+        .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT,
+        .pNext = nullptr,
+        .pLabelName = tagLabel.c_str(),
+        .color = { 0.0f, 0.0f, 0.0f, 0.0f }
+    };
 
     // Release the lock to call into the driver
     lock.unlock();
+    layer->driver.vkCmdBeginDebugUtilsLabelEXT(commandBuffer, &tagInfo);
     layer->driver.vkCmdDispatchIndirect(commandBuffer, buffer, offset);
+    layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
 }
