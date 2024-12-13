@@ -25,20 +25,15 @@
 
 /**
  * \file
- * The declaration of Vulkan command pool and command buffer use trackers.
+ * The declaration of a replayable layer command stream.
  *
  * Role summary
  * ============s
  *
- * These trackers are used to monitor the use of command buffers in a frame,
- * allowing us to monitor command buffer payloads submitted to a queue.
- *
- * Key properties
- * ==============
- *
- * Command pools and Command buffers are both lock-free from a single app
- * thread, relying on external synchronization above the API if multi-threaded
- * use is required.
+ * These trackers are used to monitor to submission of workloads inside a
+ * command buffers in a way that they can be iterated by a queue tracker at
+ * submit time, allowing us to associate workloads with per-queue state such
+ * as the dynamic debug label stack.
  */
 
 #pragma once
@@ -46,13 +41,11 @@
 #include <atomic>
 #include <memory>
 #include <string>
-#include <unordered_map>
 #include <utility>
 #include <vector>
 #include <vulkan/vulkan.h>
 
 #include "trackers/render_pass.hpp"
-#include "trackers/stats.hpp"
 #include "utils/misc.hpp"
 
 namespace Tracker
@@ -73,22 +66,36 @@ enum class LCSOpcode
 };
 
 /**
- * @brief Baseclass representing a GPU workload in the command stream.
+ * @brief Base class representing a GPU workload in the command stream.
  */
 class LCSWorkload
 {
 public:
+    /**
+     * @brief Create a new workload.
+     *
+     * @param tagID   The assigned tagID.
+     */
     LCSWorkload(
         uint64_t tagID);
 
+    /**
+     * @brief Destroy a workload.
+     */
     virtual ~LCSWorkload() = default;
 
+    /**
+     * @brief Get the metadata for this workload
+     *
+     * @param debugLabel          The debug label state of the VkQueue at submit time.
+     * @param tagIDContinuation   The ID of the workload if this is a continuation of it.
+     */
     virtual std::string getMetadata(
         const std::string* debugLabel=nullptr,
         uint64_t tagIDContinuation=0) const = 0;
 
     /**
-     * @brief Get this workloads tagID.
+     * @brief Get this workload's tagID.
      *
      * @return The assigned ID.
      */
@@ -123,11 +130,21 @@ private:
 };
 
 /**
- * @brief Baseclass representing a GPU workload in the command stream.
+ * @brief Class representing a render pass workload in the command stream.
  */
 class LCSRenderPass : public LCSWorkload
 {
 public:
+    /**
+     * @brief Create a new workload representing a single render pass.
+     *
+     * @param tagID           The assigned tagID.
+     * @param renderPass      The render pass creation information.
+     * @param width           The width of this submit in pixels.
+     * @param height          The height of this submit in pixels.
+     * @param suspending      Is this a render pass part that suspends later?
+     * @param oneTimeSubmit   Is this recorded into a one-time-submit command buffer?
+     */
     LCSRenderPass(
         uint64_t tagID,
         const RenderPass& renderPass,
@@ -136,148 +153,300 @@ public:
         bool suspending,
         bool oneTimeSubmit);
 
+    /**
+     * @brief Destroy a workload.
+     */
     virtual ~LCSRenderPass() = default;
 
+    /**
+     * @brief Is this a suspending render pass?
+     *
+     * @return @c true if this instance suspends rather than ends.
+     */
     bool isSuspending() const
     {
         return suspending;
     };
 
+    /**
+     * @brief Update this workload with the final draw count.
+     *
+     * @param count   The number of draw calls tracked by the command buffer.
+     */
     void setDrawCallCount(uint64_t count)
     {
         drawCallCount = count;
     };
 
+    /* See base class for documentation. */
     virtual std::string getMetadata(
         const std::string* debugLabel=nullptr,
         uint64_t tagIDContinuation=0) const;
 
 private:
+    /**
+     * @brief Get the metadata for this workload if beginning a new render pass.
+     *
+     * @param debugLabel   The debug label state of the VkQueue at submit time.
+     */
     std::string getBeginMetadata(
         const std::string* debugLabel=nullptr) const;
 
+    /**
+     * @brief Get the metadata for this workload if continuing an existing render pass.
+     *
+     * @param debugLabel          The debug label state of the VkQueue at submit time.
+     * @param tagIDContinuation   The ID of the workload if this is a continuation of it.
+     */
     std::string getContinuationMetadata(
         const std::string* debugLabel=nullptr,
         uint64_t tagIDContinuation=0) const;
 
+    /**
+     * @brief Width of this workload, in pixels.
+     */
     uint32_t width;
 
+    /**
+     * @brief Height of this workload, in pixels.
+     */
     uint32_t height;
 
+    /**
+     * @brief Is this workload suspending rather than ending?
+     */
     bool suspending;
 
+    /**
+     * @brief Is this workload in a one-time-submit command buffer?
+     */
     bool oneTimeSubmit;
 
+    /**
+     * @brief The number of subpasses in the render pass.
+     */
     uint32_t subpassCount;
 
+    /**
+     * @brief The number of draw calls in the render pass.
+     *
+     * Note: This is updated by ther command buffer tracker when the render
+     * pass is suspended or ended.
+     */
     uint64_t drawCallCount { 0 };
 
+    /**
+     * @brief The attachments for this render pass.
+     */
     std::vector<RenderPassAttachment> attachments;
 };
 
 /**
- * @brief Baseclass representing a GPU workload in the command stream.
+ * @brief Class representing a compute dispatch workload in the command stream.
  */
 class LCSDispatch : public LCSWorkload
 {
 public:
+    /**
+     * @brief Create a new dispatch workload.
+     *
+     * Workloads of unknown dimension (e.g. if indirect) should use -1.
+     *
+     * @param tagID     The assigned tagID.
+     * @param xGroups   The number of work groups in the X dimension.
+     * @param yGroups   The number of work groups in the Y dimension.
+     * @param zGroups   The number of work groups in the Z dimension.
+     */
     LCSDispatch(
         uint64_t tagID,
         int64_t xGroups,
         int64_t yGroups,
         int64_t zGroups);
 
+    /**
+     * @brief Destroy a workload.
+     */
     virtual ~LCSDispatch() = default;
 
+    /* See base class for documentation. */
     virtual std::string getMetadata(
         const std::string* debugLabel=nullptr,
         uint64_t tagIDContinuation=0) const;
 
 private:
+    /**
+     * @brief The number of work groups in the X dimension, or -1 if unknown.
+     */
     int64_t xGroups;
+
+    /**
+     * @brief The number of work groups in the Y dimension, or -1 if unknown.
+     */
     int64_t yGroups;
+
+    /**
+     * @brief The number of work groups in the Z dimension, or -1 if unknown.
+     */
     int64_t zGroups;
 };
 
 /**
- * @brief Baseclass representing a GPU workload in the command stream.
+ * @brief Class representing a trace rays workload in the command stream.
  */
 class LCSTraceRays : public LCSWorkload
 {
 public:
+    /**
+     * @brief Create a new trace rays workload.
+     *
+     * Workloads of unknown dimension (e.g. if indirect) should use -1.
+     *
+     * @param tagID    The assigned tagID.
+     * @param xItems   The number of work items in the X dimension.
+     * @param yItems   The number of work items in the Y dimension.
+     * @param zItems   The number of work items in the Z dimension.
+     */
     LCSTraceRays(
         uint64_t tagID,
         int64_t xItems,
         int64_t yItems,
         int64_t zItems);
 
+    /**
+     * @brief Destroy a workload.
+     */
     virtual ~LCSTraceRays() = default;
 
+    /* See base class for documentation. */
     virtual std::string getMetadata(
         const std::string* debugLabel=nullptr,
         uint64_t tagIDContinuation=0) const;
 
 private:
+    /**
+     * @brief The number of work items in the X dimension, or -1 if unknown.
+     */
     int64_t xItems;
+
+    /**
+     * @brief The number of work items in the Y dimension, or -1 if unknown.
+     */
     int64_t yItems;
+
+    /**
+     * @brief The number of work items in the Z dimension, or -1 if unknown.
+     */
     int64_t zItems;
 };
 
 /**
- * @brief Baseclass representing a GPU workload in the command stream.
+ * @brief Class representing an image transfer workload in the command stream.
  */
 class LCSImageTransfer : public LCSWorkload
 {
 public:
+    /**
+     * @brief Create a new image transfer workload.
+     *
+     * Workloads of unknown dimension should use @c pixelCount of -1.
+     *
+     * @param tagID          The assigned tagID.
+     * @param transferType   The subtype of the transfer.
+     * @param pixelCount     The size of the transfer, in pixels.
+     */
     LCSImageTransfer(
         uint64_t tagID,
         const std::string& transferType,
         int64_t pixelCount);
 
+    /**
+     * @brief Destroy a workload.
+     */
     virtual ~LCSImageTransfer() = default;
 
+    /* See base class for documentation. */
     virtual std::string getMetadata(
         const std::string* debugLabel=nullptr,
         uint64_t tagIDContinuation=0) const;
 
 private:
+    /**
+     * @brief The subtype of the transfer.
+     */
     std::string transferType;
+
+    /**
+     * @brief The number of pixels transferred, or -1 if unknown.
+     */
     int64_t pixelCount;
 };
 
 /**
- * @brief Baseclass representing a GPU workload in the command stream.
+ * @brief Class representing a buffer transfer workload in the command stream.
  */
 class LCSBufferTransfer : public LCSWorkload
 {
 public:
+    /**
+     * @brief Create a new buffer transfer workload.
+     *
+     * Workloads of unknown dimension should use @c byteCount of -1. Workloads
+     * using symbolic "whole buffer" dimension should use @c byteCount of -2.
+     *
+     * @param tagID          The assigned tagID.
+     * @param transferType   The subtype of the transfer.
+     * @param byteCount      The size of the transfer, in bytes.
+     */
     LCSBufferTransfer(
         uint64_t tagID,
         const std::string& transferType,
         int64_t byteCount);
 
+    /**
+     * @brief Destroy a workload.
+     */
     virtual ~LCSBufferTransfer() = default;
 
+    /* See base class for documentation. */
     virtual std::string getMetadata(
         const std::string* debugLabel=nullptr,
         uint64_t tagIDContinuation=0) const;
 
 private:
+    /**
+     * @brief The subtype of the transfer.
+     */
     std::string transferType;
+
+    /**
+     * @brief The number of bytes transferred, -1 if unknown, -2 if whole buffer.
+     */
     int64_t byteCount;
 };
 
 /**
- * @brief Baseclass representing a GPU workload in the command stream.
+ * @brief Class representing a marker workload in the command stream.
+ *
+ * Note there is no class for a marker end, as is has no payload and can use
+ * just the opcode to indicate behavior.
  */
 class LCSMarker : public LCSWorkload
 {
 public:
+    /**
+     * @brief Create a new debug marker workload.
+     *
+     * @param label   The application debug label.
+     */
     LCSMarker(
         const std::string& label);
 
+    /**
+     * @brief Destroy a workload.
+     */
     virtual ~LCSMarker() = default;
 
+    /* See base class for documentation. */
     virtual std::string getMetadata(
         const std::string* debugLabel=nullptr,
         uint64_t tagIDContinuation=0) const
@@ -288,6 +457,9 @@ public:
     };
 
 private:
+    /**
+     * @brief The application debug label.
+     */
     std::string label;
 };
 
