@@ -72,16 +72,6 @@ public:
         const std::vector<LCSInstruction>& stream,
         std::function<void(const std::string&)> callback);
 
-    /**
-     * @brief Get a unique submitID to label a command buffer submit.
-     *
-     * @return The assigned ID.
-     */
-    static uint64_t assignSubmitID()
-    {
-        return nextSubmitID.fetch_add(1, std::memory_order_relaxed);
-    }
-
 private:
     /**
      * The handle of the native queue we are wrapping.
@@ -97,11 +87,6 @@ private:
      * @brief The last non-zero render pass tagID submitted.
      */
     uint64_t lastRenderPassTagID { 0 };
-
-    /**
-     * @brief The command buffer submitID allocator.
-     */
-    static std::atomic<uint64_t> nextSubmitID;
 };
 
 }

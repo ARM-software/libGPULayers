@@ -85,8 +85,7 @@ public:
 
     virtual std::string getMetadata(
         const std::string* debugLabel=nullptr,
-        uint64_t tagIDContinuation=0,
-        uint64_t submitID=0) const = 0;
+        uint64_t tagIDContinuation=0) const = 0;
 
     /**
      * @brief Get this workloads tagID.
@@ -151,18 +150,15 @@ public:
 
     virtual std::string getMetadata(
         const std::string* debugLabel=nullptr,
-        uint64_t tagIDContinuation=0,
-        uint64_t submitID=0) const;
+        uint64_t tagIDContinuation=0) const;
 
 private:
     std::string getBeginMetadata(
-        const std::string* debugLabel=nullptr,
-        uint64_t submitID=0) const;
+        const std::string* debugLabel=nullptr) const;
 
     std::string getContinuationMetadata(
         const std::string* debugLabel=nullptr,
-        uint64_t tagIDContinuation=0,
-        uint64_t submitID=0) const;
+        uint64_t tagIDContinuation=0) const;
 
     uint32_t width;
 
@@ -195,8 +191,7 @@ public:
 
     virtual std::string getMetadata(
         const std::string* debugLabel=nullptr,
-        uint64_t tagIDContinuation=0,
-        uint64_t submitID=0) const;
+        uint64_t tagIDContinuation=0) const;
 
 private:
     int64_t xGroups;
@@ -220,8 +215,7 @@ public:
 
     virtual std::string getMetadata(
         const std::string* debugLabel=nullptr,
-        uint64_t tagIDContinuation=0,
-        uint64_t submitID=0) const;
+        uint64_t tagIDContinuation=0) const;
 
 private:
     int64_t xItems;
@@ -244,8 +238,7 @@ public:
 
     virtual std::string getMetadata(
         const std::string* debugLabel=nullptr,
-        uint64_t tagIDContinuation=0,
-        uint64_t submitID=0) const;
+        uint64_t tagIDContinuation=0) const;
 
 private:
     std::string transferType;
@@ -267,8 +260,7 @@ public:
 
     virtual std::string getMetadata(
         const std::string* debugLabel=nullptr,
-        uint64_t tagIDContinuation=0,
-        uint64_t submitID=0) const;
+        uint64_t tagIDContinuation=0) const;
 
 private:
     std::string transferType;
@@ -288,12 +280,10 @@ public:
 
     virtual std::string getMetadata(
         const std::string* debugLabel=nullptr,
-        uint64_t tagIDContinuation=0,
-        uint64_t submitID=0) const
+        uint64_t tagIDContinuation=0) const
     {
         UNUSED(debugLabel);
         UNUSED(tagIDContinuation);
-        UNUSED(submitID);
         return label;
     };
 

@@ -75,8 +75,7 @@ LCSRenderPass::LCSRenderPass(
 
 /* See header for details. */
 std::string LCSRenderPass::getBeginMetadata(
-    const std::string* debugLabel,
-    uint64_t submitID) const
+    const std::string* debugLabel) const
 {
     // Draw count for a multi-submit command buffer cannot be reliably
     // associated with a single tagID if restartable across command buffer
@@ -95,11 +94,6 @@ std::string LCSRenderPass::getBeginMetadata(
         { "height", height },
         { "drawCallCount", drawCount }
     };
-
-    if (submitID != 0)
-    {
-        metadata["sid"] = submitID;
-    }
 
     if (debugLabel && debugLabel->size())
     {
@@ -147,8 +141,7 @@ std::string LCSRenderPass::getBeginMetadata(
 /* See header for details. */
 std::string LCSRenderPass::getContinuationMetadata(
     const std::string* debugLabel,
-    uint64_t tagIDContinuation,
-    uint64_t submitID) const
+    uint64_t tagIDContinuation) const
 {
     json metadata = {
         { "type", "renderpass" },
@@ -161,28 +154,22 @@ std::string LCSRenderPass::getContinuationMetadata(
         metadata["label"] = *debugLabel;
     }
 
-    if (submitID != 0)
-    {
-        metadata["sid"] = submitID;
-    }
-
     return metadata.dump();
 }
 
 /* See header for details. */
 std::string LCSRenderPass::getMetadata(
     const std::string* debugLabel,
-    uint64_t tagIDContinuation,
-    uint64_t submitID) const
+    uint64_t tagIDContinuation) const
 {
     if (tagID)
     {
         assert(tagIDContinuation == 0);
-        return getBeginMetadata(debugLabel, submitID);
+        return getBeginMetadata(debugLabel);
     }
 
     assert(tagIDContinuation != 0);
-    return getContinuationMetadata(debugLabel, tagIDContinuation, submitID);
+    return getContinuationMetadata(debugLabel, tagIDContinuation);
 }
 
 /* See header for details. */
@@ -203,11 +190,9 @@ LCSDispatch::LCSDispatch(
 /* See header for details. */
 std::string LCSDispatch::getMetadata(
     const std::string* debugLabel,
-    uint64_t tagIDContinuation,
-    uint64_t submitID
+    uint64_t tagIDContinuation
 ) const {
     UNUSED(tagIDContinuation);
-    UNUSED(submitID);
 
     json metadata = {
         { "type", "dispatch" },
@@ -243,11 +228,9 @@ LCSTraceRays::LCSTraceRays(
 /* See header for details. */
 std::string LCSTraceRays::getMetadata(
     const std::string* debugLabel,
-    uint64_t tagIDContinuation,
-    uint64_t submitID
+    uint64_t tagIDContinuation
 ) const {
     UNUSED(tagIDContinuation);
-    UNUSED(submitID);
 
     json metadata = {
         { "type", "tracerays" },
@@ -281,11 +264,9 @@ LCSImageTransfer::LCSImageTransfer(
 /* See header for details. */
 std::string LCSImageTransfer::getMetadata(
     const std::string* debugLabel,
-    uint64_t tagIDContinuation,
-    uint64_t submitID
+    uint64_t tagIDContinuation
 ) const {
     UNUSED(tagIDContinuation);
-    UNUSED(submitID);
 
     json metadata = {
         { "type", "imagetransfer" },
@@ -318,11 +299,9 @@ LCSBufferTransfer::LCSBufferTransfer(
 /* See header for details. */
 std::string LCSBufferTransfer::getMetadata(
     const std::string* debugLabel,
-    uint64_t tagIDContinuation,
-    uint64_t submitID
+    uint64_t tagIDContinuation
 ) const {
     UNUSED(tagIDContinuation);
-    UNUSED(submitID);
 
     json metadata = {
         { "type", "buffertransfer" },
