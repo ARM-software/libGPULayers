@@ -30,12 +30,13 @@
 namespace Tracker
 {
 /* See header for details. */
-std::atomic<uint64_t> Queue::nextSubmitID { 1 };
-
-/* See header for details. */
 Queue::Queue(
-    VkQueue _handle):
-    handle(_handle) { };
+    VkQueue _handle
+):
+    handle(_handle)
+{
+
+};
 
 /* See header for details. */
 void Queue::runSubmitCommandStream(
