@@ -123,7 +123,7 @@ class CommsServer:
 
         # Accept connections from outside
         while not self.shutdown:
-            print('Waiting for connection')
+            print('Waiting for client connection')
             try:
                 sockfd, _ = listen_sockfd.accept()
             except OSError:

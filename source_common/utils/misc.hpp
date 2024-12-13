@@ -32,7 +32,10 @@
 
 #include <algorithm>
 #include <cassert>
+#include <cinttypes>
+#include <sstream>
 #include <string>
+#include <vector>
 
 /**
  * @brief Macro to stringize a value.
@@ -51,7 +54,7 @@
  * @param args     The variadic values used to populate the template.
  */
 template<typename ... Args>
-std::string fmt_string(
+std::string formatString(
     const std::string& format,
     Args ... args
 ) {
@@ -67,6 +70,29 @@ std::string fmt_string(
     std::unique_ptr<char[]> buf(new char[size]);
     std::snprintf(buf.get(), size, format.c_str(), args ...);
     return std::string(buf.get(), buf.get() + size - 1);
+}
+
+/**
+ * @brief Join a string of parts.
+ *
+ * @param parts       The list of string parts to join.
+ * @param separator   The delimiter to use when joining the parts.
+ */
+[[maybe_unused]] static std::string joinString(
+    const std::vector<std::string>& parts,
+    const std::string& separator
+) {
+    std::stringstream out;
+    for (size_t i = 0; i < parts.size(); i++)
+    {
+        out << parts[i];
+        if (i != parts.size() - 1)
+        {
+            out << separator;
+        }
+    }
+
+    return out.str();
 }
 
 /**
@@ -102,21 +128,47 @@ bool isInMap(
 }
 
 /**
+ * @brief Append all values in one vector to the back of another.
+ *
+ * @param dst   The destination vector to append to; must not be source vector.
+ * @param src   The source vector to append.
+ */
+template<typename T>
+void vecAppend(
+    std::vector<T>& dst,
+    const std::vector<T>& src
+) {
+    // Perform a resize with some room for growth
+    size_t newSize = dst.size() + src.size();
+    dst.reserve(newSize);
+
+    // Merge secondary into this command buffer
+    dst.insert(std::end(dst), std::begin(src), std::end(src));
+}
+
+/**
  * @brief Get a displayable pointer.
  *
- * On 64-bit systems this strips the MTE tag.
+ * On 64-bit Arm systems this strips the MTE tag in the top byte, which means
+ * that the pointer cannot be converted back into a usable pointer without
+ * triggering an MTE tag violation, so the returns value is for cosmetic use
+ * only.
  *
- * @return The displayable pointer
+ * @param pointer   The pointer to display.
+ *
+ * @return The displayable pointer.
  */
 static inline uintptr_t getDisplayPointer(
     void* pointer
 ) {
     uintptr_t dispPointer = reinterpret_cast<uintptr_t>(pointer);
 
-    if constexpr(sizeof(uintptr_t) == 8)
-    {
-        dispPointer &= 0x00FFFFFFFFFFFFFFull;
-    }
+    #if defined(__aarch64__)
+        if constexpr(sizeof(uintptr_t) == 8)
+        {
+            dispPointer &= 0x00FFFFFFFFFFFFFFull;
+        }
+    #endif
 
     return dispPointer;
 }

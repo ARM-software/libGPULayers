@@ -24,8 +24,7 @@
  */
 
 /**
- * @file
- * Declares the root class for layer management of VkDevice objects.
+ * @file Declares the root class for layer management of VkDevice objects.
  *
  * Role summary
  * ============
@@ -41,10 +40,9 @@
  * Key properties
  * ==============
  *
- * Unlike EGL contexts, Vulkan devices are designed to be used concurrently by
- * multiple application threads. An application can have multiple concurrent
- * devices (although this is less common than with OpenGL ES applications), and
- * use each device from multiple threads.
+ * Vulkan devices are designed to be used concurrently by multiple application
+ * threads. An application can have multiple concurrent devices, and use each
+ * device from multiple threads.
  *
  * Access to the layer driver structures must therefore be kept thread-safe.
  * For sake of simplicity, we generally implement this by:
@@ -80,6 +78,8 @@ public:
      * @brief Fetch a device from the global store of dispatchable devices.
      *
      * @param handle   The dispatchable device handle to use as an indirect lookup.
+     *
+     * @return The layer device context.
      */
     static Device* retrieve(
         VkDevice handle);
@@ -88,6 +88,8 @@ public:
      * @brief Fetch a device from the global store of dispatchable devices.
      *
      * @param handle   The dispatchable queue handle to use as an indirect lookup.
+     *
+     * @return The layer device context.
      */
     static Device* retrieve(
         VkQueue handle);
@@ -96,6 +98,8 @@ public:
      * @brief Fetch a device from the global store of dispatchable devices.
      *
      * @param handle   The dispatchable command buffer handle to use as an indirect lookup.
+     *
+     * @return The layer device context.
      */
     static Device* retrieve(
         VkCommandBuffer handle);
@@ -125,7 +129,7 @@ public:
     /**
      * @brief Destroy this layer device object.
      */
-    ~Device();
+    ~Device() = default;
 
 public:
     /**

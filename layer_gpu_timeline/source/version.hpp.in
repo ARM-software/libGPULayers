@@ -24,9 +24,7 @@
  */
 
 /**
- * @file
- * This header implements placeholder templates that are populated by CMake
- * during configure.
+ * @file Placeholder templates that are populated by CMake during configure.
  */
 
 #pragma once

@@ -24,27 +24,48 @@
  */
 
 /**
- * @file
- * The declaration of the communication module internal message types.
+ * @file Declares a simple comms encoded for the timeline layer.
  */
 
-#include "comms/comms_message.hpp"
+#pragma once
 
-namespace Comms
+#include "comms/comms_interface.hpp"
+
+/**
+ * @brief A simple message encoder for the timeline comms endpoint.
+ *
+ * TODO: This is currently a very simple implementation because we are simply
+ * passing JSON strings around. This is not the most efficient way of doing
+ * this and in future this module will be used to implement binary encoders
+ * for each specific message type that needs sending.
+ */
+class TimelineComms
 {
+public:
+    /**
+     * @brief Construct a new encoder.
+     *
+     * @param comms   The common comms module used by all services.
+     */
+    TimelineComms(
+        Comms::CommsInterface& comms);
 
-Message::Message(
-    EndpointID _endpointID,
-    MessageType _messageType,
-    MessageID _messageID,
-    std::unique_ptr<MessageData> _transmitData
-) :
-    endpointID(_endpointID),
-    messageType(_messageType),
-    messageID(_messageID),
-    transmitData(std::move(_transmitData))
-{
+    /**
+     * @brief Send a message to the GPU timeline endpoint service.
+     *
+     * @param message   The message to send.
+     */
+    void txMessage(
+        const std::string& message);
 
-}
+private:
+    /**
+     * @brief The endpoint ID of the service, or 0 if not found.
+     */
+    Comms::EndpointID endpoint { 0 };
 
-}
+    /**
+     * @brief The common module for network messaging.
+     */
+    Comms::CommsInterface& comms;
+};

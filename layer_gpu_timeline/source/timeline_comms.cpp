@@ -23,28 +23,32 @@
  * ----------------------------------------------------------------------------
  */
 
-/**
- * @file
- * The declaration of the communication module internal message types.
- */
+#include <memory>
 
-#include "comms/comms_message.hpp"
+#include "timeline_comms.hpp"
 
-namespace Comms
+/* See header for documentation. */
+TimelineComms::TimelineComms(
+    Comms::CommsInterface& _comms
+):
+    comms(_comms)
 {
-
-Message::Message(
-    EndpointID _endpointID,
-    MessageType _messageType,
-    MessageID _messageID,
-    std::unique_ptr<MessageData> _transmitData
-) :
-    endpointID(_endpointID),
-    messageType(_messageType),
-    messageID(_messageID),
-    transmitData(std::move(_transmitData))
-{
-
+    if (comms.isConnected())
+    {
+        endpoint = comms.getEndpointID("GPUTimeline");
+    }
 }
 
+/* See header for documentation. */
+void TimelineComms::txMessage(
+    const std::string& message)
+{
+    // Message endpoint is not available
+    if (endpoint == 0)
+    {
+        return;
+    }
+
+    auto data = std::make_unique<Comms::MessageData>(message.begin(), message.end());
+    comms.txAsync(endpoint, std::move(data));
 }
