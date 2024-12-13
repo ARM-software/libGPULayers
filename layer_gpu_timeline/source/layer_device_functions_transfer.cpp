@@ -92,11 +92,19 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdFillBuffer<user_tag>(
     std::unique_lock<std::mutex> lock { g_vulkanLock };
     auto* layer = Device::retrieve(commandBuffer);
 
+    // Compute the size of the transfer
+    // TODO: Add buffer tracking so we can turn VK_WHOLE_SIZE into bytes
+    int64_t byteCount = static_cast<int64_t>(size);
+    if (size == VK_WHOLE_SIZE)
+    {
+        byteCount = -2;
+    }
+
     uint64_t tagID = registerBufferTransfer(
         layer,
         commandBuffer,
         "Fill buffer",
-        -1);
+        byteCount);
 
     // Release the lock to call into the driver
     lock.unlock();
@@ -121,11 +129,15 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdClearColorImage<user_tag>(
     std::unique_lock<std::mutex> lock { g_vulkanLock };
     auto* layer = Device::retrieve(commandBuffer);
 
+    // Compute the size of the transfer
+    // TODO: Add image tracking so we can turn image and pRanges into pixels
+    int64_t pixelCount = -1;
+
     uint64_t tagID = registerImageTransfer(
         layer,
         commandBuffer,
         "Clear image",
-        -1);
+        pixelCount);
 
     // Release the lock to call into the driver
     lock.unlock();
@@ -150,11 +162,15 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdClearDepthStencilImage<user_tag>(
     std::unique_lock<std::mutex> lock { g_vulkanLock };
     auto* layer = Device::retrieve(commandBuffer);
 
+    // Compute the size of the transfer
+    // TODO: Add image tracking so we can turn image and pRanges into pixels
+    int64_t pixelCount = -1;
+
     uint64_t tagID = registerImageTransfer(
         layer,
         commandBuffer,
         "Clear image",
-        -1);
+        pixelCount);
 
     // Release the lock to call into the driver
     lock.unlock();
@@ -178,11 +194,18 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBuffer<user_tag>(
     std::unique_lock<std::mutex> lock { g_vulkanLock };
     auto* layer = Device::retrieve(commandBuffer);
 
+    // Compute the size of the transfer
+    int64_t byteCount = 0;
+    for (uint32_t i = 0; i < regionCount; i++)
+    {
+        byteCount += static_cast<int64_t>(pRegions[i].size);
+    }
+
     uint64_t tagID = registerBufferTransfer(
         layer,
         commandBuffer,
         "Copy buffer",
-        -1);
+        byteCount);
 
     // Release the lock to call into the driver
     lock.unlock();
@@ -203,11 +226,18 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBuffer2<user_tag>(
     std::unique_lock<std::mutex> lock { g_vulkanLock };
     auto* layer = Device::retrieve(commandBuffer);
 
+    // Compute the size of the transfer
+    int64_t byteCount = 0;
+    for (uint32_t i = 0; i < pCopyBufferInfo->regionCount; i++)
+    {
+        byteCount += static_cast<int64_t>(pCopyBufferInfo->pRegions[i].size);
+    }
+
     uint64_t tagID = registerBufferTransfer(
         layer,
         commandBuffer,
         "Copy buffer",
-        -1);
+        byteCount);
 
     // Release the lock to call into the driver
     lock.unlock();
@@ -228,11 +258,18 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBuffer2KHR<user_tag>(
     std::unique_lock<std::mutex> lock { g_vulkanLock };
     auto* layer = Device::retrieve(commandBuffer);
 
+    // Compute the size of the transfer
+    int64_t byteCount = 0;
+    for (uint32_t i = 0; i < pCopyBufferInfo->regionCount; i++)
+    {
+        byteCount += static_cast<int64_t>(pCopyBufferInfo->pRegions[i].size);
+    }
+
     uint64_t tagID = registerBufferTransfer(
         layer,
         commandBuffer,
         "Copy buffer",
-        -1);
+        byteCount);
 
     // Release the lock to call into the driver
     lock.unlock();
@@ -257,11 +294,21 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBufferToImage<user_tag>(
     std::unique_lock<std::mutex> lock { g_vulkanLock };
     auto* layer = Device::retrieve(commandBuffer);
 
+    // Compute the size of the transfer
+    int64_t pixelCount = 0;
+    for (uint32_t i = 0; i < regionCount; i++)
+    {
+        int64_t rPixelCount = static_cast<int64_t>(pRegions[i].imageExtent.width)
+                            * static_cast<int64_t>(pRegions[i].imageExtent.height)
+                            * static_cast<int64_t>(pRegions[i].imageExtent.depth);
+        pixelCount += rPixelCount;
+    }
+
     uint64_t tagID = registerImageTransfer(
         layer,
         commandBuffer,
-        "Copy image",
-        -1);
+        "Copy buffer to image",
+        pixelCount);
 
     // Release the lock to call into the driver
     lock.unlock();
@@ -282,11 +329,21 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBufferToImage2<user_tag>(
     std::unique_lock<std::mutex> lock { g_vulkanLock };
     auto* layer = Device::retrieve(commandBuffer);
 
+    // Compute the size of the transfer
+    int64_t pixelCount = 0;
+    for (uint32_t i = 0; i < pCopyBufferToImageInfo->regionCount; i++)
+    {
+        int64_t rPixelCount = static_cast<int64_t>(pCopyBufferToImageInfo->pRegions[i].imageExtent.width)
+                            * static_cast<int64_t>(pCopyBufferToImageInfo->pRegions[i].imageExtent.height)
+                            * static_cast<int64_t>(pCopyBufferToImageInfo->pRegions[i].imageExtent.depth);
+        pixelCount += rPixelCount;
+    }
+
     uint64_t tagID = registerImageTransfer(
         layer,
         commandBuffer,
-        "Copy image",
-        -1);
+        "Copy buffer to image",
+        pixelCount);
 
     // Release the lock to call into the driver
     lock.unlock();
@@ -307,11 +364,21 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBufferToImage2KHR<user_tag>(
     std::unique_lock<std::mutex> lock { g_vulkanLock };
     auto* layer = Device::retrieve(commandBuffer);
 
+    // Compute the size of the transfer
+    int64_t pixelCount = 0;
+    for (uint32_t i = 0; i < pCopyBufferToImageInfo->regionCount; i++)
+    {
+        int64_t rPixelCount = static_cast<int64_t>(pCopyBufferToImageInfo->pRegions[i].imageExtent.width)
+                            * static_cast<int64_t>(pCopyBufferToImageInfo->pRegions[i].imageExtent.height)
+                            * static_cast<int64_t>(pCopyBufferToImageInfo->pRegions[i].imageExtent.depth);
+        pixelCount += rPixelCount;
+    }
+
     uint64_t tagID = registerImageTransfer(
         layer,
         commandBuffer,
-        "Copy image",
-        -1);
+        "Copy buffer to image",
+        pixelCount);
 
     // Release the lock to call into the driver
     lock.unlock();
@@ -337,11 +404,21 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImage<user_tag>(
     std::unique_lock<std::mutex> lock { g_vulkanLock };
     auto* layer = Device::retrieve(commandBuffer);
 
+    // Compute the size of the transfer
+    int64_t pixelCount = 0;
+    for (uint32_t i = 0; i < regionCount; i++)
+    {
+        int64_t rPixelCount = static_cast<int64_t>(pRegions[i].extent.width)
+                            * static_cast<int64_t>(pRegions[i].extent.height)
+                            * static_cast<int64_t>(pRegions[i].extent.depth);
+        pixelCount += rPixelCount;
+    }
+
     uint64_t tagID = registerImageTransfer(
         layer,
         commandBuffer,
         "Copy image",
-        -1);
+        pixelCount);
 
     // Release the lock to call into the driver
     lock.unlock();
@@ -362,11 +439,21 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImage2<user_tag>(
     std::unique_lock<std::mutex> lock { g_vulkanLock };
     auto* layer = Device::retrieve(commandBuffer);
 
+    // Compute the size of the transfer
+    int64_t pixelCount = 0;
+    for (uint32_t i = 0; i < pCopyImageInfo->regionCount; i++)
+    {
+        int64_t rPixelCount = static_cast<int64_t>(pCopyImageInfo->pRegions[i].extent.width)
+                            * static_cast<int64_t>(pCopyImageInfo->pRegions[i].extent.height)
+                            * static_cast<int64_t>(pCopyImageInfo->pRegions[i].extent.depth);
+        pixelCount += rPixelCount;
+    }
+
     uint64_t tagID = registerImageTransfer(
         layer,
         commandBuffer,
         "Copy image",
-        -1);
+        pixelCount);
 
     // Release the lock to call into the driver
     lock.unlock();
@@ -387,11 +474,21 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImage2KHR<user_tag>(
     std::unique_lock<std::mutex> lock { g_vulkanLock };
     auto* layer = Device::retrieve(commandBuffer);
 
+    // Compute the size of the transfer
+    int64_t pixelCount = 0;
+    for (uint32_t i = 0; i < pCopyImageInfo->regionCount; i++)
+    {
+        int64_t rPixelCount = static_cast<int64_t>(pCopyImageInfo->pRegions[i].extent.width)
+                            * static_cast<int64_t>(pCopyImageInfo->pRegions[i].extent.height)
+                            * static_cast<int64_t>(pCopyImageInfo->pRegions[i].extent.depth);
+        pixelCount += rPixelCount;
+    }
+
     uint64_t tagID = registerImageTransfer(
         layer,
         commandBuffer,
         "Copy image",
-        -1);
+        pixelCount);
 
     // Release the lock to call into the driver
     lock.unlock();
@@ -416,11 +513,25 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImageToBuffer<user_tag>(
     std::unique_lock<std::mutex> lock { g_vulkanLock };
     auto* layer = Device::retrieve(commandBuffer);
 
-    uint64_t tagID = registerBufferTransfer(
+    // Compute the size of the transfer
+    int64_t pixelCount = 0;
+    for (uint32_t i = 0; i < regionCount; i++)
+    {
+        int64_t rPixelCount = static_cast<int64_t>(pRegions[i].imageExtent.width)
+                            * static_cast<int64_t>(pRegions[i].imageExtent.height)
+                            * static_cast<int64_t>(pRegions[i].imageExtent.depth);
+        pixelCount += rPixelCount;
+    }
+
+    // TODO: Our usual convention is to mark the transfer using the destination
+    // type, which means this should be a bufferTransfer reporting size in
+    // bytes. Without image tracking we only have pixels, so for now we report
+    // as "Copy image" and report size in pixels.
+    uint64_t tagID = registerImageTransfer(
         layer,
         commandBuffer,
-        "Copy buffer",
-        -1);
+        "Copy image to buffer",
+        pixelCount);
 
     // Release the lock to call into the driver
     lock.unlock();
@@ -441,11 +552,25 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImageToBuffer2<user_tag>(
     std::unique_lock<std::mutex> lock { g_vulkanLock };
     auto* layer = Device::retrieve(commandBuffer);
 
-    uint64_t tagID = registerBufferTransfer(
+    // Compute the size of the transfer
+    int64_t pixelCount = 0;
+    for (uint32_t i = 0; i < pCopyImageToBufferInfo->regionCount; i++)
+    {
+        int64_t rPixelCount = static_cast<int64_t>(pCopyImageToBufferInfo->pRegions[i].imageExtent.width)
+                            * static_cast<int64_t>(pCopyImageToBufferInfo->pRegions[i].imageExtent.height)
+                            * static_cast<int64_t>(pCopyImageToBufferInfo->pRegions[i].imageExtent.depth);
+        pixelCount += rPixelCount;
+    }
+
+    // TODO: Our usual convention is to mark the transfer using the destination
+    // type, which means this should be a bufferTransfer reporting size in
+    // bytes. Without image tracking we only have pixels, so for now we report
+    // as "Copy image" and report size in pixels.
+    uint64_t tagID = registerImageTransfer(
         layer,
         commandBuffer,
-        "Copy buffer",
-        -1);
+        "Copy image to buffer",
+        pixelCount);
 
     // Release the lock to call into the driver
     lock.unlock();
@@ -466,11 +591,25 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImageToBuffer2KHR<user_tag>(
     std::unique_lock<std::mutex> lock { g_vulkanLock };
     auto* layer = Device::retrieve(commandBuffer);
 
-    uint64_t tagID = registerBufferTransfer(
+    // Compute the size of the transfer
+    int64_t pixelCount = 0;
+    for (uint32_t i = 0; i < pCopyImageToBufferInfo->regionCount; i++)
+    {
+        int64_t rPixelCount = static_cast<int64_t>(pCopyImageToBufferInfo->pRegions[i].imageExtent.width)
+                            * static_cast<int64_t>(pCopyImageToBufferInfo->pRegions[i].imageExtent.height)
+                            * static_cast<int64_t>(pCopyImageToBufferInfo->pRegions[i].imageExtent.depth);
+        pixelCount += rPixelCount;
+    }
+
+    // TODO: Our usual convention is to mark the transfer using the destination
+    // type, which means this should be a bufferTransfer reporting size in
+    // bytes. Without image tracking we only have pixels, so for now we report
+    // as "Copy image" and report size in pixels.
+    uint64_t tagID = registerImageTransfer(
         layer,
         commandBuffer,
-        "Copy buffer",
-        -1);
+        "Copy image to buffer",
+        pixelCount);
 
     // Release the lock to call into the driver
     lock.unlock();
