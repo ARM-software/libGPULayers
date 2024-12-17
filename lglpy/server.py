@@ -21,24 +21,31 @@
 # SOFTWARE.
 # -----------------------------------------------------------------------------
 
-# This module implements the server-side communications module that can
-# accept client connections from the layer drivers, and dispatch them to
-# handlers in the server.
+# This module implements the server-side communications module that can accept
+# client connections from a layer driver, and dispatch messages to registered
+# service handler in the server.
 #
-# This module currently only accepts a single connection from a layer at a time
-# and runs in the context of the calling thread, so if it needs to run in the
-# background the user must create a new thread to contain it. It is therefore
-# not possible to implement pseudo-host-driven event loops if the layer is
-# using multiple services concurrently - this needs threads per service.
+# This module currently only accepts a single connection at a time and message
+# handling is synchronous inside the server. It is therefore not possible to
+# implement pseudo-host-driven event loops if the layer is using multiple
+# services concurrently - this needs threads per service.
 
 import enum
 import socket
 import struct
+from typing import Any, Optional
 
 
 class MessageType(enum.Enum):
     '''
     The received message type.
+
+    NOTE: Values defined by the protocol; do not change.
+
+    Attributes:
+        TX_ASYNC: Message is an async client transmit, no response allowed.
+        TX: Message is a sync client transmit, no response allowed.
+        TX_RX: Message is a sync client transmit, response required.
     '''
     TX_ASYNC = 0
     TX = 1
@@ -47,63 +54,156 @@ class MessageType(enum.Enum):
 
 class Message:
     '''
-    A decoded message header packet.
+    A decoded message header for a received message.
 
-    See the MessageHeader struct in comms_message.hpp for binary layout.
+    NOTE: Fields and sizes defined by the protocol; do not change.
+
+    Attributes:
+        message_type: The type of the message sent by the client.
+        endpoint_id: The endpoint service address.
+        message_id: The message cookie to use in a TX_RX response.
+        payload_size: The size of the payload in bytes.
+        payload: The data payload.
     '''
 
-    def __init__(self, header):
-        assert len(header) == 14, 'Header length is incorrect'
+    HEADER_LEN = 14
+
+    def __init__(self, header: bytes):
+        '''
+        Populate a new message based on the header info.
+
+        Args:
+            header: The header byte stream.
+        '''
+        assert len(header) == Message.HEADER_LEN, 'Header length is incorrect'
 
         fields = struct.unpack('<BBQL', header)
 
         self.message_type = MessageType(fields[0])
-        self.endpoint_id = fields[1]
-        self.message_id = fields[2]
-        self.payload_size = fields[3]
+        self.endpoint_id = int(fields[1])
+        self.message_id = int(fields[2])
+        self.payload_size = int(fields[3])
         self.payload = b''
 
-    def add_payload(self, data):
+    def add_payload(self, data: bytes) -> None:
+        '''
+        Attach a payload to this message.
+
+        Args:
+            Data: The payload byte stream.
+        '''
         self.payload = data
+
 
 class Response:
     '''
-    An encoded message header packet.
+    An encoded message header for a message to be transmitted.
 
-    See the MessageHeader struct in comms_message.hpp for binary layout.
+    NOTE: Fields and sizes defined by the protocol; do not change.
+
+    Attributes:
+        message_type: The type of the message sent by the client.
+        message_id: The message cookie to use in a TX_RX response.
+        payload_size: The size of the payload in bytes.
     '''
 
-    def __init__(self, message, data):
+    def __init__(self, message: Message, data: bytes):
+        '''
+        Populate a message header for a response.
 
+        Args:
+            message: The message we are responding to.
+            data: The response payload byte stream.
+        '''
         self.message_type = message.message_type
         self.message_id = message.message_id
         self.payload_size = len(data)
 
-    def get_header(self):
-        data = struct.pack('<BBQL', self.message_type.value, 0,
+    def get_header(self) -> bytes:
+        '''
+        Get the header byte stream for this response.
+
+        Returns:
+            The response header byte stream.
+        '''
+        return struct.pack('<BBQL', self.message_type.value, 0,
                            self.message_id, self.payload_size)
-        return data
+
+
+class ClientDropped(Exception):
+    '''
+    Exception representing loss of Client connection.
+    '''
+    pass
+
 
 class CommsServer:
+    '''
+    Class listening for client connection from a layer and handling messages.
+
+    This implementation is designed to run in a thread, so has a run method
+    that will setup and listen on the server socket.q
+
+    This implementation only handles a single layer connection at a time, but
+    can handle multiple connections serially without restarting.
+
+    This implementation handles all messages synchronously, passing a message
+    to a microservice and sending any resulting response before handling the
+    next message.
+
+    Attributes:
+        port: The port the server listens on.
+        endpoints: The mapping of addresses to registered microservices.
+        sockl: The listener socket, or None if not listening.
+        sockd: The client data socket, or None if no client connected.
+        shutdown Flag fro tracking shutdown status.
+    '''
 
     def __init__(self, port: int):
+        '''
+        Construct, but do not start, a server instance.
+
+        Args:
+            port: The local TCP/IP port to listen on.
+        '''
         self.port = port
-        self.endpoints = {}
+        self.endpoints = {}  # type: dict[int, Any]
         self.register_endpoint(self)
 
         self.shutdown = False
-        self.listen_sockfd = None
-        self.data_sockfd = None
-
-    def get_service_name(self) -> str:
-        return 'registry'
+        self.sockl = None  # type: Optional[socket.socket]
+        self.sockd = None  # type: Optional[socket.socket]
 
     def register_endpoint(self, endpoint) -> int:
+        '''
+        Register a new service endpoint with the server.
+
+        Args:
+            endpoint: The endpoint object that can handle messages.
+
+        Returns:
+            The assigned endpoint address.
+        '''
         endpoint_id = len(self.endpoints)
         self.endpoints[endpoint_id] = endpoint
         return endpoint_id
 
-    def handle_message(self, message: Message):
+    def get_service_name(self) -> str:
+        '''
+        Get the name of the self-hosted registry microservice.
+
+        Returns:
+            The name of the service endpoint.
+        '''
+        return 'registry'
+
+    def handle_message(self, message: Message) -> Optional[bytes]:
+        '''
+        Handle a message in the self-hosted registry microservice.
+
+        Returns:
+            The response to the message.
+        '''
         data = []
         for endpoint_id, endpoint in self.endpoints.items():
             name = endpoint.get_service_name().encode('utf-8')
@@ -112,87 +212,119 @@ class CommsServer:
 
         return b''.join(data)
 
-    def run(self):
-        listen_sockfd = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        listen_sockfd.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    def run(self) -> None:
+        '''
+        Enter server connection handler run loop.
+        '''
+        self.sockl = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sockl.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
-        listen_sockfd.bind(('localhost', self.port))
-        listen_sockfd.listen(1)
+        # Set up the listening socket
+        self.sockl.bind(('localhost', self.port))
+        self.sockl.listen(1)
 
-        self.listen_sockfd = listen_sockfd
-
-        # Accept connections from outside
+        # Accept a new client connection and assign a data socket
         while not self.shutdown:
             print('Waiting for client connection')
             try:
-                sockfd, _ = listen_sockfd.accept()
+                self.sockd, _ = self.sockl.accept()
+                print('  + Client connected')
+
+                self.run_client()
+
+                print('  + Client disconnected')
+                self.sockd.close()
+                self.sockd = None
+
+            except ClientDropped:
+                print('  + Client disconnected')
+                if self.sockd:
+                    self.sockd.close()
+                    self.sockd = None
+
             except OSError:
                 continue
 
-            self.data_sockfd = sockfd
-            print('  + Client connected')
+        self.sockl.close()
+        self.sockl = None
 
-            while not self.shutdown:
-                # Read the header
-                data = self.receive_data(sockfd, 14)
-                if not data:
-                    break
-                message = Message(data)
+    def run_client(self) -> None:
+        '''
+        Enter client message handler run loop.
 
-                if message.payload_size:
-                    # Read the payload
-                    data = self.receive_data(sockfd, message.payload_size)
-                    if not data:
-                        break
-                    message.add_payload(data)
+        Raises:
+            ClientDropped: The client disconnected from the socket.
+        '''
+        while not self.shutdown:
+            # Read the header
+            data = self.receive_data(Message.HEADER_LEN)
+            message = Message(data)
 
-                # Dispatch to a handler
-                endpoint = self.endpoints[message.endpoint_id]
-                response = endpoint.handle_message(message)
+            # Read the payload if there is one
+            if message.payload_size:
+                data = self.receive_data(message.payload_size)
+                message.add_payload(data)
 
-                # Send a response for all TX_RX messages
-                if message.message_type == MessageType.TX_RX:
-                    header = Response(message, response)
-                    sent = self.send_data(sockfd, header.get_header())
-                    if not sent:
-                        break
-                    sent = self.send_data(sockfd, response)
-                    if not sent:
-                        break
+            # Dispatch to a service handler
+            endpoint = self.endpoints[message.endpoint_id]
+            response = endpoint.handle_message(message)
 
-            sockfd.close()
-            self.data_sockfd = None
+            # Send a response for all TX_RX messages
+            if message.message_type == MessageType.TX_RX:
+                header = Response(message, response)
+                self.send_data(header.get_header())
+                self.send_data(response)
 
-        listen_sockfd.close()
-        self.listen_sockfd = None
-
-    def stop(self):
+    def stop(self) -> None:
+        '''
+        Shut down the server.
+        '''
         self.shutdown = True
 
-        if self.listen_sockfd is not None:
-            self.listen_sockfd.close()
+        if self.sockl is not None:
+            self.sockl.close()
 
-        if self.data_sockfd is not None:
-            self.data_sockfd.shutdown(socket.SHUT_RDWR)
+        if self.sockd is not None:
+            self.sockd.shutdown(socket.SHUT_RDWR)
 
-    def receive_data(self, sockfd, byte_count):
+    def receive_data(self, size: int) -> bytes:
+        '''
+        Fetch a fixed size packet from the socket.
+
+        Args:
+            size: The length of the packet in bytes.
+
+        Returns:
+            The packet data.
+
+        Raises:
+            ClientDropped: The client disconnected from the socket.
+        '''
+        assert self.sockd is not None
+
         data = b''
-
-        while len(data) < byte_count:
-            new_data = sockfd.recv(byte_count - len(data))
+        while len(data) < size:
+            new_data = self.sockd.recv(size - len(data))
             if not new_data:
-                print("  - Client disconnected")
-                return None
+                raise ClientDropped()
             data = data + new_data
 
         return data
 
-    def send_data(self, sockfd, data):
-        while len(data):
-            sent_bytes = sockfd.send(data)
-            if not sent_bytes:
-                print("  - Client disconnected")
-                return False
-            data = data[sent_bytes:]
+    def send_data(self, data: bytes) -> None:
+        '''
+        Send a fixed size packet to the socket.
 
-        return True
+        Args:
+            data: The binary data to send.
+
+        Raises:
+            ClientDropped: The client disconnected from the socket.
+        '''
+        assert self.sockd is not None
+
+        while len(data):
+            sent_bytes = self.sockd.send(data)
+            if not sent_bytes:
+                raise ClientDropped()
+            data = data[sent_bytes:]
