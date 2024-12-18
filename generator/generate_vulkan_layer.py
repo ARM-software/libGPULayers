@@ -26,14 +26,23 @@ A generator for Vulkan layers.
 '''
 
 import argparse
-from datetime import datetime
 import os
 import re
 import shutil
 import sys
+from typing import TextIO
 
 
-def load_template(path):
+def load_template(path: str) -> str:
+    '''
+    Load a template from the generator template directory.
+
+    Args:
+        path: The file name in the template directory.
+
+    Returns:
+        The loaded text template.
+    '''
     base_dir = os.path.dirname(__file__)
     template_file = os.path.join(base_dir, 'vk_codegen', path)
 
@@ -44,75 +53,110 @@ def load_template(path):
     return data
 
 
-def write_copyright_header(file):
-    data = load_template('header.txt')
+def get_layer_api_name(vendor: str, layer: str) -> str:
+    '''
+    Generate the layer string name for the new layer used by the loader.
+    Names are of the form "VK_LAYER_<VENDOR>_<LAYER>" in upper case.
 
-    start_year = 2024
-    end_year = datetime.now().year
-    if start_year == end_year:
-        date_string = f'{start_year}'
-    else:
-        date_string = f'{start_year}-{end_year}'
+    Args:
+        vendor: The layer vendor tag.
+        layer: The name of the layer.
 
-    data = data.replace('{COPYRIGHT_YEARS}', date_string)
-
-    file.write(data)
-    file.write('\n')
-
-
-def generate_layer_root_cmake(file, project_name, layer_name):
-    data = load_template('root_CMakeLists.txt')
-    data = data.replace('{PROJECT_NAME}', project_name)
-    data = data.replace('{LAYER_NAME}', layer_name)
-    file.write(data)
-
-
-def get_layer_api_name(vendor_name, layer_name):
-
+    Returns:
+        The layer string name used by the loader.
+    '''
     pattern = re.compile(r'^VkLayer(\w+)$')
-    match = pattern.match(layer_name)
+    match = pattern.match(layer)
     assert match
 
-    name_parts = ('VK_LAYER', vendor_name.upper(), match.group(1).upper())
+    name_parts = ('VK_LAYER', vendor.upper(), match.group(1).upper())
     return '_'.join(name_parts)
 
 
-def get_layer_api_description(vendor_name, layer_name):
-    return f'{layer_name} by {vendor_name}'
+def get_layer_api_description(vendor: str, layer: str) -> str:
+    '''
+    Generate the layer description placeholder to return from the layer
+    enumeration query in the API. We expect developers to replace this with
+    something more useful for long-lived layers.
+
+    Args:
+        vendor: The layer vendor tag.
+        layer: The name of the layer.
+
+    Returns:
+        The layer string description returned by the API queries.
+    '''
+    return f'{layer} by {vendor}'
 
 
-def generate_layer_source_cmake(file, vendor_name, layer_name):
+def generate_root_cmake(file: TextIO, project: str, layer: str) -> None:
+    '''
+    Generate the root CMake file for a new layer.
 
+    Args:
+        file: The file handle to write to.
+        project: The name of the CMake project.
+        layer: The name of the layer used as the Android log tag.
+    '''
+    data = load_template('root_CMakeLists.txt')
+    data = data.replace('{PROJECT_NAME}', project)
+    data = data.replace('{LAYER_NAME}', layer)
+    file.write(data)
+
+
+def generate_source_cmake(file: TextIO, vendor: str, layer: str) -> None:
+    '''
+    Generate the layer source directory CMake file for a new layer.
+
+    Args:
+        file: The file handle to write to.
+        vendor: The layer vendor tag.
+        layer: The name of the layer.
+    '''
     data = load_template('source_CMakeLists.txt')
-    data = data.replace('{LAYER_NAME}', layer_name)
+    data = data.replace('{LAYER_NAME}', layer)
 
-    name = get_layer_api_name(vendor_name, layer_name)
+    name = get_layer_api_name(vendor, layer)
     data = data.replace('{LGL_LAYER_NAME}', name)
 
-    desc = get_layer_api_description(vendor_name, layer_name)
+    desc = get_layer_api_description(vendor, layer)
     data = data.replace('{LGL_LAYER_DESC}', desc)
 
     file.write(data)
 
 
-def generate_layer_install_helper(file, vendor_name, layer_name):
+def generate_install_helper(file: TextIO, vendor: str, layer: str) -> None:
+    '''
+    Generate the Android installer helper with placeholders replaced.
 
+    Args:
+        file: The file handle to write to.
+        vendor: The layer vendor tag.
+        layer: The name of the layer.
+    '''
     data = load_template('android_install.py')
-    data = data.replace('{LAYER_NAME}', layer_name)
+    data = data.replace('{LAYER_NAME}', layer)
 
-    name = get_layer_api_name(vendor_name, layer_name)
+    name = get_layer_api_name(vendor, layer)
     data = data.replace('{LGL_LAYER_NAME}', name)
 
     file.write(data)
 
 
-def copy_resource(src_dir, out_dir):
-    out_dir = os.path.abspath(out_dir)
-    os.makedirs(out_dir, exist_ok=True)
-    shutil.copytree(src_dir, out_dir, dirs_exist_ok=True)
+def copy_resource(src_dir: str, dst_dir: str) -> None:
+    '''
+    Copy a directory of resources to another location.
+
+    Args:
+        src_dir: The source directory location.
+        out_dir: The destination directory location.
+    '''
+    dst_dir = os.path.abspath(dst_dir)
+    os.makedirs(dst_dir, exist_ok=True)
+    shutil.copytree(src_dir, dst_dir, dirs_exist_ok=True)
 
 
-def parse_command_line():
+def parse_command_line() -> argparse.Namespace:
     '''
     Parse the command line.
 
@@ -144,7 +188,7 @@ def parse_command_line():
     return args
 
 
-def main():
+def main() -> int:
     '''
     Tool main function.
 
@@ -156,7 +200,7 @@ def main():
     # Validate the layer name is well formed
     pattern = re.compile(r'^VkLayer\w+$')
     if not pattern.match(args.layer_name):
-        print(f'ERROR: Layer name "{args.layer_name}" is invalid')
+        print(f'ERROR: Layer name "{args.layer_name}" must start with VkLayer')
         return 1
 
     # Check that output directory is either empty or over-writable
@@ -165,6 +209,7 @@ def main():
         if not os.path.isdir(outdir):
             print(f'ERROR: Output location "{outdir}" is not a directory')
             return 1
+
         if len(os.listdir(outdir)) != 0 and not args.overwrite:
             print(f'ERROR: Output directory "{outdir}" is not empty')
             return 1
@@ -174,20 +219,21 @@ def main():
     source_dir = os.path.join(base_dir, 'vk_layer')
     copy_resource(source_dir, outdir)
 
-    # Generate the layer skeleton
+    # Generate templated resources
     outfile = os.path.join(outdir, 'CMakeLists.txt')
     with open(outfile, 'w', encoding='utf-8', newline='\n') as handle:
-        generate_layer_root_cmake(handle, args.project_name, args.layer_name)
+        generate_root_cmake(handle, args.project_name, args.layer_name)
 
     outfile = os.path.join(outdir, 'source/CMakeLists.txt')
     with open(outfile, 'w', encoding='utf-8', newline='\n') as handle:
-        generate_layer_source_cmake(handle, args.vendor_name, args.layer_name)
+        generate_source_cmake(handle, args.vendor_name, args.layer_name)
 
     outfile = os.path.join(outdir, 'android_install.py')
     with open(outfile, 'w', encoding='utf-8', newline='\n') as handle:
-        generate_layer_install_helper(handle, args.vendor_name, args.layer_name)
+        generate_install_helper(handle, args.vendor_name, args.layer_name)
 
     return 0
+
 
 if __name__ == '__main__':
     sys.exit(main())
