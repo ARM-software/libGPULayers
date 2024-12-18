@@ -25,23 +25,37 @@
 # implements a basic message endpoint for testing.
 
 from lglpy.server import Message, MessageType
+from typing import Optional
+
 
 class TestService:
-
-    def __init__(self):
-        pass
+    '''
+    A simple service used for testing.
+    '''
 
     def get_service_name(self) -> str:
+        '''
+        Get the service endpoint name.
+
+        Returns:
+            The endpoint name.
+        '''
         return 'test'
 
-    def handle_message(self, message: Message):
-        payload = message.payload.decode('utf-8')
+    def handle_message(self, message: Message) -> Optional[bytes]:
+        '''
+        Handle a service request from a layer.
 
+        Returns:
+            The response if message is a TX_RX message, None otherwise.
+        '''
+        # Print received payloads
+        payload = message.payload.decode('utf-8')
         print(f'{message.message_type.name}: {payload} ({len(payload)} bytes)')
 
+        # Reverse payloads for response to TX_RX messages
         if message.message_type == MessageType.TX_RX:
             response = payload[::-1]
-            response = response.encode('utf-8')
-            return response
+            return response.encode('utf-8')
 
-        return ''
+        return None

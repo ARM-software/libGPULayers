@@ -13,6 +13,28 @@ on:
       - main
 
 jobs:
+  python-test:
+    name: Python tests
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: 'true'
+
+      - name: Get Python modules
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install pycodestyle mypy
+
+      - name: Check code style
+        run: |
+          python3 -m pycodestyle ./lglpy
+
+      - name: Check typing
+        run: |
+          python3 -m mypy ./lglpy
+
   build-ubuntu-x64-clang:
     name: Ubuntu x64 Clang
     runs-on: ubuntu-22.04
