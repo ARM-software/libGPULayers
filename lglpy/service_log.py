@@ -24,19 +24,32 @@
 # This module implements the server-side communications module service that
 # implements basic logging.
 
+from lglpy.server import Message
+
+
 class LogService:
     '''
-    A decoded message header packet.
-
-    See the MessageHeader struct in comms_message.hpp for binary layout.
+    A simple service used for remote logging to bypass logcat.
     '''
 
-    def __init__(self):
-        pass
+    def get_service_name(self) -> str:
+        '''
+        Get the service endpoint name.
 
-    def get_service_name(self):
+        Returns:
+            The endpoint name.
+        '''
         return 'log'
 
-    def handle_message(self, message):
-        log_entry = payload.decode(encoding='utf-8')
-        print(log_entry)
+    def handle_message(self, message: Message) -> None:
+        '''
+        Handle a service request from a layer.
+
+
+        Returns:
+            This service only expects pushed TX or TX_ASYNC messages, so never
+            provides a response.
+        '''
+        # Print received payloads
+        payload = message.payload.decode('utf-8')
+        print(payload)

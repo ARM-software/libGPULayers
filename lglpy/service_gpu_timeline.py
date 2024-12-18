@@ -22,80 +22,134 @@
 # -----------------------------------------------------------------------------
 
 # This module implements the server-side communications module service that
-# implements a basic message endpoint for testing.
+# handles record preprocessing and serializing GPU Timeline layer messages to
+# file on the host.
 
-from lglpy.server import Message
 import json
 import struct
+from typing import Any
+
+from lglpy.server import Message
+
 
 class GPUTimelineService:
 
     def __init__(self):
+        '''
+        Initialize the timeline service.
+
+        Returns:
+            The endpoint name.
+        '''
+        # Create a default frame record
         self.frame = {
             "frame": 0,
             "workloads": []
         }
 
         # TODO: Make file name configurable
-        self.fileHandle = open('malivision.gputl', 'wb')
+        self.file_handle = open('malivision.gputl', 'wb')
 
     def get_service_name(self) -> str:
+        '''
+        Get the service endpoint name.
+
+        Returns:
+            The endpoint name.
+        '''
         return 'GPUTimeline'
 
-    def handle_frame(self, msg):
-        # Write frame packet to the file
-        lastFrame = json.dumps(self.frame).encode('utf-8')
-        length = struct.pack('<I', len(lastFrame))
+    def handle_frame(self, msg: Any) -> None:
+        '''
+        Handle a frame boundary workload.
 
-        self.fileHandle.write(length)
-        self.fileHandle.write(lastFrame)
+        This will write the current frame record to the output file, and then
+        reset the frame tracker ready for the next frame.
+
+        Args:
+            msg: The Python decode of a JSON payload.
+        '''
+        # Write frame packet to the file
+        last_frame = json.dumps(self.frame).encode('utf-8')
+        length = struct.pack('<I', len(last_frame))
+
+        self.file_handle.write(length)
+        self.file_handle.write(last_frame)
 
         # Reset the local frame state for the next frame
-        nextFrame = msg['fid']
+        next_frame = msg['fid']
         self.frame = {
-            'frame': nextFrame,
+            'frame': next_frame,
             'workloads': []
         }
 
-        if nextFrame % 100 == 0:
-            print(f'Starting frame {nextFrame} ...')
+        if next_frame % 100 == 0:
+            print(f'Starting frame {next_frame} ...')
 
-    def handle_renderpass(self, msg):
+    def handle_render_pass(self, msg: Any) -> None:
+        '''
+        Handle a render pass workload.
+
+        Render passes may generate multiple messages if suspended and resumed
+        when using Vulkan 1.3 dynamic render passes, so merge those into a
+        single workload.
+
+        Args:
+            msg: The Python decode of a JSON payload.
+        '''
         # Find the last workload
-        lastRenderPass = None
+        last_render_pass = None
         if len(self.frame['workloads']):
-            lastWorkload = self.frame['workloads'][-1]
-            if lastWorkload['type'] == 'renderpass':
-                lastRenderPass = lastWorkload
+            last_workload = self.frame['workloads'][-1]
+            if last_workload['type'] == 'renderpass':
+                last_render_pass = last_workload
 
-        # Continuation
-        if lastRenderPass and lastRenderPass['tid'] == msg['tid']:
-            # Don't accumulate if tagID is not unique metadata tag
-            if lastRenderPass['drawCallCount'] != -1:
-                lastRenderPass['drawCallCount'] += msg['drawCallCount']
-        # New render pass
+        # If this is a continuation then merge records
+        if last_render_pass and (last_render_pass['tid'] == msg['tid']):
+            # Don't accumulate if tagID is flagged as ambiguous
+            if last_render_pass['drawCallCount'] != -1:
+                last_render_pass['drawCallCount'] += msg['drawCallCount']
+
+        # Otherwise this is a new record
         else:
             self.frame['workloads'].append(msg)
 
-    def handle_generic(self, msg):
+    def handle_generic(self, msg: Any) -> None:
+        '''
+        Handle a generic workload that needs no special handling.
+
+        Args:
+            msg: The Python decode of a JSON payload.
+        '''
         self.frame['workloads'].append(msg)
 
-    def handle_message(self, message: Message):
-        payload = message.payload.decode('utf-8')
-        parsedPayload = json.loads(payload)
+    def handle_message(self, message: Message) -> None:
+        '''
+        Handle a service request from a layer.
 
-        payloadType = parsedPayload['type']
+        Note that this service only expects pushed TX or TX_ASYNC messages, so
+        never provides a response.
+        '''
+        encoded_payload = message.payload.decode('utf-8')
+        payload = json.loads(encoded_payload)
 
-        if payloadType == 'frame':
-            self.handle_frame(parsedPayload)
+        generic_payload_types = {
+            'dispatch',
+            'tracerays',
+            'imagetransfer',
+            'buffertransfer'
+        }
 
-        elif payloadType == 'renderpass':
-            self.handle_renderpass(parsedPayload)
+        payload_type = payload['type']
 
-        elif payloadType in ('dispatch', 'tracerays', 'imagetransfer', 'buffertransfer'):
-            self.handle_generic(parsedPayload)
+        if payload_type == 'frame':
+            self.handle_frame(payload)
+
+        elif payload_type == 'renderpass':
+            self.handle_render_pass(payload)
+
+        elif payload_type in generic_payload_types:
+            self.handle_generic(payload)
 
         else:
-            assert False, f'Unknown payload type {payloadType}'
-
-        return None
+            assert False, f'Unknown payload type {payload_type}'

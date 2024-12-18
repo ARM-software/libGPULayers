@@ -42,9 +42,11 @@ def main():
 
     # Register all the services with it
     print(f'Registering host services:')
-    service = lglpy.service_test.TestService()
-    endpoint_id = server.register_endpoint(service)
-    print(f'  - [{endpoint_id}] = {service.get_service_name()}')
+
+    if 0:
+        service = lglpy.service_test.TestService()
+        endpoint_id = server.register_endpoint(service)
+        print(f'  - [{endpoint_id}] = {service.get_service_name()}')
 
     service = lglpy.service_log.LogService()
     endpoint_id = server.register_endpoint(service)
