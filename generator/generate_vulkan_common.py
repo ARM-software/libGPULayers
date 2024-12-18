@@ -28,9 +28,10 @@ A generator for Vulkan layers.
 from datetime import datetime
 import os
 import re
-import shutil
 import sys
+from typing import Optional, TextIO
 import xml.etree.ElementTree as ET
+
 
 # These functions are not part of the layer implementation
 EXCLUDED_FUNCTIONS = {
@@ -114,7 +115,8 @@ DEVICE_FUNCTION_PARAM_TYPE = {
     'VkQueue',
 }
 
-class VersionMapping(dict):
+
+class VersionInfo(dict):
     '''
     Create a mapping of function => required version.
 
@@ -126,21 +128,24 @@ class VersionMapping(dict):
     possible extensions.
     '''
 
-    def __init__(self, root):
+    def __init__(self, root: ET.Element):
         '''
         Load all functions that are defined in the XML.
+
+        Args:
+            root: The root of the Vulkan spec XML document.
         '''
         self.load_api_core_versions(root)
         self.load_api_extensions(root)
 
-    def load_api_core_versions(self, root):
+    def load_api_core_versions(self, root: ET.Element):
         '''
         Load all core API functions that should be added to the map.
         '''
         # Find all the formally supported API feature groups
         features = root.findall('.//feature')
         for feature in features:
-            # Omit commands that are specific to VulkanSC
+            # Omit commands that are only used in VulkanSC
             apis = feature.get('api', 'vulkan').split(',')
             if 'vulkan' not in apis:
                 continue
@@ -155,14 +160,18 @@ class VersionMapping(dict):
                 assert fname not in self, fname
                 self[fname] = [(api_version, None)]
 
-    def load_api_extensions(self, root):
+    def load_api_extensions(self, root: ET.Element):
         '''
         Load all extension API functions that should be added to the map.
+
+        Args:
+            root: The root of the Vulkan spec XML document.
         '''
         # Find all the formally supported API feature groups
         extensions = root.findall('.//extension')
         for extension in extensions:
             ext_name = extension.get('name')
+            assert ext_name is not None
 
             # Omit extensions that are specific to VulkanSC
             apis = extension.get('supported', 'vulkan').split(',')
@@ -170,12 +179,14 @@ class VersionMapping(dict):
                 continue
 
             # Omit extensions that are not on the Android platform
-            platforms = extension.get('platform', None)
+            platform = extension.get('platform', None)
             is_android = True
-            if platforms:
-                platforms = platforms.split(',')
-                is_android = 'android' in platforms
+            platform_list = None
+            if platform:
+                platform_list = platform.split(',')
+                is_android = 'android' in platform_list
 
+            # TODO: Relax this and allow other operating systems
             if not is_android:
                 continue
 
@@ -195,15 +206,18 @@ class VersionMapping(dict):
                 if fname not in self:
                     self[fname] = []
 
-                self[fname].append((ext_name, platforms))
+                self[fname].append((ext_name, platform_list))
 
-    def get_platform_define(self, command):
+    def get_platform_define(self, command: str) -> Optional[str]:
         '''
-        Determine the platform define for a command mapping.
+        Determine the platform define needed for a command mapping.
+
+        Args:
+            command: The name of the command to process.
         '''
         mappings = self[command]
 
-        platforms = set()
+        platforms = set()  # type: set[str]
 
         for mapping in mappings:
             # No platform always takes precedence
@@ -225,8 +239,32 @@ class VersionMapping(dict):
 
 
 class Command:
+    '''
+    Parsed specification of a single Vulkan API entry point.
 
-    def __init__(self, mapping, root):
+    Attributes:
+        name: Name of this command.
+        dispatch_type: Is this 'instance' or 'device' for dispatch?
+        rtype: Function return type.
+        params: Function parameter list.
+        alias: Optional alias that provides the actual specification. For
+           commands with an alias, the dispatch_type, return type, and params
+           will be None until the alias is resolved.
+    '''
+
+    def __init__(self, mapping: VersionInfo, root: ET.Element):
+        '''
+        Create a new parsed Vulkan command entry.
+
+        Args:
+            mapping: The version information for that added this command.
+            root: The XML node root for the command subtree.
+        '''
+        self.alias = None
+        self.rtype = None
+        self.params = None
+        self.dispatch_type = None
+
         # Omit commands that are specific to VulkanSC
         apis = root.get('api', 'vulkan').split(',')
         if 'vulkan' not in apis:
@@ -235,12 +273,13 @@ class Command:
         # Function is an alias
         if len(root) == 0:
             self.name = root.get('name')
+            assert self.name is not None
+
             self.alias = root.get('alias')
+            assert self.alias is not None
 
         # Function is a standalone specification
         else:
-            self.alias = None
-
             # Extract the basic function prototype
             proto = root[0]
             text = proto.text.strip() if proto.text else ''
@@ -250,6 +289,7 @@ class Command:
             assert text == '' and tail == '', f'`{text}`, `{tail}`'
 
             rtype = proto[0]
+            assert rtype.text
             text = rtype.text.strip()
             tail = rtype.tail.strip() if rtype.tail else ''
             assert rtype.tag == 'type', ET.tostring(proto)
@@ -257,6 +297,7 @@ class Command:
             self.rtype = text
 
             fname = proto[1]
+            assert fname.text
             text = fname.text.strip()
             tail = fname.tail.strip() if fname.tail else ''
             assert fname.tag == 'name', ET.tostring(proto)
@@ -281,8 +322,9 @@ class Command:
 
                 type_prefix = f'{text} ' if text else ''
 
-                ptype = node[0]
                 valid_tail = ('', '*', '**', '* const*')
+                ptype = node[0]
+                assert ptype.text
                 text = ptype.text.strip()
                 tail = ptype.tail.strip() if ptype.tail else ''
                 assert ptype.tag == 'type', ET.tostring(proto)
@@ -290,16 +332,17 @@ class Command:
 
                 type_postfix = f'{tail}' if tail else ''
 
-                ptype = f'{type_prefix}{text}{type_postfix}'
+                ptype_str = f'{type_prefix}{text}{type_postfix}'
 
                 pname = node[1]
+                assert pname.text
                 text = pname.text.strip()
                 tail = pname.tail.strip() if pname.tail else ''
                 assert pname.tag == 'name', ET.tostring(proto)
                 assert text
                 assert tail == '' or re.match(r'^\[\d+]$', tail)
 
-                self.params.append((ptype, text, tail))
+                self.params.append((ptype_str, text, tail))
 
         # Filter out functions that are not dynamically dispatched
         if self.name in EXCLUDED_FUNCTIONS:
@@ -311,19 +354,27 @@ class Command:
 
         # Identify instance vs device functions
         if not self.alias:
-            dispatch_type = self.params[0][0]
-            if dispatch_type in INSTANCE_FUNCTION_PARAM_TYPE:
+            disp_type = self.params[0][0]
+            if disp_type in INSTANCE_FUNCTION_PARAM_TYPE:
                 self.dispatch_type = 'instance'
-            elif dispatch_type in DEVICE_FUNCTION_PARAM_TYPE:
+            elif disp_type in DEVICE_FUNCTION_PARAM_TYPE:
                 self.dispatch_type = 'device'
+            elif self.name.startswith('vkEnumerateInstance'):
+                self.dispatch_type = 'instance'
             else:
-                if self.name.startswith('vkEnumerateInstance'):
-                    self.dispatch_type = 'instance'
-                else:
-                    assert False, f'Unknown dispatch: {dispatch_type} {self.name}'
+                assert False, f'Unknown dispatch: {disp_type} {self.name}'
 
 
-def load_template(path):
+def load_template(path: str) -> str:
+    '''
+    Load a template from the generator template directory.
+
+    Args:
+        path: The file name in the template directory.
+
+    Returns:
+        The loaded text template.
+    '''
     base_dir = os.path.dirname(__file__)
     template_file = os.path.join(base_dir, 'vk_codegen', path)
 
@@ -334,7 +385,13 @@ def load_template(path):
     return data
 
 
-def write_copyright_header(file):
+def write_copyright_header(file: TextIO) -> None:
+    '''
+    Write the standard license and copyright header to the file.
+
+    Args:
+        file: The file handle to write to.
+    '''
     data = load_template('header.txt')
 
     start_year = 2024
@@ -350,8 +407,16 @@ def write_copyright_header(file):
     file.write('\n')
 
 
-def generate_layer_instance_dispatch_table(file, mapping, commands):
+def generate_instance_dispatch_table(
+        file: TextIO, mapping: VersionInfo, commands: list[Command]) -> None:
+    '''
+    Generate the instance dispatch table.
 
+    Args:
+        file: The file to write.
+        mapping: The version mapping information for the commands.
+        commands: The list of commands read from the spec.
+    '''
     # Write the copyright header to the file
     write_copyright_header(file)
 
@@ -367,29 +432,30 @@ def generate_layer_instance_dispatch_table(file, mapping, commands):
         if command.dispatch_type != 'instance':
             continue
 
-        tname = command.name
-        if tname in NO_INTERCEPT_OR_DISPATCH_FUNCTIONS:
+        assert command.name
+
+        if command.name in NO_INTERCEPT_OR_DISPATCH_FUNCTIONS:
             continue
 
         plat_define = mapping.get_platform_define(command.name)
 
         ttype = f'PFN_{command.name}'
 
-        if tname not in NO_INTERCEPT_FUNCTIONS:
+        if command.name not in NO_INTERCEPT_FUNCTIONS:
             if plat_define:
                 itable_members.append(f'#if defined({plat_define})')
 
-            itable_members.append(f'    ENTRY({tname}),')
+            itable_members.append(f'    ENTRY({command.name}),')
             if plat_define:
                 itable_members.append('#endif')
 
-        if tname not in NO_DISPATCH_FUNCTIONS:
+        if command.name not in NO_DISPATCH_FUNCTIONS:
             if plat_define:
                 dispatch_table_members.append(f'#if defined({plat_define})')
                 dispatch_table_inits.append(f'#if defined({plat_define})')
 
-            dispatch_table_members.append(f'    {ttype} {tname};')
-            dispatch_table_inits.append(f'    ENTRY({tname});')
+            dispatch_table_members.append(f'    {ttype} {command.name};')
+            dispatch_table_inits.append(f'    ENTRY({command.name});')
 
             if plat_define:
                 dispatch_table_members.append('#endif')
@@ -401,14 +467,14 @@ def generate_layer_instance_dispatch_table(file, mapping, commands):
         if command.dispatch_type != 'device':
             continue
 
+        assert command.name
         plat_define = mapping.get_platform_define(command.name)
         ttype = f'PFN_{command.name}'
-        tname = command.name
 
         if plat_define:
             itable_members.append(f'#if defined({plat_define})')
 
-        itable_members.append(f'    ENTRY({tname}),')
+        itable_members.append(f'    ENTRY({command.name}),')
 
         if plat_define:
             itable_members.append('#endif')
@@ -419,8 +485,16 @@ def generate_layer_instance_dispatch_table(file, mapping, commands):
     file.write(data)
 
 
-def generate_layer_instance_layer_decls(file, mapping, commands):
+def generate_instance_decls(
+        file: TextIO, mapping: VersionInfo, commands: list[Command]) -> None:
+    '''
+    Generate the instance intercept declarations header.
 
+    Args:
+        file: The file to write.
+        mapping: The version mapping information for the commands.
+        commands: The list of commands read from the spec.
+    '''
     # Write the copyright header to the file
     write_copyright_header(file)
 
@@ -436,6 +510,7 @@ def generate_layer_instance_layer_decls(file, mapping, commands):
             continue
 
         lines = []
+        assert command.name
 
         plat_define = mapping.get_platform_define(command.name)
         if plat_define:
@@ -444,7 +519,8 @@ def generate_layer_instance_layer_decls(file, mapping, commands):
         # Declare the default implementation
         lines.append('/* See Vulkan API for documentation. */')
         lines.append('/* Default common code pass-through implementation. */')
-        decl = f'VKAPI_ATTR {command.rtype} VKAPI_CALL layer_{command.name}_default('
+        decl = f'VKAPI_ATTR {command.rtype} ' \
+               f'VKAPI_CALL layer_{command.name}_default('
         lines.append(decl)
 
         for i, (ptype, pname, array) in enumerate(command.params):
@@ -482,8 +558,16 @@ def generate_layer_instance_layer_decls(file, mapping, commands):
         file.write('\n')
 
 
-def generate_layer_instance_layer_defs(file, mapping, commands):
+def generate_instance_defs(
+        file: TextIO, mapping: VersionInfo, commands: list[Command]) -> None:
+    '''
+    Generate the instance intercept definitions.
 
+    Args:
+        file: The file to write.
+        mapping: The version mapping information for the commands.
+        commands: The list of commands read from the spec.
+    '''
     # Write the copyright header to the file
     write_copyright_header(file)
 
@@ -495,11 +579,11 @@ def generate_layer_instance_layer_defs(file, mapping, commands):
         if command.dispatch_type != 'instance':
             continue
 
-        tname = command.name
-        if tname in NO_INTERCEPT_FUNCTIONS:
+        assert command.name
+        if command.name in NO_INTERCEPT_FUNCTIONS:
             continue
 
-        if tname in CUSTOM_FUNCTIONS:
+        if command.name in CUSTOM_FUNCTIONS:
             continue
 
         plat_define = mapping.get_platform_define(command.name)
@@ -507,7 +591,8 @@ def generate_layer_instance_layer_defs(file, mapping, commands):
             lines.append(f'#if defined({plat_define})\n')
 
         lines.append('/* See Vulkan API for documentation. */')
-        decl = f'VKAPI_ATTR {command.rtype} VKAPI_CALL layer_{command.name}_default('
+        decl = f'VKAPI_ATTR {command.rtype} ' \
+               f'VKAPI_CALL layer_{command.name}_default('
         lines.append(decl)
 
         for i, (ptype, pname, array) in enumerate(command.params):
@@ -541,8 +626,16 @@ def generate_layer_instance_layer_defs(file, mapping, commands):
     file.write(data)
 
 
-def generate_layer_device_dispatch_table(file, mapping, commands):
+def generate_device_dispatch_table(
+        file: TextIO, mapping: VersionInfo, commands: list[Command]) -> None:
+    '''
+    Generate the device dispatch table.
 
+    Args:
+        file: The file to write.
+        mapping: The version mapping information for the commands.
+        commands: The list of commands read from the spec.
+    '''
     # Write the copyright header to the file
     write_copyright_header(file)
 
@@ -552,12 +645,13 @@ def generate_layer_device_dispatch_table(file, mapping, commands):
     itable_members = []
     dispatch_table_members = []
     dispatch_table_inits = []
+
     for command in commands:
         if command.dispatch_type != 'device':
             continue
 
-        tname = command.name
-        if tname in NO_INTERCEPT_OR_DISPATCH_FUNCTIONS:
+        assert command.name
+        if command.name in NO_INTERCEPT_OR_DISPATCH_FUNCTIONS:
             continue
 
         plat_define = mapping.get_platform_define(command.name)
@@ -568,9 +662,9 @@ def generate_layer_device_dispatch_table(file, mapping, commands):
             dispatch_table_members.append(f'#if defined({plat_define})')
             dispatch_table_inits.append(f'#if defined({plat_define})')
 
-        itable_members.append(f'    ENTRY({tname}),')
-        dispatch_table_members.append(f'    {ttype} {tname};')
-        dispatch_table_inits.append(f'    ENTRY({tname});')
+        itable_members.append(f'    ENTRY({command.name}),')
+        dispatch_table_members.append(f'    {ttype} {command.name};')
+        dispatch_table_inits.append(f'    ENTRY({command.name});')
 
         if plat_define:
             itable_members.append('#endif')
@@ -583,7 +677,16 @@ def generate_layer_device_dispatch_table(file, mapping, commands):
     file.write(data)
 
 
-def generate_layer_device_layer_decls(file, mapping, commands):
+def generate_device_decls(
+        file: TextIO, mapping: VersionInfo, commands: list[Command]) -> None:
+    '''
+    Generate the device intercept declarations header.
+
+    Args:
+        file: The file to write.
+        mapping: The version mapping information for the commands.
+        commands: The list of commands read from the spec.
+    '''
 
     # Write the copyright header to the file
     write_copyright_header(file)
@@ -599,15 +702,17 @@ def generate_layer_device_layer_decls(file, mapping, commands):
         if command.dispatch_type != 'device':
             continue
 
-        lines = []
+        assert command.name
 
+        lines = []
         plat_define = mapping.get_platform_define(command.name)
         if plat_define:
             lines.append(f'#if defined({plat_define})\n')
 
         lines.append('/* See Vulkan API for documentation. */')
         lines.append('/* Default common code pass-through implementation. */')
-        decl = f'VKAPI_ATTR {command.rtype} VKAPI_CALL layer_{command.name}_default('
+        decl = f'VKAPI_ATTR {command.rtype} ' \
+               f'VKAPI_CALL layer_{command.name}_default('
         lines.append(decl)
 
         for i, (ptype, pname, array) in enumerate(command.params):
@@ -645,8 +750,16 @@ def generate_layer_device_layer_decls(file, mapping, commands):
         file.write('\n')
 
 
-def generate_layer_device_layer_defs(file, mapping, commands):
+def generate_device_defs(
+        file: TextIO, mapping: VersionInfo, commands: list[Command]) -> None:
+    '''
+    Generate the device intercept definitions.
 
+    Args:
+        file: The file to write.
+        mapping: The version mapping information for the commands.
+        commands: The list of commands read from the spec.
+    '''
     # Write the copyright header to the file
     write_copyright_header(file)
 
@@ -658,8 +771,8 @@ def generate_layer_device_layer_defs(file, mapping, commands):
         if command.dispatch_type != 'device':
             continue
 
-        tname = command.name
-        if tname in CUSTOM_FUNCTIONS:
+        assert command.name
+        if command.name in CUSTOM_FUNCTIONS:
             continue
 
         plat_define = mapping.get_platform_define(command.name)
@@ -668,7 +781,8 @@ def generate_layer_device_layer_defs(file, mapping, commands):
 
         lines.append('/* See Vulkan API for documentation. */')
 
-        decl = f'VKAPI_ATTR {command.rtype} VKAPI_CALL layer_{command.name}_default('
+        decl = f'VKAPI_ATTR {command.rtype} ' \
+               f'VKAPI_CALL layer_{command.name}_default('
         lines.append(decl)
 
         for i, (ptype, pname, array) in enumerate(command.params):
@@ -702,13 +816,7 @@ def generate_layer_device_layer_defs(file, mapping, commands):
     file.write(data)
 
 
-def copy_resource(src_dir, out_dir):
-    out_dir = os.path.abspath(out_dir)
-    os.makedirs(out_dir, exist_ok=True)
-    shutil.copytree(src_dir, out_dir, dirs_exist_ok=True)
-
-
-def main():
+def main() -> int:
     '''
     Tool main function.
 
@@ -724,7 +832,7 @@ def main():
     root = tree.getroot()
 
     # Parse function to API version or extension mapping
-    mapping = VersionMapping(root)
+    mapping = VersionInfo(root)
 
     # Parse function prototypes
     nodes = root.findall('.//commands/command')
@@ -748,36 +856,33 @@ def main():
             command.params = aliases[0].params
             command.dispatch_type = aliases[0].dispatch_type
 
-        # Remove the alias to avoid confusion in future
-        del command.alias
-
     # Sort functions into alphabetical order
-    commands.sort(key=lambda x: x.name)
+    commands.sort(key=lambda x: str(x.name))
 
     # Generate dynamic resources
     outfile = os.path.join(outdir, 'instance_dispatch_table.hpp')
     with open(outfile, 'w', encoding='utf-8', newline='\n') as handle:
-        generate_layer_instance_dispatch_table(handle, mapping, commands)
-
-    outfile = os.path.join(outdir, 'device_dispatch_table.hpp')
-    with open(outfile, 'w', encoding='utf-8', newline='\n') as handle:
-        generate_layer_device_dispatch_table(handle, mapping, commands)
+        generate_instance_dispatch_table(handle, mapping, commands)
 
     outfile = os.path.join(outdir, 'instance_functions.hpp')
     with open(outfile, 'w', encoding='utf-8', newline='\n') as handle:
-        generate_layer_instance_layer_decls(handle, mapping, commands)
+        generate_instance_decls(handle, mapping, commands)
 
     outfile = os.path.join(outdir, 'instance_functions.cpp')
     with open(outfile, 'w', encoding='utf-8', newline='\n') as handle:
-        generate_layer_instance_layer_defs(handle, mapping, commands)
+        generate_instance_defs(handle, mapping, commands)
+
+    outfile = os.path.join(outdir, 'device_dispatch_table.hpp')
+    with open(outfile, 'w', encoding='utf-8', newline='\n') as handle:
+        generate_device_dispatch_table(handle, mapping, commands)
 
     outfile = os.path.join(outdir, 'device_functions.hpp')
     with open(outfile, 'w', encoding='utf-8', newline='\n') as handle:
-        generate_layer_device_layer_decls(handle, mapping, commands)
+        generate_device_decls(handle, mapping, commands)
 
     outfile = os.path.join(outdir, 'device_functions.cpp')
     with open(outfile, 'w', encoding='utf-8', newline='\n') as handle:
-        generate_layer_device_layer_defs(handle, mapping, commands)
+        generate_device_defs(handle, mapping, commands)
 
     return 0
 

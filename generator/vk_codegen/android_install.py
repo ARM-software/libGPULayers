@@ -30,6 +30,7 @@ import os
 import shlex
 import subprocess as sp
 import sys
+from typing import Any, Optional
 
 # Android temp directory
 ANDROID_TMP_DIR = '/data/local/tmp/'
@@ -37,6 +38,7 @@ ANDROID_TMP_DIR = '/data/local/tmp/'
 # Expected layer names
 EXPECTED_VULKAN_LAYER_NAME = '{LGL_LAYER_NAME}'
 EXPECTED_VULKAN_LAYER_FILE = 'lib{LAYER_NAME}.so'
+
 
 class Device:
     '''
@@ -46,7 +48,7 @@ class Device:
         device: The name of the device to call, or None for non-specific use.
     '''
 
-    def adb_quiet(self, *args):
+    def adb_quiet(self, *args: str) -> None:
         '''
         Call `adb` to run a command, but ignore output and errors.
 
@@ -57,7 +59,7 @@ class Device:
         commands.extend(args)
         sp.run(commands, stdout=sp.DEVNULL, stderr=sp.DEVNULL, check=False)
 
-    def adb(self, *args, **kwargs):
+    def adb(self, *args: str, **kwargs: Any) -> str:
         '''
         Call `adb` to run command, and capture output and results.
 
@@ -73,7 +75,7 @@ class Device:
         Raises:
             CalledProcessError: The subprocess was not successfully executed.
         '''
-        commands = ['adb']
+        commands = ['adb']  # type: Any
         commands.extend(args)
 
         text = kwargs.get('text', True)
@@ -84,12 +86,12 @@ class Device:
         if shell:
             # Unix shells need a flattened command for shell commands
             if os.name != 'nt':
-                quotedCommands = []
+                quoted_commands = []
                 for command in commands:
                     if command != '>':
                         command = shlex.quote(command)
-                    quotedCommands.append(command)
-                commands = ' '.join(quotedCommands)
+                    quoted_commands.append(command)
+                commands = ' '.join(quoted_commands)
 
         # Run on the device but with shell argument quoting
         if quote:
@@ -101,11 +103,13 @@ class Device:
 
         return rep.stdout
 
-    def adb_run_as(self, package, *args, quiet=False):
+    def adb_run_as(self, package: str,
+                   *args: str, quiet: bool = False) -> Optional[str]:
         '''
         Call `adb` to run command as a package using `run-as` or as root,
         if root is accessible. If command will be run as root, this function
-        will change CWD to the package data directory before executing the command.
+        will change CWD to the package data directory before executing the
+        command.
 
         Args:
             package: Package name to run-as or change CWD to.
@@ -113,7 +117,7 @@ class Device:
             quiet: If True, ignores output from adb.
 
         Returns:
-            The contents of stdout or Nothing, if quiet=True.
+            The contents of stdout or None if quiet=True.
 
         Raises:
             CalledProcessError: The subprocess was not successfully executed.
@@ -122,12 +126,14 @@ class Device:
         command.extend(args)
 
         if quiet:
-            return self.adb_quiet(*command)
+            self.adb_quiet(*command)
+            return None
 
         return self.adb(*command)
 
 
-def enable_vulkan_debug_layer(device, package, layer):
+def enable_vulkan_debug_layer(
+        device: Device, package: str, layer: str) -> None:
     '''
     Args:
         device: The device instance.
@@ -138,16 +144,24 @@ def enable_vulkan_debug_layer(device, package, layer):
     print('\nInstalling Vulkan debug layer')
 
     layer = os.path.normpath(layer)
-    layerBase = os.path.basename(os.path.normpath(layer))
+    layer_base = os.path.basename(os.path.normpath(layer))
 
     device.adb('push', layer, ANDROID_TMP_DIR)
-    device.adb_run_as(package, 'cp', ANDROID_TMP_DIR + layerBase, '.')
-    device.adb('shell', 'settings', 'put', 'global', 'enable_gpu_debug_layers', '1')
-    device.adb('shell', 'settings', 'put', 'global', 'gpu_debug_app', package)
-    device.adb('shell', 'settings', 'put', 'global', 'gpu_debug_layers', EXPECTED_VULKAN_LAYER_NAME)
+
+    device.adb_run_as(package, 'cp', ANDROID_TMP_DIR + layer_base, '.')
+
+    device.adb('shell', 'settings', 'put', 'global',
+               'enable_gpu_debug_layers', '1')
+
+    device.adb('shell', 'settings', 'put', 'global',
+               'gpu_debug_app', package)
+
+    device.adb('shell', 'settings', 'put', 'global',
+               'gpu_debug_layers', EXPECTED_VULKAN_LAYER_NAME)
 
 
-def disable_vulkan_debug_layer(device, package, layer):
+def disable_vulkan_debug_layer(
+        device: Device, package: str, layer: str) -> None:
     '''
     Clean up the Vulkan layer installation.
 
@@ -157,35 +171,44 @@ def disable_vulkan_debug_layer(device, package, layer):
     '''
     print('\nRemoving Vulkan debug layer')
 
-    layerBase = os.path.basename(os.path.normpath(layer))
+    layer_base = os.path.basename(os.path.normpath(layer))
 
-    device.adb('shell', 'settings', 'delete', 'global', 'enable_gpu_debug_layers')
-    device.adb('shell', 'settings', 'delete', 'global gpu_debug_app')
-    device.adb('shell', 'settings', 'delete', 'global gpu_debug_layers')
-    device.adb_run_as(package, 'rm', layerBase, quiet=True)
+    device.adb('shell', 'settings', 'delete', 'global',
+               'enable_gpu_debug_layers')
+
+    device.adb('shell', 'settings', 'delete', 'global',
+               'gpu_debug_app')
+
+    device.adb('shell', 'settings', 'delete', 'global',
+               'gpu_debug_layers')
+
+    device.adb_run_as(package, 'rm', layer_base, quiet=True)
 
 
-def get_layer():
+def get_layer() -> Optional[str]:
     '''
     Find the debug layer to use in the build directory.
+
+    Returns:
+        The part to the library to use.
     '''
 
     base_dir = './build_arm64/source/'
 
-    sym_lib = None
+    # TODO: If we want to use symbolized layer we need to rename it
     lib = None
 
     for path in os.listdir(base_dir):
+        # Match symbolized library first so we don't use it
         if path.endswith('_sym.so'):
-            sym_lib = os.path.join(base_dir, path)
+            _ = os.path.join(base_dir, path)
         elif path.endswith('.so'):
             lib = os.path.join(base_dir, path)
 
-    # TODO: If we want to use symbolized layer we need to rename it
     return lib
 
 
-def parse_command_line():
+def parse_command_line() -> argparse.Namespace:
     '''
     Parse the command line.
 
@@ -200,7 +223,7 @@ def parse_command_line():
     return parser.parse_args()
 
 
-def main():
+def main() -> int:
     '''
     Script main function.
 
@@ -211,12 +234,18 @@ def main():
 
     device = Device()
     layer = get_layer()
+    if not layer:
+        print('ERROR: Layer binary not found')
+        return 1
 
     enable_vulkan_debug_layer(device, args.package, layer)
 
     input('Press Enter to disable layers')
 
     disable_vulkan_debug_layer(device, args.package, layer)
+
+    return 0
+
 
 if __name__ == '__main__':
     try:
