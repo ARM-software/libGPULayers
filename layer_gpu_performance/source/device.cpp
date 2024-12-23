@@ -29,15 +29,22 @@
 #include <sys/stat.h>
 #include <vector>
 
+#include "comms/comms_module.hpp"
 #include "framework/utils.hpp"
 
 #include "device.hpp"
 #include "instance.hpp"
 
 /**
- * @brief The dispatch lookup for all of the created Vulkan instances.
+ * @brief The dispatch lookup for all of the created Vulkan devices.
  */
 static std::unordered_map<void*, std::unique_ptr<Device>> g_devices;
+
+/* See header for documentation. */
+std::unique_ptr<Comms::CommsModule> Device::commsModule;
+
+/* See header for documentation. */
+std::unique_ptr<PerformanceComms> Device::commsWrapper;
 
 /* See header for documentation. */
 void Device::store(
@@ -94,4 +101,11 @@ Device::Device(
     device(_device)
 {
     initDriverDeviceDispatchTable(device, nlayerGetProcAddress, driver);
+
+    // Init the shared comms module for the first device built
+    if (!commsModule)
+    {
+        commsModule = std::make_unique<Comms::CommsModule>("lglcomms");
+        commsWrapper = std::make_unique<PerformanceComms>(*commsModule);
+    }
 }
