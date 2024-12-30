@@ -216,6 +216,42 @@ std::vector<std::string> getInstanceExtensionList(
 }
 
 /* See header for documentation. */
+std::vector<std::string> getDeviceExtensionList(
+    VkInstance instance,
+    VkPhysicalDevice physicalDevice,
+    const VkDeviceCreateInfo* pCreateInfo
+) {
+    std::vector<std::string> foundExtensions;
+
+    // Fetch the functions needed to query extensions availability
+    auto* chainInfo = getChainInfo(pCreateInfo);
+    auto fpGetProcAddr = chainInfo->u.pLayerInfo->pfnNextGetInstanceProcAddr;
+    auto fpGetExtensionsRaw = fpGetProcAddr(instance, "vkEnumerateDeviceExtensionProperties");
+    auto fpGetExtensions = reinterpret_cast<PFN_vkEnumerateDeviceExtensionProperties>(fpGetExtensionsRaw);
+    if (!fpGetExtensions)
+    {
+        return foundExtensions;
+    }
+
+    // Query number of extensions
+    uint32_t count;
+    fpGetExtensions(physicalDevice, nullptr, &count, nullptr);
+
+    // Reserve memory for, and then query, the extensions
+    std::vector<VkExtensionProperties> extensions;
+    extensions.resize(count);
+    fpGetExtensions(physicalDevice, nullptr, &count, extensions.data());
+
+    // Build the function return list
+    for (uint32_t i = 0; i < count; i++)
+    {
+        foundExtensions.emplace_back(extensions[i].extensionName);
+    }
+
+    return foundExtensions;
+}
+
+/* See header for documentation. */
 bool isInExtensionList(
     const std::string& target,
     uint32_t extensionCount,
