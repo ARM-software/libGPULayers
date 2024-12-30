@@ -31,7 +31,7 @@
 extern std::mutex g_vulkanLock;
 
 /* See Vulkan API for documentation. */
-template<>
+template <>
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdDebugMarkerBeginEXT<user_tag>(
     VkCommandBuffer commandBuffer,
     const VkDebugMarkerMarkerInfoEXT* pMarkerInfo
@@ -54,7 +54,7 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDebugMarkerBeginEXT<user_tag>(
 }
 
 /* See Vulkan API for documentation. */
-template<>
+template <>
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdDebugMarkerEndEXT<user_tag>(
     VkCommandBuffer commandBuffer
 ) {
@@ -76,7 +76,7 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDebugMarkerEndEXT<user_tag>(
 }
 
 /* See Vulkan API for documentation. */
-template<>
+template <>
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginDebugUtilsLabelEXT<user_tag>(
     VkCommandBuffer commandBuffer,
     const VkDebugUtilsLabelEXT* pLabelInfo
@@ -99,7 +99,7 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginDebugUtilsLabelEXT<user_tag>(
 }
 
 /* See Vulkan API for documentation. */
-template<>
+template <>
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndDebugUtilsLabelEXT<user_tag>(
     VkCommandBuffer commandBuffer
 ) {
