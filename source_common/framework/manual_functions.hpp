@@ -120,6 +120,20 @@ std::vector<std::string> getInstanceExtensionList(
     const VkInstanceCreateInfo* pCreateInfo);
 
 /**
+ * @brief Fetch the list of supported extensions from a physical device.
+ *
+ * @param instance         The instance we are connected to.
+ * @param physicalDevice   The physical device to query.
+ * @param pCreateInfo      The device creation data from the loader.
+ *
+ * @return The list of supported extensions; empty list on failure.
+ */
+std::vector<std::string> getDeviceExtensionList(
+    VkInstance instance,
+    VkPhysicalDevice physicalDevice,
+    const VkDeviceCreateInfo* pCreateInfo);
+
+/**
  * @brief Is an extension in the passed extension list.
  *
  * @param target           The target extension to look for.
