@@ -53,6 +53,7 @@ add_library(
         layer_device_functions_render_pass.cpp
         layer_device_functions_trace_rays.cpp
         layer_device_functions_transfer.cpp
+        layer_instance_functions_device.cpp
         performance_comms.cpp)
 
 target_include_directories(

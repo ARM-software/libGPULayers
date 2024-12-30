@@ -456,18 +456,18 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImageToBuffer2KHR<user_tag>(
 // Functions for debug
 
 /* See Vulkan API for documentation. */
-template<>
+template <>
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdDebugMarkerBeginEXT<user_tag>(
     VkCommandBuffer commandBuffer,
     const VkDebugMarkerMarkerInfoEXT* pMarkerInfo);
 
 /* See Vulkan API for documentation. */
-template<>
+template <>
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdDebugMarkerEndEXT<user_tag>(
     VkCommandBuffer commandBuffer);
 
 /* See Vulkan API for documentation. */
-template<>
+template <>
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginDebugUtilsLabelEXT<user_tag>(
     VkCommandBuffer commandBuffer,
     const VkDebugUtilsLabelEXT* pLabelInfo);
@@ -480,13 +480,13 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndDebugUtilsLabelEXT<user_tag>(
 // Functions for queues
 
 /* See Vulkan API for documentation. */
-template<>
+template <>
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueuePresentKHR<user_tag>(
     VkQueue queue,
     const VkPresentInfoKHR* pPresentInfo);
 
 /* See Vulkan API for documentation. */
-template<>
+template <>
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit<user_tag>(
     VkQueue queue,
     uint32_t submitCount,
@@ -494,7 +494,7 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit<user_tag>(
     VkFence fence);
 
 /* See Vulkan API for documentation. */
-template<>
+template <>
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit2<user_tag>(
     VkQueue queue,
     uint32_t submitCount,
@@ -502,7 +502,7 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit2<user_tag>(
     VkFence fence);
 
 /* See Vulkan API for documentation. */
-template<>
+template <>
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit2KHR<user_tag>(
     VkQueue queue,
     uint32_t submitCount,
