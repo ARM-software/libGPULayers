@@ -8,11 +8,11 @@ __pycache__
 # CMake build directories
 build*
 
+# Data files
+*.gputl
+
 # Build and debug output files
 /.cache
 /bin*
 /log*
-/scratch*
-/out_*
 /x_*
-

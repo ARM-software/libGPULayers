@@ -31,28 +31,28 @@
 import sys
 import threading
 
-import lglpy.server
-import lglpy.service_gpu_timeline
-import lglpy.service_test
-import lglpy.service_log
+import lglpy.comms.server as server
+import lglpy.comms.service_gpu_timeline as service_gpu_timeline
+import lglpy.comms.service_test as service_test
+import lglpy.comms.service_log as service_log
 
 def main():
     # Create a server instance
-    server = lglpy.server.CommsServer(63412)
+    server = server.CommsServer(63412)
 
     # Register all the services with it
     print(f'Registering host services:')
 
     if 0:
-        service = lglpy.service_test.TestService()
+        service = service_test.TestService()
         endpoint_id = server.register_endpoint(service)
         print(f'  - [{endpoint_id}] = {service.get_service_name()}')
 
-    service = lglpy.service_log.LogService()
+    service = service_log.LogService()
     endpoint_id = server.register_endpoint(service)
     print(f'  - [{endpoint_id}] = {service.get_service_name()}')
 
-    service = lglpy.service_gpu_timeline.GPUTimelineService()
+    service = service_gpu_timeline.GPUTimelineService()
     endpoint_id = server.register_endpoint(service)
     print(f'  - [{endpoint_id}] = {service.get_service_name()}')
 
