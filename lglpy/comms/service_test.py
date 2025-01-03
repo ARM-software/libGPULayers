@@ -3,7 +3,7 @@
 # Copyright (c) 2024 Arm Limited
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to
+# of this software and associated documentation files (the 'Software'), to
 # deal in the Software without restriction, including without limitation the
 # rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
 # sell copies of the Software, and to permit persons to whom the Software is
@@ -12,7 +12,7 @@
 # The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
 #
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
@@ -22,14 +22,15 @@
 # -----------------------------------------------------------------------------
 
 # This module implements the server-side communications module service that
-# implements basic logging.
+# implements a basic message endpoint for testing.
 
-from lglpy.server import Message
+from lglpy.comms.server import Message, MessageType
+from typing import Optional
 
 
-class LogService:
+class TestService:
     '''
-    A simple service used for remote logging to bypass logcat.
+    A simple service used for testing.
     '''
 
     def get_service_name(self) -> str:
@@ -39,17 +40,22 @@ class LogService:
         Returns:
             The endpoint name.
         '''
-        return 'log'
+        return 'test'
 
-    def handle_message(self, message: Message) -> None:
+    def handle_message(self, message: Message) -> Optional[bytes]:
         '''
         Handle a service request from a layer.
 
-
         Returns:
-            This service only expects pushed TX or TX_ASYNC messages, so never
-            provides a response.
+            The response if message is a TX_RX message, None otherwise.
         '''
         # Print received payloads
         payload = message.payload.decode('utf-8')
-        print(payload)
+        print(f'{message.message_type.name}: {payload} ({len(payload)} bytes)')
+
+        # Reverse payloads for response to TX_RX messages
+        if message.message_type == MessageType.TX_RX:
+            response = payload[::-1]
+            return response.encode('utf-8')
+
+        return None

@@ -3,7 +3,7 @@
 # Copyright (c) 2024 Arm Limited
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to
+# of this software and associated documentation files (the 'Software'), to
 # deal in the Software without restriction, including without limitation the
 # rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
 # sell copies of the Software, and to permit persons to whom the Software is
@@ -12,7 +12,7 @@
 # The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
 #
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
@@ -31,28 +31,28 @@
 import sys
 import threading
 
-import lglpy.server
-import lglpy.service_gpu_timeline
-import lglpy.service_test
-import lglpy.service_log
+import lglpy.comms.server as server
+import lglpy.comms.service_gpu_timeline as service_gpu_timeline
+import lglpy.comms.service_test as service_test
+import lglpy.comms.service_log as service_log
 
 def main():
     # Create a server instance
-    server = lglpy.server.CommsServer(63412)
+    server = server.CommsServer(63412)
 
     # Register all the services with it
     print(f'Registering host services:')
 
     if 0:
-        service = lglpy.service_test.TestService()
+        service = service_test.TestService()
         endpoint_id = server.register_endpoint(service)
         print(f'  - [{endpoint_id}] = {service.get_service_name()}')
 
-    service = lglpy.service_log.LogService()
+    service = service_log.LogService()
     endpoint_id = server.register_endpoint(service)
     print(f'  - [{endpoint_id}] = {service.get_service_name()}')
 
-    service = lglpy.service_gpu_timeline.GPUTimelineService()
+    service = service_gpu_timeline.GPUTimelineService()
     endpoint_id = server.register_endpoint(service)
     print(f'  - [{endpoint_id}] = {service.get_service_name()}')
 
@@ -64,9 +64,9 @@ def main():
 
     # Press to exit
     try:
-        input("Press any key to exit ...\n\n")
+        input('Press any key to exit ...\n\n')
     except KeyboardInterrupt:
-        print("Exiting ...")
+        print('Exiting ...')
         sys.exit(0)
 
     return 0
