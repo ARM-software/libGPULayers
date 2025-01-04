@@ -21,9 +21,11 @@
 # SOFTWARE.
 # -----------------------------------------------------------------------------
 
-# This module implements tests for the Android package. Running this test suite
-# requires an Android device with at least one debuggable application installed
-# to be connected to the host PC with an authorized adb connection.
+'''
+This module implements tests for the lglpy.android package. Running this
+test suite requires an Android device with at least one debuggable application
+installed to be connected to the host PC with an authorized adb connection.
+'''
 
 import contextlib
 import os
@@ -39,7 +41,7 @@ SLOW_TESTS = False  # Set to True to enable slot tests, False to skip them
 
 
 @contextlib.contextmanager
-def NamedTempFile():
+def NamedTempFile():  # pylint: disable=invalid-name
     '''
     Creates a context managed temporary file that can be used with external
     subprocess.
@@ -98,16 +100,16 @@ class AndroidTestNoDevice(unittest.TestCase):
         '''
         Test host shell invocation of adb devices.
         '''
-        with NamedTempFile() as fileName:
+        with NamedTempFile() as file_name:
             device = ADBConnect()
-            result = device.adb('devices', '>', fileName, shell=True)
+            result = device.adb('devices', '>', file_name, shell=True)
 
             # We used the shell to redirect to file so this should be empty
             self.assertEqual(result, '')
 
             # Read the file and validate that it is correct
-            with open(fileName, 'r') as fileHandle:
-                data = fileHandle.read()
+            with open(file_name, 'r', encoding='utf-8') as handle:
+                data = handle.read()
                 self.validate_devices(data)
 
     def test_sync_quote(self):
@@ -158,18 +160,18 @@ class AndroidTestNoDevice(unittest.TestCase):
         '''
         Test host shell invocation of adb devices.
         '''
-        with NamedTempFile() as fileName:
+        with NamedTempFile() as file_name:
             device = ADBConnect()
             process = device.adb_async(
-                'devices', '>', fileName, shell=True, pipe=True)
+                'devices', '>', file_name, shell=True, pipe=True)
 
             # We used the shell to redirect to file so this should be empty
             stdout, _ = process.communicate()
             self.assertEqual(stdout, '')
 
             # Read the file and validate that it is correct
-            with open(fileName, 'r') as fileHandle:
-                data = fileHandle.read()
+            with open(file_name, 'r', encoding='utf-8') as handle:
+                data = handle.read()
                 self.validate_devices(data)
 
     def test_async_pipe(self):

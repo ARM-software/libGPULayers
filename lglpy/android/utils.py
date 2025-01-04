@@ -21,12 +21,16 @@
 # SOFTWARE.
 # -----------------------------------------------------------------------------
 
+'''
+This module implements higher level Android queries and utilities, built on top
+of the low level Android Debug Bridge wrapper.
+'''
 # This module implements higher level calls around an established
 # Android Debug Bridge command line connection.
 
 import shlex
 import subprocess as sp
-from typing import Any, Optional
+from typing import Optional
 
 from .adb import ADBConnect
 

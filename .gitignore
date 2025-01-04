@@ -9,6 +9,7 @@ __pycache__
 build*
 
 # Data files
+*.log
 *.gputl
 
 # Build and debug output files

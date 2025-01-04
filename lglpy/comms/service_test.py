@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: MIT
 # -----------------------------------------------------------------------------
-# Copyright (c) 2024 Arm Limited
+# Copyright (c) 2024-2025 Arm Limited
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the 'Software'), to
@@ -21,11 +21,14 @@
 # SOFTWARE.
 # -----------------------------------------------------------------------------
 
-# This module implements the server-side communications module service that
-# implements a basic message endpoint for testing.
+'''
+This module implements the server-side communications module service that
+implements a basic message endpoint for comms module unit testing.
+'''
+
+from typing import Optional
 
 from lglpy.comms.server import Message, MessageType
-from typing import Optional
 
 
 class TestService:

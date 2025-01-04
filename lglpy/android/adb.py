@@ -21,17 +21,16 @@
 # SOFTWARE.
 # -----------------------------------------------------------------------------
 
-# This module implements a simple wrapper around the Android Debug Bridge
-# command line tool which can be used to transfer files and copy data to a
-# remote device.
+'''
+This module implements a simple wrapper around the Android Debug Bridge command
+line tool which can be used to run commands on a connected Android device.
+'''
 
 from collections.abc import Iterable
-from typing import Any, Optional
-
-
 import os
 import shlex
 import subprocess as sp
+from typing import Optional
 
 
 class ADBConnect:
@@ -185,7 +184,9 @@ class ADBConnect:
 
         # Sink inputs to DEVNULL to stop the child process stealing keyboard
         # Sink outputs to DEVNULL to stop full output buffers blocking child
-        process = sp.Popen(packed_commands, text=text, shell=shell,
+        # pylint: disable=consider-using-with
+        process = sp.Popen(packed_commands,
+                           text=text, shell=shell,
                            stdin=sp.DEVNULL,
                            stdout=output,
                            stderr=sp.DEVNULL)

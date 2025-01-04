@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: MIT
 # -----------------------------------------------------------------------------
-# Copyright (c) 2024 Arm Limited
+# Copyright (c) 2024-2025 Arm Limited
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the 'Software'), to
@@ -21,8 +21,11 @@
 # SOFTWARE.
 # -----------------------------------------------------------------------------
 
-# This module implements the server-side communications module service that
-# implements basic logging.
+'''
+This module implements the server-side communications module service that
+implements basic logging, as an alternative to logcat for devices where logcat
+is awkward to use.
+'''
 
 from lglpy.comms.server import Message
 

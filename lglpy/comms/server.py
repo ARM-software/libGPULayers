@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: MIT
 # -----------------------------------------------------------------------------
-# Copyright (c) 2024 Arm Limited
+# Copyright (c) 2024-2025 Arm Limited
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the 'Software'), to
@@ -21,14 +21,16 @@
 # SOFTWARE.
 # -----------------------------------------------------------------------------
 
-# This module implements the server-side communications module that can accept
-# client connections from a layer driver, and dispatch messages to registered
-# service handler in the server.
-#
-# This module currently only accepts a single connection at a time and message
-# handling is synchronous inside the server. It is therefore not possible to
-# implement pseudo-host-driven event loops if the layer is using multiple
-# services concurrently - this needs threads per service.
+'''
+This module implements the server-side communications module that can accept
+client connections from a layer driver, and dispatch messages to registered
+service handler in the server.
+
+This module currently only accepts a single connection at a time and message
+handling is synchronous inside the server. It is therefore not possible to
+implement pseudo-host-driven event loops if the layer is using multiple
+services concurrently - this needs threads per service.
+'''
 
 import enum
 import socket
@@ -134,7 +136,6 @@ class ClientDropped(Exception):
     '''
     Exception representing loss of Client connection.
     '''
-    pass
 
 
 class CommsServer:
@@ -174,7 +175,7 @@ class CommsServer:
         self.sockl = None  # type: Optional[socket.socket]
         self.sockd = None  # type: Optional[socket.socket]
 
-    def register_endpoint(self, endpoint) -> int:
+    def register_endpoint(self, endpoint: Any) -> int:
         '''
         Register a new service endpoint with the server.
 
@@ -204,6 +205,9 @@ class CommsServer:
         Returns:
             The response to the message.
         '''
+        # Message is unused for this microservice - keep pylint happy
+        del message
+
         data = []
         for endpoint_id, endpoint in self.endpoints.items():
             name = endpoint.get_service_name().encode('utf-8')
