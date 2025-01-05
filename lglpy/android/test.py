@@ -30,14 +30,31 @@ installed to be connected to the host PC with an authorized adb connection.
 import contextlib
 import os
 import re
+import shutil
+import subprocess as sp
 import sys
 import tempfile
 import unittest
 
 from .adb import ADBConnect
 from .utils import AndroidUtils
+from .filesystem import AndroidFilesystem
 
 SLOW_TESTS = False  # Set to True to enable slot tests, False to skip them
+
+
+def get_script_relative_path(file_name: str) -> str:
+    '''
+    Get the host path of a script relative file.
+
+    Args:
+        file_name: The path of the file relative to this script.
+
+    Returns:
+        The path of the file on disk.
+    '''
+    dir_name = os.path.dirname(__file__)
+    return os.path.join(dir_name, file_name)
 
 
 @contextlib.contextmanager
@@ -196,7 +213,7 @@ class AndroidTestNoDevice(unittest.TestCase):
         self.assertGreaterEqual(len(devices[1]), 0)
 
 
-class AndroidTestDefaultDevice(unittest.TestCase):
+class AndroidTestDeviceUtil(unittest.TestCase):
     '''
     This set of tests validates execution of device-level commands that
     require adb to have a valid implicit default device connected.
@@ -273,6 +290,167 @@ class AndroidTestDefaultDevice(unittest.TestCase):
         self.assertIsNotNone(version)
         self.assertTrue(version[0])
         self.assertTrue(version[1])
+
+    def test_util_package_debuggable(self):
+        '''
+        Test helper to get package debug status
+        '''
+        conn = ADBConnect()
+
+        # Fetch some packages that we can use
+        all_packages = AndroidUtils.get_packages(conn, False, False)
+        self.assertGreater(len(all_packages), 0)
+
+        dbg_packages = AndroidUtils.get_packages(conn, True, False)
+        self.assertGreater(len(dbg_packages), 0)
+
+        ndbg_packages = list(set(all_packages) ^ set(dbg_packages))
+        self.assertGreater(len(ndbg_packages), 0)
+
+        # Test the package
+        is_debug = AndroidUtils.is_package_debuggable(conn, ndbg_packages[0])
+        self.assertFalse(is_debug)
+
+        is_debug = AndroidUtils.is_package_debuggable(conn, dbg_packages[0])
+        self.assertTrue(is_debug)
+
+    def test_util_package_bitness(self):
+        '''
+        Test helper to get package ABI bitness.
+        '''
+        conn = ADBConnect()
+
+        # Fetch some packages that we can use
+        packages = AndroidUtils.get_packages(conn, True, False)
+        self.assertGreater(len(packages), 0)
+
+        # Test the package
+        is_32bit = AndroidUtils.is_package_32bit(conn, packages[0])
+        self.assertTrue(isinstance(is_32bit, bool))
+
+    def test_util_package_data_dir(self):
+        '''
+        Test helper to get package data directory on the device filesystem.
+        '''
+        conn = ADBConnect()
+
+        # Fetch some packages that we can use
+        packages = AndroidUtils.get_packages(conn, True, False)
+        self.assertGreater(len(packages), 0)
+
+        # Test the package
+        data_dir = AndroidUtils.get_package_data_dir(conn, packages[0])
+        self.assertTrue(data_dir)
+
+
+class AndroidTestDeviceFilesystem(unittest.TestCase):
+    '''
+    This set of tests validates execution of device-level filesystem operations
+    that require adb to have a valid implicit default device connected.
+    '''
+
+    HOST_DEST_DIR = 'x_test_tmp'
+
+    def tearDown(self):
+        '''
+        Post-test cleanup.
+        '''
+        shutil.rmtree(self.HOST_DEST_DIR, True)
+
+    def test_util_copy_to_device_tmp(self):
+        '''
+        Test filesystem copy to device temp directory.
+        '''
+        conn = ADBConnect()
+
+        test_file = 'test_data.txt'
+        test_path = get_script_relative_path(test_file)
+        device_file = f'/data/local/tmp/{test_file}'
+
+        # Push the file
+        success = AndroidFilesystem.push_file_to_tmp(conn, test_path, False)
+        self.assertTrue(success)
+
+        # Validate it pushed OK
+        data = conn.adb('shell', 'cat', device_file)
+        self.assertEqual(data.strip(), 'test payload')
+
+        # Cleanup
+        success = AndroidFilesystem.delete_file_in_tmp(conn, test_file)
+        self.assertTrue(success)
+
+    def test_util_copy_to_device_tmp_exec(self):
+        '''
+        Test filesystem copy executable payload to device temp directory.
+        '''
+        conn = ADBConnect()
+
+        test_file = 'test_data.sh'
+        test_path = get_script_relative_path(test_file)
+        device_file = f'/data/local/tmp/{test_file}'
+
+        # Push the file with executable permissions
+        success = AndroidFilesystem.push_file_to_tmp(conn, test_path, True)
+        self.assertTrue(success)
+
+        # Validate it pushed OK
+        data = conn.adb('shell', device_file)
+        self.assertEqual(data.strip(), 'test payload exec')
+
+        # Cleanup
+        success = AndroidFilesystem.delete_file_in_tmp(conn, test_file)
+        self.assertTrue(success)
+
+    def test_util_copy_from_device_keep(self):
+        '''
+        Test filesystem copy executable payload from device temp directory.
+        '''
+        conn = ADBConnect()
+
+        test_file = 'test_data.txt'
+        test_path = get_script_relative_path(test_file)
+
+        # Push the file
+        success = AndroidFilesystem.push_file_to_tmp(conn, test_path, False)
+        self.assertTrue(success)
+
+        # Copy the file without deletion
+        success = AndroidFilesystem.pull_file_from_tmp(
+            conn, test_file, self.HOST_DEST_DIR, False)
+        self.assertTrue(success)
+
+        # Cleanup
+        success = AndroidFilesystem.delete_file_in_tmp(conn, test_file)
+        self.assertTrue(success)
+
+    def test_util_copy_from_device_delete(self):
+        '''
+        Test filesystem copy executable payload from device temp directory.
+        '''
+        conn = ADBConnect()
+
+        test_file = 'test_data.txt'
+        test_path = get_script_relative_path(test_file)
+
+        device_path = f'/data/local/tmp/{test_file}'
+        host_path = f'{self.HOST_DEST_DIR}/{test_file}'
+
+        # Push the file
+        success = AndroidFilesystem.push_file_to_tmp(conn, test_path, False)
+        self.assertTrue(success)
+
+        # Copy the file with deletion
+        success = AndroidFilesystem.pull_file_from_tmp(
+            conn, test_file, self.HOST_DEST_DIR, True)
+        self.assertTrue(success)
+
+        with open(host_path, 'r', encoding='utf-8') as handle:
+            data = handle.read()
+            self.assertEqual(data, 'test payload')
+
+        # Check the file is deleted - this should fail
+        with self.assertRaises(sp.CalledProcessError):
+            conn.adb('shell', 'ls', device_path)
 
 
 def main():

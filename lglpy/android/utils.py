@@ -25,9 +25,8 @@
 This module implements higher level Android queries and utilities, built on top
 of the low level Android Debug Bridge wrapper.
 '''
-# This module implements higher level calls around an established
-# Android Debug Bridge command line connection.
 
+import re
 import shlex
 import subprocess as sp
 from typing import Optional
@@ -37,7 +36,7 @@ from .adb import ADBConnect
 
 class AndroidUtils:
     '''
-    A library of utility methods.
+    A library of utility methods for querying device and package status.
     '''
 
     @staticmethod
@@ -73,8 +72,9 @@ class AndroidUtils:
         return (good_devices, bad_devices)
 
     @staticmethod
-    def get_packages(conn: ADBConnect, debuggable_only: bool = True,
-                     main_only: bool = True) -> list[str]:
+    def get_packages(
+            conn: ADBConnect, debuggable_only: bool = True,
+            main_only: bool = True) -> list[str]:
         '''
         Get the list of packages on the target device.
 
@@ -168,6 +168,88 @@ class AndroidUtils:
             model = model.strip()
 
             return (vendor, model)
+
+        except sp.CalledProcessError:
+            return None
+
+    @staticmethod
+    def is_package_debuggable(conn: ADBConnect, package: str) -> bool:
+        '''
+        Test if a package is debuggable.
+
+        Args:
+            conn: The adb connection.
+            package: The name of the package to test.
+
+        Returns:
+            True if the package is debuggable, False otherwise.
+        '''
+        try:
+            package = shlex.quote(package)
+            command = f'if run-as {package} true ; then echo {package} ; fi'
+            log = conn.adb('shell', command)
+            return log.strip() == package
+
+        except sp.CalledProcessError:
+            return False
+
+    @staticmethod
+    def is_package_32bit(conn: ADBConnect, package: str) -> bool:
+        '''
+        Test if a package prefers 32-bit ABI on the target device.
+
+        Args:
+            conn: The adb connection.
+            package: The name of the package to test.
+
+        Returns:
+            True if the package is 32-bit, False if 64-bit or on error.
+        '''
+        try:
+            preferred_abi = None
+
+            # Try to match the primary ABI loaded by the application
+            package = shlex.quote(package)
+            command = f'pm dump {package} | grep primaryCpuAbi'
+            log = conn.adb('shell', command)
+            pattern = re.compile('primaryCpuAbi=(\\S+)')
+            match = pattern.search(log)
+
+            if match:
+                log_abi = match.group(1)
+                if log_abi != 'null':
+                    preferred_abi = log_abi
+
+            # If that fails match against the default device ABI
+            if preferred_abi is None:
+                preferred_abi = conn.adb('shell', 'getprop ro.product.cpu.abi')
+
+            return preferred_abi in ('armeabi-v7a', 'armeabi')
+
+        except sp.CalledProcessError:
+            return False
+
+    @staticmethod
+    def get_package_data_dir(conn: ADBConnect, package: str):
+        '''
+        Get the package data directory on the device filesystem.
+
+        TODO: This currently only handles data directories for User 0. If a
+        device has multiple user profiles configured, the dumpsys output will
+        contain multiple dataDir records.
+
+        Args:
+            conn: The adb connection.
+            package: The name of the package to test.
+
+        Returns:
+            The package data directory, or None on error.
+        '''
+        try:
+            package = shlex.quote(package)
+            command = f'dumpsys package {package} | grep dataDir'
+            log = conn.adb('shell', command)
+            return log.replace('dataDir=', '').strip()
 
         except sp.CalledProcessError:
             return None
