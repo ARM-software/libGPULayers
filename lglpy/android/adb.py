@@ -57,6 +57,26 @@ class ADBConnect:
         self.device = device
         self.package = package
 
+    def set_device(self, device: str) -> None:
+        '''
+        Set the device for this connection.
+
+        Args:
+            device: The device identifier, as returned by 'adb devices', or
+                None for non-specific use.
+        '''
+        self.device = device
+
+    def set_package(self, package: str) -> None:
+        '''
+        Set the package for this connection.
+
+        Args:
+            package: The package name, as returned by `adb shell pm list
+                packages` or None for non-specific use.
+        '''
+        self.package = package
+
     def get_base_command(self, args: Iterable[str]) -> list[str]:
         '''
         Get the root of an adb command, injecting device selector if needed.
@@ -194,6 +214,44 @@ class ADBConnect:
         # Return the output process a user can use to wait, if needed.
         return process
 
+    def adb_run(self, *args: str, text: bool = True, shell: bool = False,
+                quote: bool = False, check: bool = True) -> str:
+        '''
+        Call adb to synchronously run a device shell command as the Android
+        "shell" user, check its result, and capture its output if successful.
+
+        Commands can invoke adb directly, or via the host shell if invoked with
+        shell=True. When using shell=True on Unix hosts the arguments are
+        always quoted unless the argument is a '>' redirect shell argument. On
+        Windows beware of the security implications of the lack of quoting.
+
+        Args:
+            *args: List of command line parameters.
+            text: True if output is text, False if binary
+            shell: True if this should invoke via host shell, False if direct.
+            quote: True if arguments are quoted, False if unquoted.
+            check: True if result is checked, False if ignored.
+
+        Returns:
+            The stdout response written by adb.
+
+        Raises:
+            CalledProcessError: The invoked call failed.
+        '''
+        # Build the command list
+        commands = self.get_base_command(['shell'])
+        commands.extend(args)
+        packed_commands = self.pack_commands(commands, shell, quote)
+
+        # Invoke the command
+        rep = sp.run(packed_commands, check=check, shell=shell, text=text,
+                     stdin=sp.DEVNULL,
+                     stdout=sp.PIPE,
+                     stderr=sp.PIPE)
+
+        # Return the output
+        return rep.stdout
+
     def adb_runas(self, *args: str, text: bool = True, shell: bool = False,
                   quote: bool = False, check: bool = True) -> str:
         '''
@@ -218,7 +276,8 @@ class ADBConnect:
         Raises:
             CalledProcessError: The invoked call failed.
         '''
-        assert self.package, 'Cannot use run-as without a package'
+        assert self.package, \
+            'Cannot use adb_runas() without package'
 
         # Build the command list
         commands = self.get_base_command(['shell', 'run-as', self.package])

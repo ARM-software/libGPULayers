@@ -230,7 +230,7 @@ class AndroidUtils:
             return False
 
     @staticmethod
-    def get_package_data_dir(conn: ADBConnect, package: str):
+    def get_package_data_dir(conn: ADBConnect):
         '''
         Get the package data directory on the device filesystem.
 
@@ -240,13 +240,15 @@ class AndroidUtils:
 
         Args:
             conn: The adb connection.
-            package: The name of the package to test.
 
         Returns:
             The package data directory, or None on error.
         '''
+        assert conn.package, \
+            'Cannot use get_package_data_dir() without package'
+
         try:
-            package = shlex.quote(package)
+            package = shlex.quote(conn.package)
             command = f'dumpsys package {package} | grep dataDir'
             log = conn.adb('shell', command)
             return log.replace('dataDir=', '').strip()

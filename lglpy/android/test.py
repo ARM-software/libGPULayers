@@ -134,7 +134,7 @@ class AndroidTestNoDevice(unittest.TestCase):
         Test direct adb invocation that needs device-side quoting.
         '''
         device = ADBConnect()
-        result = device.adb('shell', 'echo', 'a | echo', quote=True)
+        result = device.adb_run('echo', 'a | echo', quote=True)
         self.assertEqual(result, 'a | echo\n')
 
     @unittest.skipIf(os.name == 'nt', 'Not supported on Windows')
@@ -143,7 +143,7 @@ class AndroidTestNoDevice(unittest.TestCase):
         Test host shell invocation of adb shell that needs host-side quoting.
         '''
         device = ADBConnect()
-        result = device.adb('shell', 'echo', 'a | echo', shell=True)
+        result = device.adb_run('echo', 'a | echo', shell=True)
         self.assertEqual(result, 'a | echo\n')
 
     def test_async(self):
@@ -337,9 +337,10 @@ class AndroidTestDeviceUtil(unittest.TestCase):
         # Fetch some packages that we can use
         packages = AndroidUtils.get_packages(conn, True, False)
         self.assertGreater(len(packages), 0)
+        conn.set_package(packages[0])
 
         # Test the package
-        data_dir = AndroidUtils.get_package_data_dir(conn, packages[0])
+        data_dir = AndroidUtils.get_package_data_dir(conn)
         self.assertTrue(data_dir)
 
 
@@ -372,11 +373,11 @@ class AndroidTestDeviceFilesystem(unittest.TestCase):
         self.assertTrue(success)
 
         # Validate it pushed OK
-        data = conn.adb('shell', 'cat', device_file)
+        data = conn.adb_run('cat', device_file)
         self.assertEqual(data.strip(), 'test payload')
 
         # Cleanup
-        success = AndroidFilesystem.delete_file_in_tmp(conn, test_file)
+        success = AndroidFilesystem.delete_file_from_tmp(conn, test_file)
         self.assertTrue(success)
 
     def test_util_copy_to_device_tmp_exec(self):
@@ -394,11 +395,11 @@ class AndroidTestDeviceFilesystem(unittest.TestCase):
         self.assertTrue(success)
 
         # Validate it pushed OK
-        data = conn.adb('shell', device_file)
+        data = conn.adb_run(device_file)
         self.assertEqual(data.strip(), 'test payload exec')
 
         # Cleanup
-        success = AndroidFilesystem.delete_file_in_tmp(conn, test_file)
+        success = AndroidFilesystem.delete_file_from_tmp(conn, test_file)
         self.assertTrue(success)
 
     def test_util_copy_from_device_keep(self):
@@ -420,7 +421,7 @@ class AndroidTestDeviceFilesystem(unittest.TestCase):
         self.assertTrue(success)
 
         # Cleanup
-        success = AndroidFilesystem.delete_file_in_tmp(conn, test_file)
+        success = AndroidFilesystem.delete_file_from_tmp(conn, test_file)
         self.assertTrue(success)
 
     def test_util_copy_from_device_delete(self):
@@ -450,7 +451,167 @@ class AndroidTestDeviceFilesystem(unittest.TestCase):
 
         # Check the file is deleted - this should fail
         with self.assertRaises(sp.CalledProcessError):
-            conn.adb('shell', 'ls', device_path)
+            conn.adb_run('ls', device_path)
+
+    def test_util_copy_to_package(self):
+        '''
+        Test filesystem copy to package data directory.
+        '''
+        conn = ADBConnect()
+
+        # Fetch some packages that we can use
+        packages = AndroidUtils.get_packages(conn, True, False)
+        self.assertGreater(len(packages), 0)
+        conn.set_package(packages[0])
+
+        test_file = 'test_data.txt'
+        test_path = get_script_relative_path(test_file)
+
+        # Push the file
+        success = AndroidFilesystem.push_file_to_package(conn, test_path)
+        self.assertTrue(success)
+
+        # Validate it pushed OK
+        data = conn.adb_runas('ls', test_file)
+        self.assertEqual(data.strip(), test_file)
+
+        # Cleanup tmp - this should fail because the file does not exist
+        success = AndroidFilesystem.delete_file_from_tmp(conn, test_file)
+        self.assertFalse(success)
+
+    def test_util_copy_to_package_exec(self):
+        '''
+        Test filesystem copy to package data directory.
+        '''
+        conn = ADBConnect()
+
+        # Fetch some packages that we can use
+        packages = AndroidUtils.get_packages(conn, True, False)
+        self.assertGreater(len(packages), 0)
+        conn.set_package(packages[0])
+
+        test_file = './test_data.sh'
+        test_path = get_script_relative_path(test_file)
+
+        # Push the file
+        success = AndroidFilesystem.push_file_to_package(conn, test_path, True)
+        self.assertTrue(success)
+
+        # Validate it pushed OK
+        data = conn.adb_runas(test_file)
+        self.assertEqual(data.strip(), 'test payload exec')
+
+        # Cleanup the file
+        success = AndroidFilesystem.delete_file_from_package(conn, test_file)
+        self.assertTrue(success)
+
+    def test_util_copy_from_package(self):
+        '''
+        Test filesystem copy from package data directory to host.
+        '''
+        conn = ADBConnect()
+
+        # Fetch some packages that we can use
+        packages = AndroidUtils.get_packages(conn, True, False)
+        self.assertGreater(len(packages), 0)
+        conn.set_package(packages[0])
+
+        test_file = 'test_data.txt'
+        test_path = get_script_relative_path(test_file)
+
+        # Push the file
+        success = AndroidFilesystem.push_file_to_package(conn, test_path)
+        self.assertTrue(success)
+
+        # Validate it pushed OK
+        data = conn.adb_runas('ls', test_file)
+        self.assertEqual(data.strip(), test_file)
+
+        # Copy the file
+        with tempfile.TemporaryDirectory() as host_dir:
+            host_file = os.path.join(host_dir, test_file)
+
+            AndroidFilesystem.pull_file_from_package(
+                conn, test_file, host_dir, False)
+
+            # Read the file and validate that it is correct
+            with open(host_file, 'r', encoding='utf-8') as handle:
+                data = handle.read()
+
+            self.assertEqual(data.strip(), 'test payload')
+
+        # Cleanup the file
+        success = AndroidFilesystem.delete_file_from_package(conn, test_file)
+        self.assertTrue(success)
+
+    def test_util_move_from_package(self):
+        '''
+        Test filesystem move from package data directory to host.
+        '''
+        conn = ADBConnect()
+
+        # Fetch some packages that we can use
+        packages = AndroidUtils.get_packages(conn, True, False)
+        self.assertGreater(len(packages), 0)
+        conn.set_package(packages[0])
+
+        test_file = 'test_data.txt'
+        test_path = get_script_relative_path(test_file)
+
+        # Push the file
+        success = AndroidFilesystem.push_file_to_package(conn, test_path)
+        self.assertTrue(success)
+
+        # Validate it pushed OK
+        data = conn.adb_runas('ls', test_file)
+        self.assertEqual(data.strip(), test_file)
+
+        # Copy the file
+        with tempfile.TemporaryDirectory() as host_dir:
+            host_file = os.path.join(host_dir, test_file)
+
+            AndroidFilesystem.pull_file_from_package(
+                conn, test_file, host_dir, True)
+
+            # Read the file and validate that it is correct
+            with open(host_file, 'r', encoding='utf-8') as handle:
+                data = handle.read()
+
+            self.assertEqual(data.strip(), 'test payload')
+
+        # Cleanup the file - this should fail as we deleted the file earlier
+        success = AndroidFilesystem.delete_file_from_package(conn, test_file)
+        self.assertFalse(success)
+
+    def test_util_delete_from_package(self):
+        '''
+        Test filesystem delete from package data directory.
+        '''
+        conn = ADBConnect()
+
+        # Fetch some packages that we can use
+        packages = AndroidUtils.get_packages(conn, True, False)
+        self.assertGreater(len(packages), 0)
+        conn.set_package(packages[0])
+
+        test_file = 'test_data.txt'
+        test_path = get_script_relative_path(test_file)
+
+        # Push the file
+        success = AndroidFilesystem.push_file_to_package(conn, test_path)
+        self.assertTrue(success)
+
+        # Validate it pushed OK
+        data = conn.adb_runas('ls', test_file)
+        self.assertEqual(data.strip(), test_file)
+
+        # Cleanup the file
+        success = AndroidFilesystem.delete_file_from_package(conn, test_file)
+        self.assertTrue(success)
+
+        # Validate it was deleted - this should fail
+        with self.assertRaises(sp.CalledProcessError):
+            data = conn.adb_runas('ls', test_file)
 
 
 def main():
