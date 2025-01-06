@@ -57,7 +57,7 @@ class ADBConnect:
         self.device = device
         self.package = package
 
-    def set_device(self, device: str) -> None:
+    def set_device(self, device: Optional[str]) -> None:
         '''
         Set the device for this connection.
 

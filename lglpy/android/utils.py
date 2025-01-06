@@ -257,59 +257,59 @@ class AndroidUtils:
             return None
 
     @staticmethod
-    def set_property(conn: ADBConnect, property: str, value: str) -> bool:
+    def set_property(conn: ADBConnect, prop: str, value: str) -> bool:
         '''
         Set an Android system property to a value.
 
         Args:
             conn: The adb connection.
-            property: The name of the property to set.
+            prop: The name of the property to set.
             value: The desired value of the property.
 
         Returns:
             True on success, False otherwise.
         '''
         try:
-            conn.adb('shell', 'setprop', property, value)
+            conn.adb('shell', 'setprop', prop, value)
             return True
 
         except sp.CalledProcessError:
             return False
 
     @staticmethod
-    def get_property(conn: ADBConnect, property: str) -> Optional[str]:
+    def get_property(conn: ADBConnect, prop: str) -> Optional[str]:
         '''
         Get an Android system property value.
 
         Args:
             conn: The adb connection.
-            property: The name of the property to get.
+            prop: The name of the property to get.
 
         Returns:
             The value of the property on success, None otherwise. Note that
             deleted settings that do not exist will also return None.
         '''
         try:
-            value = conn.adb('shell', 'getprop', property)
+            value = conn.adb('shell', 'getprop', prop)
             return value.strip()
 
         except sp.CalledProcessError:
             return None
 
     @staticmethod
-    def clear_property(conn: ADBConnect, property: str) -> bool:
+    def clear_property(conn: ADBConnect, prop: str) -> bool:
         '''
         Set an Android system property to an empty value.
 
         Args:
             conn: The adb connection.
-            property: The name of the property to set.
+            prop: The name of the property to clear.
 
         Returns:
             True on success, False otherwise.
         '''
         try:
-            conn.adb('shell', 'setprop', property, '""')
+            conn.adb('shell', 'setprop', prop, '""')
             return True
 
         except sp.CalledProcessError:

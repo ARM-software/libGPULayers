@@ -85,5 +85,4 @@ def select_from_menu(title: str, options: list[str]) -> Optional[int]:
         except ValueError:
             print(f'\n    Please enter a value between 0 and {len(options)}')
 
-    print(f'\n    Selected {options[selection]}')
     return selection
