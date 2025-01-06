@@ -344,6 +344,65 @@ class AndroidTestDeviceUtil(unittest.TestCase):
         self.assertTrue(data_dir)
 
 
+class AndroidTestDeviceProps(unittest.TestCase):
+    '''
+    This set of tests validates modifications to device-level settings
+    This require adb to have a valid implicit default device connected.
+    '''
+
+    def test_util_properties_modifiers(self):
+        '''
+        Test helper to set, get, or clear a property.
+        '''
+        conn = ADBConnect()
+        prop = 'debug.vulkan.layers'
+
+        # Ensure test device starts from a clear state
+        success = AndroidUtils.clear_property(conn, prop)
+        self.assertTrue(success)
+
+        value = AndroidUtils.get_property(conn, prop)
+        self.assertEqual(value, '')
+
+        success = AndroidUtils.set_property(conn, prop, 'test_')
+        self.assertTrue(success)
+
+        value = AndroidUtils.get_property(conn, prop)
+        self.assertEqual(value, 'test_')
+
+        success = AndroidUtils.clear_property(conn, prop)
+        self.assertTrue(success)
+
+        value = AndroidUtils.get_property(conn, prop)
+        self.assertEqual(value, '')
+
+    def test_util_settings_modifiers(self):
+        '''
+        Test helper to set, get, or clear a setting.
+        '''
+        conn = ADBConnect()
+        prop = 'enable_gpu_debug_layers'
+
+        # Ensure test device starts from a clear state
+        success = AndroidUtils.clear_setting(conn, prop)
+        self.assertTrue(success)
+
+        value = AndroidUtils.get_setting(conn, prop)
+        self.assertEqual(value, None)
+
+        success = AndroidUtils.set_setting(conn, prop, '1')
+        self.assertTrue(success)
+
+        value = AndroidUtils.get_setting(conn, prop)
+        self.assertEqual(value, '1')
+
+        success = AndroidUtils.clear_setting(conn, prop)
+        self.assertTrue(success)
+
+        value = AndroidUtils.get_setting(conn, prop)
+        self.assertEqual(value, None)
+
+
 class AndroidTestDeviceFilesystem(unittest.TestCase):
     '''
     This set of tests validates execution of device-level filesystem operations

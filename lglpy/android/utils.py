@@ -255,3 +255,125 @@ class AndroidUtils:
 
         except sp.CalledProcessError:
             return None
+
+    @staticmethod
+    def set_property(conn: ADBConnect, property: str, value: str) -> bool:
+        '''
+        Set an Android system property to a value.
+
+        Args:
+            conn: The adb connection.
+            property: The name of the property to set.
+            value: The desired value of the property.
+
+        Returns:
+            True on success, False otherwise.
+        '''
+        try:
+            conn.adb('shell', 'setprop', property, value)
+            return True
+
+        except sp.CalledProcessError:
+            return False
+
+    @staticmethod
+    def get_property(conn: ADBConnect, property: str) -> Optional[str]:
+        '''
+        Get an Android system property value.
+
+        Args:
+            conn: The adb connection.
+            property: The name of the property to get.
+
+        Returns:
+            The value of the property on success, None otherwise. Note that
+            deleted settings that do not exist will also return None.
+        '''
+        try:
+            value = conn.adb('shell', 'getprop', property)
+            return value.strip()
+
+        except sp.CalledProcessError:
+            return None
+
+    @staticmethod
+    def clear_property(conn: ADBConnect, property: str) -> bool:
+        '''
+        Set an Android system property to an empty value.
+
+        Args:
+            conn: The adb connection.
+            property: The name of the property to set.
+
+        Returns:
+            True on success, False otherwise.
+        '''
+        try:
+            conn.adb('shell', 'setprop', property, '""')
+            return True
+
+        except sp.CalledProcessError:
+            return False
+
+    @staticmethod
+    def set_setting(conn: ADBConnect, setting: str, value: str) -> bool:
+        '''
+        Set an Android system setting to a value.
+
+        Args:
+            conn: The adb connection.
+            setting: The name of the setting to set.
+            value: The desired value of the setting.
+
+        Returns:
+            True on success, False otherwise.
+        '''
+        try:
+            conn.adb('shell', 'settings', 'put', 'global', setting, value)
+            return True
+
+        except sp.CalledProcessError:
+            return False
+
+    @staticmethod
+    def get_setting(conn: ADBConnect, setting: str) -> Optional[str]:
+        '''
+        Get an Android system property setting.
+
+        Args:
+            conn: The adb connection.
+            setting: The name of the setting to get.
+
+        Returns:
+            The value of the setting on success, None otherwise.
+        '''
+        try:
+            value = conn.adb('shell', 'settings', 'get', 'global', setting)
+            value = value.strip()
+
+            if value == 'null':
+                return None
+
+            return value
+
+        except sp.CalledProcessError:
+            return None
+
+    @staticmethod
+    def clear_setting(conn: ADBConnect, setting: str) -> bool:
+        '''
+        Clear an Android system setting.
+
+        Args:
+            conn: The adb connection.
+            setting: The name of the setting to set.
+
+        Returns:
+            True on success, False otherwise.
+        '''
+        try:
+            conn.adb('shell', 'settings', 'delete', 'global', setting)
+            return True
+
+        except sp.CalledProcessError:
+            return False
