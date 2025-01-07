@@ -31,16 +31,6 @@ mtv-core {
 	line-color: #505050;
 }
 
-[tlv-tlw-core] tlv-tlw-bookmarkbar {
-	fill-color: #d0d0d0;
-	line-color: #505050;
-}
-
-[tlv-tlw-bookmarkbar] tlv-tlw-bookmark {
-	fill-color: #ff7728;
-	line-color: #505050;
-}
-
 [tlv-tlw-core] tlv-tlw-activeregion {
 	fill-color: #ffffff80;
 	line-color: none;

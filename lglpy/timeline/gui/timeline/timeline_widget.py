@@ -106,26 +106,6 @@ class TimelineWidget(TimelineWidgetBase):
             menui.connect_object('activate', self.on_norc3, clicked)
             menu.append(menui)
 
-            bookmarks = {}
-            for time, name in self.bookmarks.items():
-                # Keep bookmarks in active clamp range only
-                if self.ws_clamp_min_x < time < self.ws_clamp_max_x:
-                    bookmarks[time] = name
-
-            if bookmarks:
-                menui = Gtk.MenuItem('Jump to Bookmark')
-                menu.append(menui)
-
-                submenu = Gtk.Menu()
-                menui.set_submenu(submenu)
-
-                handler = self.on_jump_bookmark
-                for bookmark in sorted(bookmarks.keys()):
-                    key = bookmarks[bookmark]
-                    menui = Gtk.MenuItem(key)
-                    menui.connect_object('activate', handler, key)
-                    submenu.append(menui)
-
             menu.show_all()
             menu.popup_at_pointer(event)
 
@@ -166,86 +146,4 @@ class TimelineWidget(TimelineWidgetBase):
         self.trace_ws_min_x = self.ws_clamp_min_x
         self.ws_clamp_max_x = self.original_trace_ws_max_x + 100
         self.trace_ws_max_x = self.ws_clamp_max_x
-        self.parent.queue_draw()
-
-    def on_jump_bookmark(self, name):
-        '''
-        Right click menu handler -> jump to bookmark
-        '''
-        for ws_target_x, value in self.bookmarks.items():
-            if value == name:
-                break
-        else:
-            return
-
-        clamp_min_x = self.ws_clamp_min_x
-        clamp_max_x = self.ws_clamp_max_x
-        if not clamp_min_x <= ws_target_x <= clamp_max_x:
-            print(f'WARNING: Bookmark {name} outside of clamped range')
-            return
-
-        # Put the bookmark in the middle of the screen, but handle clamps
-        # gracefully, which may pull it off center
-        ws_start_x = max(ws_target_x - (self.vp.ws.w / 2), clamp_min_x)
-        ws_end_x = min(ws_target_x + (self.vp.ws.w / 2), clamp_max_x)
-
-        # Finally we can update the viewport and render
-        ws = self.vp.ws
-        ws_pos_new = [ws_start_x, ws.min_y]
-        ws_dim_new = [ws_end_x - ws_start_x, ws.max_y - ws.min_y]
-        self.vp.update_ws(ws_pos_new, ws_dim_new)
-
-        self.parent.queue_draw()
-
-    def jump_one_frame(self, forward):
-        '''
-        Handle jump one frame forward or backwards.
-        '''
-        # Find the scene object in the config
-        def ch_filter(channel):
-            return channel.name in ['sw.frame']
-
-        def obj_filter(event):
-            return isinstance(event, WorldDrawableLine)
-
-        # Find the frame either side of the first eglSwap in the viewport
-        prev = None
-        start = None
-        end = None
-
-        ws = self.vp.ws
-        for drawable in self.drawable_trace.each_object(ch_filter, obj_filter):
-            if drawable.ws.min_x >= ws.min_x:
-                if not start:
-                    start = drawable.ws.min_x
-                else:
-                    end = drawable.ws.min_x
-                    break
-            else:
-                prev = drawable.ws.min_x
-
-        if None is end:
-            print('Warning: Unable to determine frame time')
-            return
-
-        # Use gap between N and N+1 when moving forwards
-        if forward:
-            ws_pos_new = [ws.min_x + end - start, ws.min_y]
-        # Use gap between N-1 and N when moving backwards (if there is a
-        # backwards). This ensures that toggling left and right is stable
-        # without jitter
-        elif prev:
-            ws_pos_new = [ws.min_x - start + prev, ws.min_y]
-        # Otherwise nothing to do, so return
-        else:
-            return
-
-        # Clamp the start against the clamp ranges
-        ws_pos_new = [max(self.ws_clamp_min_x, ws_pos_new[0]), ws_pos_new[1]]
-        max_w = self.ws_clamp_max_x - ws_pos_new[0] - 5
-
-        width = min(ws.max_x - ws.min_x, max_w)
-        ws_dim_new = [width, ws.max_y - ws.min_y]
-
-        self.vp.update_ws(ws_pos_new, ws_dim_new)
         self.parent.queue_draw()

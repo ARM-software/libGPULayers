@@ -368,13 +368,6 @@ class TimelineView(View):
         submenu_root = Gtk.Menu()
         menu_item.set_submenu(submenu_root)
 
-        menu_item = Gtk.SeparatorMenuItem()
-        menu_root.append(menu_item)
-
-        menu_item = Gtk.MenuItem('Clear Bookmarks')
-        menu_root.append(menu_item)
-        menu_item.connect_object('activate', self.on_clear_bookmarks, None)
-
         self.menu_bar.show_all()
 
     def on_visibility_other(self, item):
@@ -389,14 +382,6 @@ class TimelineView(View):
         if item[4] == 'info':
             self.resize()
         self.parent.queue_draw()
-
-    def on_clear_bookmarks(self, _unused):
-        '''
-        Event handler for bookmark menu actions.
-        '''
-        if self.timeline_widget:
-            self.timeline_widget.bookmarks = {}
-            self.parent.queue_draw()
 
     def load(self, trace_data=None):
         '''
@@ -521,16 +506,10 @@ class TimelineView(View):
             drag = FakeMouseDrag(drag)
             return self.on_mouse_drag('middle', drag)
 
-        if (key == 'Left') and (mod == 's'):
-            return self.timeline_widget.jump_one_frame(False)
-
         if (key == 'Right') and (mod == ''):
             drag = -self.width / 15
             drag = FakeMouseDrag(drag)
             return self.on_mouse_drag('middle', drag)
-
-        if (key == 'Right') and (mod == 's'):
-            return self.timeline_widget.jump_one_frame(True)
 
         # No valid key was detected, so don't update any rendering
         return False
