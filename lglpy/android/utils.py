@@ -22,8 +22,8 @@
 # -----------------------------------------------------------------------------
 
 '''
-This module implements higher level Android queries and utilities, built on top
-of the low level Android Debug Bridge wrapper.
+This module implements higher level Android queries and utility functions,
+built on top of the low level ADBConnect wrapper around Android Debug Bridge.
 '''
 
 import re
@@ -36,7 +36,7 @@ from .adb import ADBConnect
 
 class AndroidUtils:
     '''
-    A library of utility methods for querying device and package status.
+    A library of utility methods for querying device and package configuration.
     '''
 
     @staticmethod
@@ -104,7 +104,7 @@ class AndroidUtils:
             command += f' | xargs -n1 sh -c {shlex.quote(sub)} 2> /dev/null'
 
         try:
-            package_list = conn.adb('shell', command).splitlines()
+            package_list = conn.adb_run(command).splitlines()
 
         except sp.CalledProcessError:
             return []
@@ -115,8 +115,8 @@ class AndroidUtils:
 
         return package_list
 
-    @staticmethod
-    def get_os_version(conn: ADBConnect) -> Optional[str]:
+    @classmethod
+    def get_os_version(cls, conn: ADBConnect) -> Optional[str]:
         '''
         Get the Android OS platform version of the target device.
 
@@ -127,13 +127,12 @@ class AndroidUtils:
             The Android platform version, or None on error.
         '''
         try:
-            ver = conn.adb('shell', 'getprop', 'ro.build.version.release')
-            return ver
+            return cls.get_property(conn, 'ro.build.version.release')
         except sp.CalledProcessError:
             return None
 
-    @staticmethod
-    def get_os_sdk_version(conn: ADBConnect) -> Optional[int]:
+    @classmethod
+    def get_os_sdk_version(cls, conn: ADBConnect) -> Optional[int]:
         '''
         Get the Android OS SDK version of the target device.
 
@@ -143,14 +142,13 @@ class AndroidUtils:
         Returns:
             The Android SDK version number, or None on error.
         '''
-        try:
-            ver = conn.adb('shell', 'getprop', 'ro.build.version.sdk')
-            return int(ver)
-        except sp.CalledProcessError:
+        ver = cls.get_property(conn, 'ro.build.version.sdk')
+        if not ver:
             return None
+        return int(ver)
 
-    @staticmethod
-    def get_device_model(conn: ADBConnect) -> Optional[tuple[str, str]]:
+    @classmethod
+    def get_device_model(cls, conn: ADBConnect) -> Optional[tuple[str, str]]:
         '''
         Get the vendor and model of the target device.
 
@@ -160,17 +158,17 @@ class AndroidUtils:
         Returns:
             The device vendor and model strings, or None on error.
         '''
-        try:
-            vendor = conn.adb('shell', 'getprop', 'ro.product.manufacturer')
-            vendor = vendor.strip()
-
-            model = conn.adb('shell', 'getprop', 'ro.product.model')
-            model = model.strip()
-
-            return (vendor, model)
-
-        except sp.CalledProcessError:
+        vendor = cls.get_property(conn, 'ro.product.manufacturer')
+        if not vendor:
             return None
+        vendor = vendor.strip()
+
+        model = cls.get_property(conn, 'ro.product.model')
+        if not model:
+            return None
+        model = model.strip()
+
+        return (vendor, model)
 
     @staticmethod
     def is_package_debuggable(conn: ADBConnect, package: str) -> bool:
@@ -187,14 +185,14 @@ class AndroidUtils:
         try:
             package = shlex.quote(package)
             command = f'if run-as {package} true ; then echo {package} ; fi'
-            log = conn.adb('shell', command)
+            log = conn.adb_run(command)
             return log.strip() == package
 
         except sp.CalledProcessError:
             return False
 
-    @staticmethod
-    def is_package_32bit(conn: ADBConnect, package: str) -> bool:
+    @classmethod
+    def is_package_32bit(cls, conn: ADBConnect, package: str) -> bool:
         '''
         Test if a package prefers 32-bit ABI on the target device.
 
@@ -211,7 +209,7 @@ class AndroidUtils:
             # Try to match the primary ABI loaded by the application
             package = shlex.quote(package)
             command = f'pm dump {package} | grep primaryCpuAbi'
-            log = conn.adb('shell', command)
+            log = conn.adb_run(command)
             pattern = re.compile('primaryCpuAbi=(\\S+)')
             match = pattern.search(log)
 
@@ -220,9 +218,10 @@ class AndroidUtils:
                 if log_abi != 'null':
                     preferred_abi = log_abi
 
-            # If that fails match against the default device ABI
+            # If that fails match against the default system ABI
             if preferred_abi is None:
-                preferred_abi = conn.adb('shell', 'getprop ro.product.cpu.abi')
+                sys_abi = cls.get_property(conn, 'getprop ro.product.cpu.abi')
+                preferred_abi = sys_abi
 
             return preferred_abi in ('armeabi-v7a', 'armeabi')
 
@@ -250,7 +249,7 @@ class AndroidUtils:
         try:
             package = shlex.quote(conn.package)
             command = f'dumpsys package {package} | grep dataDir'
-            log = conn.adb('shell', command)
+            log = conn.adb_run(command)
             return log.replace('dataDir=', '').strip()
 
         except sp.CalledProcessError:
@@ -270,7 +269,7 @@ class AndroidUtils:
             True on success, False otherwise.
         '''
         try:
-            conn.adb('shell', 'setprop', prop, value)
+            conn.adb_run('setprop', prop, value)
             return True
 
         except sp.CalledProcessError:
@@ -290,7 +289,7 @@ class AndroidUtils:
             deleted settings that do not exist will also return None.
         '''
         try:
-            value = conn.adb('shell', 'getprop', prop)
+            value = conn.adb_run('getprop', prop)
             return value.strip()
 
         except sp.CalledProcessError:
@@ -309,7 +308,7 @@ class AndroidUtils:
             True on success, False otherwise.
         '''
         try:
-            conn.adb('shell', 'setprop', prop, '""')
+            conn.adb_run('setprop', prop, '""')
             return True
 
         except sp.CalledProcessError:
@@ -329,7 +328,7 @@ class AndroidUtils:
             True on success, False otherwise.
         '''
         try:
-            conn.adb('shell', 'settings', 'put', 'global', setting, value)
+            conn.adb_run('settings', 'put', 'global', setting, value)
             return True
 
         except sp.CalledProcessError:
@@ -348,7 +347,7 @@ class AndroidUtils:
             The value of the setting on success, None otherwise.
         '''
         try:
-            value = conn.adb('shell', 'settings', 'get', 'global', setting)
+            value = conn.adb_run('settings', 'get', 'global', setting)
             value = value.strip()
 
             if value == 'null':
@@ -372,7 +371,7 @@ class AndroidUtils:
             True on success, False otherwise.
         '''
         try:
-            conn.adb('shell', 'settings', 'delete', 'global', setting)
+            conn.adb_run('settings', 'delete', 'global', setting)
             return True
 
         except sp.CalledProcessError:

@@ -22,24 +22,13 @@
 # -----------------------------------------------------------------------------
 
 printf "= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = \n"
-printf "Running pycodestyle\n"
+printf "Running tests without devices\n"
 printf "= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = \n"
 printf "\n"
-python3 -m pycodestyle ./generator ./lglpy *.py
-if [ $? -eq 0 ]; then
-    echo "Success: no issues found"
-fi
+python3 -m lglpy.ui.test
 
-printf "\n"
 printf "= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = \n"
-printf "Running mypy\n"
-printf "= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = \n"
-printf "\n"
-python3 -m mypy ./generator ./lglpy *.py
-
-printf "\n"
-printf "= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = \n"
-printf "Running pylint\n"
+printf "Running tests with devices\n"
 printf "= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = \n"
 printf "\n"
-python3 -m pylint ./generator ./lglpy *.py
+python3 -m lglpy.android.test

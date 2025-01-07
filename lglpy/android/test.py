@@ -40,7 +40,8 @@ from .adb import ADBConnect
 from .utils import AndroidUtils
 from .filesystem import AndroidFilesystem
 
-SLOW_TESTS = False  # Set to True to enable slot tests, False to skip them
+
+SLOW_TESTS = True  # Set to True to enable slow tests, False to skip them
 
 
 def get_script_relative_path(file_name: str) -> str:
@@ -562,6 +563,46 @@ class AndroidTestDeviceFilesystem(unittest.TestCase):
 
         # Cleanup the file
         success = AndroidFilesystem.delete_file_from_package(conn, test_file)
+        self.assertTrue(success)
+
+    def test_util_rename_in_package(self):
+        '''
+        Test filesystem rename in package data directory.
+        '''
+        conn = ADBConnect()
+
+        # Fetch some packages that we can use
+        packages = AndroidUtils.get_packages(conn, True, False)
+        self.assertGreater(len(packages), 0)
+        conn.set_package(packages[0])
+
+        test_file = 'test_data.txt'
+        test_path = get_script_relative_path(test_file)
+
+        # Push the file
+        success = AndroidFilesystem.push_file_to_package(conn, test_path)
+        self.assertTrue(success)
+
+        # Validate it pushed OK
+        data = conn.adb_runas('ls', test_file)
+        self.assertEqual(data.strip(), test_file)
+
+        # Rename the file
+        new_test_file = 'test_data_2.txt'
+        success = AndroidFilesystem.rename_file_in_package(
+            conn, test_file, new_test_file)
+        self.assertTrue(success)
+
+        # Validate it was moved - this should fail
+        with self.assertRaises(sp.CalledProcessError):
+            data = conn.adb_runas('ls', test_file)
+
+        data = conn.adb_runas('ls', new_test_file)
+        self.assertEqual(data.strip(), new_test_file)
+
+        # Cleanup tmp - this should fail because the file does not exist
+        success = AndroidFilesystem.delete_file_from_package(
+            conn, new_test_file)
         self.assertTrue(success)
 
     def test_util_copy_from_package(self):

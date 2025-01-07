@@ -38,6 +38,17 @@ class ADBConnect:
     A wrapper around adb which can be used to connect to a specific device,
     and run commands as a specific package.
 
+      - adb() runs a command using adb and waits for the result.
+      - adb_async() runs a command using  adb and does not wait for the result.
+      - adb_run() runs a device shell command as the "shell" user and waits for
+        the result.
+      - adb_runas() runs a device shell command as the current package user and
+        waits for the result.
+
+    The current device and package are attributes of the connection instance
+    which can be set at construction, or via the set_device() and set_package()
+    methods.
+
     Attributes:
         device: The name of the connected device, or None for generic use.
         package: The name of the debuggable package, or None for generic use.
@@ -159,9 +170,7 @@ class ADBConnect:
 
         # Invoke the command
         rep = sp.run(packed_commands, check=check, shell=shell, text=text,
-                     stdin=sp.DEVNULL,
-                     stdout=sp.PIPE,
-                     stderr=sp.PIPE)
+                     stdin=sp.DEVNULL, stdout=sp.PIPE, stderr=sp.PIPE)
 
         # Return the output
         return rep.stdout
@@ -207,9 +216,7 @@ class ADBConnect:
         # pylint: disable=consider-using-with
         process = sp.Popen(packed_commands,
                            text=text, shell=shell,
-                           stdin=sp.DEVNULL,
-                           stdout=output,
-                           stderr=sp.DEVNULL)
+                           stdin=sp.DEVNULL, stdout=output, stderr=sp.DEVNULL)
 
         # Return the output process a user can use to wait, if needed.
         return process
@@ -244,10 +251,9 @@ class ADBConnect:
         packed_commands = self.pack_commands(commands, shell, quote)
 
         # Invoke the command
-        rep = sp.run(packed_commands, check=check, shell=shell, text=text,
-                     stdin=sp.DEVNULL,
-                     stdout=sp.PIPE,
-                     stderr=sp.PIPE)
+        rep = sp.run(packed_commands,
+                     check=check, shell=shell, text=text,
+                     stdin=sp.DEVNULL, stdout=sp.PIPE, stderr=sp.PIPE)
 
         # Return the output
         return rep.stdout
@@ -285,10 +291,9 @@ class ADBConnect:
         packed_commands = self.pack_commands(commands, shell, quote)
 
         # Invoke the command
-        rep = sp.run(packed_commands, check=check, shell=shell, text=text,
-                     stdin=sp.DEVNULL,
-                     stdout=sp.PIPE,
-                     stderr=sp.PIPE)
+        rep = sp.run(packed_commands,
+                     check=check, shell=shell, text=text,
+                     stdin=sp.DEVNULL, stdout=sp.PIPE, stderr=sp.PIPE)
 
         # Return the output
         return rep.stdout

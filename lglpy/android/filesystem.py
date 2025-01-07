@@ -22,8 +22,8 @@
 # -----------------------------------------------------------------------------
 
 '''
-This module implements higher level Android queries and utilities, built on top
-of the low level Android Debug Bridge wrapper.
+This module implements higher level Android filesystem utilities, built on top
+of the low level ADBConnect wrapper around Android Debug Bridge.
 '''
 
 import os
@@ -36,6 +36,11 @@ from .adb import ADBConnect
 class AndroidFilesystem:
     '''
     A library of utility methods for transferring files to/from a device.
+
+    Attributes:
+        TEMP_DIR: The generally accessible device temp directory.
+        DATA_PERM: The file permissions to use for data files.
+        EXEC_PERM: The file permissions to use for executable files.
     '''
 
     TEMP_DIR = '/data/local/tmp'
@@ -49,12 +54,12 @@ class AndroidFilesystem:
         '''
         Push a file to the device temp directory.
 
-        File will be copied to: /data/local/tmp/<file>.
+        File will be copied to: TEMP_DIR/<file>.
 
         Args:
             conn: The adb connection.
             host_path: The path of the file on the host file system.
-            executable: True if the file should be configured as executable.
+            executable: True if the file should have executable permissions.
 
         Returns:
             True if the file was copied, False otherwise.
@@ -65,16 +70,17 @@ class AndroidFilesystem:
 
         try:
             # Remove old file to prevent false success
-            conn.adb('shell', 'rm', '-f', device_path)
+            conn.adb_run('rm', '-f', device_path)
 
             # Push new file
             conn.adb('push', host_path, device_path)
 
             # Check it actually copied
-            conn.adb('shell', 'ls', device_path)
+            conn.adb_run('ls', device_path)
 
             permission = cls.EXEC_PERM if executable else cls.DATA_PERM
-            conn.adb('shell', 'chmod', permission, device_path)
+            conn.adb_run('chmod', permission, device_path)
+
         except sp.CalledProcessError:
             return False
 
@@ -94,7 +100,7 @@ class AndroidFilesystem:
             file_name: The name of the file in the tmp directory.
             host_path: The destination directory on the host file system.
                Host directory will be created if it doesn't exist.
-            delete: Delete the file on the device after copying it.
+            delete: Should the file on the device be deleted after copying?
 
         Returns:
             True if the file was copied, False otherwise.
@@ -121,7 +127,7 @@ class AndroidFilesystem:
         '''
         Delete a file from the device temp directory.
 
-        File will be deleted from: /data/local/tmp/<file>.
+        File will be deleted from: TEMP_DIR/<file>.
 
         Args:
             conn: The adb connection.
@@ -135,9 +141,9 @@ class AndroidFilesystem:
 
         try:
             if error_ok:
-                conn.adb('shell', 'rm', '-f', device_path)
+                conn.adb_run('rm', '-f', device_path)
             else:
-                conn.adb('shell', 'rm', device_path)
+                conn.adb_run('rm', device_path)
         except sp.CalledProcessError:
             return False
 
@@ -155,7 +161,7 @@ class AndroidFilesystem:
         Args:
             conn: The adb connection.
             host_path: The path of the file on the host file system.
-            executable: True if the file should be configured as executable.
+            executable: True if the file should have executable permissions.
 
         Returns:
             True if the file was copied, False otherwise.
@@ -197,7 +203,7 @@ class AndroidFilesystem:
             src_file: The name of the file in the tmp directory.
             host_path: The destination directory on the host file system.
                Host directory will be created if it doesn't exist.
-            delete: Delete the file on the device after copying it.
+            delete: Should the file on the device be deleted after copying?
 
         Returns:
             True if the file was copied, False otherwise.
@@ -218,6 +224,7 @@ class AndroidFilesystem:
 
             if delete:
                 cls.delete_file_from_package(conn, src_file)
+
         except sp.SubprocessError:
             return False
 
@@ -227,13 +234,13 @@ class AndroidFilesystem:
     def rename_file_in_package(
             cls, conn: ADBConnect, file_name: str, new_file_name: str) -> bool:
         '''
-        Delete a file from the package directory.
+        Rename a file in the package directory.
 
-        File will be deleted from, e.g.: /data/user/0/<package>/<file>
+        File will be renamed to, e.g.: /data/user/0/<package>/<new_file>
 
         Args:
             conn: The adb connection.
-            file_name: The name of the file to rename.
+            file_name: The name of the existing file to rename.
             new_file_name: The new file name to use.
 
         Returns:

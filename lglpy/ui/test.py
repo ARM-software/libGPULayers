@@ -77,9 +77,9 @@ class ConsoleTestMenu(unittest.TestCase):
         self.assertEqual(selected_option, 1)
 
     @mock.patch('lglpy.ui.console.get_input', side_effect=['fox', '3'])
-    def test_menu_select_bad_formant(self, mock_get_input):
+    def test_menu_select_bad_formnt(self, mock_get_input):
         '''
-        Test the user entering an out-of-bounds value in the menu.
+        Test the user entering a non-integer value in the menu.
         '''
         options = self.make_options(3)
         selected_option = console.select_from_menu('Title', options)
