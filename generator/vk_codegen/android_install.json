@@ -1,0 +1,4 @@
+{
+    "layer_name": "{LGL_LAYER_NAME}",
+    "layer_binary": "lib{LAYER_NAME}.so"
+}

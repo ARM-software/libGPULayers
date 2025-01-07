@@ -1,0 +1,4 @@
+{
+    "layer_name": "VK_LAYER_KHRONOS_validation",
+    "layer_binary": "libVkLayer_khronos_validation.so"
+}

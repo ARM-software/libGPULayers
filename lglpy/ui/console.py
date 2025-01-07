@@ -56,8 +56,8 @@ def select_from_menu(title: str, options: list[str]) -> Optional[int]:
     assert len(options) > 0, 'No menu options provided'
 
     if len(options) == 1:
-        print(f'\nSelect a {title}')
-        print(f'    Auto-selected {options[0]}')
+        print(f'Select a {title}')
+        print(f'    Auto-selected {options[0]}\n')
         return 0
 
     selection = None
@@ -85,4 +85,5 @@ def select_from_menu(title: str, options: list[str]) -> Optional[int]:
         except ValueError:
             print(f'\n    Please enter a value between 0 and {len(options)}')
 
+    print('\n')
     return selection

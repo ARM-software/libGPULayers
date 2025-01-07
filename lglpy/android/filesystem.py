@@ -224,6 +224,29 @@ class AndroidFilesystem:
         return True
 
     @classmethod
+    def rename_file_in_package(
+            cls, conn: ADBConnect, file_name: str, new_file_name: str) -> bool:
+        '''
+        Delete a file from the package directory.
+
+        File will be deleted from, e.g.: /data/user/0/<package>/<file>
+
+        Args:
+            conn: The adb connection.
+            file_name: The name of the file to rename.
+            new_file_name: The new file name to use.
+
+        Returns:
+            True if the file was renamed, False otherwise.
+        '''
+        try:
+            conn.adb_runas('mv', file_name, new_file_name)
+        except sp.CalledProcessError:
+            return False
+
+        return True
+
+    @classmethod
     def delete_file_from_package(
             cls, conn: ADBConnect, file_name: str,
             error_ok: bool = False) -> bool:
