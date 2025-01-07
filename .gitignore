@@ -11,10 +11,12 @@ build*
 # Data files and build outputs
 *.gputl
 *.log
+*.perfetto
 *.so
 
 # Build and debug output files
 /.cache
+/.mypy_cache
 /bin*
 /log*
 /x_*

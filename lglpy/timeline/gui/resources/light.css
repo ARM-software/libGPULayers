@@ -1,0 +1,231 @@
+/* Centralized settings. */
+mtv-core {
+	fill-color: #e5e5e5;
+	font-size: 11;
+}
+
+/* ------------------------------------------------------------------------- */
+/* Homescreen View */
+
+[mtv-core] homev-core {
+	font-color: #404040;
+	font-size: 13;
+}
+
+/* ------------------------------------------------------------------------- */
+/* Timeline View */
+[mtv-core] tlv-core {}
+
+/* Timeline View: Widget and Overlay Settings. */
+[tlv-core] tlv-tlw-core {
+	fill-color: none;
+	line-color: #404040;
+}
+
+[tlv-core] tlv-tlw-labels {
+	font-color: #404040;
+}
+
+[tlv-tlw-core] tlv-tlw-activitybar {
+	fill-color: #d0d0d0;
+	line-color: #505050;
+}
+
+[tlv-tlw-core] tlv-tlw-bookmarkbar {
+	fill-color: #d0d0d0;
+	line-color: #505050;
+}
+
+[tlv-tlw-bookmarkbar] tlv-tlw-bookmark {
+	fill-color: #ff7728;
+	line-color: #505050;
+}
+
+[tlv-tlw-core] tlv-tlw-activeregion {
+	fill-color: #ffffff80;
+	line-color: none;
+}
+
+[tlv-tlw-core] tlv-tlw-limitclamp {
+	fill-color: #ff7728;
+	line-color: #404040;
+}
+
+[tlv-tlw-core] tlv-tlw-dragbox {
+	fill-color: none;
+	line-dash: 2,4;
+	line-width: 1.0;
+	line-color: #202020;
+}
+
+[tlv-tlw-core] tlv-tlw-legend {
+	fill-color: #e5e5e5;
+	line-width: 1.0;
+	line-color: #606060;
+	font-color: #404040;
+}
+
+[tlv-core] tlv-info {
+	font-color: #404040;
+}
+
+[tlv-core] tlv-x {}
+
+[tlv-x] tlv-x.normal {
+	font-color: #202020;
+}
+
+[tlv-x] tlv-x.fade {
+	font-color: #989898;
+}
+
+/* Timeline View: Frame Markers */
+[tlv-x.normal] tlv-xframe.normal  {
+	line-color: #7f19cc;
+	font-color: #7f19cc;
+	line-dash: 2,4;
+}
+
+/* Timeline View: Stall Objects */
+[tlv-x.normal] tlv-xstall.normal  {
+	fill-color: #a52626;
+}
+
+[tlv-x.fade] tlv-xstall.fade  {
+	fill-color: #d8d8d8;
+	line-color: none;
+}
+
+/* Timeline View: Software Objects */
+[tlv-x.normal] tlv-xsw.normal {
+	fill-color: #0e6880;
+}
+
+[tlv-x.fade] tlv-xsw.fade  {
+	fill-color: #e0e0e0;
+	line-color: none;
+}
+
+/* Timeline View: Window Objects */
+[tlv-x.normal] tlv-xwin0.normal {
+	fill-color: #d46308;
+	line-color: #d46308;
+}
+
+[tlv-x.normal] tlv-xwin1.normal {
+	fill-color: #e5771d;
+	line-color: #e5771d;
+}
+
+[tlv-x.normal] tlv-xwin2.normal {
+	fill-color: #f68933;
+	line-color: #f68933;
+}
+
+[tlv-x.fade] tlv-xwin0.fade, tlv-xwin1.fade, tlv-xwin2.fade {
+	fill-color: #e0e0e0;
+	line-color: none;
+}
+
+/* Timeline View: External FBO Objects */
+[tlv-x.normal] tlv-xfbo0.normal {
+	fill-color: #b50e39;
+	line-color: #b50e39;
+}
+
+[tlv-x.normal] tlv-xfbo1.normal {
+	fill-color: #d81244;
+	line-color: #d81244;
+}
+
+[tlv-x.normal] tlv-xfbo2.normal {
+	fill-color: #fc164f;
+	line-color: #fc164f;
+}
+
+[tlv-x.fade] tlv-xfbo0.fade, tlv-xfbo1.fade, tlv-xfbo2.fade {
+	fill-color: #dcdcdc;
+	line-color: none;
+}
+
+/* Timeline View: Internal FBO Objects */
+[tlv-x.normal] tlv-xifbo0.normal {
+	fill-color: #138969;
+	line-color: #138969;
+}
+
+[tlv-x.normal] tlv-xifbo1.normal {
+	fill-color: #1a9b79;
+	line-color: #1a9b79;
+}
+
+[tlv-x.normal] tlv-xifbo2.normal {
+	fill-color: #22ae86;
+	line-color: #22ae86;
+}
+
+[tlv-x.fade] tlv-xifbo0.fade, tlv-xifbo1.fade, tlv-xifbo2.fade {
+	fill-color: #dcdcdc;
+	line-color: none;
+}
+
+/* Timeline View: Mipmap Generation Objects */
+[tlv-x.normal] tlv-xmip0.normal {
+	fill-color: #60166a;
+	line-color: #60166a;
+}
+
+[tlv-x.normal] tlv-xmip1.normal {
+	fill-color: #751e7a;
+	line-color: #751e7a;
+}
+
+[tlv-x.normal] tlv-xmip2.normal {
+	fill-color: #892c89;
+	line-color: #892c89;
+}
+
+[tlv-x.fade] tlv-xmip0.fade, tlv-xmip1.fade, tlv-xmip2.fade {
+	fill-color: #d0d0d0;
+	line-color: none;
+}
+
+/* Timeline View: Mipmap Generation Objects */
+[tlv-x.normal] tlv-xorphan.normal {
+	fill-color: #2626a5;
+	line-color: #2626a5;
+}
+
+[tlv-x.fade] tlv-xorphan.fade {
+	fill-color: #e8e8e8;
+	line-color: none;
+}
+
+/* Timeline View: Dependency Objects */
+[tlv-x.normal] tlv-xdep.normal {
+	line-color: #555555;
+	line-dash: 2,2;
+}
+
+[tlv-x.fade] tlv-xdep.fade {
+	line-color: #b8b8b8;
+	line-dash: 2,2;
+}
+
+/* Timeline View: Warning Objects */
+[tlv-x.normal] tlv-xwarning.normal {
+	fill-color: #cccc00;
+}
+
+[tlv-x.fade] tlv-xwarning.fade {
+	fill-color: none;
+}
+
+/* Timeline View: Error Objects */
+[tlv-x.normal] tlv-xerror.normal {
+	fill-color: #cc0000;
+}
+
+[tlv-x.fade] tlv-xerror.fade {
+	fill-color: none;
+}
