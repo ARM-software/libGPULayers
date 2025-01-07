@@ -421,7 +421,7 @@ class GPUTrace:
         for event in raw_trace.events:
             # Find the metadata record for this event if we have one
             event_meta = None
-            if event.user_label in raw_trace.metadata:
+            if raw_trace.metadata and event.user_label in raw_trace.metadata:
                 event_meta = raw_trace.metadata[event.user_label]
 
             # Generic event
