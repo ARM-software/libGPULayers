@@ -275,7 +275,7 @@ def get_package_name(
 
 def get_layer_metadata(
         layer_dirs: list[str],
-        need_32bit: bool, need_symbols: bool) -> list[LayerMeta]:
+        need_32bit: bool, need_symbols: bool) -> Optional[list[LayerMeta]]:
     '''
     Get the layer metadata for all of the selected layers.
 
@@ -387,20 +387,17 @@ def enable_layers(conn: ADBConnect, layers: list[LayerMeta]) -> bool:
     return s1 and s2 and s3
 
 
-def disable_layers(conn: ADBConnect, layers: list[LayerMeta]) -> bool:
+def disable_layers(conn: ADBConnect) -> bool:
     '''
-    Enable the selected layer drivers on the target device.
+    Disable all layer drivers on the target device.
 
     Args:
         conn: The adb connection.
-        layers: The loaded layer metadata configurations.
 
     Returns:
         True on success, False otherwise.
     '''
-    assert conn.package, 'Enabling layers requires conn.package to be set'
-
-    layer_names = ':'.join([x.name for x in layers])
+    assert conn.package, 'Disabling layers requires conn.package to be set'
 
     s1 = AndroidUtils.clear_setting(conn, 'enable_gpu_debug_layers')
     s2 = AndroidUtils.clear_setting(conn, 'gpu_debug_app')
@@ -456,8 +453,8 @@ def main() -> int:
 
     # Test the device supports Vulkan layers
     sdk_version = AndroidUtils.get_os_sdk_version(conn)
-    if sdk_version < ANDROID_MIN_VULKAN_SDK:
-        print(f'ERROR: Device must support Android 9.0 or newer')
+    if not sdk_version or sdk_version < ANDROID_MIN_VULKAN_SDK:
+        print('ERROR: Device must support Android 9.0 or newer')
         return 2
 
     # Select a package to instrument
@@ -476,12 +473,12 @@ def main() -> int:
     # Install files
     for layer in layers:
         if not install_layer_binary(conn, layer):
-            print(f'ERROR: Layer install on device failed')
+            print('ERROR: Layer install on device failed')
             return 5
 
     # Enable layers
     if not enable_layers(conn, layers):
-        print(f'ERROR: Layer enable on device failed')
+        print('ERROR: Layer enable on device failed')
         return 6
 
     print('Layers are installed and ready for use:')
@@ -492,14 +489,14 @@ def main() -> int:
     input('Press any key to uninstall all layers')
 
     # Disable layers
-    if not disable_layers(conn, layers):
-        print(f'ERROR: Layer disable on device failed')
+    if not disable_layers(conn):
+        print('ERROR: Layer disable on device failed')
         return 7
 
     # Remove files
     for layer in layers:
         if not uninstall_layer_binary(conn, layer):
-            print(f'ERROR: Layer uninstall from device failed')
+            print('ERROR: Layer uninstall from device failed')
             return 8
 
     return 0
