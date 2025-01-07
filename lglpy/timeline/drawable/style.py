@@ -76,7 +76,7 @@ class Style:
         'fill_color', 'line_color', 'line_width', 'line_dash'
     )
 
-    def __init__(self, variant=None):
+    def __init__(self, variant: str = None):
         '''
         Create a new style instance, assigning defaults if needed.
 

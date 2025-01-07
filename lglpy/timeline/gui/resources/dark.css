@@ -58,13 +58,6 @@ mtv-core {
 	line-color: #ffffff;
 }
 
-[tlv-tlw-core] tlv-tlw-legend {
-	fill-color: #262626;
-	line-width: 1.0;
-	line-color: #606060;
-	font-color: #808080;
-}
-
 [tlv-core] tlv-info {
 	font-color: #b0b0b0;
 }

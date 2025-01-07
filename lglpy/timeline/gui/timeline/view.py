@@ -320,7 +320,6 @@ class TimelineView(View):
         self.timeline_styles = TLStyles(self.css, self.timeline_colors)
 
         self.menu_visibility_spec = (
-            [1, 'Show legend', False, self.on_visibility_other, 'legend'],
             [1, 'Show labels', True, self.on_visibility_other, 'labels'],
             [1, 'Show info panel', True, self.on_visibility_other, 'info']
         )
@@ -387,8 +386,6 @@ class TimelineView(View):
         # Resize to force repartioning of space if panel changed ...
         if (item[4] == 'labels') and self.timeline_widget:
             self.timeline_widget.set_label_visibility(state)
-        if (item[4] == 'legend') and self.timeline_widget:
-            self.timeline_widget.set_legend_visibility(state)
         if item[4] == 'info':
             self.resize()
         self.parent.queue_draw()
@@ -455,11 +452,6 @@ class TimelineView(View):
         self.timeline_widget = TimelineWidget(self.parent, trace, self.css)
         labels = self.config_visibility['other']['labels']
         self.timeline_widget.set_label_visibility(labels)
-
-        legend_style = self.timeline_styles.get_style('Fragment', 0, 'window')
-        self.timeline_widget.add_legend_entry('EGL Window', legend_style)
-        legend_style = self.timeline_styles.get_style('Fragment', 0, 'fbo')
-        self.timeline_widget.add_legend_entry('Offscreen FBO', legend_style)
 
         style = Style.css_factory(self.css['tlv-info'])
         self.info_widget = TimelineInfoWidget(self.timeline_widget, style)

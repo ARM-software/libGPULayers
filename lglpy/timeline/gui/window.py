@@ -28,6 +28,7 @@ import os
 import sys
 import time
 import traceback
+from typing import Optional, Union
 
 import gi
 gi.require_version('Gtk', '3.0')
@@ -56,7 +57,7 @@ class Window:
     which are each designed to provide a specific interpretation of the data.
     '''
 
-    DEFAULT_APP_TITLE = 'Arm GPU Timeline Viewer'
+    APP_TITLE = 'Arm GPU Timeline Viewer'
     DEFAULT_VIEW = 'Homescreen'
 
     RAW_MOUSE_EVENT = None
@@ -65,9 +66,6 @@ class Window:
     def get_raw_mouse_event(cls):
         '''
         Get the raw mouse event.
-
-        TODO: This is a nasty hack relying on Python being single threaded, and
-        this class being a singleton.
         '''
         return cls.RAW_MOUSE_EVENT
 
@@ -75,17 +73,12 @@ class Window:
     def set_raw_mouse_event(cls, event):
         '''
         Set the raw mouse event.
-
-        TODO: This is a nasty hack relying on Python being single threaded, and
-        this class being a singleton.
         '''
         cls.RAW_MOUSE_EVENT = event
 
     def queue_draw(self):
         '''
         Force a global redraw.
-
-        TODO: Move, not a global.
         '''
         self.canvas.queue_draw()
 
@@ -103,7 +96,7 @@ class Window:
 
         # Open a window ...
         self.window = Gtk.Window()
-        self.window.set_title(self.DEFAULT_APP_TITLE)
+        self.window.set_title(self.APP_TITLE)
         self.window.connect('destroy', Gtk.main_quit)
         self.window.set_size_request(1024, 500)
         self.window.set_default_size(1600, 500)
@@ -236,45 +229,52 @@ class Window:
         self.window.present()
         Gtk.main()
 
-    def on_menu_file_open(self, menu):
+    def on_menu_file_open(self, menu: str) -> None:
         '''
         Handle a File->Open selection event from the menu bar.
 
         Args:
-            menu: str
-                The menu name to load
+            menu: The menu name being triggered.
         '''
+        del menu
+
+        # Get the requested file name
         file_name = get_open_filechoice(
             self.window, 'Trace files', ('*.perfetto',))
 
+        # User cancelled, so no file name returned
         if None is file_name:
             self.status.log('Open cancelled (user)')
             return
 
+        # User selected the same file so do nothing
         if file_name == self.loaded_file_path:
             self.status.log('Open skipped (same file)')
             return
 
-        # Deactivate all the plugins
+        # File change required so reset state
         self.view.deactivate()
         for view in self.loaded_views.values():
             view.unload()
+
         self.view = None
         self.on_menu_view(self.DEFAULT_VIEW)
 
         self.loaded_file_path = None
         self.trace_data = None
 
+        # Load the new file
         self.load_file(file_name)
 
-    def on_menu_file_close(self, menu):
+    def on_menu_file_close(self, menu: str) -> None:
         '''
         Handle a File->Close selection event from the menu bar.
 
         Args:
-            menu: str
-                The menu name to load
+            menu: The menu name being triggered.
         '''
+        del menu
+
         # Deactivate all the plugins
         self.view.deactivate()
         for view in self.loaded_views.values():
@@ -293,27 +293,22 @@ class Window:
 
         self.status.log('File closed')
 
-    def on_menu_file_exit(self, menu):
+    def on_menu_file_exit(self, menu: str) -> None:
         '''
         Handle a File->Exit selection event from the menu bar.
 
         Args:
-            menu: str
-                The menu name to load
+            menu: The menu name being triggered.
         '''
-        '''
-        if self.fileLoaded:
-            self.on_MenuFileClose(menu)
-        '''
+        del menu
         Gtk.main_quit()
 
-    def on_menu_view(self, menu):
+    def on_menu_view(self, menu: str) -> None:
         '''
         Handle a View selection event from the menu bar.
 
         Args:
-            menu: str
-                The menu name to load
+            menu: The menu name being triggered.
         '''
         # Don't do anything if the old view is the new view ...
         if self.view == self.loaded_views[menu]:
@@ -423,19 +418,18 @@ class Window:
             self.menubar.remove(menu)
 
     @staticmethod
-    def decode_key_modifiers(event):
+    def decode_key_modifiers(event: Union[Gdk.EventKey, Gdk.EventButton]):
         '''
         Utility method to decode keyboard modifier keys (shift, control, alt)
         for the current event.
 
         Args:
-            event: Gtk.Event
-                The action event from GTK
+            event: The action event from GTK.
 
         Returns:
-            Returns a string containing the characters 'a', 'c', and/or 's'
-            if the relevant modifier is present. Modifier characters are
-            always present in the string in alphabetical order.
+            A string containing the characters 'a', 'c', and/or 's' if the
+            modifier is present. Modifier characters are always in
+            alphabetical order.
         '''
         # Linux doesn't have a default mapping for Right Alt / AltGR
         mask_alt2 = 0
@@ -456,18 +450,18 @@ class Window:
         return ''.join(mod)
 
     @classmethod
-    def decode_mouse_event(cls, event):
+    def decode_mouse_event(
+            cls, event: Gdk.EventButton) -> tuple[int, int, Optional[str], str]:
         '''
         Utility method to decode a mouse event into parameters.
 
         Args:
-            event: Gtk.Event
-                The action event from GTK
+            event: The action event from GTK.
 
         Returns:
-            Returns a four element tuple containing the following elements:
+            A four element tuple containing the following elements:
 
-              ( x-coord, y-coord, button, key-modifier)
+              (x-coord, y-coord, button, key-modifier)
 
             The button is one of 'left', 'right', or 'middle' (or None if
             the button is not supported). The key modifier is an 'acs' string
@@ -491,7 +485,7 @@ class Window:
 
         return (event.x, event.y, click_button, key_modifier)
 
-    def on_key_press(self, _unused, event):
+    def on_key_press(self, _unused, event: Gdk.EventKey):
         '''
         Handle a key press event on the top level window.
 
@@ -501,7 +495,7 @@ class Window:
         Args:
             _unused : N/A
                 Unused; only provided for API compatibility for GTK callback
-            event: Gtk.Event
+            event: Gdk.Event
                 The action event from GTK
         '''
         key_name = Gdk.keyval_name(event.keyval)
@@ -528,7 +522,7 @@ class Window:
 
         return True
 
-    def on_mouse_press(self, _unused, event):
+    def on_mouse_press(self, _unused, event: Gdk.EventButton) -> bool:
         '''
         Handle a mouse button press event on the top level window.
 
@@ -536,10 +530,10 @@ class Window:
         currently active `View` plugin for processing.
 
         Args:
-            _unused : N/A
-                Unused; only provided for API compatibility for GTK callback
-            event: Gtk.Event
-                The action event from GTK
+            event: The action event from GTK
+
+        Returns:
+            True if we handled the event, False otherwise.
         '''
         self.set_raw_mouse_event(event)
 
@@ -571,7 +565,7 @@ class Window:
 
         return True
 
-    def on_mouse_release(self, _unused, event):
+    def on_mouse_release(self, _unused, event: Gdk.EventButton) -> bool:
         '''
         Handle a mouse button release event on the top level window.
 
@@ -579,10 +573,10 @@ class Window:
         currently active `View` plugin for processing.
 
         Args:
-            _unused : N/A
-                Unused; only provided for API compatibility for GTK callback
-            event: Gtk.Event
-                The action event from GTK
+            event: The action event from GTK
+
+        Returns:
+            True if we handled the event, False otherwise.
         '''
         self.set_raw_mouse_event(event)
 
@@ -609,7 +603,7 @@ class Window:
 
         return True
 
-    def on_mouse_move(self, _unused, event):
+    def on_mouse_move(self, _unused, event: Gdk.EventMotion) -> bool:
         '''
         Handle a mouse move event on the top level window.
 
@@ -623,10 +617,10 @@ class Window:
         make it to the plugin.
 
         Args:
-            _unused : N/A
-                Unused; only provided for API compatibility for GTK callback
-            event: Gtk.Event
-                The action event from GTK
+            event: The action event from GTK
+
+        Returns:
+            True if we handled the event, False otherwise.
         '''
         self.set_raw_mouse_event(event)
 
@@ -655,7 +649,7 @@ class Window:
         # Consume the event
         return True
 
-    def on_mouse_scroll(self, _unused, event):
+    def on_mouse_scroll(self, _unused, event: Gdk.EventScroll) -> bool:
         '''
         Handle a mouse wheel scroll event on the top level window.
 
@@ -663,10 +657,10 @@ class Window:
         hardware is supported.
 
         Args:
-            _unused : N/A
-                Unused; only provided for API compatibility for GTK callback
-            event: Gtk.Event
-                The action event from GTK
+            event: The action event from GTK
+
+        Returns:
+            True if we handled the event, False otherwise.
         '''
         self.set_raw_mouse_event(event)
 
@@ -684,29 +678,27 @@ class Window:
 
         return True
 
-    def on_window_size(self, _unused, allocation):
+    def on_window_size(self, _unused, allocation: Gdk.Rectangle) -> None:
         '''
         Handle the initial window allocation size.
+
+        Args:
+            allocation: The new window size.
         '''
         self.width = allocation.width
         self.height = allocation.height
 
-    def on_window_resize(self, window):
+    def on_window_resize(self, _unused) -> None:
         '''
         Handle a window resize event.
-
-        Args:
-            _unused : N/A
-                Unused; only provided for API compatibility for GTK callback
         '''
         self.view.resize()
         self.canvas.queue_draw()
 
-    def on_window_draw(self, _unused, _unused2):
+    def on_window_draw(self, _unused, _unused2) -> None:
         '''
         Handle a window redraw event.
         '''
-        # TODO: Possible to minimize redraw size with GTK3?
         redraw_pos = (0, 0)
         redraw_dim = (self.width, self.height)
         self.view.draw_view(redraw_pos, redraw_dim)

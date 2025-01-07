@@ -153,29 +153,11 @@ class TimelineWidgetBase:
         name = f'{prefix}limitclamp'
         self.clamp_style = Style.css_factory(css[name])
 
-        # Legend configuration
-        self.show_legend = False
-        self.legend_entries = []
-
-        name = f'{prefix}legend'
-        self.legend_style = Style.css_factory(css[name])
-
         # Bookmarks
         self.bookmarks = {}
 
         name = f'{prefix}bookmark'
         self.bookmark_style = Style.css_factory(css[name])
-
-    def add_legend_entry(self, name, style):
-        '''
-        Add a legend entry.
-
-        Args:
-            name: name of the legend entry.
-            style: visual style for rendering.
-        '''
-        label = CanvasDrawableLabel(self.legend_style, name)
-        self.legend_entries.append((label, style))
 
     def update_cs(self, cs_pos, cs_dim):
         '''
@@ -352,27 +334,15 @@ class TimelineWidgetBase:
         '''
         self.show_labels = labels
 
-    def set_legend_visibility(self, legend):
-        '''
-        Toggle whether this widget shows the legend or not.
-
-        Args:
-            legend: True if legend should be  drawn.
-        '''
-        self.show_legend = legend
-
-    def on_mouse_scroll(self, scroll, x, y):
+    def on_mouse_scroll(self, scroll: str, x: int, y: int):
         '''
         Handle a mouse scroll event.
 
         Args:
-            scroll: str
-                String indicating direction of the scroll. Must be "up" or
+            scroll: String indicating direction of the scroll. Must be "up" or
                 "down"; side scrolling mice are not supported!
-            x: int
-                X coordinate of the mouse pointer in canvas-space.
-            y: int
-                Y coordinate of the mouse pointer in canvas-space.
+            x: X coordinate of the mouse pointer in canvas-space.
+            y: Y coordinate of the mouse pointer in canvas-space.
 
         Returns:
             Returns True if this function triggered some behavior which needs
@@ -935,49 +905,6 @@ class TimelineWidgetBase:
             active = CanvasDrawableRect((min_x, min_y), (w, h), style)
             active.draw(gc)
 
-    def draw_legend(self, gc):
-        '''
-        Render the legend.
-
-        Args:
-            gc: Cairo graphics context.
-        '''
-        if (not self.legend_entries) or (not self.show_legend):
-            return
-
-        borderpad = 10
-        textpad = 5
-        entrypad = 20
-        cell = 10
-        max_x = self.vp.cs.max_x - 10
-
-        width = borderpad
-        for label, _ in self.legend_entries:
-            width += label.get_label_extents(gc)[0]
-            width += textpad + cell + entrypad
-        width -= entrypad
-        width += borderpad
-
-        # Draw legend border
-        style = self.legend_style
-        min_x = max_x - width + 0.5
-        min_y = borderpad + 0.5
-        height = borderpad + cell + borderpad
-        legend = CanvasDrawableRect((min_x, min_y), (width, height), style)
-        legend.draw(gc)
-
-        # Draw entries
-        min_x += borderpad
-        min_y += borderpad
-        label_y = min_y + cell - 2
-        for label, style in self.legend_entries:
-            legend = CanvasDrawableRect((min_x, min_y), (cell, cell), style)
-            legend.draw(gc)
-            min_x += cell + textpad
-            label.draw(gc, min_x, label_y)
-            min_x += label.get_label_extents(gc)[0]
-            min_x += entrypad
-
     def draw(self, gc, ch_filter=None, ws_range=None):
         '''
         Draw this widget.
@@ -1021,4 +948,3 @@ class TimelineWidgetBase:
         self.drawable_trace.draw(gc, vp, ch_filter, ws_range, self.show_labels)
 
         self.draw_active_drag(gc)
-        self.draw_legend(gc)
