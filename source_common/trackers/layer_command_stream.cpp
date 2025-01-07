@@ -272,7 +272,7 @@ std::string LCSImageTransfer::getMetadata(
         { "type", "imagetransfer" },
         { "tid", tagID },
         { "subtype", transferType },
-        { "pixels", pixelCount }
+        { "pixelCount", pixelCount }
     };
 
     if (debugLabel && debugLabel->size())
@@ -307,7 +307,7 @@ std::string LCSBufferTransfer::getMetadata(
         { "type", "buffertransfer" },
         { "tid", tagID },
         { "subtype", transferType },
-        { "bytes", byteCount }
+        { "byteCount", byteCount }
     };
 
     if (debugLabel && debugLabel->size())

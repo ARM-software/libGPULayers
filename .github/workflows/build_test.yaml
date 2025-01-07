@@ -29,9 +29,9 @@ jobs:
 
       - name: Check code style
         run: |
-          python3 -m pycodestyle ./*.py
-          python3 -m pycodestyle ./lglpy
-          python3 -m pycodestyle ./generator
+          python3 -m pycodestyle --config .pycodestyle.ini ./*.py
+          python3 -m pycodestyle --config .pycodestyle.ini ./lglpy
+          python3 -m pycodestyle --config .pycodestyle.ini ./generator
 
       - name: Check typing
         run: |

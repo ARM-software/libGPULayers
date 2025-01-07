@@ -25,7 +25,7 @@ printf "= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = \n"
 printf "Running pycodestyle\n"
 printf "= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = \n"
 printf "\n"
-python3 -m pycodestyle ./generator ./lglpy *.py
+python3 -m pycodestyle --config .pycodestyle.ini ./lglpy *.py
 if [ $? -eq 0 ]; then
     echo "Success: no issues found"
 fi
