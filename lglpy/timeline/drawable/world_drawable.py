@@ -63,8 +63,7 @@ class WorldDrawableRect(WorldDrawable):
     may be skipped by setting its color to `None` in the style.
     '''
 
-    __slots__ = ("label", "label_short",)
-
+    __slots__ = ('label', 'label_short')
 
     def __init__(self, pos, dim, style, label, label_short):
         '''

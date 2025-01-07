@@ -176,7 +176,8 @@ class DrawableTrace:
         Returns:
             The drawable object if clicked, or None if no intersection.
         '''
-        ch_filter = lambda x: x.interactable and x.visible
+        def ch_filter(x):
+            return x.interactable and x.visible
 
         for channel in self.each_channel(ch_filter=ch_filter):
             clicked_object = channel.get_clicked_object(ws_x, ws_y)
@@ -211,10 +212,11 @@ class DrawableTrace:
             inside the box.
         '''
         if ch_filter:
-            ch_filter2 = lambda x: ch_filter(x) \
-                         and x.interactable and x.visible
+            def ch_filter2(x):
+                return ch_filter(x) and x.interactable and x.visible
         else:
-            ch_filter2 = lambda x: x.interactable and x.visible
+            def ch_filter2(x):
+                return x.interactable and x.visible
 
         objects = []
         for channel in self.each_channel(ch_filter=ch_filter2):
@@ -243,9 +245,11 @@ class DrawableTrace:
             labels: are channel name labels enabled?
         '''
         if ch_filter:
-            ch_filter2 = lambda x: ch_filter(x) and x.visible
+            def ch_filter2(x):
+                return ch_filter(x) and x.visible
         else:
-            ch_filter2 = lambda x: x.visible
+            def ch_filter2(x):
+                return x.visible
 
         # Draw the main channel data first for all channels
         for channel in self.each_channel(ch_filter2):
@@ -254,8 +258,8 @@ class DrawableTrace:
 
         # Draw the labels on top
         if labels and self.style.bind_font(gc):
-            ch_filter3 = lambda x: ch_filter2(x) \
-                         and x.label_visible and x.ws_bounds
+            def ch_filter3(x):
+                return ch_filter2(x) and x.label_visible and x.ws_bounds
 
             for channel in self.each_channel(ch_filter3):
                 x = vp.cs.min_x + 15

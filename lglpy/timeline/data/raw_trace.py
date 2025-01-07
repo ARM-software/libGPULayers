@@ -191,6 +191,7 @@ class MetadataAttachments:
 
         self.attachments.sort(key=lambda x: x.binding)
 
+
 class MetadataRenderPass:
 
     def __init__(self, frame, metadata):
@@ -243,7 +244,7 @@ class MetadataImageTransfer:
             self.label_stack = label_stack.split('|')
 
         self.subtype = metadata['subtype']
-        self.pixel_count = metadata['pixels'] ## TODO: pixelCount
+        self.pixel_count = metadata['pixels']  # TODO: pixelCount
 
     def getKey(self):
         return f't{self.tagID}'
@@ -284,7 +285,7 @@ class MetadataBufferTransfer:
             self.label_stack = label_stack.split('|')
 
         self.subtype = metadata['subtype']
-        self.byte_count = metadata['bytes'] ## TODO: byteCount
+        self.byte_count = metadata['bytes']  # TODO: byteCount
 
     def getKey(self):
         return f't{self.tagID}'
@@ -447,8 +448,6 @@ class RawTrace:
         for event in trace_events:
             config.replace_interned_stream(event)
             config.replace_interned_stage(event)
-
-
 
         return trace_events
 

@@ -313,6 +313,7 @@ class GPUBufferTransfer(GPUWorkload):
     def get_short_label(self):
         return self.transfer_type
 
+
 class GPUTrace:
     '''
     Decoded GPU trace, combining data sources into a single representation.

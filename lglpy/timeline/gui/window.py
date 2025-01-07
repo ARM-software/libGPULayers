@@ -226,7 +226,8 @@ class Window:
         # If needed, queue a file load to start after a short delay to give
         # time for the window to appear on screen
         if trace_file:
-            GObject.timeout_add(500, lambda: self.load_file(trace_file, metadata_file))
+            GObject.timeout_add(
+                500, lambda: self.load_file(trace_file, metadata_file))
 
         # ---- ----- ----- ----- -----
         # Start rendering
@@ -284,7 +285,6 @@ class Window:
 
         self.loaded_file_path = None
         self.trace_data = None
-
 
         # Make file-based options non-sensitive
         for menu in self.menus_needing_file:

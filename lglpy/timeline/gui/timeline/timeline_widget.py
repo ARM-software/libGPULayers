@@ -83,11 +83,7 @@ class TimelineWidget(TimelineWidgetBase):
             menu.append(menui)
 
             menui = Gtk.MenuItem('Highlight by Frame')
-            menui.connect_object('activate', self.on_orc2, clicked)
-            menu.append(menui)
-
-            menui = Gtk.MenuItem('Highlight by FBO ID')
-            menui.connect_object('activate', self.on_orc3, clicked)
+            # TODO: Implement this
             menu.append(menui)
 
             menu.show_all()
@@ -162,65 +158,6 @@ class TimelineWidget(TimelineWidgetBase):
         '''
         self.clear_active_objects()
         self.add_to_active_objects(clicked_object)
-        self.parent.queue_draw()
-
-    def on_orc2(self, clicked_object):
-        '''
-        Right click menu handler -> highlight by EGL frame
-        '''
-        self.clear_active_objects()
-
-        cf = lambda x: x.name in ['hw.js0', 'hw.js1']
-        ef = lambda x: x.user_data
-
-        # Check the incoming object is a frame object
-        if not ef(clicked_object):
-            return
-
-        renderpasses = []
-        drawables = []
-        for drawable in self.drawable_trace.each_object(cf, ef):
-            if drawable.user_data.frameId == clicked_object.user_data.frameId:
-                if drawable.user_data not in renderpasses:
-                    renderpasses.append(drawable.user_data)
-                drawables.append(drawable)
-
-        self.add_multiple_to_active_objects(drawables)
-        self.parent.queue_draw()
-
-    def on_orc3(self, clicked_object):
-        '''
-        Right click menu handler -> highlight by FBO ID
-        '''
-        user_data = clicked_object.user_data
-        if not user_data:
-            return
-
-        # TODO: Fix this once real data exists
-        is_fbo = isinstance(user_data, TimelineFBO)
-        if not is_fbo:
-            return
-
-        def ch_filter(channel):
-            return channel.name in ['hw.js0', 'hw.js1']
-
-        self.clear_active_objects()
-
-        rps = set()
-        drawables = []
-
-        for drawable in self.drawable_trace.each_object(ch_filter=ch_filter):
-            search_user_data = drawable.user_data
-            if (not search_user_data) or \
-               (not isinstance(search_user_data, TimelineFBO)):
-                continue
-
-            if (search_user_data.fboId == user_data.fboId) and \
-               (search_user_data not in rps):
-                rps.add(drawable.user_data)
-                drawables.append(drawable)
-
-        self.add_multiple_to_active_objects(drawables)
         self.parent.queue_draw()
 
     def on_norc1(self, clicked_object):

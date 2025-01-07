@@ -69,7 +69,9 @@ class TimelineInfoWidget(TextPaneWidget):
         first_frame = None
         last_frame = None
 
-        event_filter = lambda x: isinstance(x, WorldDrawableLine)
+        def event_filter(x):
+            return isinstance(x, WorldDrawableLine)
+
         for drawable in channel.each_object(event_filter):
             frame_time = drawable.ws.min_x
             if start <= frame_time < end:
@@ -94,7 +96,8 @@ class TimelineInfoWidget(TextPaneWidget):
 
         return lines
 
-    def get_gpu_utilization(self, start, end, slot=('Non-fragment', 'Fragment', 'Transfer')):
+    def get_gpu_utilization(
+            self, start, end, slot=('Non-fragment', 'Fragment', 'Transfer')):
         '''
         Compute the hardware utilization over the active time range.
 
@@ -109,9 +112,12 @@ class TimelineInfoWidget(TextPaneWidget):
         usage = 0
         range_end = 0
 
-        filt = lambda x: x.name in slot
+        def event_filter(x):
+            return x.name in slot
+
         trace = self.timeline_widget.drawable_trace
-        trace = [(x.ws.min_x, x.ws.max_x) for x in trace.each_object(filt)]
+        trace = [(x.ws.min_x, x.ws.max_x)
+                 for x in trace.each_object(event_filter)]
         trace.sort()
 
         for min_x, max_x in trace:
@@ -167,13 +173,18 @@ class TimelineInfoWidget(TextPaneWidget):
         if fps:
             lines.extend(fps)
 
+        nf_util = self.get_gpu_utilization(*active, slot=("Non-fragment",))
+        f_util = self.get_gpu_utilization(*active, slot=("Fragment",))
+        t_util = self.get_gpu_utilization(*active, slot=("Transfer",))
+        gpu_util = self.get_gpu_utilization(*active)
+
         util = [
             '',
             'Utilization:',
-            f'  Non-fragment: {self.get_gpu_utilization(*active, slot=("Non-fragment",))}',
-            f'  Fragment: {self.get_gpu_utilization(*active, slot=("Fragment",))}',
-            f'  Transfer: {self.get_gpu_utilization(*active, slot=("Transfer",))}',
-            f'  GPU: {self.get_gpu_utilization(*active)}',
+            f'  Non-fragment: {nf_util}',
+            f'  Fragment: {f_util}',
+            f'  Transfer: {t_util}',
+            f'  GPU: {gpu_util}',
             ''
         ]
 

@@ -40,8 +40,6 @@ from lglpy.timeline.drawable.drawable_trace import DrawableTrace
 from lglpy.timeline.drawable.drawable_channel import DrawableChannel
 from lglpy.timeline.drawable.drawable_channel import DrawableChannelFrameMarkers
 from lglpy.timeline.drawable.world_drawable import WorldDrawableRect
-from lglpy.timeline.drawable.world_drawable import WorldDrawableLabel
-from lglpy.timeline.drawable.world_drawable import WorldDrawableLine
 from lglpy.timeline.drawable.style import Style, StyleSet, StyleSetLibrary
 
 
@@ -81,8 +79,7 @@ class TLSpec:
     CHANNEL_BOX_Y = 40
     CHANNEL_GAP_Y = 30
 
-    specMap = {}
-    linkMap = {}
+    specMap = {}  # type: dict[str, TLSpec]
 
     def __init__(self, name, row, layer, cull, click, label, frame=False):
         '''
@@ -253,7 +250,9 @@ class TLStyles(StyleSetLibrary):
         channel = '.'.join(channel)
 
         # Find the style specified for the given channel, object, and rotation
-        test = lambda x: x.channel == channel and x.types == types
+        def test(x):
+            return x.channel == channel and x.types == types
+
         cmap = [x for x in self.color_map if test(x)]
         assert len(cmap) == 1, f'{channel}, {len(cmap)}'
 
@@ -294,13 +293,13 @@ class TimelineView(View):
         self.info_widget = None
 
         self.timeline_spec = (
-            TLSpec('Frame',        0, 1, False, False, False, True),
-            TLSpec('Compute',      1, 1, True, True, True),
+            TLSpec('Frame', 0, 1, False, False, False, True),
+            TLSpec('Compute', 1, 1, True, True, True),
             TLSpec('Non-fragment', 2, 1, True, True, True),
-            TLSpec('Binning',      2, 1, True, True, True),
-            TLSpec('Fragment',     3, 1, True, True, True),
-            TLSpec('Main',         3, 1, True, True, True),
-            TLSpec('Transfer',     4, 1, True, True, True),
+            TLSpec('Binning', 2, 1, True, True, True),
+            TLSpec('Fragment', 3, 1, True, True, True),
+            TLSpec('Main', 3, 1, True, True, True),
+            TLSpec('Transfer', 4, 1, True, True, True),
         )
 
         self.timeline_colors = (
@@ -441,7 +440,7 @@ class TimelineView(View):
                 stime = event.start_time
                 etime = event.start_time + event.duration
 
-                workload = 'fbo' # TODO: Identify swapchain
+                workload = 'fbo'  # TODO: Identify swapchain
                 style = self.timeline_styles.get_style(name, 0, workload)
 
                 draw = TLSpec.get_box(name, stime, etime, style,
