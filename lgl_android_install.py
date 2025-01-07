@@ -275,7 +275,7 @@ def get_package_name(
 
 def get_layer_metadata(
         layer_dirs: list[str],
-        need_32bit: bool, need_symbols: bool) -> Optional[str]:
+        need_32bit: bool, need_symbols: bool) -> list[LayerMeta]:
     '''
     Get the layer metadata for all of the selected layers.
 
