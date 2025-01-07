@@ -25,7 +25,6 @@ TODO
 '''
 
 import time
-import random
 
 import gi
 gi.require_version('Gtk', '3.0')
@@ -235,30 +234,30 @@ class TLStyles(StyleSetLibrary):
         style_set = self.get_style_set(style_name)
         style_set.add_style(variant, style)
 
-    def get_style(self, channel, rotation=0, types='all'):
+    def get_style(self, name, variant=0, types='all'):
         '''
         Add a new style to the timeline style library
         '''
         # Determining the correct style is quite slow and called frequently, so
         # build a hash table of styles matching requested keys and use that ...
-        key = (channel, rotation, types)
+        key = (name, variant, types)
         if key in self.cache:
             return self.cache[key]
 
-        channel = channel.split('.')
-        channel = channel[0:2]
-        channel = '.'.join(channel)
+        name = name.split('.')
+        name = name[0:2]
+        name = '.'.join(name)
 
         # Find the style specified for the given channel, object, and rotation
         def test(x):
-            return x.channel == channel and x.types == types
+            return x.channel == name and x.types == types
 
         cmap = [x for x in self.color_map if test(x)]
-        assert len(cmap) == 1, f'{channel}, {len(cmap)}'
+        assert len(cmap) == 1, f'{name}, {len(cmap)}'
 
         style = cmap[0].style_code
         if cmap[0].rotation:
-            style = f'{style}{rotation}'
+            style = f'{style}{variant}'
 
         # Call the parent class method to fetch the correct style
         style = super().get_style(style)
@@ -402,7 +401,7 @@ class TimelineView(View):
             self.timeline_widget.bookmarks = {}
             self.parent.queue_draw()
 
-    def load(self, data=None):
+    def load(self, trace_data=None):
         '''
         Populate this view with a loaded data file.
 
@@ -415,7 +414,7 @@ class TimelineView(View):
         trace = DrawableTrace(style)
         self.timeline_trace = trace
 
-        if not data:
+        if not trace_data:
             return
 
         # TODO: Channel names need to be made dynamic
@@ -429,7 +428,7 @@ class TimelineView(View):
             channel.label_visible = tl.label
 
         # Add scheduling channels
-        for name, stream in data.streams.items():
+        for name, stream in trace_data.streams.items():
             name = name.get_ui_name(name)
             channel = trace.get_channel(name)
 

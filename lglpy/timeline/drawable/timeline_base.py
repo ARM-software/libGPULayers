@@ -35,7 +35,8 @@ allowing efficient changes to select the region of world-space being rendered.
 
 from lglpy.timeline.drawable.drawable import Drawable
 from lglpy.timeline.drawable.style import Style
-from lglpy.timeline.drawable.canvas_drawable import *
+from lglpy.timeline.drawable.canvas_drawable import CanvasDrawableRect, \
+    CanvasDrawableRectFill, CanvasDrawableLabel, CanvasDrawableLine
 from lglpy.timeline.drawable.timeline_viewport import TimelineViewport
 from lglpy.timeline.drawable.entry_dialog import get_entry_dialog
 
@@ -96,6 +97,8 @@ class TimelineWidgetBase:
             css: CSS stylesheet to load styles from.
             prefix: the widget prefix for the stylesheet.
         '''
+        self.parent = None
+
         self.drawable_trace = trace
 
         # Initial bounds are the size of the whole trace, but may be no data

@@ -112,7 +112,7 @@ class GPUTimelineService:
 
         # If this is a continuation then merge records
         if last_render_pass and (last_render_pass['tid'] == msg['tid']):
-            # Don't accumulate if tagID is flagged as ambiguous
+            # Don't accumulate if tag_id is flagged as ambiguous
             if last_render_pass['drawCallCount'] != -1:
                 last_render_pass['drawCallCount'] += msg['drawCallCount']
 

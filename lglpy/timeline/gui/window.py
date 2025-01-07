@@ -27,6 +27,7 @@ TODO
 import os
 import sys
 import time
+import traceback
 
 import gi
 gi.require_version('Gtk', '3.0')
@@ -333,10 +334,25 @@ class Window:
         Handle the underlying data processing related to opening a file.
 
         Args:
-           file_name: The trace file to load.
+           trace_file: The perfetto trace file.
+           metadata_file: The layer metadata file.
         '''
         assert self.loaded_file_path is None
         assert self.trace_data is None
+
+        # Derive the metadata file if we can
+        if not metadata_file:
+            postfix = '.perfetto'
+            if trace_file.endswith(postfix):
+                metadata_file = f'{trace_file[:-len(postfix)]}.gputl'
+
+            if not os.path.exists(metadata_file):
+                metadata_file = None
+
+        # Notify the plugin views - this may take some time so defer it; change
+        # the cursor so the user knows that we're thinking ...
+        watch_cursor = Gdk.Cursor(Gdk.CursorType.WATCH)
+        self.window.get_root_window().set_cursor(watch_cursor)
 
         self.status.log('File loading. Please wait ...', None)
 
@@ -359,7 +375,6 @@ class Window:
                 self.loaded_file_path = trace_file
             except Exception:
                 self.status.log('Open cancelled (failed to load)')
-                import traceback
                 traceback.print_exc()
                 return
 

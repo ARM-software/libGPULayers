@@ -29,7 +29,6 @@ gi.require_version('Gtk', '3.0')
 # pylint: disable=wrong-import-position
 from gi.repository import Gtk
 
-from lglpy.timeline.drawable.world_drawable import WorldDrawableLabel
 from lglpy.timeline.drawable.world_drawable import WorldDrawableLine
 from lglpy.timeline.drawable.timeline_base import TimelineWidgetBase
 
@@ -132,24 +131,6 @@ class TimelineWidget(TimelineWidgetBase):
 
             return True
 
-        # Is using control then show the grouping save/restore menu
-        if mod == 'c':
-            menu = Gtk.Menu()
-
-            menui = Gtk.MenuItem('Save active objects')
-            menui.connect_object('activate', self.on_norc5, clicked)
-            menu.append(menui)
-
-            if None is not self.active_objects_stash:
-                menui = Gtk.MenuItem('Restore active objects')
-                menui.connect_object('activate', self.on_norc6, clicked)
-                menu.append(menui)
-
-            menu.show_all()
-            menu.popup_at_pointer(event)
-
-            return True
-
         return False
 
     def on_orc1(self, clicked_object):
@@ -164,6 +145,7 @@ class TimelineWidget(TimelineWidgetBase):
         '''
         Right click menu handler -> clear range
         '''
+        del clicked_object
         self.active_time_range = []
         self.parent.queue_draw()
 
@@ -171,6 +153,7 @@ class TimelineWidget(TimelineWidgetBase):
         '''
         Right click menu handler -> clear selection
         '''
+        del clicked_object
         self.clear_active_objects()
         self.parent.queue_draw()
 
@@ -178,26 +161,11 @@ class TimelineWidget(TimelineWidgetBase):
         '''
         Right click menu handler -> clear clamp limits
         '''
+        del clicked_object
         self.ws_clamp_min_x = self.original_trace_ws_min_x - 100
         self.trace_ws_min_x = self.ws_clamp_min_x
         self.ws_clamp_max_x = self.original_trace_ws_max_x + 100
         self.trace_ws_max_x = self.ws_clamp_max_x
-        self.parent.queue_draw()
-
-    def on_norc5(self, clicked_object):
-        '''
-        Right click menu handler -> save active objects
-        '''
-        self.active_objects_stash = self.active_objects.copy()
-
-    def on_norc6(self, clicked_object):
-        '''
-        Right click menu handler -> restore active objects
-        '''
-        self.clear_active_objects()
-        for drawable in self.active_objects_stash:
-            self.add_to_active_objects(drawable)
-        self.active_objects_stash = None
         self.parent.queue_draw()
 
     def on_jump_bookmark(self, name):

@@ -63,7 +63,7 @@ class CanvasDrawable(DrawableLabel):
 
 class CanvasDrawableRect(CanvasDrawable):
     '''
-    A canvas-space rectangle with fill, stroke, and label. Any of these may be
+    A canvas-space rectangle with fill, and stroke. Any of these may be
     skipped by setting its color to None in the style.
     '''
 
@@ -89,17 +89,11 @@ class CanvasDrawableRect(CanvasDrawable):
             gc.rectangle(x, y, w, h)
             gc.stroke()
 
-        # Draw label, centered in object
-        if self.label and self.style.bind_font(gc):
-            lw, lh = self.get_label_extents(gc)
-            gc.move_to(x + w * 0.5 - lw * 0.5, y + h * 0.5 + lh * 0.5)
-            gc.show_text(self.label)
-
 
 class CanvasDrawableRectFill(CanvasDrawable):
     '''
-    A canvas-space rectangle with fill, and label. Any of these may be skipped
-    by setting its color to None in the style.
+    A canvas-space rectangle with fill. Any of these may be skipped by setting
+    its color to None in the style.
 
     This is useful for uses rendering a composite shape that contains a mixture
     of fill-only rectangles as well as lines or full rectangles with a stroke.
@@ -123,12 +117,6 @@ class CanvasDrawableRectFill(CanvasDrawable):
         if self.style.bind_fill(gc):
             gc.rectangle(x, y, w, h)
             gc.fill()
-
-        # Draw label, centered in object
-        if self.label and self.style.bind_font(gc):
-            lw, lh = self.get_label_extents(gc)
-            gc.move_to(x + w * 0.5 - lw * 0.5, y + h * 0.5 + lh * 0.5)
-            gc.show_text(self.label)
 
 
 class CanvasDrawableLine(CanvasDrawable):

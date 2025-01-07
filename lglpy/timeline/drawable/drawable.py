@@ -21,7 +21,7 @@
 # SOFTWARE.
 # -----------------------------------------------------------------------------
 '''
-This module contains a number of basic abstract_rendering constants and
+This module contains a number of basic abstract rendering constants and
 primitives.
 '''
 
@@ -73,7 +73,7 @@ class Drawable:
         '''
         self.style = style
 
-    def set_style(self, style):
+    def set_style(self, style) -> None:
         '''
         Change the style of this object.
 
@@ -95,7 +95,7 @@ class Drawable:
         assert False, f'Draw function for {self.__class__.__name__} missing'
 
     @staticmethod
-    def rt00(x):
+    def rt00(x: float) -> float:
         '''
         Round x down to an integer boundary.
 
@@ -108,7 +108,7 @@ class Drawable:
         return float(int(x))
 
     @staticmethod
-    def rt05(x):
+    def rt05(x: float) -> float:
         '''
         Round x to the nearest n.5 boundary.
 
@@ -150,7 +150,7 @@ class DrawableLabel(Drawable):
 
         Args:
             style: Rendering style for this object.
-            label: Full label text string.
+            label: Full label text string, may be None
         '''
         super().__init__(style)
 
@@ -178,7 +178,7 @@ class DrawableLabel(Drawable):
 
         super().set_style(style)
 
-    def compute_label_extents(self, gc):
+    def compute_label_extents(self, gc) -> None:
         '''
         Compute the canvas-space extents of the text label.
 
@@ -198,9 +198,9 @@ class DrawableLabel(Drawable):
             self.line_extents = [gc.text_extents(x)[2] for x in self.label]
             self.total_extents = (max(self.line_extents), h)
 
-    def fits_centered(self, gc, width, padding):
+    def fits_centered(self, gc, width, padding) -> bool:
         '''
-        Get the label that fits in the given on-screen width.
+        Test of the label that fits in the given on-screen width.
 
         Args:
             gc: Cairo graphics context
@@ -208,14 +208,13 @@ class DrawableLabel(Drawable):
             padding: Desired padding in pixels.
 
         Returns:
-            Tuple of string and extents for a label that fits.
-            Tuple of None if no label fits.
+            True if the label fits, False otherwise.
         '''
         target_width = width - 2 * padding
         self.compute_label_extents(gc)
         return self.total_extents[0] <= target_width
 
-    def draw_centered(self, gc, pos, dim):
+    def draw_centered(self, gc, pos, dim) -> None:
         '''
         Draw the label on the screen.
 
@@ -224,7 +223,6 @@ class DrawableLabel(Drawable):
             pos: Origin on canvas pixels.
             dim: Space in canvas pixels.
         '''
-        line_count = len(self.label)
         lh = self.line_height
         pad_y = (dim[1] - self.total_extents[1]) * 0.5 - 1
 
