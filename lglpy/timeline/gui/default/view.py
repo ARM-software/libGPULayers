@@ -46,7 +46,7 @@ class DefaultView(View):
         '''
         super().__init__(window, css)
         text = "Select a data presentation from the Views menu\n\n"
-        text += "Please raise any enhancements or defects in the HIVE Jira"
+        text += "Please raise any issues the GitHub issue tracker"
         style = Style.css_factory(css["homev-core"])
         self.info_widget = TextPaneWidget((0, 0), (600, 100), style, text)
 
