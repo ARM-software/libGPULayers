@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: MIT
 # -----------------------------------------------------------------------------
-# Copyright (c) 2024 Arm Limited
+# Copyright (c) 2024-2025 Arm Limited
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to
@@ -134,7 +134,7 @@ def generate_install_helper(file: TextIO, vendor: str, layer: str) -> None:
         vendor: The layer vendor tag.
         layer: The name of the layer.
     '''
-    data = load_template('android_install.py')
+    data = load_template('android_install.json')
     data = data.replace('{LAYER_NAME}', layer)
 
     name = get_layer_api_name(vendor, layer)
@@ -228,7 +228,7 @@ def main() -> int:
     with open(outfile, 'w', encoding='utf-8', newline='\n') as handle:
         generate_source_cmake(handle, args.vendor_name, args.layer_name)
 
-    outfile = os.path.join(outdir, 'android_install.py')
+    outfile = os.path.join(outdir, 'android_install.json')
     with open(outfile, 'w', encoding='utf-8', newline='\n') as handle:
         generate_install_helper(handle, args.vendor_name, args.layer_name)
 
