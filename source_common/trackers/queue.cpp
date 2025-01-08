@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2022-2024 Arm Limited
+ * Copyright (c) 2022-2025 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -61,14 +61,11 @@ void Queue::runSubmitCommandStream(
             auto* workload = dynamic_cast<const LCSRenderPass*>(opData);
             uint64_t tagID = workload->getTagID();
 
-            // Build the debug info
-            std::string log = joinString(debugStack, "|");
-
             // Workload is a new render pass
             if (tagID > 0)
             {
                 assert(lastRenderPassTagID == 0);
-                callback(workload->getMetadata(&log));
+                callback(workload->getMetadata(&debugStack));
 
                 lastRenderPassTagID = 0;
                 if (workload->isSuspending())
@@ -94,7 +91,7 @@ void Queue::runSubmitCommandStream(
         {
             uint64_t tagID = opData->getTagID();
             std::string log = joinString(debugStack, "|");
-            callback(opData->getMetadata(&log, tagID));
+            callback(opData->getMetadata(&debugStack, tagID));
         }
     }
 }

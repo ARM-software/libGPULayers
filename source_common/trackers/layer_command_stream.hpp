@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2022-2024 Arm Limited
+ * Copyright (c) 2024-2025 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -28,7 +28,7 @@
  * The declaration of a replayable layer command stream.
  *
  * Role summary
- * ============s
+ * ============
  *
  * These trackers are used to monitor to submission of workloads inside a
  * command buffers in a way that they can be iterated by a queue tracker at
@@ -87,11 +87,11 @@ public:
     /**
      * @brief Get the metadata for this workload
      *
-     * @param debugLabel          The debug label state of the VkQueue at submit time.
+     * @param debugLabel          The debug label stack for the VkQueue at submit time.
      * @param tagIDContinuation   The ID of the workload if this is a continuation of it.
      */
     virtual std::string getMetadata(
-        const std::string* debugLabel=nullptr,
+        const std::vector<std::string>* debugLabel=nullptr,
         uint64_t tagIDContinuation=0) const = 0;
 
     /**
@@ -180,26 +180,26 @@ public:
 
     /* See base class for documentation. */
     virtual std::string getMetadata(
-        const std::string* debugLabel=nullptr,
+        const std::vector<std::string>* debugLabel=nullptr,
         uint64_t tagIDContinuation=0) const;
 
 private:
     /**
      * @brief Get the metadata for this workload if beginning a new render pass.
      *
-     * @param debugLabel   The debug label state of the VkQueue at submit time.
+     * @param debugLabel   The debug label stack of the VkQueue at submit time.
      */
     std::string getBeginMetadata(
-        const std::string* debugLabel=nullptr) const;
+        const std::vector<std::string>* debugLabel=nullptr) const;
 
     /**
      * @brief Get the metadata for this workload if continuing an existing render pass.
      *
-     * @param debugLabel          The debug label state of the VkQueue at submit time.
+     * @param debugLabel          The debug label stack of the VkQueue at submit time.
      * @param tagIDContinuation   The ID of the workload if this is a continuation of it.
      */
     std::string getContinuationMetadata(
-        const std::string* debugLabel=nullptr,
+        const std::vector<std::string>* debugLabel=nullptr,
         uint64_t tagIDContinuation=0) const;
 
     /**
@@ -270,7 +270,7 @@ public:
 
     /* See base class for documentation. */
     virtual std::string getMetadata(
-        const std::string* debugLabel=nullptr,
+        const std::vector<std::string>* debugLabel=nullptr,
         uint64_t tagIDContinuation=0) const;
 
 private:
@@ -319,7 +319,7 @@ public:
 
     /* See base class for documentation. */
     virtual std::string getMetadata(
-        const std::string* debugLabel=nullptr,
+        const std::vector<std::string>* debugLabel=nullptr,
         uint64_t tagIDContinuation=0) const;
 
 private:
@@ -366,7 +366,7 @@ public:
 
     /* See base class for documentation. */
     virtual std::string getMetadata(
-        const std::string* debugLabel=nullptr,
+        const std::vector<std::string>* debugLabel=nullptr,
         uint64_t tagIDContinuation=0) const;
 
 private:
@@ -409,7 +409,7 @@ public:
 
     /* See base class for documentation. */
     virtual std::string getMetadata(
-        const std::string* debugLabel=nullptr,
+        const std::vector<std::string>* debugLabel=nullptr,
         uint64_t tagIDContinuation=0) const;
 
 private:
@@ -448,7 +448,7 @@ public:
 
     /* See base class for documentation. */
     virtual std::string getMetadata(
-        const std::string* debugLabel=nullptr,
+        const std::vector<std::string>* debugLabel=nullptr,
         uint64_t tagIDContinuation=0) const
     {
         UNUSED(debugLabel);

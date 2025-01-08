@@ -200,10 +200,7 @@ class MetadataWorkload:
         self.frame = frame
         self.tag_id = int(metadata['tid'])
 
-        self.label_stack = None
-        label_stack = metadata.get('label', None)
-        if label_stack:
-            self.label_stack = label_stack.split('|')
+        self.label_stack = metadata.get('label', None)
 
     def get_perfetto_tag_id(self) -> str:
         '''
@@ -310,9 +307,6 @@ class MetadataBufferTransfer(MetadataWorkload):
     Parsed GPU Timeline layer payload for a transfer that writes a buffer.
 
     Attributes:
-        frame: The frame index in the application.
-        tag_id: The unique workload tag ID to cross-reference with Perfetto.
-        label_stack: Debug label stack, or None if no user labels.
         subtype: Specific type of the transfer.
         byte_count: Number of bytes written, or -1 if unknown.
     '''
@@ -641,7 +635,6 @@ class RawTrace:
 
         # Extract render stages events from Perfetto data
         for packet in protoc.packet:
-
             # Clock sync packet so update clock drift information
             if packet.HasField('clock_snapshot'):
                 config.add_clock_sync_data(packet)
