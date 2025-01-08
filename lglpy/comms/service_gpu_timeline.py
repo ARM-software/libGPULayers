@@ -29,9 +29,17 @@ frame records to a file on the host.
 
 import json
 import struct
-from typing import Any
+from typing import Any, TypedDict
 
 from lglpy.comms.server import Message
+
+
+class FrameMetadataType(TypedDict):
+    '''
+    Structured dict type for type hinting.
+    '''
+    frame: int
+    workloads: list[Any]
 
 
 class GPUTimelineService:
@@ -39,22 +47,24 @@ class GPUTimelineService:
     A service for handling network comms from the layer_gpu_timeline layer.
     '''
 
-    def __init__(self):
+    def __init__(self, file_path: str):
         '''
         Initialize the timeline service.
+
+        Args:
+            file_path: File to write on the filesystem
 
         Returns:
             The endpoint name.
         '''
         # Create a default frame record
-        self.frame = {
-            "frame": 0,
-            "workloads": []
+        self.frame: FrameMetadataType = {
+            'frame': 0,
+            'workloads': []
         }
 
-        # TODO: Make file name configurable
         # pylint: disable=consider-using-with
-        self.file_handle = open('malivision.gputl', 'wb')
+        self.file_handle = open(file_path, 'wb')
 
     def get_service_name(self) -> str:
         '''

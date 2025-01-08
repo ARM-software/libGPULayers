@@ -27,7 +27,6 @@ test suite requires an Android device with at least one debuggable application
 installed to be connected to the host PC with an authorized adb connection.
 '''
 
-import contextlib
 import os
 import re
 import shutil
@@ -37,7 +36,7 @@ import tempfile
 import unittest
 
 from .adb import ADBConnect
-from .utils import AndroidUtils
+from .utils import AndroidUtils, NamedTempFile
 from .filesystem import AndroidFilesystem
 
 
@@ -56,30 +55,6 @@ def get_script_relative_path(file_name: str) -> str:
     '''
     dir_name = os.path.dirname(__file__)
     return os.path.join(dir_name, file_name)
-
-
-@contextlib.contextmanager
-def NamedTempFile():  # pylint: disable=invalid-name
-    '''
-    Creates a context managed temporary file that can be used with external
-    subprocess.
-
-    On context entry this yields the file name, on exit it deletes the file.
-
-    Yields:
-        The name of the temporary file.
-    '''
-    name = None
-
-    try:
-        f = tempfile.NamedTemporaryFile(delete=False)
-        name = f.name
-        f.close()
-        yield name
-
-    finally:
-        if name:
-            os.unlink(name)
 
 
 class AndroidTestNoDevice(unittest.TestCase):

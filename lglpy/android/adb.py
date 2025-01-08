@@ -176,7 +176,8 @@ class ADBConnect:
         return rep.stdout
 
     def adb_async(self, *args: str, text: bool = True, shell: bool = False,
-                  quote: bool = False, pipe: bool = False) -> sp.Popen:
+                  quote: bool = False, pipe: bool = False,
+                  filex=None) -> sp.Popen:
         '''
         Call adb to asynchronously run a command, without waiting for it to
         complete.
@@ -196,7 +197,8 @@ class ADBConnect:
             text: True if output is text, False if binary
             shell: True if this should invoke via host shell, False if direct.
             quote: True if arguments are quoted, False if unquoted.
-            pipe: True if child stdout is collected, False if discarded.
+            pipe: True if child stdout is collected to pipe, else False.
+            filex: True if child stdout is collected to file, else False.
 
         Returns:
             The process handle.
@@ -205,7 +207,13 @@ class ADBConnect:
             CalledProcessError: The invoked call failed.
         '''
         # Setup the configuration
-        output = sp.PIPE if pipe else sp.DEVNULL
+        output = sp.DEVNULL
+
+        if pipe:
+            output = sp.PIPE
+
+        if filex:
+            output = filex
 
         # Build the command list
         commands = self.get_base_command(args)
