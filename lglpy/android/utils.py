@@ -26,12 +26,42 @@ This module implements higher level Android queries and utility functions,
 built on top of the low level ADBConnect wrapper around Android Debug Bridge.
 '''
 
+import contextlib
 import re
+import os
 import shlex
 import subprocess as sp
+import tempfile
 from typing import Optional
 
 from .adb import ADBConnect
+
+
+@contextlib.contextmanager
+def NamedTempFile(suffix=None):  # pylint: disable=invalid-name
+    '''
+    Creates a context managed temporary file that can be used with external
+    subprocess.
+
+    On context entry this yields the file name, on exit it deletes the file.
+
+    Args:
+        suffix: An optional file suffix.
+
+    Yields:
+        The name of the temporary file.
+    '''
+    name = None
+
+    try:
+        f = tempfile.NamedTemporaryFile(suffix=suffix, delete=False)
+        name = f.name
+        f.close()
+        yield name
+
+    finally:
+        if name:
+            os.unlink(name)
 
 
 class AndroidUtils:

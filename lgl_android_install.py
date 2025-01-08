@@ -97,13 +97,16 @@ Binary discoverability section above.
 '''
 
 import argparse
+import atexit
 import json
 import os
+import shutil
+import subprocess as sp
 import sys
 from typing import Optional
 
 from lglpy.android.adb import ADBConnect
-from lglpy.android.utils import AndroidUtils
+from lglpy.android.utils import AndroidUtils, NamedTempFile
 from lglpy.android.filesystem import AndroidFilesystem
 from lglpy.ui import console
 
@@ -406,6 +409,142 @@ def disable_layers(conn: ADBConnect) -> bool:
     return s1 and s2 and s3
 
 
+def configure_logcat(conn: ADBConnect, output_path: str) -> None:
+    '''
+    Clear logcat and then pipe new logs to a file.
+
+    Does not error on failure, but will print a warning.
+
+    Args:
+        conn: The adb connection.
+        output_path: The desired output file path.
+    '''
+    # Delete the file to avoid user reading stale logs
+    if os.path.exists(output_path):
+        os.remove(output_path)
+
+    # Pipe adb to file using an async command to avoid losing logs
+    # Do NOT use shell=True with a > redirect for this - you cannot easily kill
+    # the child on Windows and the log file ends up with an active reference
+    try:
+        conn.adb('logcat', '-c')
+        handle = open(output_path, 'w', encoding='utf-8')
+        child = conn.adb_async('logcat', filex=handle)
+
+        # Register a cleanup handler to kill the child
+        def cleanup(child_process):
+            child_process.kill()
+
+        atexit.register(cleanup, child)
+
+    except sp.CalledProcessError:
+        print('WARNING: Cannot enable logcat recording')
+
+
+def configure_perfetto(
+        conn: ADBConnect, output_path: str) -> Optional[tuple[str, str]]:
+    '''
+    Configure Perfetto traced recording for the given ADB connection.
+
+    Args:
+        conn: The adb connection, requires package to be set.
+        output_path: The desired output file path.
+
+    Returns:
+        PID of the Perfetto process and config file name on success, None on
+        failure.
+    '''
+    assert conn.package, \
+        'Cannot use configure_perfetto() without package'
+
+    # Populate the Perfetto template file
+    output_file = os.path.basename(output_path)
+
+    base_dir = os.path.dirname(__file__)
+    template_path = os.path.join(base_dir, 'lglpy', 'android', 'perfetto.cfg')
+
+    with open(template_path, 'r', encoding='utf-8') as handle:
+        template = handle.read()
+        template = template.replace('{{PACKAGE}}', conn.package)
+
+    try:
+        with NamedTempFile('.cfg') as config_path:
+            # Write a file we can push
+            with open(config_path, 'w', encoding='utf-8') as handle:
+                handle.write(template)
+
+            # Push the file where Perfetto traced can access it
+            config_file = os.path.basename(config_path)
+            conn.adb('push', config_path, '/data/misc/perfetto-configs/')
+
+            # Enable Perfetto traced and the render stages profiler
+            AndroidUtils.set_property(
+                conn, 'persist.traced.enable', '1')
+            AndroidUtils.set_property(
+                conn, 'debug.graphics.gpu.profiler.perfetto', '1')
+
+            # Start Perfetto traced
+            output = conn.adb_run(
+                        'perfetto',
+                        '--background', '--txt',
+                        '-c', f'/data/misc/perfetto-configs/{config_file}',
+                        '-o', f'/data/misc/perfetto-traces/{output_file}')
+
+            pid = output.strip()
+            return (pid, config_file)
+
+    except sp.CalledProcessError:
+        print('ERROR: Cannot enable Perfetto recording')
+        return None
+
+
+def cleanup_perfetto(
+        conn: ADBConnect, output_path: str, pid: str,
+        config_file: str) -> None:
+    '''
+    Cleanup Perfetto traced recording for the given ADB connection.
+
+    Args:
+        conn: The adb connection, requires package to be set.
+        output_path: The desired output file path.
+        pid: The Perfetto process pid.
+        config_file: The Perfetto config path on the device.
+
+    Returns:
+        PID of the Perfetto process and config file name on success, None on
+        failure.
+    '''
+    # Compute the various paths we need
+    output_file = os.path.basename(output_path)
+    output_dir = os.path.dirname(output_path)
+    if not output_dir:
+        output_dir = '.'
+
+    data_file = f'/data/misc/perfetto-traces/{output_file}'
+    config_file = f'/data/misc/perfetto-configs/{config_file}'
+
+    try:
+        # Stop Perfetto recording
+        # TODO: This doesn't work on a user build phone, is there another way?
+        # conn.adb_run('kill', '-TERM', pid)
+
+        # Download the recording data file
+        conn.adb('pull', data_file, output_dir)
+
+        # Remove the device-side files
+        conn.adb_run('rm', data_file)
+        conn.adb_run('rm', config_file)
+
+        # Disable Perfetto traced and the render stages profiler
+        AndroidUtils.set_property(
+            conn, 'persist.traced.enable', '0')
+        AndroidUtils.set_property(
+            conn, 'debug.graphics.gpu.profiler.perfetto', '0')
+
+    except sp.CalledProcessError:
+        print('ERROR: Cannot disable Perfetto recording')
+
+
 def parse_cli() -> argparse.Namespace:
     '''
     Parse the command line.
@@ -430,6 +569,15 @@ def parse_cli() -> argparse.Namespace:
     parser.add_argument(
         '--symbols', '-S', action='store_true', default=False,
         help='use to install layers with unstripped symbols')
+
+    parser.add_argument(
+        '--logcat', type=str, default=None,
+        help='file path to save logcat to after a run')
+
+    parser.add_argument(
+        '--perfetto', type=str, default=None,
+        help='file path to save Perfetto trace to after run')
+
     return parser.parse_args()
 
 
@@ -486,18 +634,30 @@ def main() -> int:
         print(f'    - {layer.name}')
     print()
 
-    input('Press any key to uninstall all layers')
+    # Enable logcat
+    if args.logcat:
+        configure_logcat(conn, args.logcat)
+
+    # Enable Perfetto trace
+    if args.perfetto:
+        perfetto_conf = configure_perfetto(conn, args.perfetto)
+
+    input('Press any key when finished to uninstall all layers')
+
+    # Disable Perfetto trace
+    if args.perfetto and perfetto_conf:
+        cleanup_perfetto(conn, args.perfetto, *perfetto_conf)
 
     # Disable layers
     if not disable_layers(conn):
         print('ERROR: Layer disable on device failed')
-        return 7
+        return 10
 
     # Remove files
     for layer in layers:
         if not uninstall_layer_binary(conn, layer):
             print('ERROR: Layer uninstall from device failed')
-            return 8
+            return 11
 
     return 0
 

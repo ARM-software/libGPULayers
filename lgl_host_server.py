@@ -34,10 +34,12 @@ to forward a Unix domain socket on the device to a TCP socket on the host.
 '''
 
 import argparse
+import subprocess as sp
 import sys
 import threading
 from typing import Any
 
+from lglpy.android.adb import ADBConnect
 from lglpy.comms import server
 from lglpy.comms import service_gpu_timeline
 from lglpy.comms import service_test
@@ -54,8 +56,16 @@ def parse_cli() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
-        '--test', '-T', action='store_true', default=False,
+        '--test', action='store_true', default=False,
         help='enable the communications unit test helper service')
+
+    parser.add_argument(
+        '--android-port', '-A', type=int, default=62142,
+        help='enable adb reverse on the specified port for network comms')
+
+    parser.add_argument(
+        '--timeline', '-T', type=str, default=None,
+        help='file path to save timeline metadata to to after a run')
 
     return parser.parse_args()
 
@@ -69,8 +79,20 @@ def main() -> int:
     '''
     args = parse_cli()
 
+    # Configure Android adb reverse on the specified port
+    conn = ADBConnect()
+    try:
+        conn.adb(
+            'reverse',
+            'localabstract:lglcomms',
+            f'tcp:{args.android_port}')
+
+    except sp.CalledProcessError:
+        print('ERROR: Could not setup Android network comms')
+        return 1
+
     # Create a server instance
-    svr = server.CommsServer(63412)
+    svr = server.CommsServer(args.android_port)
 
     # Register all the services with it
     print('Registering host services:')
@@ -86,9 +108,11 @@ def main() -> int:
     endpoint_id = svr.register_endpoint(service)
     print(f'  - [{endpoint_id}] = {service.get_service_name()}')
 
-    service = service_gpu_timeline.GPUTimelineService()
-    endpoint_id = svr.register_endpoint(service)
-    print(f'  - [{endpoint_id}] = {service.get_service_name()}')
+    if args.timeline:
+        service = service_gpu_timeline.GPUTimelineService(args.timeline)
+        endpoint_id = svr.register_endpoint(service)
+        print(f'  - [{endpoint_id}] = {service.get_service_name()}')
+
     print()
 
     # Start it running
