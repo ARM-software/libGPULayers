@@ -30,7 +30,7 @@ from typing import Optional, Union
 
 from .raw_trace import RawTrace, RenderstageEvent, MetadataWork, \
     MetadataRenderPass, MetadataDispatch, MetadataBufferTransfer, \
-    MetadataImageTransfer, GPUStreamID
+    MetadataImageTransfer, GPUStreamID, GPUStageID
 
 
 class GPUWorkload:

@@ -31,15 +31,14 @@ gi.require_version('Gtk', '3.0')
 # pylint: disable=wrong-import-position
 from gi.repository import Gtk
 
-from lglpy.timeline.gui.view import View
-from lglpy.timeline.gui.timeline.timeline_widget import TimelineWidget
-from lglpy.timeline.gui.timeline.info_widget import TimelineInfoWidget
 
-from lglpy.timeline.drawable.drawable_trace import DrawableTrace
-from lglpy.timeline.drawable.drawable_channel import DrawableChannel
-from lglpy.timeline.drawable.drawable_channel import DrawableChannelFrameMarkers
-from lglpy.timeline.drawable.world_drawable import WorldDrawableRect
-from lglpy.timeline.drawable.style import Style, StyleSet, StyleSetLibrary
+from .info_widget import TimelineInfoWidget
+from .timeline_widget import TimelineWidget
+from ..view import View
+from ...drawable.drawable_trace import DrawableTrace
+from ...drawable.drawable_channel import DrawableChannel
+from ...drawable.world_drawable import WorldDrawableRect
+from ...drawable.style import Style, StyleSet, StyleSetLibrary
 
 
 class FakeMouseDrag:
@@ -80,7 +79,7 @@ class TLSpec:
 
     specMap = {}  # type: dict[str, TLSpec]
 
-    def __init__(self, name, row, layer, cull, click, label, frame=False):
+    def __init__(self, name, row, layer, cull, click, label):
         '''
         Create the specification of a new channel row.
         '''
@@ -90,11 +89,9 @@ class TLSpec:
         self.cull = cull
         self.click = click
         self.label = label
-        self.frame = frame
 
         # Update the class state cache
         self.__class__.specMap[name] = self
-
         self.cached_start_y = None
 
     def get_y_start(self):
@@ -143,14 +140,14 @@ class TLSpec:
         '''
         Build a drawable box to go into a channel.
 
-        # TODO: Move this to DrawableChannel?
+        TODO: Move this to DrawableChannel?
         '''
         channel = cls.specMap[channel]
         pos = (start, channel.get_y_start())
         dim = (end - start, cls.CHANNEL_BOX_Y)
         short = None if short == label else short
         draw = WorldDrawableRect(pos, dim, style, label, short)
-        draw.user_data = user_data
+        draw.set_user_data(user_data)
         return draw
 
 
@@ -188,7 +185,7 @@ class TLStyles(StyleSetLibrary):
     the drawable styles which are used by the rendering of the timeline.
     '''
 
-    COLORS = ["frame"]
+    COLORS = ['frame']
 
     COLORS_ROTATE = ['frame', 'fbo', 'win']
 
@@ -291,8 +288,8 @@ class TimelineView(View):
         self.timeline_trace = None
         self.info_widget = None
 
+        # Spec includes lanes that collide, but only one exists at a time
         self.timeline_spec = (
-            TLSpec('Frame', 0, 1, False, False, False, True),
             TLSpec('Compute', 1, 1, True, True, True),
             TLSpec('Non-fragment', 2, 1, True, True, True),
             TLSpec('Binning', 2, 1, True, True, True),
@@ -302,7 +299,6 @@ class TimelineView(View):
         )
 
         self.timeline_colors = (
-            TLColor('Frame', 'frame', 'all', False),
             TLColor('Compute', 'win', 'window', True),
             TLColor('Compute', 'fbo', 'fbo', True),
             TLColor('Non-fragment', 'win', 'window', True),
@@ -353,7 +349,7 @@ class TimelineView(View):
         menu_item = Gtk.SeparatorMenuItem()
         menu_root.append(menu_item)
 
-        menu_item = Gtk.MenuItem('Channel Visibility')
+        menu_item = Gtk.MenuItem('Channel visibility')
         menu_root.append(menu_item)
 
         submenu_root = Gtk.Menu()
@@ -362,7 +358,7 @@ class TimelineView(View):
         menu_item = Gtk.SeparatorMenuItem()
         menu_root.append(menu_item)
 
-        menu_item = Gtk.MenuItem('Infopanel Options')
+        menu_item = Gtk.MenuItem('Infopanel options')
         menu_root.append(menu_item)
 
         submenu_root = Gtk.Menu()
@@ -401,12 +397,8 @@ class TimelineView(View):
 
         # TODO: Channel names need to be made dynamic
         for tl in self.timeline_spec:
-            if not tl.frame:
-                channel = DrawableChannel(
-                    tl.name, trace, tl.layer, tl.cull, tl.click)
-            else:
-                channel = DrawableChannelFrameMarkers(
-                    tl.name, trace, tl.layer)
+            channel = DrawableChannel(
+                tl.name, trace, tl.layer, tl.cull, tl.click)
             channel.label_visible = tl.label
 
         # Add scheduling channels
@@ -425,7 +417,7 @@ class TimelineView(View):
                 style = self.timeline_styles.get_style(name, 0, workload)
 
                 draw = TLSpec.get_box(name, stime, etime, style,
-                                      llabel, slabel, None)
+                                      llabel, slabel, event)
                 channel.add_object(draw)
 
         # Compile the trace to improve performance

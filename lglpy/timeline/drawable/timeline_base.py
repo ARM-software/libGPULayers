@@ -79,7 +79,7 @@ class TimelineWidgetBase:
             The current set of saved active objects.
     '''
     CLAMP_PIXELS = 12
-    ACTION_BAR_PIXELS = 10
+    ACTION_BAR_PIXELS = 20
     BOTTOM_PAD_PIXELS = 20
     MAX_PIXELS_PER_US = 0.15
     ZOOM_RATE = 0.2

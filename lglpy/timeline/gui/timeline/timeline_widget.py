@@ -56,8 +56,7 @@ class TimelineWidget(TimelineWidgetBase):
         We follow the same convention as the `View` module API, so see that
         class for documentation.
         '''
-        parent = super()
-        if parent.on_mouse_single_click(button, x, y, mod):
+        if super().on_mouse_single_click(button, x, y, mod):
             return True
 
         # The only extra options are right menu click options
@@ -65,8 +64,7 @@ class TimelineWidget(TimelineWidgetBase):
             return False
 
         # Try to find a clicked object, if there is one
-        vp = self.vp
-        ws_x, ws_y = vp.transform_cs_to_ws(x, y)
+        ws_x, ws_y = self.vp.transform_cs_to_ws(x, y)
 
         clicked = self.drawable_trace.get_clicked_object(ws_x, ws_y)
 
@@ -77,12 +75,14 @@ class TimelineWidget(TimelineWidgetBase):
         if clicked:
             menu = Gtk.Menu()
 
-            menui = Gtk.MenuItem('Highlight by Render Pass')
-            menui.connect_object('activate', self.on_orc1, clicked)
+            menui = Gtk.MenuItem('Select by frame')
+            menui.connect_object(
+                'activate', self.on_select_events_by_frame, clicked)
             menu.append(menui)
 
-            menui = Gtk.MenuItem('Highlight by Frame')
-            # TODO: Implement this
+            menui = Gtk.MenuItem('Select by workload')
+            menui.connect_object(
+                'activate', self.on_select_events_by_workload, clicked)
             menu.append(menui)
 
             menu.show_all()
@@ -94,16 +94,19 @@ class TimelineWidget(TimelineWidgetBase):
         if mod == '':
             menu = Gtk.Menu()
 
-            menui = Gtk.MenuItem('Clear Selected Time Range')
-            menui.connect_object('activate', self.on_norc1, clicked)
+            menui = Gtk.MenuItem('Clear active time range')
+            menui.connect_object(
+                'activate', self.on_clear_time_range, clicked)
             menu.append(menui)
 
-            menui = Gtk.MenuItem('Clear Selected Objects')
-            menui.connect_object('activate', self.on_norc2, clicked)
+            menui = Gtk.MenuItem('Clear active events')
+            menui.connect_object(
+                'activate', self.on_deselect_events, clicked)
             menu.append(menui)
 
-            menui = Gtk.MenuItem('Clear Timeline Clamps')
-            menui.connect_object('activate', self.on_norc3, clicked)
+            menui = Gtk.MenuItem('Clear timeline clamps')
+            menui.connect_object(
+                'activate', self.on_clear_timeline_clamps, clicked)
             menu.append(menui)
 
             menu.show_all()
@@ -113,23 +116,43 @@ class TimelineWidget(TimelineWidgetBase):
 
         return False
 
-    def on_orc1(self, clicked_object):
+    def on_select_events_by_frame(self, clicked_object):
         '''
-        Right click menu handler -> highlight by single render pass
+        Right click menu handler -> highlight by single frame.
+        '''
+        # Do nothing if the event user data doesn't have frame metadata
+        if clicked_object.user_data.frame is None:
+             return
+
+        self.clear_active_objects()
+
+        def filt(x):
+            return x.user_data.frame == clicked_object.user_data.frame
+
+        to_activate = []
+        for drawable in self.drawable_trace.each_object(obj_filter=filt):
+            to_activate.append(drawable)
+
+        self.add_multiple_to_active_objects(to_activate)
+        self.parent.queue_draw()
+
+    def on_select_events_by_workload(self, clicked_object):
+        '''
+        Right click menu handler -> highlight by single workload.
         '''
         self.clear_active_objects()
-        self.add_to_active_objects(clicked_object)
+
+        def filt(x):
+            return x.user_data.tag_id == clicked_object.user_data.tag_id
+
+        to_activate = []
+        for drawable in self.drawable_trace.each_object(obj_filter=filt):
+            to_activate.append(drawable)
+
+        self.add_multiple_to_active_objects(to_activate)
         self.parent.queue_draw()
 
-    def on_norc1(self, clicked_object):
-        '''
-        Right click menu handler -> clear range
-        '''
-        del clicked_object
-        self.active_time_range = []
-        self.parent.queue_draw()
-
-    def on_norc2(self, clicked_object):
+    def on_deselect_events(self, clicked_object):
         '''
         Right click menu handler -> clear selection
         '''
@@ -137,7 +160,15 @@ class TimelineWidget(TimelineWidgetBase):
         self.clear_active_objects()
         self.parent.queue_draw()
 
-    def on_norc3(self, clicked_object):
+    def on_clear_time_range(self, clicked_object):
+        '''
+        Right click menu handler -> clear range
+        '''
+        del clicked_object
+        self.active_time_range = []
+        self.parent.queue_draw()
+
+    def on_clear_timeline_clamps(self, clicked_object):
         '''
         Right click menu handler -> clear clamp limits
         '''

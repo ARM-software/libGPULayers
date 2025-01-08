@@ -205,9 +205,7 @@ class TimelineInfoWidget(TextPaneWidget):
         lines.extend(message)
 
         active_objects = self.timeline_widget.get_active_objects(True)
-        # If we have one object just print it out
-        if 1 == len(active_objects):
-            lines.extend(active_objects[0].getDescription())
+        # TODO: Do something with the active objects ...
 
         self.set_text('\n'.join(lines))
         super().draw(gc)
