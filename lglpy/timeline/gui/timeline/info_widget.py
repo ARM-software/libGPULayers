@@ -46,9 +46,16 @@ class TimelineInfoWidget(TextPaneWidget):
         '''
         super().__init__((0, 0), (1, 1), style, '')
         self.timeline_widget = timeline_widget
-        self.sort_type = self. VALIDSORTS[0]
+        self.sort_type = self.VALIDSORTS[0]
 
-    def get_frame_rate(self, start, end):
+        # Initialize the text report caches
+        self.cached_active_range = None
+        self.cached_range_info = self.compute_active_region_stats(None)
+
+        self.cached_active_event = None
+        self.cached_event_info = None
+
+    def get_frame_rate_report(self, start, end):
         '''
         Compute the frame rate for frames in the selected time range.
 
@@ -59,45 +66,103 @@ class TimelineInfoWidget(TextPaneWidget):
         Returns:
             Compute frame rate or None if could not be determined.
         '''
-        tl = self.timeline_widget
-        try:
-            channel = tl.drawable_trace.get_channel('sw.frame')
-        except KeyError:
+        # Determine which frames are entirely in the active range
+        out_frames = set()
+        in_frames = dict()
+
+        for event in self.timeline_widget.drawable_trace.each_object():
+            frame = event.user_data.frame
+
+            # Event is not entirely in active range
+            # - Work starts and/or ends before time range
+            #   End before implies start before, so don't need to check it
+            # - Work starts and/or ends after time range
+            #   Start after implies end after, so don't need to check it
+            if event.ws.min_x < start or event.ws.max_x > end:
+                out_frames.add(frame)
+                continue
+
+            # Event is entirely inside active time range
+            if frame not in in_frames:
+                in_frames[frame] = [event.ws.min_x, event.ws.max_x]
+            else:
+                in_frames[frame][0] = min(in_frames[frame][0], event.ws.min_x)
+                in_frames[frame][1] = max(in_frames[frame][1], event.ws.max_x)
+
+        # Remove partial frames from the in_frames data
+        keys = list(in_frames.keys())
+        for key in keys:
+            if key in out_frames:
+                del in_frames[key]
+
+        # No frames found
+        if not in_frames:
             return None
 
-        frame_count = 0
-        first_frame = None
-        last_frame = None
+        # Determine active frame min/max times
+        min_time = min(in_frames.values(), key=lambda x: x[0])[0]
+        max_time = max(in_frames.values(), key=lambda x: x[1])[1]
+        frame_count = len(in_frames)
 
-        def event_filter(x):
-            return isinstance(x, WorldDrawableLine)
-
-        for drawable in channel.each_object(event_filter):
-            frame_time = drawable.ws.min_x
-            if start <= frame_time < end:
-                frame_count += 1
-                if not first_frame:
-                    first_frame = frame_time
-                last_frame = frame_time
-
-        # We need at least two frame markers to bracket an FPS metric
-        if frame_count < 2:
-            return None
-
-        frame_count = float(frame_count - 1)
-        duration = float(last_frame - first_frame) / 1000000000.0
-        msf = (duration * 1000.0) / frame_count
-        fps = frame_count / duration
+        frame_countf = float(frame_count)
+        seconds = float(max_time - min_time) / 1000000000.0
+        msf = (seconds * 1000.0) / frame_countf
+        fps = frame_countf / seconds
 
         lines = [
-            f'  Frames: {frame_count}'
-            f'  Performance: {msf:0.2f} ms/F ({fps:0.2f} FPS)'
+            f'  Frames:      {int(frame_count)}',
+            f'  Performance: {msf:0.2f} ms/frame ({fps:0.2f} FPS)'
         ]
 
         return lines
 
-    def get_gpu_utilization(
-            self, start, end, slot=('Non-fragment', 'Fragment', 'Transfer')):
+    def get_utilization(self, start: int, end: int, slot: list[str]) -> float:
+        '''
+        Compute the hardware utilization over the active time range.
+
+        For analysis using multiple slots, time is considered active if any
+        slot is active.
+
+        Args:
+            start: start of time range.
+            end: end of time range.
+            slot: the hardware queues to analyze.
+
+        Returns:
+            The computed utilization percentage.
+        '''
+        usage = 0
+        cursor = start
+
+        def ch_filter(x):
+            return x.name in slot
+
+        trace = self.timeline_widget.drawable_trace
+        trace = [(x.ws.min_x, x.ws.max_x)
+                 for x in trace.each_object(ch_filter)]
+
+        trace.sort()
+
+        for min_x, max_x in trace:
+            # Skip drawables which do not intersect range
+            if (max_x < cursor) or (min_x > end):
+                continue
+
+            # Trim end to fit active range
+            max_x = min(end, max_x)
+
+            # Trim start to exclude range already counted for earlier events
+            min_x = max(cursor, min_x)
+
+            # Now just store the new data ...
+            usage += max_x - min_x
+            cursor = max_x
+
+        util = (float(usage) / float(end - start)) * 100.0
+        return util
+
+
+    def get_utilization_report(self, start, end):
         '''
         Compute the hardware utilization over the active time range.
 
@@ -109,87 +174,138 @@ class TimelineInfoWidget(TextPaneWidget):
         Returns:
             Compute frame rate or None if could not be determined.
         '''
-        usage = 0
-        range_end = 0
-
-        def event_filter(x):
-            return x.name in slot
-
         trace = self.timeline_widget.drawable_trace
-        trace = [(x.ws.min_x, x.ws.max_x)
-                 for x in trace.each_object(event_filter)]
-        trace.sort()
 
-        for min_x, max_x in trace:
-            # Skip drawables which are out of the range
-            if max_x < start:
-                continue
+        def ch_filt(x):
+            return len(x)
 
-            if min_x > end:
-                break
+        channels = [x.name for x in trace.each_channel(ch_filt)]
+        label_len = max(len(x) for x in channels) + len(' stream:')
 
-            # Clamp to the start range
-            min_x = max(start, min_x)
-            max_x = min(end, max_x)
+        metrics = ['']
+        metrics.append('Utilization:')
+        for channel in channels:
+            util = self.get_utilization(start, end, [channel,])
+            label = f'{channel} stream:'
+            metrics.append(f'  {label:{label_len}} {util:>5.1f}%')
 
-            # Cut off the parts which we have already counted
-            if range_end:
-                min_x = max(range_end, min_x)
-                max_x = max(range_end, max_x)
+        util = self.get_utilization(start, end, channels)
+        label = f'Any stream:'
+        metrics.append(f'  {label:{label_len}} {util:>5.1f}%')
+        metrics.append('')
+        return metrics
 
-            # Now just store the new data ...
-            usage += max_x - min_x
-            range_end = max(range_end, max_x)
-
-        util = (float(usage) / float(end - start)) * 100.0
-        return f'{util:0.1f}%'
-
-    def get_active_region_stats(self):
+    def compute_active_region_stats(self, active):
         '''
         Compute all metrics for the active time range.
 
         Returns:
             List of lines to be printed.
         '''
-        active = self.timeline_widget.get_active_time_range(True)
-        if not active:
-            return ['Active Region: -', '']
+        if not active or (active[1] - active[0]) <= 0:
+            return ['Active region: -', '']
 
-        duration = active[1] - active[0]
-        if duration < 0:
-            return ['Active Region: -', '']
-
-        # Convert to milliseconds
-        duration = float(duration) / 1000000.0
-        start = float(active[0]) / 1000000.0
+        # Convert start to seconds and duration to milliseconds
+        start = float(active[0]) / 1000000000.0
+        duration = float(active[1] - active[0]) / 1000000.0
 
         lines = [
-            'Active Region:',
-            f'  Start = {start:0.3f} ms'
-            f'  Duration = {duration:0.3f} ms'
+            'Active region:',
+            f'  Start:       {start:0.3f} s',
+            f'  Duration:    {duration:0.3f} ms'
         ]
 
-        fps = self.get_frame_rate(*active)
-        if fps:
-            lines.extend(fps)
+        if fps_report := self.get_frame_rate_report(*active):
+            lines.extend(fps_report)
 
-        nf_util = self.get_gpu_utilization(*active, slot=("Non-fragment",))
-        f_util = self.get_gpu_utilization(*active, slot=("Fragment",))
-        t_util = self.get_gpu_utilization(*active, slot=("Transfer",))
-        gpu_util = self.get_gpu_utilization(*active)
+        if util_report := self.get_utilization_report(*active):
+            lines.extend(util_report)
 
-        util = [
-            '',
-            'Utilization:',
-            f'  Non-fragment: {nf_util}',
-            f'  Fragment: {f_util}',
-            f'  Transfer: {t_util}',
-            f'  GPU: {gpu_util}',
-            ''
-        ]
-
-        lines.extend(util)
         return lines
+
+    def get_active_region_stats(self):
+        '''
+        Get the metrics for the active time range.
+
+        This function uses a cached lookup to avoid re-calculating every
+        redraw, as the stats computation can be quite slow.
+
+        Returns:
+            List of lines to be printed.
+        '''
+        active = self.timeline_widget.get_active_time_range(True)
+
+        if self.cached_active_range != active:
+            self.cached_active_range = active
+            self.cached_range_info = self.compute_active_region_stats(active)
+
+        return self.cached_range_info
+
+
+    def compute_active_event_stats_single(self, active):
+        '''
+        Get the metrics for the active time range.
+
+        This function uses a cached lookup to avoid re-calculating every
+        redraw, as the stats computation can be quite slow.
+
+        Returns:
+            List of lines to be printed.
+        '''
+        return ['One selected']
+
+
+    def compute_active_event_stats_multi(self, active):
+        '''
+        Get the metrics for the active time range.
+
+        This function uses a cached lookup to avoid re-calculating every
+        redraw, as the stats computation can be quite slow.
+
+        Returns:
+            List of lines to be printed.
+        '''
+        active.sort(key=lambda x: x.start_time)
+
+        lines = []
+        for event in active:
+            if event.label_stack:
+                lines.append('|'.join(event.label_stack))
+                print(lines[-1])
+            else:
+                lines.append('Unknown')
+
+        return lines
+
+    def get_active_event_stats(self):
+        '''
+        Get the metrics for the active time range.
+
+        This function uses a cached lookup to avoid re-calculating every
+        redraw, as the stats computation can be quite slow.
+
+        Returns:
+            List of lines to be printed.
+        '''
+        active = self.timeline_widget.get_active_objects(True)
+        active.sort(key=lambda x: x.start_time)
+
+        if self.cached_active_event == active:
+            return self.cached_event_info
+
+        elif len(active) == 0:
+            info = None
+
+        elif len(active) == 1:
+            info = self.compute_active_event_stats_single(active)
+
+        else:
+            info = self.compute_active_event_stats_multi(active)
+            import sys
+            sys.exit(1)
+
+        self.cached_event_info = info
+        return self.cached_event_info
 
     def draw(self, gc):
         '''
@@ -200,12 +316,13 @@ class TimelineInfoWidget(TextPaneWidget):
         '''
         lines = []
 
-        # Top line: Active region size (optional)
+        # Top line: Active region statistics
         message = self.get_active_region_stats()
         lines.extend(message)
 
-        active_objects = self.timeline_widget.get_active_objects(True)
-        # TODO: Do something with the active objects ...
+        # Bottom line: Active object statistics
+        if message := self.get_active_event_stats():
+            lines.extend(message)
 
         self.set_text('\n'.join(lines))
         super().draw(gc)

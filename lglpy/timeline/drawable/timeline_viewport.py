@@ -144,7 +144,7 @@ class TimelineViewport:
             return
 
         # Save this to avoid overlap in canvas-space
-        self.coverage_cull_next_cs_x = last_cs_x + 1
+        self.coverage_cull_next_cs_x = last_cs_x
 
         # Save this to allow fast culling
         cs_delta_x = last_cs_x - self.cs.min_x + 1

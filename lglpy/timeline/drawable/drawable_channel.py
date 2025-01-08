@@ -167,6 +167,15 @@ class DrawableChannel:
         '''
         yield from self.objects
 
+    def __len__(self):
+        '''
+        Number of objects in this channel.
+
+        Returns:
+            The number of objects stored.
+        '''
+        return len(self.objects)
+
     def each_object(self, obj_filter=None, ws_range=None):
         '''
         Generator which yields filtered objects from the channel in list order.

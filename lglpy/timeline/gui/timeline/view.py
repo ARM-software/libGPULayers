@@ -271,7 +271,7 @@ class TimelineView(View):
     MENU_NAME = 'Timeline'
     DEBUG_DRAW_TIME = False
     MENU_REQUIRES_DATA_FILE = True
-    INFO_PANEL_W = 350
+    INFO_PANEL_W = 500
 
     def __init__(self, window, css):
         '''
