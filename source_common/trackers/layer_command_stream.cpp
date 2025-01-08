@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024 Arm Limited
+ * Copyright (c) 2024-2025 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -75,7 +75,7 @@ LCSRenderPass::LCSRenderPass(
 
 /* See header for details. */
 std::string LCSRenderPass::getBeginMetadata(
-    const std::string* debugLabel) const
+     const std::vector<std::string>* debugLabel) const
 {
     // Draw count for a multi-submit command buffer cannot be reliably
     // associated with a single tagID if restartable across command buffer
@@ -140,7 +140,7 @@ std::string LCSRenderPass::getBeginMetadata(
 
 /* See header for details. */
 std::string LCSRenderPass::getContinuationMetadata(
-    const std::string* debugLabel,
+    const std::vector<std::string>* debugLabel,
     uint64_t tagIDContinuation) const
 {
     json metadata = {
@@ -159,7 +159,7 @@ std::string LCSRenderPass::getContinuationMetadata(
 
 /* See header for details. */
 std::string LCSRenderPass::getMetadata(
-    const std::string* debugLabel,
+    const std::vector<std::string>* debugLabel,
     uint64_t tagIDContinuation) const
 {
     if (tagID)
@@ -189,7 +189,7 @@ LCSDispatch::LCSDispatch(
 
 /* See header for details. */
 std::string LCSDispatch::getMetadata(
-    const std::string* debugLabel,
+    const std::vector<std::string>* debugLabel,
     uint64_t tagIDContinuation
 ) const {
     UNUSED(tagIDContinuation);
@@ -227,7 +227,7 @@ LCSTraceRays::LCSTraceRays(
 
 /* See header for details. */
 std::string LCSTraceRays::getMetadata(
-    const std::string* debugLabel,
+    const std::vector<std::string>* debugLabel,
     uint64_t tagIDContinuation
 ) const {
     UNUSED(tagIDContinuation);
@@ -263,9 +263,10 @@ LCSImageTransfer::LCSImageTransfer(
 
 /* See header for details. */
 std::string LCSImageTransfer::getMetadata(
-    const std::string* debugLabel,
+    const std::vector<std::string>* debugLabel,
     uint64_t tagIDContinuation
-) const {
+) const
+{
     UNUSED(tagIDContinuation);
 
     json metadata = {
@@ -298,7 +299,7 @@ LCSBufferTransfer::LCSBufferTransfer(
 
 /* See header for details. */
 std::string LCSBufferTransfer::getMetadata(
-    const std::string* debugLabel,
+    const std::vector<std::string>* debugLabel,
     uint64_t tagIDContinuation
 ) const {
     UNUSED(tagIDContinuation);
