@@ -288,8 +288,8 @@ class Window:
         self.trace_data = None
 
         # Make file-based options non-sensitive
-        for menu in self.menus_needing_file:
-            menu.set_sensitive(False)
+        for menu_item in self.menus_needing_file:
+            menu_item.set_sensitive(False)
 
         self.status.log('File closed')
 

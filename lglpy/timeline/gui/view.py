@@ -216,6 +216,7 @@ class View:
         self.set_draw_clip(gc, draw_pos, draw_dim)
 
         # Fill the background with a clear color
+        assert self.width and self.height
         gc.rectangle(0, 0, self.width, self.height)
         gc.set_source_rgba(*self.background_color)
         gc.fill()

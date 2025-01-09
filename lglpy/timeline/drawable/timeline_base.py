@@ -345,7 +345,7 @@ class TimelineWidgetBase:
             return None
 
         # Convert the X coordinate to relative to canvas offset
-        x = float(x - cs.min_x)
+        xf = float(x - cs.min_x)
 
         # Mouse down zooms out, so we scale up the amount of WS on screen
         if scroll == 'down':
@@ -355,7 +355,7 @@ class TimelineWidgetBase:
 
         # Calculate the ratio of scale to apply to X.min and X.max bounds
         # The aim is to keep the diagram under the mouse pointer stationary
-        ratio_left = x / float(cs.w)
+        ratio_left = xf / float(cs.w)
         ratio_right = 1.0 - ratio_left
 
         # Calculate the change in the world visibility based on the up or down

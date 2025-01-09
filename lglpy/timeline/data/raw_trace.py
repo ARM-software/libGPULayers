@@ -38,7 +38,7 @@ from lglpy.timeline.protos.perfetto.trace import trace_pb2
 JSONType = Any
 
 
-class GPUStreamID(enum.Enum):
+class GPUStreamID(enum.IntEnum):
     '''
     Symbolic mapping of known GPU scheduling stream IDs.
 
@@ -80,7 +80,7 @@ class GPUStreamID(enum.Enum):
         return human_names[stream_id]
 
 
-class GPUStageID(enum.Enum):
+class GPUStageID(enum.IntEnum):
     '''
     Symbolic mapping of known GPU workload stage IDs.
 

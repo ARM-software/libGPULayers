@@ -122,7 +122,7 @@ class TimelineWidget(TimelineWidgetBase):
         '''
         # Do nothing if the event user data doesn't have frame metadata
         if clicked_object.user_data.frame is None:
-             return
+            return
 
         self.clear_active_objects()
 

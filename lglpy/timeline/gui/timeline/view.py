@@ -271,7 +271,7 @@ class TimelineView(View):
     MENU_NAME = 'Timeline'
     DEBUG_DRAW_TIME = False
     MENU_REQUIRES_DATA_FILE = True
-    INFO_PANEL_W = 500
+    INFO_PANEL_W = 450
 
     def __init__(self, window, css):
         '''
@@ -345,24 +345,6 @@ class TimelineView(View):
             menu_item.connect_object('activate', item[3], item)
             item[0] = menu_item
             menu_item.set_active(item[2])
-
-        menu_item = Gtk.SeparatorMenuItem()
-        menu_root.append(menu_item)
-
-        menu_item = Gtk.MenuItem('Channel visibility')
-        menu_root.append(menu_item)
-
-        submenu_root = Gtk.Menu()
-        menu_item.set_submenu(submenu_root)
-
-        menu_item = Gtk.SeparatorMenuItem()
-        menu_root.append(menu_item)
-
-        menu_item = Gtk.MenuItem('Infopanel options')
-        menu_root.append(menu_item)
-
-        submenu_root = Gtk.Menu()
-        menu_item.set_submenu(submenu_root)
 
         self.menu_bar.show_all()
 

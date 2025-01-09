@@ -209,6 +209,7 @@ class CSSStylesheet(dict):
             with open(css_file, 'r', encoding='utf-8') as handle:
                 css_string = handle.read()
 
+        assert css_string
         self.parse_string(css_string, css_file)
 
     def parse_string(self, css_string: str, file_name: Optional[str]):
@@ -229,7 +230,7 @@ class CSSStylesheet(dict):
 
         # Parse line-wise
         try:
-            current_nodes = []
+            current_nodes: list[CSSNode] = []
 
             for line_no, line in enumerate(lines):
                 # String out any comments and whitespace
@@ -242,8 +243,8 @@ class CSSStylesheet(dict):
                 # Handle node declarations
                 if match := self.re_node_decl.match(line):
                     parent = match.group(1) if match.group(1) else '<root>'
-                    nodes = [x.strip() for x in match.group(2).split(',')]
-                    nodes = [self.get_node(x, parent) for x in nodes]
+                    parts = [x.strip() for x in match.group(2).split(',')]
+                    nodes = [self.get_node(x, parent) for x in parts]
                     ending = match.group(3)
                     if not ending:
                         current_nodes = nodes
@@ -251,31 +252,31 @@ class CSSStylesheet(dict):
 
                 # ... and terminations
                 if match := self.re_node_end_decl.match(line):
-                    current_nodes = None
+                    current_nodes = []
                     continue
 
                 # Handle node field declarations for colors
                 if match := self.re_color_decl.match(line):
                     key = match.group(1)
-                    value = CSSColor(match.group(2))
+                    color_value = CSSColor(match.group(2))
                     for node in current_nodes:
-                        node[key] = value
+                        node[key] = color_value
                     continue
 
                 # Handle node field declarations for floats
                 if match := self.re_float_decl.match(line):
                     key = match.group(1)
-                    value = float(match.group(2))
+                    float_value = float(match.group(2))
                     for node in current_nodes:
-                        node[key] = value
+                        node[key] = float_value
                     continue
 
                 # Handle node field declarations for line dashes
                 if match := self.re_dash_decl.match(line):
                     key = match.group(1)
-                    value = CSSDash(match.group(2))
+                    dash_value = CSSDash(match.group(2))
                     for node in current_nodes:
-                        node[key] = value
+                        node[key] = dash_value
                     continue
 
                 # If we get here this line is an unknown so raise an error
@@ -292,7 +293,7 @@ class CSSStylesheet(dict):
             msg = f'CSS parent syntax error: "{line}" @ line {line_no + 1}{msg}'
             raise ValueError(msg) from exc
 
-    def get_node(self, name, parent='<root>', create=True):
+    def get_node(self, name, parent='<root>', create=True) -> 'CSSNode':
         '''
         Fetch a CSS node, optionally creating it if it does not exist.
 

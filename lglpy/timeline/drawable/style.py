@@ -51,8 +51,10 @@ A StyleSetLibrary is a collection of StyleSet instances, which can be looked
 up by name. Libraries are read-only and designed to be shared by multiple
 user interface components.
 '''
+from typing import Optional
 
-from lglpy.timeline.drawable.drawable import FONT
+from .css import CSSDash
+from .drawable import FONT
 
 
 class Style:
@@ -76,7 +78,7 @@ class Style:
         'fill_color', 'line_color', 'line_width', 'line_dash'
     )
 
-    def __init__(self, variant: str = None):
+    def __init__(self, variant: Optional[str] = None):
         '''
         Create a new style instance, assigning defaults if needed.
 
@@ -102,7 +104,7 @@ class Style:
 
         self.line_color = None
         self.line_width = 1.0
-        self.line_dash = []
+        self.line_dash = CSSDash('none')
 
     @classmethod
     def css_factory(cls, css_style, variant=None):

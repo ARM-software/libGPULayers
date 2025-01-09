@@ -26,8 +26,10 @@ The `TimelineInfoWidget` class implements a specialized version of the
 timeline visualization.
 '''
 
-from lglpy.timeline.drawable.text_pane_widget import TextPaneWidget
-from lglpy.timeline.drawable.world_drawable import WorldDrawableLine
+from collections import defaultdict
+
+from ...data.raw_trace import GPUStreamID, GPUStageID
+from ...drawable.text_pane_widget import TextPaneWidget
 
 
 class TimelineInfoWidget(TextPaneWidget):
@@ -36,6 +38,7 @@ class TimelineInfoWidget(TextPaneWidget):
     time ranges in the main timeline.
     '''
 
+    MAX_EVENTS = 5
     VALIDSORTS = ['flush', 'runtime']
 
     def __init__(self, timeline_widget, style):
@@ -161,7 +164,6 @@ class TimelineInfoWidget(TextPaneWidget):
         util = (float(usage) / float(end - start)) * 100.0
         return util
 
-
     def get_utilization_report(self, start, end):
         '''
         Compute the hardware utilization over the active time range.
@@ -186,6 +188,9 @@ class TimelineInfoWidget(TextPaneWidget):
         metrics.append('Utilization:')
         for channel in channels:
             util = self.get_utilization(start, end, [channel,])
+            if util == 0.0:
+                continue
+
             label = f'{channel} stream:'
             metrics.append(f'  {label:{label_len}} {util:>5.1f}%')
 
@@ -241,20 +246,6 @@ class TimelineInfoWidget(TextPaneWidget):
 
         return self.cached_range_info
 
-
-    def compute_active_event_stats_single(self, active):
-        '''
-        Get the metrics for the active time range.
-
-        This function uses a cached lookup to avoid re-calculating every
-        redraw, as the stats computation can be quite slow.
-
-        Returns:
-            List of lines to be printed.
-        '''
-        return ['One selected']
-
-
     def compute_active_event_stats_multi(self, active):
         '''
         Get the metrics for the active time range.
@@ -267,19 +258,91 @@ class TimelineInfoWidget(TextPaneWidget):
         '''
         active.sort(key=lambda x: x.start_time)
 
-        lines = []
-        for event in active:
-            if event.label_stack:
-                lines.append('|'.join(event.label_stack))
-                print(lines[-1])
-            else:
-                lines.append('Unknown')
+        # Per-stream time for a given submitted workload
+        tag_stream_time = {}
+        # Per-tag event mapping (keeps an arbitrary one)
+        tag_event = {}
+        # Per-work time for a submitted workload
+        total_tag_time = defaultdict(int)
+        # Per-steam time for all workloads
+        total_stream_time = defaultdict(int)
 
-        return lines
+        max_name_len = 0
+
+        for event in active:
+            total_stream_time[event.stream] += event.duration
+            total_tag_time[event.tag_id] += event.duration
+
+            name_len = len(GPUStreamID.get_ui_name(event.stream))
+            max_name_len = max(max_name_len, name_len)
+
+            if event.tag_id not in tag_stream_time:
+                tag_stream_time[event.tag_id] = defaultdict(int)
+                tag_event[event.tag_id] = event
+
+            tag_stream_time[event.tag_id][event.stream] += event.duration
+
+        metrics = ['']
+        # Report total runtime of the selected workloads
+        other_names = [
+            'API workloads:',
+            'Hardware workloads:'
+        ]
+
+        metrics.append('Active workload runtime:')
+
+        label_len = max_name_len + len(' stream:')
+        label_len = max(max(len(x) for x in other_names), label_len)
+
+        label = other_names[0]
+        value = len(tag_event)
+        metrics.append(f'  {label:{label_len}} {value:>5}')
+
+        label = other_names[1]
+        value = len(active)
+        metrics.append(f'  {label:{label_len}} {value:>5}')
+
+        active_streams = sorted(total_stream_time.keys())
+        for stream in active_streams:
+            label = f'{GPUStreamID.get_ui_name(stream)} stream:'
+            duration = float(total_stream_time[stream]) / 1000000.0
+            metrics.append(f'  {label:{label_len}} {duration:>5.2f} ms')
+
+        # Report total N workloads
+        metrics.append('')
+        top_n_limit = min(self.MAX_EVENTS, len(total_tag_time))
+        if top_n_limit > 1:
+            metrics.append(f'Top {top_n_limit} workload runtimes:')
+        else:
+            metrics.append(f'Workload runtime:')
+
+        tags_by_cost = sorted(
+            total_tag_time, key=total_tag_time.get, reverse=True)
+
+        for n_count, tag_id in enumerate(tags_by_cost):
+            if n_count >= top_n_limit:
+                break
+
+            event = tag_event[tag_id]
+            costs = tag_stream_time[tag_id]
+
+            # Report total N workloads
+            label = event.get_workload_name()
+            metrics.append(f'  {label}')
+
+            active_streams = sorted(costs.keys())
+            label_len = max_name_len + len(' stream:')
+            for stream in active_streams:
+                label = f'{GPUStreamID.get_ui_name(stream)} stream:'
+                duration = float(costs[stream]) / 1000000.0
+                metrics.append(f'    {label:{label_len}} {duration:>5.2f} ms')
+
+        metrics.append('')
+        return metrics
 
     def get_active_event_stats(self):
         '''
-        Get the metrics for the active time range.
+        Get the metrics for the active event selection.
 
         This function uses a cached lookup to avoid re-calculating every
         redraw, as the stats computation can be quite slow.
@@ -296,13 +359,8 @@ class TimelineInfoWidget(TextPaneWidget):
         elif len(active) == 0:
             info = None
 
-        elif len(active) == 1:
-            info = self.compute_active_event_stats_single(active)
-
         else:
             info = self.compute_active_event_stats_multi(active)
-            import sys
-            sys.exit(1)
 
         self.cached_event_info = info
         return self.cached_event_info
