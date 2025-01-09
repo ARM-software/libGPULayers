@@ -34,17 +34,17 @@ class PrimitiveRectangle:
     store min and max, as well as the width and height.
 
     Attributes:
-        min_x: minimum X coordinate.
-        min_y: minimum Y coordinate.
-        max_x: maximum X coordinate.
-        max_y: maximum Y coordinate.
+        min_x: minimum X coordinate (inclusive).
+        min_y: minimum Y coordinate (inclusive).
+        max_x: maximum X coordinate (inclusive).
+        max_y: maximum Y coordinate (inclusive).
         w: width of the primitive.
         h: height of the primitive.
     '''
 
     __slots__ = ('min_x', 'max_x', 'min_y', 'max_y', 'w', 'h')
 
-    def __init__(self, pos, dim):
+    def __init__(self, pos: list[int], dim: list[int]):
         '''
         Create a new primitive rectangle.
 
@@ -61,7 +61,7 @@ class PrimitiveRectangle:
         self.w = float(dim[0])
         self.h = float(dim[1])
 
-    def extend_rect(self, rect):
+    def extend_rect(self, rect) -> None:
         '''
         Enlarge the size of this rectangle to enclose the passed rectangle.
 
@@ -77,7 +77,7 @@ class PrimitiveRectangle:
         self.w = self.max_x - self.min_x
         self.h = self.max_y - self.min_y
 
-    def intersects(self, other):
+    def intersects(self, other) -> bool:
         '''
         Test whether this rectangle intersects another.
 
@@ -92,12 +92,12 @@ class PrimitiveRectangle:
                (other.min_y <= self.max_y) and \
                (other.max_y >= self.min_y)
 
-    def is_enclosed_by(self, other):
+    def is_enclosed_by(self, other) -> bool:
         '''
         Test whether this rectangle is totally inside another.
 
         Args:
-            other: other rectangle to test.
+            other: the other rectangle to test.
 
         Returns:
             True if totally enclosed, False otherwise.
@@ -107,7 +107,7 @@ class PrimitiveRectangle:
                (other.min_y <= self.min_y) and \
                (other.max_y >= self.max_y)
 
-    def is_hit_by(self, x, y):
+    def is_hit_by(self, x: int, y: int) -> bool:
         '''
         Test whether the specified point is inside this rectangle.
 
@@ -121,7 +121,7 @@ class PrimitiveRectangle:
         return (self.min_x <= x <= self.max_x) and \
                (self.min_y <= y <= self.max_y)
 
-    def __str__(self):
+    def __str__(self) -> str:
         '''
         Return a debug string representation of this primitive box.
 

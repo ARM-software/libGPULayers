@@ -241,9 +241,8 @@ class AndroidUtils:
             command = f'pm dump {package} | grep primaryCpuAbi'
             log = conn.adb_run(command)
             pattern = re.compile('primaryCpuAbi=(\\S+)')
-            match = pattern.search(log)
 
-            if match:
+            if match := pattern.search(log):
                 log_abi = match.group(1)
                 if log_abi != 'null':
                     preferred_abi = log_abi

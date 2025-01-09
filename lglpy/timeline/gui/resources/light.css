@@ -31,16 +31,6 @@ mtv-core {
 	line-color: #505050;
 }
 
-[tlv-tlw-core] tlv-tlw-bookmarkbar {
-	fill-color: #d0d0d0;
-	line-color: #505050;
-}
-
-[tlv-tlw-bookmarkbar] tlv-tlw-bookmark {
-	fill-color: #ff7728;
-	line-color: #505050;
-}
-
 [tlv-tlw-core] tlv-tlw-activeregion {
 	fill-color: #ffffff80;
 	line-color: none;
@@ -56,13 +46,6 @@ mtv-core {
 	line-dash: 2,4;
 	line-width: 1.0;
 	line-color: #202020;
-}
-
-[tlv-tlw-core] tlv-tlw-legend {
-	fill-color: #e5e5e5;
-	line-width: 1.0;
-	line-color: #606060;
-	font-color: #404040;
 }
 
 [tlv-core] tlv-info {

@@ -56,8 +56,7 @@ class TimelineWidget(TimelineWidgetBase):
         We follow the same convention as the `View` module API, so see that
         class for documentation.
         '''
-        parent = super()
-        if parent.on_mouse_single_click(button, x, y, mod):
+        if super().on_mouse_single_click(button, x, y, mod):
             return True
 
         # The only extra options are right menu click options
@@ -65,8 +64,7 @@ class TimelineWidget(TimelineWidgetBase):
             return False
 
         # Try to find a clicked object, if there is one
-        vp = self.vp
-        ws_x, ws_y = vp.transform_cs_to_ws(x, y)
+        ws_x, ws_y = self.vp.transform_cs_to_ws(x, y)
 
         clicked = self.drawable_trace.get_clicked_object(ws_x, ws_y)
 
@@ -77,12 +75,14 @@ class TimelineWidget(TimelineWidgetBase):
         if clicked:
             menu = Gtk.Menu()
 
-            menui = Gtk.MenuItem('Highlight by Render Pass')
-            menui.connect_object('activate', self.on_orc1, clicked)
+            menui = Gtk.MenuItem('Select by frame')
+            menui.connect_object(
+                'activate', self.on_select_events_by_frame, clicked)
             menu.append(menui)
 
-            menui = Gtk.MenuItem('Highlight by Frame')
-            # TODO: Implement this
+            menui = Gtk.MenuItem('Select by workload')
+            menui.connect_object(
+                'activate', self.on_select_events_by_workload, clicked)
             menu.append(menui)
 
             menu.show_all()
@@ -94,37 +94,20 @@ class TimelineWidget(TimelineWidgetBase):
         if mod == '':
             menu = Gtk.Menu()
 
-            menui = Gtk.MenuItem('Clear Selected Time Range')
-            menui.connect_object('activate', self.on_norc1, clicked)
+            menui = Gtk.MenuItem('Clear active time range')
+            menui.connect_object(
+                'activate', self.on_clear_time_range, clicked)
             menu.append(menui)
 
-            menui = Gtk.MenuItem('Clear Selected Objects')
-            menui.connect_object('activate', self.on_norc2, clicked)
+            menui = Gtk.MenuItem('Clear active events')
+            menui.connect_object(
+                'activate', self.on_deselect_events, clicked)
             menu.append(menui)
 
-            menui = Gtk.MenuItem('Clear Timeline Clamps')
-            menui.connect_object('activate', self.on_norc3, clicked)
+            menui = Gtk.MenuItem('Clear timeline clamps')
+            menui.connect_object(
+                'activate', self.on_clear_timeline_clamps, clicked)
             menu.append(menui)
-
-            bookmarks = {}
-            for time, name in self.bookmarks.items():
-                # Keep bookmarks in active clamp range only
-                if self.ws_clamp_min_x < time < self.ws_clamp_max_x:
-                    bookmarks[time] = name
-
-            if bookmarks:
-                menui = Gtk.MenuItem('Jump to Bookmark')
-                menu.append(menui)
-
-                submenu = Gtk.Menu()
-                menui.set_submenu(submenu)
-
-                handler = self.on_jump_bookmark
-                for bookmark in sorted(bookmarks.keys()):
-                    key = bookmarks[bookmark]
-                    menui = Gtk.MenuItem(key)
-                    menui.connect_object('activate', handler, key)
-                    submenu.append(menui)
 
             menu.show_all()
             menu.popup_at_pointer(event)
@@ -133,23 +116,43 @@ class TimelineWidget(TimelineWidgetBase):
 
         return False
 
-    def on_orc1(self, clicked_object):
+    def on_select_events_by_frame(self, clicked_object):
         '''
-        Right click menu handler -> highlight by single render pass
+        Right click menu handler -> highlight by single frame.
+        '''
+        # Do nothing if the event user data doesn't have frame metadata
+        if clicked_object.user_data.frame is None:
+            return
+
+        self.clear_active_objects()
+
+        def filt(x):
+            return x.user_data.frame == clicked_object.user_data.frame
+
+        to_activate = []
+        for drawable in self.drawable_trace.each_object(obj_filter=filt):
+            to_activate.append(drawable)
+
+        self.add_multiple_to_active_objects(to_activate)
+        self.parent.queue_draw()
+
+    def on_select_events_by_workload(self, clicked_object):
+        '''
+        Right click menu handler -> highlight by single workload.
         '''
         self.clear_active_objects()
-        self.add_to_active_objects(clicked_object)
+
+        def filt(x):
+            return x.user_data.tag_id == clicked_object.user_data.tag_id
+
+        to_activate = []
+        for drawable in self.drawable_trace.each_object(obj_filter=filt):
+            to_activate.append(drawable)
+
+        self.add_multiple_to_active_objects(to_activate)
         self.parent.queue_draw()
 
-    def on_norc1(self, clicked_object):
-        '''
-        Right click menu handler -> clear range
-        '''
-        del clicked_object
-        self.active_time_range = []
-        self.parent.queue_draw()
-
-    def on_norc2(self, clicked_object):
+    def on_deselect_events(self, clicked_object):
         '''
         Right click menu handler -> clear selection
         '''
@@ -157,7 +160,15 @@ class TimelineWidget(TimelineWidgetBase):
         self.clear_active_objects()
         self.parent.queue_draw()
 
-    def on_norc3(self, clicked_object):
+    def on_clear_time_range(self, clicked_object):
+        '''
+        Right click menu handler -> clear range
+        '''
+        del clicked_object
+        self.active_time_range = []
+        self.parent.queue_draw()
+
+    def on_clear_timeline_clamps(self, clicked_object):
         '''
         Right click menu handler -> clear clamp limits
         '''
@@ -166,86 +177,4 @@ class TimelineWidget(TimelineWidgetBase):
         self.trace_ws_min_x = self.ws_clamp_min_x
         self.ws_clamp_max_x = self.original_trace_ws_max_x + 100
         self.trace_ws_max_x = self.ws_clamp_max_x
-        self.parent.queue_draw()
-
-    def on_jump_bookmark(self, name):
-        '''
-        Right click menu handler -> jump to bookmark
-        '''
-        for ws_target_x, value in self.bookmarks.items():
-            if value == name:
-                break
-        else:
-            return
-
-        clamp_min_x = self.ws_clamp_min_x
-        clamp_max_x = self.ws_clamp_max_x
-        if not clamp_min_x <= ws_target_x <= clamp_max_x:
-            print(f'WARNING: Bookmark {name} outside of clamped range')
-            return
-
-        # Put the bookmark in the middle of the screen, but handle clamps
-        # gracefully, which may pull it off center
-        ws_start_x = max(ws_target_x - (self.vp.ws.w / 2), clamp_min_x)
-        ws_end_x = min(ws_target_x + (self.vp.ws.w / 2), clamp_max_x)
-
-        # Finally we can update the viewport and render
-        ws = self.vp.ws
-        ws_pos_new = [ws_start_x, ws.min_y]
-        ws_dim_new = [ws_end_x - ws_start_x, ws.max_y - ws.min_y]
-        self.vp.update_ws(ws_pos_new, ws_dim_new)
-
-        self.parent.queue_draw()
-
-    def jump_one_frame(self, forward):
-        '''
-        Handle jump one frame forward or backwards.
-        '''
-        # Find the scene object in the config
-        def ch_filter(channel):
-            return channel.name in ['sw.frame']
-
-        def obj_filter(event):
-            return isinstance(event, WorldDrawableLine)
-
-        # Find the frame either side of the first eglSwap in the viewport
-        prev = None
-        start = None
-        end = None
-
-        ws = self.vp.ws
-        for drawable in self.drawable_trace.each_object(ch_filter, obj_filter):
-            if drawable.ws.min_x >= ws.min_x:
-                if not start:
-                    start = drawable.ws.min_x
-                else:
-                    end = drawable.ws.min_x
-                    break
-            else:
-                prev = drawable.ws.min_x
-
-        if None is end:
-            print('Warning: Unable to determine frame time')
-            return
-
-        # Use gap between N and N+1 when moving forwards
-        if forward:
-            ws_pos_new = [ws.min_x + end - start, ws.min_y]
-        # Use gap between N-1 and N when moving backwards (if there is a
-        # backwards). This ensures that toggling left and right is stable
-        # without jitter
-        elif prev:
-            ws_pos_new = [ws.min_x - start + prev, ws.min_y]
-        # Otherwise nothing to do, so return
-        else:
-            return
-
-        # Clamp the start against the clamp ranges
-        ws_pos_new = [max(self.ws_clamp_min_x, ws_pos_new[0]), ws_pos_new[1]]
-        max_w = self.ws_clamp_max_x - ws_pos_new[0] - 5
-
-        width = min(ws.max_x - ws.min_x, max_w)
-        ws_dim_new = [width, ws.max_y - ws.min_y]
-
-        self.vp.update_ws(ws_pos_new, ws_dim_new)
         self.parent.queue_draw()

@@ -27,6 +27,8 @@ of world-space coordinates, so their position must be translated into
 canvas-space using a viewport before they are rendered.
 '''
 
+from typing import Any
+
 from lglpy.timeline.drawable.drawable import DrawableLabel
 from lglpy.timeline.drawable.primitive_rectangle import PrimitiveRectangle
 
@@ -83,6 +85,14 @@ class WorldDrawableRect(WorldDrawable):
         self.label_short = None
         if label_short:
             self.label_short = DrawableLabel(style, label_short)
+
+        self.user_data = None
+
+    def set_user_data(self, user_data: Any) -> None:
+        '''
+        Set the user data to point at an arbitrary payload.
+        '''
+        self.user_data = user_data
 
     def draw(self, gc, vp):
         '''

@@ -47,8 +47,8 @@ class TimelineWidgetBase:
     transformed from world-space to canvas-space for rendering.
 
     This widget is designed as a set of horizontal time-tracks plotted on the
-    canvas, with some fixed-function control regions for making actions and
-    setting navigation bookmarks running along the top of the widget.
+    canvas, with some fixed-function control regions for control actions
+    running along the top of the widget.
 
     The underlying viewport behavior is generic, but the zoom and pan controls
     (by virtue of the viewport used) only modify the X axis. Using the mouse
@@ -61,7 +61,6 @@ class TimelineWidgetBase:
     Attributes:
         CLAMP_PIXELS: Width of the boundary clamp boxes, in pixels.
         ACTION_BAR_PIXELS: Height of the action bar region in pixels.
-        BOOKMARK_BAR_PIXELS: Height of the action bar region in pixels.
         MAX_PIXELS_PER_US_MAX : Max number of pixels per nanosecond.
             Increase this to allow more zoomed in views.
         ZOOM_SCALE: Scaling rate per step of zoom on the mouse wheel.
@@ -80,9 +79,8 @@ class TimelineWidgetBase:
             The current set of saved active objects.
     '''
     CLAMP_PIXELS = 12
-    ACTION_BAR_PIXELS = 10
+    ACTION_BAR_PIXELS = 20
     BOTTOM_PAD_PIXELS = 20
-    BOOKMARK_BAR_PIXELS = 15
     MAX_PIXELS_PER_US = 0.15
     ZOOM_RATE = 0.2
 
@@ -144,38 +142,11 @@ class TimelineWidgetBase:
         name = f'{prefix}activitybar'
         self.activity_bar_style = Style.css_factory(css[name])
 
-        name = f'{prefix}bookmarkbar'
-        self.bookmark_bar_style = Style.css_factory(css[name])
-
         name = f'{prefix}activeregion'
         self.activity_region_style = Style.css_factory(css[name])
 
         name = f'{prefix}limitclamp'
         self.clamp_style = Style.css_factory(css[name])
-
-        # Legend configuration
-        self.show_legend = False
-        self.legend_entries = []
-
-        name = f'{prefix}legend'
-        self.legend_style = Style.css_factory(css[name])
-
-        # Bookmarks
-        self.bookmarks = {}
-
-        name = f'{prefix}bookmark'
-        self.bookmark_style = Style.css_factory(css[name])
-
-    def add_legend_entry(self, name, style):
-        '''
-        Add a legend entry.
-
-        Args:
-            name: name of the legend entry.
-            style: visual style for rendering.
-        '''
-        label = CanvasDrawableLabel(self.legend_style, name)
-        self.legend_entries.append((label, style))
 
     def update_cs(self, cs_pos, cs_dim):
         '''
@@ -352,27 +323,15 @@ class TimelineWidgetBase:
         '''
         self.show_labels = labels
 
-    def set_legend_visibility(self, legend):
-        '''
-        Toggle whether this widget shows the legend or not.
-
-        Args:
-            legend: True if legend should be  drawn.
-        '''
-        self.show_legend = legend
-
-    def on_mouse_scroll(self, scroll, x, y):
+    def on_mouse_scroll(self, scroll: str, x: int, y: int):
         '''
         Handle a mouse scroll event.
 
         Args:
-            scroll: str
-                String indicating direction of the scroll. Must be "up" or
+            scroll: String indicating direction of the scroll. Must be "up" or
                 "down"; side scrolling mice are not supported!
-            x: int
-                X coordinate of the mouse pointer in canvas-space.
-            y: int
-                Y coordinate of the mouse pointer in canvas-space.
+            x: X coordinate of the mouse pointer in canvas-space.
+            y: Y coordinate of the mouse pointer in canvas-space.
 
         Returns:
             Returns True if this function triggered some behavior which needs
@@ -386,7 +345,7 @@ class TimelineWidgetBase:
             return None
 
         # Convert the X coordinate to relative to canvas offset
-        x = float(x - cs.min_x)
+        xf = float(x - cs.min_x)
 
         # Mouse down zooms out, so we scale up the amount of WS on screen
         if scroll == 'down':
@@ -396,7 +355,7 @@ class TimelineWidgetBase:
 
         # Calculate the ratio of scale to apply to X.min and X.max bounds
         # The aim is to keep the diagram under the mouse pointer stationary
-        ratio_left = x / float(cs.w)
+        ratio_left = xf / float(cs.w)
         ratio_right = 1.0 - ratio_left
 
         # Calculate the change in the world visibility based on the up or down
@@ -521,7 +480,7 @@ class TimelineWidgetBase:
         end_x, end_y = drag.end
 
         # Skip drags in active region
-        if start_y < self.ACTION_BAR_PIXELS + self.BOOKMARK_BAR_PIXELS:
+        if start_y < self.ACTION_BAR_PIXELS:
             return False
 
         # Convert canvas-space to world-space coordinates
@@ -588,17 +547,6 @@ class TimelineWidgetBase:
                 self.set_active_region(button, ws_x)
             if mod == 'c':
                 self.set_clip_region(button, ws_x)
-            return True
-
-        # If in the top 20 pixels process as a view highlight ...
-        bar_start = self.ACTION_BAR_PIXELS
-        bar_end = self.ACTION_BAR_PIXELS + self.BOOKMARK_BAR_PIXELS
-        if bar_start <= cs_rel_y < bar_end:
-            ws_x = self.vp.transform_cs_to_ws_x(x)
-            if (button == 'left') and (mod == ''):
-                self.set_bookmark(ws_x)
-            elif (button == 'right') and (mod == ''):
-                self.clear_bookmark(x)
             return True
 
         # Else process as a click event on an object ...
@@ -686,56 +634,6 @@ class TimelineWidgetBase:
 
         return True
 
-    def set_bookmark(self, ws_x):
-        '''
-        Set the a new bookmark at the world-space X coordinate.
-
-        Args:
-            ws_x: float
-                The world-space location of the click.
-        '''
-        bookmark = get_entry_dialog(self.parent.window, 'Enter Bookmark')
-        if None is not bookmark:
-            bookmark = bookmark.strip()
-
-        if not bookmark:
-            print('Warning: Bookmark not specified in dialog')
-            return
-
-        # TODO: We probably want to avoid bookmarks which are too close to
-        # other bookmarks here, so make this an abs(diff) > limit check
-        if ws_x in self.bookmarks:
-            print('Warning: Bookmark already specified at this location')
-            return
-
-        if bookmark in self.bookmarks.values():
-            print(f'Warning: Bookmark "{bookmark}" already specified')
-            return
-
-        self.bookmarks[ws_x] = bookmark
-
-        return
-
-    def clear_bookmark(self, cs_x):
-        '''
-        Clear the a new bookmark at the canvas-space X coordinate.
-
-        Args:
-            cs_x: float
-                The canvas-space location of the click.
-        '''
-        # Get the bounds of a 4 pixel widget in world-space
-        ws_min_x = self.vp.transform_cs_to_ws_x(cs_x - 2)
-        ws_max_x = self.vp.transform_cs_to_ws_x(cs_x + 2)
-
-        # Remove any bookmarks in this range
-        for ws in self.bookmarks:
-            if ws_min_x <= ws < ws_max_x:
-                del self.bookmarks[ws]
-                return True
-
-        return False
-
     def get_coord_str(self, cx, cy):
         '''
         Return a coordinate string for the given canvas-space coordinate.
@@ -755,22 +653,6 @@ class TimelineWidgetBase:
         start = 0
         end = self.ACTION_BAR_PIXELS
         if start <= cy < self.ACTION_BAR_PIXELS:
-            return ''
-
-        # If in the BOOKMARK BAR then only a string if hovering over a bookmark
-        start = end
-        end += self.BOOKMARK_BAR_PIXELS
-        if start <= cy < end:
-            for bookmark, value in self.bookmarks.items():
-                bx = self.vp.transform_ws_to_cs_x(bookmark)
-                start = bx - 3
-                end = bx + 3
-                if start < cx < end:
-                    ms = bookmark / 1000000.0
-                    label = f'{ms:0.2f} ms, Bookmark "{value}"'
-                    return label
-
-            # Clear the string if not over a bookmark
             return ''
 
         # Otherwise we are over the main timeline so provide timeline coords
@@ -793,7 +675,6 @@ class TimelineWidgetBase:
         ws = self.vp.ws
 
         extra_h = self.ACTION_BAR_PIXELS \
-                + self.BOOKMARK_BAR_PIXELS \
                 + self.BOTTOM_PAD_PIXELS
 
         # Draw min_x clamp limits and mask off once drawn
@@ -872,43 +753,6 @@ class TimelineWidgetBase:
                                         (cs_w, cs.h), style)
             active.draw(gc)
 
-    def draw_bookmark_bar(self, gc):
-        '''
-        Render the bookmark control bar.
-
-        Args:
-            gc: Cairo graphics context.
-        '''
-        cs = self.vp.cs
-
-        # Draw active region interactable zone user hint
-        style = self.bookmark_bar_style
-        min_y = cs.min_y + self.ACTION_BAR_PIXELS
-        height = self.BOOKMARK_BAR_PIXELS
-        active = CanvasDrawableRectFill((cs.min_x, min_y),
-                                        (cs.w, height), style)
-        active.draw(gc)
-
-        line = Drawable.rt05(min_y + height - 1)
-        points = [(cs.min_x, line), (cs.max_x, line)]
-        active = CanvasDrawableLine(points, style)
-        active.draw(gc)
-
-        # Draw bookmark points
-        style = self.bookmark_style
-        min_y = min_y + 2 - 0.5
-        height = height - 4
-        width = 4
-        for ws_x, _ in self.bookmarks.items():
-            # Skip bookmarks out of the current viewport
-            if not self.vp.ws.min_x < ws_x < self.vp.ws.max_x:
-                continue
-
-            # Render bookmarks inside the current viewport
-            min_x = self.vp.transform_ws_to_cs_x(ws_x, 1) - 2
-            active = CanvasDrawableRect((min_x, min_y), (width, height), style)
-            active.draw(gc)
-
     def draw_active_drag(self, gc):
         '''
         Render the active region control bar, and the active region if needed.
@@ -918,7 +762,7 @@ class TimelineWidgetBase:
         '''
         if self.left_drag_start:
             # Don't draw the highlight for an active bar drag
-            height = self.ACTION_BAR_PIXELS + self.BOOKMARK_BAR_PIXELS
+            height = self.ACTION_BAR_PIXELS
             if self.left_drag_start[1] < height:
                 return
 
@@ -935,49 +779,6 @@ class TimelineWidgetBase:
             active = CanvasDrawableRect((min_x, min_y), (w, h), style)
             active.draw(gc)
 
-    def draw_legend(self, gc):
-        '''
-        Render the legend.
-
-        Args:
-            gc: Cairo graphics context.
-        '''
-        if (not self.legend_entries) or (not self.show_legend):
-            return
-
-        borderpad = 10
-        textpad = 5
-        entrypad = 20
-        cell = 10
-        max_x = self.vp.cs.max_x - 10
-
-        width = borderpad
-        for label, _ in self.legend_entries:
-            width += label.get_label_extents(gc)[0]
-            width += textpad + cell + entrypad
-        width -= entrypad
-        width += borderpad
-
-        # Draw legend border
-        style = self.legend_style
-        min_x = max_x - width + 0.5
-        min_y = borderpad + 0.5
-        height = borderpad + cell + borderpad
-        legend = CanvasDrawableRect((min_x, min_y), (width, height), style)
-        legend.draw(gc)
-
-        # Draw entries
-        min_x += borderpad
-        min_y += borderpad
-        label_y = min_y + cell - 2
-        for label, style in self.legend_entries:
-            legend = CanvasDrawableRect((min_x, min_y), (cell, cell), style)
-            legend.draw(gc)
-            min_x += cell + textpad
-            label.draw(gc, min_x, label_y)
-            min_x += label.get_label_extents(gc)[0]
-            min_x += entrypad
-
     def draw(self, gc, ch_filter=None, ws_range=None):
         '''
         Draw this widget.
@@ -992,7 +793,6 @@ class TimelineWidgetBase:
         '''
         cs = self.vp.cs
         extra_h = self.ACTION_BAR_PIXELS \
-                + self.BOOKMARK_BAR_PIXELS \
                 + self.BOTTOM_PAD_PIXELS
 
         gc.rectangle(cs.min_x, cs.min_y, cs.w, cs.h + extra_h)
@@ -1013,7 +813,6 @@ class TimelineWidgetBase:
         self.vp.enable_coverage_culling(False)
 
         self.set_draw_clip(gc)
-        self.draw_bookmark_bar(gc)
         self.draw_active_bar(gc)
 
         # Draw the trace
@@ -1021,4 +820,3 @@ class TimelineWidgetBase:
         self.drawable_trace.draw(gc, vp, ch_filter, ws_range, self.show_labels)
 
         self.draw_active_drag(gc)
-        self.draw_legend(gc)

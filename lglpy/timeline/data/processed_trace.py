@@ -26,11 +26,15 @@ that merge data from the Perfetto data and GPU Timeline layer data into a
 single combined representation.
 '''
 
+import re
 from typing import Optional, Union
 
 from .raw_trace import RawTrace, RenderstageEvent, MetadataWork, \
     MetadataRenderPass, MetadataDispatch, MetadataBufferTransfer, \
-    MetadataImageTransfer, GPUStreamID
+    MetadataImageTransfer, GPUStreamID, GPUStageID
+
+LABEL_HEURISTICS = True
+LABEL_MAX_LEN = 60
 
 
 class GPUWorkload:
@@ -46,6 +50,11 @@ class GPUWorkload:
         frame: The frame index in the application.
         label_stack: Application debug label stack.
     '''
+
+    FRAME_LABEL = re.compile(r'^Frame (\d+)$')
+    PARENS = re.compile(r'(\(.*\))')
+    RESOLUTION = re.compile(r'\d+x\d+')
+    WHITESPACE = re.compile(r'\s\s+')
 
     def __init__(
             self, event: RenderstageEvent, metadata: Optional[MetadataWork]):
@@ -66,9 +75,95 @@ class GPUWorkload:
         # Common data we get from the layer metadata
         self.frame = None
         self.label_stack = None
+        self.parsed_label_name = None
+
         if metadata:
             self.frame = metadata.frame
             self.label_stack = metadata.label_stack
+
+    def get_label_name(self) -> Optional[str]:
+        '''
+        Get a cleaned up label name for a workload.
+
+        Warning: The heuristics here are not robust.
+
+        Returns:
+            A modified label for use in the UI.
+        '''
+        # No label to parse
+        if not self.label_stack:
+            return None
+
+        # Cached label already parsed
+        if self.parsed_label_name is not None:
+            return self.parsed_label_name
+
+        if not LABEL_HEURISTICS:
+            return self.label_stack[-1]
+
+        # Create a copy we can edit ...
+        labels = list(self.label_stack)
+
+        # Heuristic to remove app-concatenated leaf nodes in UE
+        if 'Scene.' in labels[-1]:
+            del labels[-1]
+
+        # Pop off low value root nodes in UE captures
+        if labels and self.FRAME_LABEL.match(labels[0]):
+            del labels[0]
+
+        if labels and labels[0] == 'Scene':
+            del labels[0]
+
+        # String substitutions
+        for i, label in enumerate(labels):
+            label = self.PARENS.sub('', label)
+            label = self.RESOLUTION.sub('', label)
+            label = self.WHITESPACE.sub(' ', label)
+            label = label.replace('Light::', '')
+            labels[i] = label.strip()
+
+        # Stack prefix substitutions
+        for i, label in enumerate(labels):
+            for j in range(i + 1, len(labels)):
+                next_label = labels[j]
+                if not next_label.startswith(label):
+                    break
+                labels[j] = next_label[len(label):].strip()
+
+        # Remove labels that are now empty
+        labels = list(filter(bool, labels))
+
+        if not labels:
+            label = ''
+        else:
+            label = '.'.join(labels)
+
+        if len(label) > LABEL_MAX_LEN:
+            half_max = LABEL_MAX_LEN // 2
+            prefix = label[0:half_max]
+            postfix = label[-half_max:]
+            label = f'{prefix}...{postfix}'
+
+        self.parsed_label_name = label
+        return self.parsed_label_name
+
+    def get_workload_name(self) -> str:
+        '''
+        Get a name for the workload.
+
+        This is based on the application debug label if there is one, but
+        with some heuristics to try and clean is up ...
+
+        Returns:
+            Returns the label for use in the UI.
+        '''
+        if not self.label_stack:
+            return GPUStageID.get_ui_name(self.stage)
+
+        label = self.get_label_name()
+        assert label
+        return label
 
     def get_long_label(self) -> str:
         '''
@@ -177,8 +272,8 @@ class GPURenderPass(GPUWorkload):
         '''
         lines = []
 
-        if self.label_stack:
-            lines.append(self.label_stack[-1])
+        if label_name := self.get_label_name():
+            lines.append(label_name)
 
         if self.draw_call_count < 0:
             draw_str = 'Unknown draws'
@@ -243,8 +338,8 @@ class GPUDispatch(GPUWorkload):
         '''
         lines = []
 
-        if self.label_stack:
-            lines.append(self.label_stack[-1])
+        if label_name := self.get_label_name():
+            lines.append(label_name)
 
         lines.append(self.get_short_label())
         return '\n'.join(lines)
@@ -309,8 +404,8 @@ class GPUImageTransfer(GPUWorkload):
         '''
         lines = []
 
-        if self.label_stack:
-            lines.append(self.label_stack[-1])
+        if label_name := self.get_label_name():
+            lines.append(label_name)
 
         # If indirect then show a placeholder
         if self.pixel_count == -1:
@@ -365,8 +460,8 @@ class GPUBufferTransfer(GPUWorkload):
         '''
         lines = []
 
-        if self.label_stack:
-            lines.append(self.label_stack[-1])
+        if label_name := self.get_label_name():
+            lines.append(label_name)
 
         # If indirect then show a placeholder
         if self.byte_count == -1:

@@ -24,7 +24,7 @@
 This module contains a parser of a basic CSS-like style sheet that we use for
 styling the user interface.
 
-Unlike HTML, we have no standard implicit hierarchy we can use to implement
+Unlike HTML, we have no standard implicit DOM that we can use to implement
 style inheritance, so our CSS self-defines the parent-child hierarchical
 relationships in the CSS itself. For example, in the node below we define
 mtv-core as the parent style of the tlv-core style:
@@ -52,8 +52,11 @@ TODO: Font-face does not actually perform a list search like real CSS, so it's
 difficult to specify a fallback when a font isn't available for OS portability.
 '''
 
-import re
 import os
+import re
+from typing import Optional
+
+
 import cairo
 
 
@@ -112,26 +115,18 @@ class CSSStylesheet(dict):
     node does not provide the value itself. All nodes inherit from a default
     root node which defines a default value for all exposed style keys.
 
-    TODO: snake_case and CONSTANTS
-
     Attributes:
-        reComment: regex rule
-            Regex for matching comments.
-        reNodeDecl: regex rule
-            Regex for matching node declarations.
-        reNodeEndDecl: regex rule
-            Regex for matching the end of node declarations.
-        reColorDecl: regex rule
-            Regex for matching colors.
-        reDashDecl: regex rule
-            Regex for matching dashes.
-        reFloatDecl: regex rule
-            Regex for matching floats.
+        re_comment: Regex for matching comments.
+        re_node_decl: Regex for matching node declarations.
+        re_node_end_decl: Regex for matching the end of node declarations.
+        re_color_decl: Regex for matching colors.
+        re_dash_decl: Regex for matching dashes.
+        re_float_decl: Regex for matching floats.
     '''
 
-    reComment = re.compile(r'/\*(.*?)\*/')
+    re_comment = re.compile(r'/\*(.*?)\*/')
 
-    reNodeDecl = re.compile(
+    re_node_decl = re.compile(
         r'''
           ^\s*                              # Start new line, ignore whitespace
           (?:\[                             # Parent node
@@ -148,9 +143,9 @@ class CSSStylesheet(dict):
         re.VERBOSE
     )
 
-    reNodeEndDecl = re.compile(r'^\s*}\s*$')
+    re_node_end_decl = re.compile(r'^\s*}\s*$')
 
-    reColorDecl = re.compile(
+    re_color_decl = re.compile(
         r'''
           ^\s*                           # Start a new line ignore whitespace
           ((?:fill|line|font)-color):\s* # Mandatory name
@@ -163,7 +158,7 @@ class CSSStylesheet(dict):
         re.VERBOSE
     )
 
-    reDashDecl = re.compile(
+    re_dash_decl = re.compile(
         r'''
           ^\s*                           # Start a new line ignore whitespace
           (line-dash):\s*                # Mandatory name
@@ -174,7 +169,7 @@ class CSSStylesheet(dict):
         re.VERBOSE
     )
 
-    reFloatDecl = re.compile(
+    re_float_decl = re.compile(
         r'''
           ^\s*                           # Start a new line ignore whitespace
           (line-width|font-size):\s*     # Mandatory name
@@ -185,7 +180,9 @@ class CSSStylesheet(dict):
         re.VERBOSE
     )
 
-    def __init__(self, css_file=None, css_string=None):
+    def __init__(
+            self, css_file: Optional[str] = None,
+            css_string: Optional[str] = None):
         '''
         Create a new stylesheet from either a file or a string. Only one of
         these two options can be used at a time!
@@ -212,15 +209,16 @@ class CSSStylesheet(dict):
             with open(css_file, 'r', encoding='utf-8') as handle:
                 css_string = handle.read()
 
+        assert css_string
         self.parse_string(css_string, css_file)
 
-    def parse_string(self, css_string, file_name):
+    def parse_string(self, css_string: str, file_name: Optional[str]):
         '''
         Populate stylesheet from a CSS string.
 
         Args:
-            css_string: CSS string.
-            file_name : File name, or None if not loaded from file.
+            css_string: The CSS data.
+            file_name: File name if loaded from file.
 
         Raises:
             ValueError: Parse errors are encountered.
@@ -232,58 +230,53 @@ class CSSStylesheet(dict):
 
         # Parse line-wise
         try:
-            current_nodes = []
+            current_nodes: list[CSSNode] = []
 
             for line_no, line in enumerate(lines):
                 # String out any comments and whitespace
-                line = self.reComment.sub('', line).strip()
+                line = self.re_comment.sub('', line).strip()
 
                 # Skip blank lines
                 if not line:
                     continue
 
                 # Handle node declarations
-                match = self.reNodeDecl.match(line)
-                if match:
+                if match := self.re_node_decl.match(line):
                     parent = match.group(1) if match.group(1) else '<root>'
-                    nodes = [x.strip() for x in match.group(2).split(',')]
-                    nodes = [self.get_node(x, parent) for x in nodes]
+                    parts = [x.strip() for x in match.group(2).split(',')]
+                    nodes = [self.get_node(x, parent) for x in parts]
                     ending = match.group(3)
                     if not ending:
                         current_nodes = nodes
                     continue
 
                 # ... and terminations
-                match = self.reNodeEndDecl.match(line)
-                if match:
-                    current_nodes = None
+                if match := self.re_node_end_decl.match(line):
+                    current_nodes = []
                     continue
 
                 # Handle node field declarations for colors
-                match = self.reColorDecl.match(line)
-                if match:
+                if match := self.re_color_decl.match(line):
                     key = match.group(1)
-                    value = CSSColor(match.group(2))
+                    color_value = CSSColor(match.group(2))
                     for node in current_nodes:
-                        node[key] = value
+                        node[key] = color_value
                     continue
 
                 # Handle node field declarations for floats
-                match = self.reFloatDecl.match(line)
-                if match:
+                if match := self.re_float_decl.match(line):
                     key = match.group(1)
-                    value = float(match.group(2))
+                    float_value = float(match.group(2))
                     for node in current_nodes:
-                        node[key] = value
+                        node[key] = float_value
                     continue
 
                 # Handle node field declarations for line dashes
-                match = self.reDashDecl.match(line)
-                if match:
+                if match := self.re_dash_decl.match(line):
                     key = match.group(1)
-                    value = CSSDash(match.group(2))
+                    dash_value = CSSDash(match.group(2))
                     for node in current_nodes:
-                        node[key] = value
+                        node[key] = dash_value
                     continue
 
                 # If we get here this line is an unknown so raise an error
@@ -300,7 +293,7 @@ class CSSStylesheet(dict):
             msg = f'CSS parent syntax error: "{line}" @ line {line_no + 1}{msg}'
             raise ValueError(msg) from exc
 
-    def get_node(self, name, parent='<root>', create=True):
+    def get_node(self, name, parent='<root>', create=True) -> 'CSSNode':
         '''
         Fetch a CSS node, optionally creating it if it does not exist.
 
@@ -342,12 +335,12 @@ class CSSColor(tuple):
     tuples. Created instances will not be instances of CSSColor.
     '''
 
-    def __new__(cls, color='none'):
+    def __new__(cls, color: str = 'none'):
         '''
         Create a new CSSColor tuple.
 
         Args:
-            color: The color string, or `none` if no color required.
+            color: The color string, or "none" if no color required.
         '''
         if color == 'none':
             return None
@@ -377,7 +370,7 @@ class CSSFont(tuple):
     tuples. Created instances will not be instances of CSSFont.
     '''
 
-    def __new__(cls, face='sans'):
+    def __new__(cls, face: str = 'sans'):
         '''
         Create a new CSSFont tuple.
 

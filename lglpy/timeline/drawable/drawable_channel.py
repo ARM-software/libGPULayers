@@ -167,6 +167,15 @@ class DrawableChannel:
         '''
         yield from self.objects
 
+    def __len__(self):
+        '''
+        Number of objects in this channel.
+
+        Returns:
+            The number of objects stored.
+        '''
+        return len(self.objects)
+
     def each_object(self, obj_filter=None, ws_range=None):
         '''
         Generator which yields filtered objects from the channel in list order.
@@ -321,75 +330,3 @@ class DrawableChannel:
                 # Lowest object we need is the first object to cover next WS
                 next_ws = vp.coverage_cull_next_ws_x
                 index = bisect_left(self.objects_x_max, next_ws, index + 1)
-
-
-class DrawableChannelFrameMarkers(DrawableChannel):
-    '''
-    A container for world-space frame boundary markers.
-
-    This container is a specialized channel designed for rendering frame
-    boundary lines and labels on the trace. Unlike normal line markers
-    such as dependencies, frame markers are useful to see when zoomed out of
-    the timeline, but quickly overwhelm it if you are zoomed out a long way
-    (especially with the label rendering, as the labels all overlap).
-
-    To avoid this we implement dynamic culling of both lines and labels to
-    keep the volume of information on screen at a useful level.
-    '''
-
-    def draw(self, gc, vp, ws_range=None):
-        '''
-        Draw this channel onto a Cairo canvas, using the given viewport.
-
-        Args:
-            gc: Cairo graphics context.
-            vp: visible viewport
-            ws_range: world-space extents withing which objects should be
-                returned, or None if no filtering. Note that this is just an
-                optimization hint, and objects outside of this range may be
-                drawn.
-        '''
-        del ws_range  # unused
-
-        # Lowest object we need is the last to cover first WS value
-        start_index = bisect.bisect_left(self.objects_x_max, vp.ws.min_x)
-
-        # Highest object we need is the first to cover the last WS value
-        end_index = bisect.bisect_right(self.objects_x_min, vp.ws.max_x)
-        end_index = min(end_index, len(self.objects) - 1)
-
-        width = vp.cs.max_x - vp.cs.min_x
-
-        # Allow labels on every 60 pixels and lines every 25
-        label_threshold = width / 60
-        line_threshold = width / 25
-
-        # Start with the minimum object
-        line_count = 0
-
-        # Iterate all frame markers, rendering conservatively
-        index = start_index
-        while index <= end_index:
-            user_object = self.objects[index]
-            index += 1
-
-            # Render only the less lines this time through
-            if isinstance(user_object, WorldDrawableLine):
-                line_count += 1
-                if line_count % 10 == 0:
-                    user_object.draw(gc, vp)
-
-        # If more lines than line threshold then we're done
-        if line_count > line_threshold:
-            return
-
-        # Iterate all frame markers, rendering extras which we need
-        index = start_index
-        while index <= end_index:
-            user_object = self.objects[index]
-            index += 1
-
-            # Render extras if needed
-            if isinstance(object, WorldDrawableLine) or \
-               (line_count < label_threshold):
-                user_object.draw(gc, vp)
