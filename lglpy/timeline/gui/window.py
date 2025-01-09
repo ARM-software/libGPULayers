@@ -49,14 +49,14 @@ from lglpy.timeline.gui.timeline.view import TimelineView
 
 class Window:
     '''
-    The Window is the main framework for the Mali trace viewer, providing the
-    root GTK window, event, and input handling functionality. This class
+    The Window is the main framework for the Mali timeline viewer, providing
+    the root GTK window, event, and input handling functionality. This class
     provides no visualization functionality itself; specific logic for
     visualizing data from a trace is delegated to a number of `View` instances
     which are each designed to provide a specific interpretation of the data.
     '''
 
-    DEFAULT_APP_TITLE = 'Arm GPU Trace Viewer'
+    DEFAULT_APP_TITLE = 'Arm GPU Timeline Viewer'
     DEFAULT_VIEW = 'Homescreen'
 
     RAW_MOUSE_EVENT = None
