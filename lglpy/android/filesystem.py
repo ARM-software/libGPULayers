@@ -121,6 +121,31 @@ class AndroidFilesystem:
         return True
 
     @classmethod
+    def rename_file_in_tmp(
+            cls, conn: ADBConnect, file_name: str, new_file_name: str) -> bool:
+        '''
+        Rename a file in the device tmp directory.
+
+        File will be renamed to, e.g.: /data/local/tmp/<new_file>
+
+        Args:
+            conn: The adb connection.
+            file_name: The name of the existing file to rename.
+            new_file_name: The new file name to use.
+
+        Returns:
+            True if the file was renamed, False otherwise.
+        '''
+        try:
+            file_name = posixpath.join(cls.TEMP_DIR, file_name)
+            new_file_name = posixpath.join(cls.TEMP_DIR, new_file_name)
+            conn.adb_run('mv', file_name, new_file_name)
+        except sp.CalledProcessError:
+            return False
+
+        return True
+
+    @classmethod
     def delete_file_from_tmp(
             cls, conn: ADBConnect, file_name: str,
             error_ok: bool = False) -> bool:

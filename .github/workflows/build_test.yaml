@@ -61,6 +61,14 @@ jobs:
           cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
           make -j4
 
+      - name: Build layer_gpu_support
+        run: |
+          export CXX=clang++
+          mkdir layer_gpu_support/build_rel
+          cd layer_gpu_support/build_rel
+          cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
+          make -j4
+
       - name: Build layer_gpu_timeline
         run: |
           export CXX=clang++
@@ -95,6 +103,14 @@ jobs:
           cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
           make -j4
 
+      - name: Build layer_gpu_support
+        run: |
+          export CXX=g++
+          mkdir layer_gpu_support/build_rel
+          cd layer_gpu_support/build_rel
+          cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
+          make -j4
+
       - name: Build layer_gpu_timeline
         run: |
           export CXX=g++
@@ -115,6 +131,16 @@ jobs:
       - name: Build layer_example
         run: |
           cd layer_example
+          bash ./android_build.sh Release
+
+      - name: Build layer_gpu_support
+        run: |
+          cd layer_gpu_support
+          bash ./android_build.sh Release
+
+      - name: Build layer_gpu_timeline
+        run: |
+          cd layer_gpu_timeline
           bash ./android_build.sh Release
 
   build-ubuntu-x64-clang-new-common:

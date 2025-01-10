@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: MIT
 # -----------------------------------------------------------------------------
-# Copyright (c) 2024 Arm Limited
+# Copyright (c) 2025 Arm Limited
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to
@@ -23,15 +23,15 @@
 
 # Set output file names
 if (CMAKE_BUILD_TYPE STREQUAL "Release")
-    set(VK_LAYER VkLayerGPUTimeline_sym)
-    set(VK_LAYER_STRIP libVkLayerGPUTimeline.so)
+    set(VK_LAYER VkLayerGPUSupport_sym)
+    set(VK_LAYER_STRIP libVkLayerGPUSupport.so)
 else()
-    set(VK_LAYER VkLayerGPUTimeline)
+    set(VK_LAYER VkLayerGPUSupport)
 endif()
 
 # Set strings used by configure
-set(LGL_LAYER_NAME_STR "VK_LAYER_LGL_GPUTIMELINE")
-set(LGL_LAYER_DESC_STR "VkLayerGPUTimeline by LGL")
+set(LGL_LAYER_NAME_STR "VK_LAYER_LGL_GPUSUPPORT")
+set(LGL_LAYER_DESC_STR "VkLayerGPUSupport by LGL")
 
 # Vulkan layer library
 configure_file(
@@ -44,16 +44,12 @@ add_library(
         ${PROJECT_SOURCE_DIR}/../source_common/framework/entry.cpp
         device.cpp
         instance.cpp
-        layer_device_functions_command_buffer.cpp
-        layer_device_functions_command_pool.cpp
-        layer_device_functions_debug.cpp
+        layer_config.cpp
         layer_device_functions_dispatch.cpp
-        layer_device_functions_draw_call.cpp
         layer_device_functions_queue.cpp
         layer_device_functions_render_pass.cpp
         layer_device_functions_trace_rays.cpp
-        layer_device_functions_transfer.cpp
-        timeline_comms.cpp)
+        layer_device_functions_transfer.cpp)
 
 target_include_directories(
     ${VK_LAYER} PRIVATE
@@ -70,9 +66,7 @@ lgl_set_build_options(${VK_LAYER})
 
 target_link_libraries(
     ${VK_LAYER}
-        lib_layer_comms
         lib_layer_framework
-        lib_layer_trackers
         $<$<PLATFORM_ID:Android>:log>)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Release")

@@ -1,0 +1,26 @@
+{
+    "layer": "VK_LAYER_LGL_GPUSUPPORT",
+    "serialize": {
+        "all": false,
+        "none": false,
+        "commandstream": {
+            "compute": {
+                "pre": false,
+                "post": false
+            },
+            "renderpass": {
+                "pre": false,
+                "post": false
+            },
+            "tracerays": {
+                "pre": false,
+                "post": false
+            },
+            "transfer": {
+                "pre": false,
+                "post": false
+            }
+        },
+        "queue": false
+    }
+}

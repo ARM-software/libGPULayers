@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: MIT
 # -----------------------------------------------------------------------------
-# Copyright (c) 2024 Arm Limited
+# Copyright (c) 2025 Arm Limited
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to
@@ -21,26 +21,19 @@
 # SOFTWARE.
 # -----------------------------------------------------------------------------
 
-set(LIB_BINARY lib_layer_framework)
+cmake_minimum_required(VERSION 3.17)
 
-add_library(
-    ${LIB_BINARY} STATIC
-        device_functions.cpp
-        instance_functions.cpp
-        manual_functions.cpp)
+set(CMAKE_CXX_STANDARD 20)
 
-target_include_directories(
-    ${LIB_BINARY} PRIVATE
-        # Include from the layer-specific tree
-        ${PROJECT_SOURCE_DIR}/source
-        # Needed for CMake generated version.hpp
-        ${PROJECT_BINARY_DIR}/source
-        ../)
+project(VkLayerGPUSupport VERSION 1.0.0)
 
-target_include_directories(
-    ${LIB_BINARY} SYSTEM PRIVATE
-        ${PROJECT_SOURCE_DIR}/../source_third_party
-        ${PROJECT_SOURCE_DIR}/../khronos/vulkan/include
-        ../)
+# Common configuration
+set(LGL_LOG_TAG "VkLayerGPUSupport")
+set(LGL_CONFIG_TRACE 0)
+set(LGL_CONFIG_LOG 1)
 
-lgl_set_build_options(${LIB_BINARY})
+include(../source_common/compiler_helper.cmake)
+
+# Build steps
+add_subdirectory(source)
+add_subdirectory(../source_common/framework source_common/framework)
