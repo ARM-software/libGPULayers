@@ -46,6 +46,11 @@ static void preRenderPass(
     Device* layer,
     VkCommandBuffer commandBuffer
 ) {
+    if (!layer->instance->config.serialize_cmdstream_render_pass_pre())
+    {
+        return;
+    }
+
     // Execution dependency
     layer->driver.vkCmdPipelineBarrier(
         commandBuffer,
@@ -67,6 +72,11 @@ static void postRenderPass(
     Device* layer,
     VkCommandBuffer commandBuffer
 ) {
+    if (!layer->instance->config.serialize_cmdstream_render_pass_post())
+    {
+        return;
+    }
+
     // Execution dependency
     layer->driver.vkCmdPipelineBarrier(
         commandBuffer,

@@ -82,6 +82,17 @@ By default the installer will choose to install the stripped binaries. You can
 optionally enable use of the symbolized binaries using the --symbols/-S command
 line option.
 
+Layer configuration
+===================
+
+Some layers use JSON configuration files to parameterize their behavior. If
+the android_install.json configuration file for a layer specifies that it
+requires a configuration file, this script will default to using the built-in
+layer_config.json found in the layer directory.
+
+Users can override this, providing a custom configuration using the --config
+command line option to specify an alternative.
+
 Khronos validation layers
 =========================
 
@@ -119,24 +130,34 @@ class LayerMeta:
     Config data for a single layer to install.
 
     Attributes:
+        layer_dir: The directory name of the layer in the project.
         name: The Vulkan name of the layer, e.g. VK_LAYER_LGL_EXAMPLE.
-        host_path: The full file path on the host filesystem.
+        host_path: The file path of the layer library on the host filesystem.
         device_file: The file name to use on the device. May be different to
             the host_path file name.
+        has_config: Does this layer need a configuration file?
+        config: The loaded configuration file.
     '''
 
-    def __init__(self, name: str, host_path: str, device_file: str):
+    def __init__(
+            self, layer_dir: str, name: str, host_path: str, device_file: str,
+            has_config: bool):
         '''
         Create a new layer metadata object.
 
         Args:
+            layer_dir: The directory name of the layer in the project.
             name: The Vulkan name of the layer, e.g. VK_LAYER_LGL_EXAMPLE.
             host_path: The full file path on the host filesystem.
             device_file: The file name to use on the device.
+            has_config: Does this layer need a configuration file?
         '''
+        self.layer_dir = layer_dir
         self.name = name
         self.host_path = host_path
         self.device_file = device_file
+        self.has_config = has_config
+        self.config = None
 
 
 def get_device_name(
@@ -305,6 +326,7 @@ def get_layer_metadata(
         try:
             layer_name = config['layer_name']
             layer_binary = config['layer_binary']
+            has_config = config.get('has_config', False)
         except KeyError:
             print(f'ERROR: {layer_dir} has invalid android_install.json')
             return None
@@ -322,10 +344,66 @@ def get_layer_metadata(
             return None
 
         # Build the metadata
-        meta = LayerMeta(layer_name, host_path, layer_binary)
+        meta = LayerMeta(layer_dir, layer_name,
+                         host_path, layer_binary, has_config)
         layer_metadata.append(meta)
 
     return layer_metadata
+
+
+def get_layer_configs(metadata: list[LayerMeta], userconfs: list[str]) -> bool:
+    '''
+    Get the layer config files, if needed, for each active layer.
+
+    Args:
+        metadata: The loaded layer metadata.
+        userconfs: The user specified config files on the command line.
+
+    Returns:
+        True if config files were found for all layers that require them, False
+        otherwise.
+    '''
+    configs = {}
+
+    # Load default configs
+    for layer in metadata:
+
+        if layer.has_config:
+            path = os.path.join(layer.layer_dir, 'layer_config.json')
+
+            try:
+                with open(path, 'r', encoding='utf-8') as handle:
+                    config = handle.read()
+            except OSError:
+                print(f'ERROR: Config {path} not found')
+                return False
+
+            # Store the loaded data so we can get it back later
+            configs[layer.name] = layer
+            layer.config = config
+
+    # Load user configs
+    for path in userconfs:
+
+        try:
+            with open(path, 'r', encoding='utf-8') as handle:
+                config_json = json.load(handle)
+        except OSError:
+            print(f'ERROR: Config {path} not found')
+            return False
+
+        layer_name = config_json.get('layer', None)
+        if not layer_name:
+            print(f'ERROR: Config {path} has no "layer" field')
+            return False
+
+        if layer_name not in configs:
+            print(f'ERROR: Config {path} is for unknown layer {layer_name}')
+            return False
+
+        configs[layer_name].config = json.dumps(config_json)
+
+    return True
 
 
 def install_layer_binary(conn: ADBConnect, layer: LayerMeta) -> bool:
@@ -366,6 +444,61 @@ def uninstall_layer_binary(conn: ADBConnect, layer: LayerMeta) -> bool:
         True on success, False otherwise.
     '''
     return AndroidFilesystem.delete_file_from_package(conn, layer.device_file)
+
+
+def install_layer_config(conn: ADBConnect, layer: LayerMeta) -> bool:
+    '''
+    Transfer layer config file to the device if there is one.
+
+    Args:
+        conn: The adb connection.
+        layer: The loaded layer metadata configuration.
+
+    Returns:
+        True on success, False otherwise.
+    '''
+    # No config needed
+    if not layer.config:
+        return True
+
+    # Write to host file we can push
+    with NamedTempFile('.cfg') as temp_path:
+        # Write a file we can push
+        with open(temp_path, 'w', encoding='utf-8') as handle:
+            handle.write(layer.config)
+
+        # Push the file
+        res = AndroidFilesystem.push_file_to_tmp(conn, temp_path, False)
+        if not res:
+            return False
+
+        # Push the file
+        temp_file = os.path.basename(temp_path)
+        new_file = f'{layer.name}.json'
+        res = AndroidFilesystem.rename_file_in_tmp(conn, temp_file, new_file)
+        if not res:
+            return False
+
+    return True
+
+
+def uninstall_layer_config(conn: ADBConnect, layer: LayerMeta) -> bool:
+    '''
+    Remove layer config file from the device if there is one.
+
+    Args:
+        conn: The adb connection.
+        layer: The loaded layer metadata configuration.
+
+    Returns:
+        True on success, False otherwise.
+    '''
+    # No config needed
+    if not layer.config:
+        return True
+
+    config_file = f'{layer.name}.json'
+    return AndroidFilesystem.delete_file_from_tmp(conn, config_file)
 
 
 def enable_layers(conn: ADBConnect, layers: list[LayerMeta]) -> bool:
@@ -564,7 +697,11 @@ def parse_cli() -> argparse.Namespace:
 
     parser.add_argument(
         '--layer', '-L', action='append', required=True,
-        help='layer name to install (required, can be repeated)')
+        help='layer directory of a layer to install (required, repeatable)')
+
+    parser.add_argument(
+        '--config', '-C', action='append', default=[],
+        help='layer config  to install (repeatable)')
 
     parser.add_argument(
         '--symbols', '-S', action='store_true', default=False,
@@ -612,22 +749,30 @@ def main() -> int:
 
     conn.set_package(package)
 
-    # Select layers to install
+    # Select layers to install and their configs
     need_32bit = AndroidUtils.is_package_32bit(conn, package)
     layers = get_layer_metadata(args.layer, need_32bit, args.symbols)
     if not layers:
         return 4
 
+    success = get_layer_configs(layers, args.config)
+    if not layers:
+        return 5
+
     # Install files
     for layer in layers:
         if not install_layer_binary(conn, layer):
-            print('ERROR: Layer install on device failed')
-            return 5
+            print('ERROR: Layer binary install on device failed')
+            return 6
+
+        if not install_layer_config(conn, layer):
+            print('ERROR: Layer config install on device failed')
+            return 7
 
     # Enable layers
     if not enable_layers(conn, layers):
         print('ERROR: Layer enable on device failed')
-        return 6
+        return 8
 
     print('Layers are installed and ready for use:')
     for layer in layers:
@@ -651,12 +796,16 @@ def main() -> int:
     # Disable layers
     if not disable_layers(conn):
         print('ERROR: Layer disable on device failed')
-        return 10
+        return 9
 
     # Remove files
     for layer in layers:
         if not uninstall_layer_binary(conn, layer):
-            print('ERROR: Layer uninstall from device failed')
+            print('ERROR: Layer binary uninstall from device failed')
+            return 10
+
+        if not uninstall_layer_config(conn, layer):
+            print('ERROR: Layer config uninstall from device failed')
             return 11
 
     return 0

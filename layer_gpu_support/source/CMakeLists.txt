@@ -44,6 +44,7 @@ add_library(
         ${PROJECT_SOURCE_DIR}/../source_common/framework/entry.cpp
         device.cpp
         instance.cpp
+        layer_config.cpp
         layer_device_functions_dispatch.cpp
         layer_device_functions_queue.cpp
         layer_device_functions_render_pass.cpp
@@ -58,7 +59,8 @@ target_include_directories(
 
 target_include_directories(
     ${VK_LAYER} SYSTEM PRIVATE
-        ../../khronos/vulkan/include)
+        ${PROJECT_SOURCE_DIR}/../source_third_party
+        ${PROJECT_SOURCE_DIR}/../khronos/vulkan/include)
 
 lgl_set_build_options(${VK_LAYER})
 

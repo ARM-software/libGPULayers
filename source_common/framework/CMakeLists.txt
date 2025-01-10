@@ -39,7 +39,8 @@ target_include_directories(
 
 target_include_directories(
     ${LIB_BINARY} SYSTEM PRIVATE
-        ../../khronos/vulkan/include
+        ${PROJECT_SOURCE_DIR}/../source_third_party
+        ${PROJECT_SOURCE_DIR}/../khronos/vulkan/include
         ../)
 
 lgl_set_build_options(${LIB_BINARY})

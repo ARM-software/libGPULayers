@@ -40,6 +40,11 @@ static void preTransfer(
     Device* layer,
     VkCommandBuffer commandBuffer
 ) {
+    if (!layer->instance->config.serialize_cmdstream_transfer_pre())
+    {
+        return;
+    }
+
     // Execution dependency
     layer->driver.vkCmdPipelineBarrier(
         commandBuffer,
@@ -61,6 +66,11 @@ static void postTransfer(
     Device* layer,
     VkCommandBuffer commandBuffer
 ) {
+    if (!layer->instance->config.serialize_cmdstream_transfer_post())
+    {
+        return;
+    }
+
     // Execution dependency
     layer->driver.vkCmdPipelineBarrier(
         commandBuffer,

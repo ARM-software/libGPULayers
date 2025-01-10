@@ -40,6 +40,11 @@ static void preTraceRays(
     Device* layer,
     VkCommandBuffer commandBuffer
 ) {
+    if (!layer->instance->config.serialize_cmdstream_trace_rays_pre())
+    {
+        return;
+    }
+
     // Execution dependency
     layer->driver.vkCmdPipelineBarrier(
         commandBuffer,
@@ -61,6 +66,11 @@ static void postTraceRays(
     Device* layer,
     VkCommandBuffer commandBuffer
 ) {
+    if (!layer->instance->config.serialize_cmdstream_trace_rays_post())
+    {
+        return;
+    }
+
     // Execution dependency
     layer->driver.vkCmdPipelineBarrier(
         commandBuffer,

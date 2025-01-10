@@ -61,6 +61,8 @@
 
 #include "framework/instance_dispatch_table.hpp"
 
+#include "layer_config.hpp"
+
 /**
  * @brief This class implements the layer state tracker for a single instance.
  */
@@ -130,4 +132,9 @@ public:
      * @brief The driver function dispatch table.
      */
     InstanceDispatchTable driver {};
+
+    /**
+     * @brief The layer configuration.
+     */
+    const LayerConfig config;
 };

@@ -40,6 +40,11 @@ static void preDispatch(
     Device* layer,
     VkCommandBuffer commandBuffer
 ) {
+    if (!layer->instance->config.serialize_cmdstream_compute_dispatch_pre())
+    {
+        return;
+    }
+
     // Execution dependency
     layer->driver.vkCmdPipelineBarrier(
         commandBuffer,
@@ -61,6 +66,11 @@ static void postDispatch(
     Device* layer,
     VkCommandBuffer commandBuffer
 ) {
+    if (!layer->instance->config.serialize_cmdstream_compute_dispatch_post())
+    {
+        return;
+    }
+
     // Execution dependency
     layer->driver.vkCmdPipelineBarrier(
         commandBuffer,

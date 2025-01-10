@@ -1,4 +1,5 @@
 {
     "layer_name": "VK_LAYER_LGL_GPUSUPPORT",
-    "layer_binary": "libVkLayerGPUSupport.so"
+    "layer_binary": "libVkLayerGPUSupport.so",
+    "has_config": true
 }
