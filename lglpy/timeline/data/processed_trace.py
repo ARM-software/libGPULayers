@@ -158,11 +158,14 @@ class GPUWorkload:
         Returns:
             Returns the label for use in the UI.
         '''
-        if not self.label_stack:
+        label = None
+        if self.label_stack:
+            label = self.get_label_name()
+
+        # Default label if no label or get_label_name heuristics stripped it
+        if not label:
             return GPUStageID.get_ui_name(self.stage)
 
-        label = self.get_label_name()
-        assert label
         return label
 
     def get_long_label(self) -> str:
