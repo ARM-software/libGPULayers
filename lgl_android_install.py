@@ -157,7 +157,7 @@ class LayerMeta:
         self.host_path = host_path
         self.device_file = device_file
         self.has_config = has_config
-        self.config = None
+        self.config: Optional[str] = None
 
 
 def get_device_name(
