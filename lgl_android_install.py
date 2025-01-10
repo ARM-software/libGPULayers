@@ -111,7 +111,6 @@ import argparse
 import atexit
 import json
 import os
-import shutil
 import subprocess as sp
 import sys
 from typing import Optional
@@ -561,8 +560,8 @@ def configure_logcat(conn: ADBConnect, output_path: str) -> None:
     # the child on Windows and the log file ends up with an active reference
     try:
         conn.adb('logcat', '-c')
-        handle = open(output_path, 'w', encoding='utf-8')
-        child = conn.adb_async('logcat', filex=handle)
+        with open(output_path, 'w', encoding='utf-8') as handle:
+            child = conn.adb_async('logcat', filex=handle)
 
         # Register a cleanup handler to kill the child
         def cleanup(child_process):
@@ -642,11 +641,9 @@ def cleanup_perfetto(
         output_path: The desired output file path.
         pid: The Perfetto process pid.
         config_file: The Perfetto config path on the device.
-
-    Returns:
-        PID of the Perfetto process and config file name on success, None on
-        failure.
     '''
+    del pid
+
     # Compute the various paths we need
     output_file = os.path.basename(output_path)
     output_dir = os.path.dirname(output_path)
@@ -756,7 +753,7 @@ def main() -> int:
         return 4
 
     success = get_layer_configs(layers, args.config)
-    if not layers:
+    if not success:
         return 5
 
     # Install files
@@ -784,6 +781,7 @@ def main() -> int:
         configure_logcat(conn, args.logcat)
 
     # Enable Perfetto trace
+    perfetto_conf = None
     if args.perfetto:
         perfetto_conf = configure_perfetto(conn, args.perfetto)
 
