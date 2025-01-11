@@ -702,15 +702,15 @@ def parse_cli() -> argparse.Namespace:
 
     parser.add_argument(
         '--symbols', '-S', action='store_true', default=False,
-        help='use to install layers with unstripped symbols')
+        help='install layers with unstripped symbols')
 
     parser.add_argument(
         '--logcat', type=str, default=None,
-        help='file path to save logcat to after a run')
+        help='save logcat to this file during the run')
 
     parser.add_argument(
         '--perfetto', type=str, default=None,
-        help='file path to save Perfetto trace to after run')
+        help='save Perfetto trace to this file during the run')
 
     return parser.parse_args()
 

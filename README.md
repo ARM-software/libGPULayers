@@ -1,8 +1,13 @@
 # About
 
-libGPULayers provides tooling for creating a skeleton implementation of a
-graphics API layer driver. Over time, we plan to add a set of useful
-ready-to-use diagnostic layers that have been built using the tooling.
+libGPULayers provides tooling to rapidly create new Vulkan layer drivers,
+allowing developers to quickly generate new layers that can be used for
+ad hoc experiments during development.
+
+In addition, we provide a number of pre-built layers that have been built
+using these tools. These layers can be used as standalone tools in their
+own right, and some can be used alongside other Arm tools such as Arm
+Performance Studio.
 
 ## What are layer drivers?
 
@@ -15,35 +20,34 @@ change, everything that the native driver sees makes layers an exceptionally
 powerful tool for debugging functional and performance issues.
 
 The Vulkan API defines a standard layer driver mechanism. The API uses layers
-to implement API parameter validation and error checking, but they are a
+to implement API parameter validation and error checking, but they are also a
 general purpose mechanism for all kinds of developer tooling.
-
-The OpenGL ES API does not have layer drivers as a standard feature. However,
-since Android 10, the Android OpenGL ES loader has implemented support for
-OpenGL ES layers, so we can access the same methodology benefits as Vulkan.
 
 ## What is the purpose of this project?
 
 We support many application developers during their development cycle. We
-rarely get access to application source code, so layer drivers provide us a
-convenient way for us to make modifications to API behavior. We use this
-capability to triage bugs and to test the impact of application API usage fixes
-and optimizations, and wanted to share the capability with our wider developer
-ecosystem.
+rarely get access to application source code, so layer drivers provide us with
+an invaluable mechanism to make modifications to application API usage. The
+`GPU Support` layer in this project is a a tool we use during technical support
+investigations to quickly triage developers problems.
 
-This project has two main goals:
+We also use layer drivers as a way to develop new API-aware debug and profiling
+capabilities. The performance layers in this repository, such as the
+`GPU Timeline` layer, are often early prototypes that we want to share with
+developers to test new ideas and gather feedback. Some are designed to be used
+as standalone development tools, others can also be used alongside other Arm
+tools such as the Arm Streamline profiler in [Arm Performance Studio][2].
 
-* Firstly, it provides developers with access to the same easy-to-use layer
-  generation tooling that we use internally, allowing them to perform their
-  own experiments using layers.
-* Secondly, we will use this layer generation to provide a number of pre-built
-  layers than can be used during development to debug and optimize application
-  rendering.
+As you can tell, we find layers exceptionally useful. However, creating a new
+layer from scratch requires a lot of boilerplate code and is fiddly to get
+right. We therefore also wanted to take this opportunity to share our layer
+generation tools which make it trivial to create a complete bare-bones layer
+that is ready to extend and use.
 
 ## Supported devices
 
-This library is currently tested on devices running Android and using Arm®
-Immortalis™ and Arm Mali™ GPUs. Contributions adding support for other
+This library is currently tested on devices running Android or Linux, and using
+Arm® Immortalis™ and Arm Mali™ GPUs. Contributions adding support for other
 platforms is welcome.
 
 # License
@@ -54,10 +58,17 @@ from this repository you acknowledge that you accept terms specified in the
 
 # Documentation
 
+Common documentation
+
 * [Building a new layer](./docs/building.md)
 * [Running using a layer on Android](./docs/running_android.md)
 * [Running using a layer on Linux](./docs/running_linux.md)
 * [Frequently asked questions](./docs/faq.md)
+
+Layer documentation
+
+* [Layer: GPU Support](./layer_gpu_support/LAYER_README.md)
+* [Layer: GPU Timeline](./layer_gpu_support/LAYER_README.md)
 
 # Support
 
@@ -65,11 +76,12 @@ If you have issues with the layer framework, or the prebuilt layers, please
 raise them in the project's GitHub issue tracker.
 
 If you have any questions about Arm GPUs, application development for Arm GPUs,
-or general mobile graphics development or technology please submit them on the
+or general mobile graphics development or technology, please submit them on the
 [Arm Community graphics forums][1].
 
 - - -
 
-_Copyright © 2024, Arm Limited and contributors._
+_Copyright © 2024-2025, Arm Limited and contributors._
 
 [1]: https://community.arm.com/support-forums/f/graphics-gaming-and-vr-forum/
+[2]: https://developer.arm.com/Tools%20and%20Software/Arm%20Performance%20Studio
