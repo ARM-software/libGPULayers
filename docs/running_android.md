@@ -25,8 +25,8 @@ can avoid this by manually specifying the device (`--device`/`-D`) and package
 
 Wait for the layer to be installed and configured. The script will notify you
 when this has been done. You can now perform your development work. When you
-are finished, return to the script and press a key so it can clean up the
-device and remove the layers.
+are finished, return to the script and press a key to notify it that it can
+clean up the device and remove the layers.
 
 ### Layer configuration
 
@@ -48,10 +48,10 @@ application.
 
 ### Khronos validation layer installation
 
-The script can install the Khronos validation layer. A dummy layer directory
-is provided as the `layer_khronos_validation` directory. Download the the
-latest binary release from [Vulkan-ValidationLayers/releases][1] GitHub, and
-place the binaries into dummy build tree at the correct location.
+The script can install the Khronos validation layer. A dummy layer directory ,
+`layer_khronos_validation`, is provided. Download the the latest binary release
+from the [Vulkan-ValidationLayers/releases][1] GitHub, and place the binaries
+into dummy build tree at the correct location.
 
 Once this is done you can install the validation layer like any other.
 
@@ -59,9 +59,9 @@ Once this is done you can install the validation layer like any other.
 to install it in the layer stack. If you install it as the first layer in the
 stack it will only report issues from the application. If you install it last,
 it will report errors from the application and all layers above it in the
-stack. Both of these might be useful, depending on what you are trying to do.
+stack.
 
-### Capturing logcat
+### Capturing Android logcat
 
 During development it is often useful to capture the Android log, using
 `logcat` to save it to a file on the host.
@@ -70,12 +70,12 @@ If you specify the `--logcat <file>` option the script will automatically clear
 the logcat log after installing the layers, and start recording logcat to the
 specified file. Logcat recording will end during device clean up.
 
-### Capturing Perfetto traces
+### Capturing Android Perfetto traces
 
-The Mali Timeline tool is designed to work alongside the Android Perfetto
-render stages trace, providing additional semantic information that can be
-combined with the Perfetto data to provide a richer visualization with more API
-awareness.
+The Timeline layer is designed to provide semantic metadata that can be used
+to annotate an Android Perfetto render stages trace. This provides profiling
+tools with API information that Perfetto alone cannot provide, making it a
+much more data-rich visualization .
 
 If you specify the `--perfetto <file>` option the script will automatically
 configure Perfetto to capture render stages information for the target
@@ -85,6 +85,10 @@ application and save it to the specified file.
 
 For users with existing configuration flows, Vulkan layers can be manually
 configured using `adb` to copy the files and set the system properties.
+
+For layers with configuration files, the configuration file must be named
+after the layer (e.g. `VK_LAYER_LGL_GPUSUPPORT.json`) and then pushed to
+the `/data/local/tmp` directory with global (`0666`) access permissions.
 
 **Note:** Android will fail to start an application if it has a layer enabled,
 but the layer library cannot be found. Ensure that you disable your layer when
