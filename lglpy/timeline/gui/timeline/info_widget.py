@@ -28,7 +28,7 @@ timeline visualization.
 
 from collections import defaultdict
 
-from ...data.raw_trace import GPUStreamID, GPUStageID
+from ...data.raw_trace import GPUStreamID
 from ...drawable.text_pane_widget import TextPaneWidget
 
 
@@ -71,7 +71,7 @@ class TimelineInfoWidget(TextPaneWidget):
         '''
         # Determine which frames are entirely in the active range
         out_frames = set()
-        in_frames = dict()
+        in_frames = {}
 
         for event in self.timeline_widget.drawable_trace.each_object():
             frame = event.user_data.frame
@@ -195,7 +195,7 @@ class TimelineInfoWidget(TextPaneWidget):
             metrics.append(f'  {label:{label_len}} {util:>5.1f}%')
 
         util = self.get_utilization(start, end, channels)
-        label = f'Any stream:'
+        label = 'Any stream:'
         metrics.append(f'  {label:{label_len}} {util:>5.1f}%')
         metrics.append('')
         return metrics
@@ -314,7 +314,7 @@ class TimelineInfoWidget(TextPaneWidget):
         if top_n_limit > 1:
             metrics.append(f'Top {top_n_limit} workload runtimes:')
         else:
-            metrics.append(f'Workload runtime:')
+            metrics.append('Workload runtime:')
 
         tags_by_cost = sorted(
             total_tag_time, key=total_tag_time.get, reverse=True)
@@ -356,7 +356,7 @@ class TimelineInfoWidget(TextPaneWidget):
         if self.cached_active_event == active:
             return self.cached_event_info
 
-        elif len(active) == 0:
+        if len(active) == 0:
             info = None
 
         else:

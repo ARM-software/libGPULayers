@@ -29,7 +29,6 @@ DrawableTrace.
 import bisect
 
 from lglpy.timeline.drawable.primitive_rectangle import PrimitiveRectangle
-from lglpy.timeline.drawable.world_drawable import WorldDrawableLine
 
 
 class DrawableChannel:
