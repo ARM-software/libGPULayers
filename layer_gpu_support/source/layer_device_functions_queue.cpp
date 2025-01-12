@@ -32,23 +32,6 @@ extern std::mutex g_vulkanLock;
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueuePresentKHR<user_tag>(
-    VkQueue queue,
-    const VkPresentInfoKHR* pPresentInfo
-) {
-    LAYER_TRACE(__func__);
-
-    // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
-    auto* layer = Device::retrieve(queue);
-
-    // Release the lock to call into the driver
-    lock.unlock();
-    return layer->driver.vkQueuePresentKHR(queue, pPresentInfo);
-}
-
-/* See Vulkan API for documentation. */
-template<>
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit<user_tag>(
     VkQueue queue,
     uint32_t submitCount,
