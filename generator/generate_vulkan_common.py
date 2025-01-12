@@ -48,7 +48,7 @@ NO_INTERCEPT_OR_DISPATCH_FUNCTIONS = {
 
 # These functions are excluded from generated intercept tables
 NO_INTERCEPT_FUNCTIONS = {
-    # Functions exported as shared object exports and resolved by loader
+    # Functions exported as shared object symbols and resolved by loader
     'vkEnumerateDeviceExtensionProperties',
     'vkEnumerateDeviceLayerProperties',
     'vkEnumerateInstanceExtensionProperties',
@@ -57,9 +57,10 @@ NO_INTERCEPT_FUNCTIONS = {
 
 # These functions are excluded from generated dispatch tables
 NO_DISPATCH_FUNCTIONS = {
-    # Functions resolved by the loaded not the implementation
+    # Functions resolved by the loader not the implementation
     'vkCreateDevice',
     'vkCreateInstance',
+    'vkEnumerateInstanceExtensionProperties',
 }
 
 # These functions are excluded from generated declarations
