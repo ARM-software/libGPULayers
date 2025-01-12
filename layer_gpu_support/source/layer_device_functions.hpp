@@ -272,12 +272,6 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImageToBuffer2KHR<user_tag>(
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueuePresentKHR<user_tag>(
-    VkQueue queue,
-    const VkPresentInfoKHR* pPresentInfo);
-
-/* See Vulkan API for documentation. */
-template<>
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit<user_tag>(
     VkQueue queue,
     uint32_t submitCount,
