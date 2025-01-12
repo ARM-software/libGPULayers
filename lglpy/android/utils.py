@@ -145,6 +145,41 @@ class AndroidUtils:
 
         return package_list
 
+    @staticmethod
+    def get_package_main_activity(conn: ADBConnect):
+        '''
+        Get the main activity for a package.
+
+        Args:
+            conn: The adb connection.
+
+        Return:
+            The activity name, or None on error or if this is a system service
+            which has no activities.
+        '''
+        assert conn.package, \
+               'Cannot use get__package_main_activity() without a package'
+        package = conn.package
+
+        cmd = f'dumpsys package {package} | ' \
+            r'grep -A1 "android.intent.action.MAIN:" | ' \
+            r'tr " " "\n" | ' \
+            f"grep {package}/ || " \
+            r"exit 0"
+
+        try:
+            output = conn.adb_run('sh', '-c', f"'{cmd}'")
+            output = output.strip()
+            output = output.replace(f'{package}/', '')
+
+            if not output:
+                return None
+
+            return output
+
+        except sp.CalledProcessError:
+            return None
+
     @classmethod
     def get_os_version(cls, conn: ADBConnect) -> Optional[str]:
         '''
@@ -283,6 +318,46 @@ class AndroidUtils:
 
         except sp.CalledProcessError:
             return None
+
+    @staticmethod
+    def start_package(conn: ADBConnect, activity: str) -> bool:
+        '''
+        Start the package for this connection.
+
+        Args:
+            conn: The adb connection.
+            activity: The name of the activity.
+
+        Returns:
+            True on success, False otherwise.
+        '''
+        assert conn.package, \
+            'Cannot use start_package() without package'
+
+        try:
+            target = f'{conn.package}/{activity}'
+            conn.adb_run('am', 'start', '-n', target, quote=True)
+        except sp.CalledProcessError:
+            return False
+
+        return True
+
+    @staticmethod
+    def stop_package(conn: ADBConnect) -> bool:
+        '''
+        Stop the package for this connection.
+
+        Return:
+            True if stopped or was not running, False if command failed.
+        '''
+        assert conn.package, \
+            'Cannot use stop_package() without package'
+
+        try:
+            conn.adb_run('am', 'force-stop', conn.package)
+            return True
+        except sp.CalledProcessError:
+            return False
 
     @staticmethod
     def set_property(conn: ADBConnect, prop: str, value: str) -> bool:

@@ -239,6 +239,50 @@ class AndroidTestDeviceUtil(unittest.TestCase):
         # Test that list length reduces each time as we add filters
         self.assertGreater(all_packages, debug_main_packages)
 
+    def test_util_package_main(self):
+        '''
+        Test helper to get main activity of a package.
+        '''
+        conn = ADBConnect()
+
+        packages = AndroidUtils.get_packages(conn, True, True)
+
+        # Test that a package was returned
+        self.assertGreater(len(packages), 0)
+        conn.set_package(packages[0])
+
+        # Test that a valid activity was returned
+        activity = AndroidUtils.get_package_main_activity(conn)
+        self.assertTrue(activity)
+
+    def test_util_package_start_stop(self):
+        '''
+        Test helper to get main activity of a package.
+        '''
+        conn = ADBConnect()
+
+        packages = AndroidUtils.get_packages(conn, True, True)
+
+        # Test that a package was returned
+        self.assertGreater(len(packages), 0)
+        conn.set_package(packages[0])
+
+        # Test that a valid activity was returned
+        activity = AndroidUtils.get_package_main_activity(conn)
+
+        # Test we can start a package if it is not running
+        AndroidUtils.stop_package(conn)
+        started = AndroidUtils.start_package(conn, activity)
+        self.assertTrue(started)
+
+        # Test we can stop a package
+        stopped = AndroidUtils.stop_package(conn)
+        self.assertTrue(stopped)
+
+        # Test we can ignore errors if package is already stopped
+        stopped = AndroidUtils.stop_package(conn)
+        self.assertTrue(stopped)
+
     def test_util_os_version(self):
         '''
         Test helper to get OS version.
