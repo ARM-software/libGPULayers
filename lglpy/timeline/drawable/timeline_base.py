@@ -36,9 +36,8 @@ allowing efficient changes to select the region of world-space being rendered.
 from lglpy.timeline.drawable.drawable import Drawable
 from lglpy.timeline.drawable.style import Style
 from lglpy.timeline.drawable.canvas_drawable import CanvasDrawableRect, \
-    CanvasDrawableRectFill, CanvasDrawableLabel, CanvasDrawableLine
+    CanvasDrawableRectFill, CanvasDrawableLine
 from lglpy.timeline.drawable.timeline_viewport import TimelineViewport
-from lglpy.timeline.drawable.entry_dialog import get_entry_dialog
 
 
 class TimelineWidgetBase:
@@ -650,9 +649,7 @@ class TimelineWidgetBase:
             change should be presented to the lglpy.timeline.
         '''
         # If in the ACTION BAR then no string
-        start = 0
-        end = self.ACTION_BAR_PIXELS
-        if start <= cy < self.ACTION_BAR_PIXELS:
+        if 0 <= cy < self.ACTION_BAR_PIXELS:
             return ''
 
         # Otherwise we are over the main timeline so provide timeline coords
