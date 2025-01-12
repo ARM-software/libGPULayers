@@ -746,30 +746,36 @@ def main() -> int:
 
     conn.set_package(package)
 
+    # Determine package main activity to launch
+    activity = AndroidUtils.get_package_main_activity(conn)
+    if not activity:
+        print('ERROR: Package has no identifiable main activity')
+        return 4
+
     # Select layers to install and their configs
     need_32bit = AndroidUtils.is_package_32bit(conn, package)
     layers = get_layer_metadata(args.layer, need_32bit, args.symbols)
     if not layers:
-        return 4
+        return 5
 
     success = get_layer_configs(layers, args.config)
     if not success:
-        return 5
+        return 6
 
     # Install files
     for layer in layers:
         if not install_layer_binary(conn, layer):
             print('ERROR: Layer binary install on device failed')
-            return 6
+            return 7
 
         if not install_layer_config(conn, layer):
             print('ERROR: Layer config install on device failed')
-            return 7
+            return 8
 
     # Enable layers
     if not enable_layers(conn, layers):
         print('ERROR: Layer enable on device failed')
-        return 8
+        return 9
 
     print('Layers are installed and ready for use:')
     for layer in layers:
@@ -785,7 +791,14 @@ def main() -> int:
     if args.perfetto:
         perfetto_conf = configure_perfetto(conn, args.perfetto)
 
+    # Restart the package so it actually loads the layer ...
+    AndroidUtils.stop_package(conn)
+    AndroidUtils.start_package(conn, activity)
+
     input('Press any key when finished to uninstall all layers')
+
+    # Kill the package so we can cleanup
+    AndroidUtils.stop_package(conn)
 
     # Disable Perfetto trace
     if args.perfetto and perfetto_conf:
@@ -794,17 +807,17 @@ def main() -> int:
     # Disable layers
     if not disable_layers(conn):
         print('ERROR: Layer disable on device failed')
-        return 9
+        return 10
 
     # Remove files
     for layer in layers:
         if not uninstall_layer_binary(conn, layer):
             print('ERROR: Layer binary uninstall from device failed')
-            return 10
+            return 11
 
         if not uninstall_layer_config(conn, layer):
             print('ERROR: Layer config uninstall from device failed')
-            return 11
+            return 12
 
     return 0
 
