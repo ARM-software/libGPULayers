@@ -64,7 +64,7 @@ def select_from_menu(title: str, options: list[str]) -> Optional[int]:
     while True:
         try:
             # Print the menu
-            print(f'\nSelect a {title}')
+            print(f'Select a {title}')
             chars = int(math.log10(len(options))) + 1
             for i, entry in enumerate(options):
                 print(f'    {i+1:{chars}}) {entry}')
@@ -83,7 +83,7 @@ def select_from_menu(title: str, options: list[str]) -> Optional[int]:
             raise ValueError()
 
         except ValueError:
-            print(f'\n    Please enter a value between 0 and {len(options)}')
+            print(f'\n    Enter a value between 0 and {len(options)}\n')
 
-    print('\n')
+    print('')
     return selection
