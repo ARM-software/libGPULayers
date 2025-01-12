@@ -31,16 +31,15 @@ add_library(
 
 target_include_directories(
     ${LIB_BINARY} PRIVATE
-        # Include from the layer-specific tree
+        ../
+        # Include from the layer-specific trees
         ${PROJECT_SOURCE_DIR}/source
-        # Needed for CMake generated version.hpp
-        ${PROJECT_BINARY_DIR}/source
-        ../)
+        ${PROJECT_BINARY_DIR}/source)
 
 target_include_directories(
     ${LIB_BINARY} SYSTEM PRIVATE
-        ${PROJECT_SOURCE_DIR}/../source_third_party
-        ${PROJECT_SOURCE_DIR}/../khronos/vulkan/include
-        ../)
+        ../
+        ../../source_third_party/
+        ../../source_third_party/khronos/vulkan/include/)
 
 lgl_set_build_options(${LIB_BINARY})

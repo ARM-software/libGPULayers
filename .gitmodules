@@ -1,11 +1,11 @@
 [submodule "khronos/vulkan"]
-	path = khronos/vulkan
+	path = source_third_party/khronos/vulkan
 	url = https://github.com/KhronosGroup/Vulkan-Headers
 [submodule "khronos/opengles"]
-	path = khronos/opengles
+	path = source_third_party/khronos/opengles
 	url = https://github.com/KhronosGroup/OpenGL-Registry
 [submodule "khronos/egl"]
-	path = khronos/egl
+	path = source_third_party/khronos/egl
 	url = https://github.com/KhronosGroup/EGL-Registry
 [submodule "source_third_party/gtest"]
 	path = source_third_party/gtest

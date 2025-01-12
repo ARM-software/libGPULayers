@@ -32,6 +32,8 @@ add_executable(
 target_include_directories(
     ${TEST_BINARY} PRIVATE
         ../../
+        ../../../source_third_party/
+        ../../../source_third_party/khronos/vulkan/include
         ${gtest_SOURCE_DIR}/include)
 
 target_link_libraries(
@@ -66,9 +68,9 @@ target_link_libraries(
 
 # Exclude from ctest for now because it needs user to manually run the
 # external server program before the test can pass
-#add_test(
-#    NAME ${TEST_BINARY}
-#    COMMAND ${TEST_BINARY})
+# add_test(
+#     NAME ${TEST_BINARY}
+#     COMMAND ${TEST_BINARY})
 
 install(
     TARGETS ${TEST_BINARY}

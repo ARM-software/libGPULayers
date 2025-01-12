@@ -41,7 +41,7 @@ configure_file(
 
 add_library(
     ${VK_LAYER} SHARED
-        ${PROJECT_SOURCE_DIR}/../source_common/framework/entry.cpp
+        ../../source_common/framework/entry.cpp
         device.cpp
         instance.cpp
         layer_config.cpp
@@ -53,14 +53,14 @@ add_library(
 
 target_include_directories(
     ${VK_LAYER} PRIVATE
-        ${PROJECT_SOURCE_DIR}/../source_common
-        ${CMAKE_CURRENT_BINARY_DIR}
-        .)
+        ./
+        ../../source_common/
+        ${CMAKE_CURRENT_BINARY_DIR})
 
 target_include_directories(
     ${VK_LAYER} SYSTEM PRIVATE
-        ${PROJECT_SOURCE_DIR}/../source_third_party
-        ${PROJECT_SOURCE_DIR}/../khronos/vulkan/include)
+        ../../source_third_party/
+        ../../source_third_party/khronos/vulkan/include/)
 
 lgl_set_build_options(${VK_LAYER})
 

@@ -828,7 +828,7 @@ def main() -> int:
     outdir = os.path.join(base_dir, '..', 'source_common', 'framework')
 
     # Parse the XML headers
-    tree = ET.parse('./khronos/vulkan/registry/vk.xml')
+    tree = ET.parse('./source_third_party/khronos/vulkan/registry/vk.xml')
     root = tree.getroot()
 
     # Parse function to API version or extension mapping
