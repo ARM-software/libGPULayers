@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: MIT
 # -----------------------------------------------------------------------------
-# Copyright (c) 2024 Arm Limited
+# Copyright (c) 2024-2025 Arm Limited
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to
@@ -41,20 +41,20 @@ configure_file(
 
 add_library(
     ${VK_LAYER} SHARED
-        ${PROJECT_SOURCE_DIR}/../source_common/framework/entry.cpp
+        ../../source_common/framework/entry.cpp
         device.cpp
         instance.cpp
         layer_device_functions.cpp)
 
 target_include_directories(
     ${VK_LAYER} PRIVATE
-        ${PROJECT_SOURCE_DIR}/../source_common
-        ${CMAKE_CURRENT_BINARY_DIR}
-        .)
+        ./
+        ../../source_common/
+        ${CMAKE_CURRENT_BINARY_DIR})
 
 target_include_directories(
     ${VK_LAYER} SYSTEM PRIVATE
-        ../../khronos/vulkan/include)
+        ../../source_third_party/khronos/vulkan/include/)
 
 lgl_set_build_options(${VK_LAYER})
 

@@ -33,9 +33,9 @@ add_library(
 
 target_include_directories(
     ${LIB_BINARY} PRIVATE
-        ../../khronos/vulkan/include
-        ../../source_third_party
-        ../)
+        ../
+        ../../source_third_party/
+        ../../source_third_party/khronos/vulkan/include)
 
 lgl_set_build_options(${LIB_BINARY})
 
