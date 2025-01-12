@@ -605,7 +605,6 @@ struct InstanceDispatchTable {
     PFN_vkDestroySurfaceKHR vkDestroySurfaceKHR;
     PFN_vkEnumerateDeviceExtensionProperties vkEnumerateDeviceExtensionProperties;
     PFN_vkEnumerateDeviceLayerProperties vkEnumerateDeviceLayerProperties;
-    PFN_vkEnumerateInstanceExtensionProperties vkEnumerateInstanceExtensionProperties;
     PFN_vkEnumerateInstanceLayerProperties vkEnumerateInstanceLayerProperties;
     PFN_vkEnumeratePhysicalDeviceGroups vkEnumeratePhysicalDeviceGroups;
     PFN_vkEnumeratePhysicalDeviceGroupsKHR vkEnumeratePhysicalDeviceGroupsKHR;
@@ -697,7 +696,6 @@ static inline void initDriverInstanceDispatchTable(
     ENTRY(vkDestroySurfaceKHR);
     ENTRY(vkEnumerateDeviceExtensionProperties);
     ENTRY(vkEnumerateDeviceLayerProperties);
-    ENTRY(vkEnumerateInstanceExtensionProperties);
     ENTRY(vkEnumerateInstanceLayerProperties);
     ENTRY(vkEnumeratePhysicalDeviceGroups);
     ENTRY(vkEnumeratePhysicalDeviceGroupsKHR);
