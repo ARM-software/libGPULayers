@@ -112,6 +112,11 @@ PFN_vkVoidFunction getDeviceLayerFunction(
 /**
  * @brief Fetch the list of supported extensions from the instance.
  *
+ * WARNING: This function only works on Android and only works for the bottom
+ * layer in a stack. Layers higher up the stack are likely to crash, and there
+ * is no workaround because the the Android loader doesn't implement chainable
+ * queries for pre-instance functions.
+ *
  * @param pCreateInfo   The instance creation data from the loader.
  *
  * @return The list of supported extensions; empty list on failure.
