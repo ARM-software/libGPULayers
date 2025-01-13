@@ -456,11 +456,30 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateInstance_default(
 ) {
     LAYER_TRACE(__func__);
 
-    auto* chainInfo = getChainInfo(pCreateInfo);
-    auto supportedExtensions = getInstanceExtensionList(pCreateInfo);
+    // We cannot reliably query the available instance extensions on Android if multiple layers are
+    // installed, so we disable this by default. This occurs because Android only implements the v0
+    // specification between the loader and the interceptor, and does not implement chainable
+    // intercepts for vkEnumerateInstanceExtensionProperties().
+    //
+    // On Android if you call chainInfo getInstanceProcAddr() to get the function in the next layer
+    // you will get the layer implementation of the function, and layer implementations of this
+    // function will return the additional extensions that the layer itself provides. It does not
+    // forward to the driver, and any query for anything other than the layer will just return
+    // VK_ERROR_LAYER_NOT_PRESENT.
+    //
+    // If you are running with a single layer you can set this to true, and use proper queries.
+    constexpr bool queryExtensions = false;
 
+    std::vector<std::string> supportedExtensions;
+    if (queryExtensions)
+    {
+        supportedExtensions = getInstanceExtensionList(pCreateInfo);
+    }
+
+    auto* chainInfo = getChainInfo(pCreateInfo);
     auto fpGetInstanceProcAddr = chainInfo->u.pLayerInfo->pfnNextGetInstanceProcAddr;
-    auto fpCreateInstance = reinterpret_cast<PFN_vkCreateInstance>(fpGetInstanceProcAddr(nullptr, "vkCreateInstance"));
+    auto fpCreateInstanceRaw = fpGetInstanceProcAddr(nullptr, "vkCreateInstance");
+    auto fpCreateInstance = reinterpret_cast<PFN_vkCreateInstance>(fpCreateInstanceRaw);
     if (!fpCreateInstance)
     {
         return VK_ERROR_INITIALIZATION_FAILED;
@@ -471,7 +490,13 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateInstance_default(
 
     // Query extension state
     std::string targetExt("VK_EXT_debug_utils");
-    bool targetSupported = isIn(targetExt, supportedExtensions);
+    // Assume common extensions are available (see comment at start of function)
+    bool targetSupported = true;
+    if (queryExtensions)
+    {
+        targetSupported = isIn(targetExt, supportedExtensions);
+    }
+
     bool targetEnabled = isInExtensionList(
         targetExt,
         pCreateInfo->enabledExtensionCount,
