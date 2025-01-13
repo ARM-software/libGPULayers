@@ -463,8 +463,9 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateInstance_default(
     //
     // On Android if you call chainInfo getInstanceProcAddr() to get the function in the next layer
     // you will get the layer implementation of the function, and layer implementations of this
-    // function will return functions that they implement and not forward to the driver. Any query
-    // for anything other than the layer will just return VK_ERROR_LAYER_NOT_PRESENT.
+    // function will return the additional extensions that the layer itself provides. It does not
+    // forward to the driver, and any query for anything other than the layer will just return
+    // VK_ERROR_LAYER_NOT_PRESENT.
     //
     // If you are running with a single layer you can set this to true, and use proper queries.
     constexpr bool queryExtensions = false;
