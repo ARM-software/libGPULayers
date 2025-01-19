@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024 Arm Limited
+ * Copyright (c) 2024-2025 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -63,7 +63,7 @@ static const EndpointID NO_ENDPOINT { 0 };
 class CommsInterface
 {
 public:
-    virtual ~CommsInterface() { }
+    virtual ~CommsInterface() = default;
 
     /**
      * @brief Is this comms module connected to a host server?
