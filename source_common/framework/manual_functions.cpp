@@ -909,9 +909,10 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDevice_default(
         return res;
     }
 
+    auto device = std::make_unique<Device>(layer, physicalDevice, *pDevice, fpGetDeviceProcAddr);
+
     // Retake the lock to access layer-wide global store
     lock.lock();
-    auto device = std::make_unique<Device>(layer, physicalDevice, *pDevice, fpGetDeviceProcAddr);
     Device::store(*pDevice, std::move(device));
 
     return VK_SUCCESS;

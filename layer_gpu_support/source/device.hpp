@@ -147,6 +147,16 @@ public:
      */
     static const std::vector<std::string> extraExtensions;
 
+    /**
+     * @brief The timeline sem use for queue serialization.
+     */
+    VkSemaphore queueSerializationTimelineSem { nullptr };
+
+    /**
+     * @brief The current timeline sem target value the next use waits for.
+     */
+    uint64_t queueSerializationTimelineSemCount { 0 };
+
 private:
     /**
      * @brief The physical device this device is created with.
