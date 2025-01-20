@@ -194,7 +194,7 @@ std::vector<std::string> getDeviceExtensionList(
  * @return @c true if @c target is found in @c extensionList.
  */
 bool isInExtensionList(
-    const char*  target,
+    std::string target,
     uint32_t extensionCount,
     const char* const* extensionList);
 

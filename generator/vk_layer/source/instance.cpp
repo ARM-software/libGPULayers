@@ -35,6 +35,14 @@
 static std::unordered_map<void*, std::unique_ptr<Instance>> g_instances;
 
 /* See header for documentation. */
+const APIVersion Instance::minAPIVersion { 1, 1 };
+
+/* See header for documentation. */
+const std::vector<std::string> Instance::extraExtensions {
+    "VK_EXT_debug_utils"
+};
+
+/* See header for documentation. */
 void Instance::store(
     VkInstance handle,
     std::unique_ptr<Instance>& instance

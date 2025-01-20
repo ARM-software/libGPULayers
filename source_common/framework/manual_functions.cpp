@@ -299,7 +299,7 @@ APIVersion increaseAPIVersion(
         return maxVersion;
     }
 
-    LAYER_ERR(
+    LAYER_LOG(
         "Instance API version %u.%u (increased to layer minimum)",
         requiredVersion.first, requiredVersion.second);
 
@@ -378,13 +378,13 @@ std::vector<std::string> getDeviceExtensionList(
 
 /* See header for documentation. */
 bool isInExtensionList(
-    const char* target,
+    std::string target,
     uint32_t extensionCount,
     const char* const* extensionList
 ) {
     for(uint32_t i = 0; i < extensionCount; i++)
     {
-        if (!strcmp(target, extensionList[i]))
+        if (target == extensionList[i])
         {
             return true;
         }
@@ -407,7 +407,33 @@ std::vector<const char*> cloneExtensionList(
     return data;
 }
 
-void enableTimelineSemaphores(
+static void enableInstanceVkExtDebugUtils(
+    const std::vector<std::string>& supportedExtensions,
+    std::vector<const char*>& newExtensions
+) {
+    const std::string target { "VK_EXT_debug_utils" };
+
+    // Test if the desired extension is supported. If supportedExtensions
+    // is empty then we didn't query and assume it is supported.
+    if (supportedExtensions.size() && !isIn(target, supportedExtensions))
+    {
+        LAYER_ERR("Instance extension not available: %s", target.c_str());
+        return;
+    }
+
+    // If it is already enabled then do nothing
+    if (isIn(target, newExtensions))
+    {
+        LAYER_LOG("Instance extension already enabled: %s", target.c_str());
+        return;
+    }
+
+    // Else add it to the list of enable extensions
+    LAYER_LOG("Instance extension added: %s", target.c_str());
+    newExtensions.push_back(target.c_str());
+}
+
+static void enableDeviceVkKhrTimelineSemaphore(
     VkDeviceCreateInfo& createInfo,
     std::vector<std::string>& supportedExtensions,
     std::vector<const char*>& newEnabledExtensions,
@@ -419,7 +445,7 @@ void enableTimelineSemaphores(
     bool isSupported = isIn(target, supportedExtensions);
     if (!isSupported)
     {
-        LAYER_LOG("WARNING: Cannot enable additional extension: %s", target);
+        LAYER_LOG("Device extension not available: %s", target);
         return;
     }
 
@@ -704,14 +730,11 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateInstance_default(
     auto* chainInfo = getChainInfo(pCreateInfo);
     auto fpGetInstanceProcAddr = chainInfo->u.pLayerInfo->pfnNextGetInstanceProcAddr;
 
-    // For now assume all layers need Vulkan 1.1 or newer
-    // TODO: Make this configurable per layer
+    // Work out what version we should use, promoting to meet layer requirement
     APIVersion appVersion = getApplicationAPIVersion(pCreateInfo);
     APIVersion maxVersion = getInstanceAPIVersion(fpGetInstanceProcAddr);
-    APIVersion reqVersion { 1, 1 };
-
-    APIVersion targetVersion = increaseAPIVersion(
-        appVersion, maxVersion, reqVersion);
+    APIVersion reqVersion = Instance::minAPIVersion;
+    APIVersion newVersion = increaseAPIVersion(appVersion, maxVersion, reqVersion);
 
     auto fpCreateInstanceRaw = fpGetInstanceProcAddr(nullptr, "vkCreateInstance");
     auto fpCreateInstance = reinterpret_cast<PFN_vkCreateInstance>(fpCreateInstanceRaw);
@@ -725,43 +748,33 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateInstance_default(
     VkApplicationInfo newAppInfo = *pCreateInfo->pApplicationInfo;
 
     // Write the new application info
-    newAppInfo.apiVersion = VK_MAKE_API_VERSION(
-        0, targetVersion.first, targetVersion.second, 0);
+    newAppInfo.apiVersion = VK_MAKE_API_VERSION(0, newVersion.first, newVersion.second, 0);
     newCreateInfo.pApplicationInfo = &newAppInfo;
 
-    // Query extension state
-    const char* targetExt = "VK_EXT_debug_utils";
+    // Create a copy of the extension list we can patch
+    std::vector<const char *> newExtensions;
+    const auto start = pCreateInfo->ppEnabledExtensionNames;
+    const auto end = pCreateInfo->ppEnabledExtensionNames + pCreateInfo->enabledExtensionCount;
+    newExtensions.insert(newExtensions.end(), start, end);
 
-    // Assume common extensions are available (see comment at start of function)
-    bool targetSupported = true;
-    if (queryExtensions)
+    // Enable extra extensions
+    for (const auto& newExt : Instance::extraExtensions)
     {
-        targetSupported = isIn(targetExt, supportedExtensions);
-        if (!targetSupported)
+        if (newExt == "VK_EXT_debug_utils")
         {
-            LAYER_LOG("WARNING: Cannot enable extension: %s", targetExt);
+            enableInstanceVkExtDebugUtils(
+                supportedExtensions,
+                newExtensions);
+        }
+        else
+        {
+            LAYER_ERR("Unknown instance extension: %s", newExt.c_str());
         }
     }
 
-    bool targetEnabled = isInExtensionList(
-        targetExt,
-        pCreateInfo->enabledExtensionCount,
-        pCreateInfo->ppEnabledExtensionNames);
-
-    // Enable the extension if we need to
-    std::vector<const char*> newExtList;
-    if (targetSupported && !targetEnabled)
-    {
-        LAYER_LOG("Enabling additional extension: %s", targetExt);
-        newExtList = cloneExtensionList(
-            pCreateInfo->enabledExtensionCount,
-            pCreateInfo->ppEnabledExtensionNames);
-
-        newExtList.push_back(targetExt);
-
-        newCreateInfo.enabledExtensionCount = newExtList.size();
-        newCreateInfo.ppEnabledExtensionNames = newExtList.data();
-    }
+    // Patch extension pointer and size after extending it
+    newCreateInfo.enabledExtensionCount = newExtensions.size();
+    newCreateInfo.ppEnabledExtensionNames = newExtensions.data();
 
     chainInfo->u.pLayerInfo = chainInfo->u.pLayerInfo->pNext;
     auto result = fpCreateInstance(&newCreateInfo, pAllocator, pInstance);
@@ -842,7 +855,7 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDevice_default(
     std::vector<const char*> newEnabledExtensions;
 
     // Enable timeline semaphores
-    enableTimelineSemaphores(
+    enableDeviceVkKhrTimelineSemaphore(
         newCreateInfo,
         supportedExtensions,
         newEnabledExtensions,
