@@ -133,6 +133,11 @@ public:
 
 public:
     /**
+     * @brief The instance this device is created with.
+     */
+    const Instance* instance;
+
+    /**
      * @brief The driver function dispatch table.
      */
     DeviceDispatchTable driver {};
@@ -143,11 +148,6 @@ public:
     static const std::vector<std::string> extraExtensions;
 
 private:
-    /**
-     * @brief The instance this device is created with.
-     */
-    const Instance* instance;
-
     /**
      * @brief The physical device this device is created with.
      */
