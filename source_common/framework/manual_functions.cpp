@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024 Arm Limited
+ * Copyright (c) 2024-2025 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -92,6 +92,29 @@ VkLayerInstanceCreateInfo* getChainInfo(
     }
 
     return const_cast<VkLayerInstanceCreateInfo*>(info);
+}
+
+/**
+ * @brief Helper to search a Vulkan "pNext" list for a matching structure.
+ */
+template <typename T>
+T* searchNextList(
+    VkStructureType sType,
+    const void* pNext
+) {
+    const auto* pStruct = reinterpret_cast<const T*>(pNext);
+    while(pStruct)
+    {
+        if (pStruct->sType == sType)
+        {
+            break;
+        }
+        pStruct = reinterpret_cast<const T*>(pStruct->pNext);
+    }
+
+    // Const cast is not ideal here but we don't have functionality to
+    // clone a writable copy of the entire pNext chain yet ...
+    return const_cast<T*>(pStruct);
 }
 
 /* See header for documentation. */
@@ -407,22 +430,30 @@ std::vector<const char*> cloneExtensionList(
     return data;
 }
 
+/**
+ * Enable VK_EXT_debug_utils if not enabled.
+ *
+ * Enabling this requires passing the extension string to vkCreateInstance().
+ *
+ * @param supported   The list of supported extension, or empty if unknown.
+ * @param active      The list of active extensions.
+ */
 static void enableInstanceVkExtDebugUtils(
-    const std::vector<std::string>& supportedExtensions,
-    std::vector<const char*>& newExtensions
+    const std::vector<std::string>& supported,
+    std::vector<const char*>& active
 ) {
     const std::string target { "VK_EXT_debug_utils" };
 
-    // Test if the desired extension is supported. If supportedExtensions
-    // is empty then we didn't query and assume it is supported.
-    if (supportedExtensions.size() && !isIn(target, supportedExtensions))
+    // Test if the desired extension is supported. If supported list is
+    // empty then we didn't query and assume extension is supported.
+    if (supported.size() && !isIn(target, supported))
     {
         LAYER_ERR("Instance extension not available: %s", target.c_str());
         return;
     }
 
     // If it is already enabled then do nothing
-    if (isIn(target, newExtensions))
+    if (isIn(target, active))
     {
         LAYER_LOG("Instance extension already enabled: %s", target.c_str());
         return;
@@ -430,106 +461,89 @@ static void enableInstanceVkExtDebugUtils(
 
     // Else add it to the list of enable extensions
     LAYER_LOG("Instance extension added: %s", target.c_str());
-    newExtensions.push_back(target.c_str());
+    active.push_back(target.c_str());
 }
 
+/**
+ * Enable VK_KHR_timeline_semaphore if not enabled.
+ *
+ * Enabling this requires passing the extension string to vkCreateDevice(),
+ * and passing either VkPhysicalDeviceTimelineSemaphoreFeatures or
+ * VkPhysicalDeviceVulkan12Features with the feature enabled.
+ *
+ * If the user has the extension enabled we patch t
+ *
+ * @param createInfo    The createInfo we can search to find user config.
+ * @param supported     The list of supported extensions.
+ * @param active        The list of active extensions.
+ * @param newFeatures   Pre-allocated struct we can use if we need to add it.
+ */
 static void enableDeviceVkKhrTimelineSemaphore(
     VkDeviceCreateInfo& createInfo,
-    std::vector<std::string>& supportedExtensions,
-    std::vector<const char*>& newEnabledExtensions,
-    VkPhysicalDeviceTimelineSemaphoreFeatures newTimelineFeatures
+    std::vector<std::string>& supported,
+    std::vector<const char*>& active,
+    VkPhysicalDeviceTimelineSemaphoreFeatures newFeatures
 ) {
-    static const char* target = "VK_KHR_timeline_semaphore";
+    const std::string target { "VK_KHR_timeline_semaphore" };
 
-    // Extension is not supported ...
-    bool isSupported = isIn(target, supportedExtensions);
-    if (!isSupported)
+    // Test if the desired extension is supported
+    if (!isIn(target, supported))
     {
-        LAYER_LOG("Device extension not available: %s", target);
+        LAYER_LOG("Device extension not available: %s", target.c_str());
         return;
     }
 
-    // Extension is not enabled ...
-    bool isEnabled = isInExtensionList(
-        target,
-        createInfo.enabledExtensionCount,
-        createInfo.ppEnabledExtensionNames);
-
-    // Clone the extension list into our copy, if needed
-    if (!isEnabled && !newEnabledExtensions.size())
+    // If it is not already enabled then add to the list
+    if (!isIn(target, active))
     {
-        newEnabledExtensions = cloneExtensionList(
-            createInfo.enabledExtensionCount,
-            createInfo.ppEnabledExtensionNames);
+        LAYER_LOG("Instance extension added: %s", target.c_str());
+        active.push_back(target.c_str());
     }
 
-    // Add the extension to the end of the list
-    newEnabledExtensions.push_back(target);
-    createInfo.enabledExtensionCount = newEnabledExtensions.size();
-    createInfo.ppEnabledExtensionNames = newEnabledExtensions.data();
+    // Check if user provided a VkPhysicalDeviceTimelineSemaphoreFeatures
+    auto* config1 = searchNextList<VkPhysicalDeviceTimelineSemaphoreFeatures>(
+        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES,
+        createInfo.pNext);
 
-    // Enable the extension/feature
-    bool timeline_enabled { false };
-
-    // Check VkPhysicalDeviceTimelineSemaphoreFeatures
-    auto* pTSF = reinterpret_cast<const VkPhysicalDeviceTimelineSemaphoreFeatures*>(createInfo.pNext);
-    while(pTSF)
+    if (config1)
     {
-        if (pTSF->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES)
+        if (!config1->timelineSemaphore)
         {
-            break;
+            LAYER_LOG("Instance extension force enabled: %s", target.c_str());
+            config1->timelineSemaphore = true;
         }
-        pTSF = reinterpret_cast<const VkPhysicalDeviceTimelineSemaphoreFeatures*>(pTSF->pNext);
-    }
-
-    // Make sure it is enabled in the existing structure, if present
-    if (pTSF)
-    {
-        if (!pTSF->timelineSemaphore) {
-            // TODO: Const cast is not safe and we should be cloning the entire pNext chain if we
-            // need modify anything, but this is painful and const_cast works most of the time
-            auto* pWritableTSF = const_cast<VkPhysicalDeviceTimelineSemaphoreFeatures*>(pTSF);
-            pWritableTSF->timelineSemaphore = true;
-            LAYER_LOG("Enabling additional extension: %s", target);
-        }
-
-        timeline_enabled = true;
-    }
-
-    // Check VkPhysicalDeviceVulkan12Features
-    auto* pV12F = reinterpret_cast<const VkPhysicalDeviceVulkan12Features*>(createInfo.pNext);
-    while(pV12F)
-    {
-        if (pV12F->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES)
+        else
         {
-            break;
+            LAYER_LOG("Instance extension already enabled: %s", target.c_str());
         }
-
-        pV12F = reinterpret_cast<const VkPhysicalDeviceVulkan12Features*>(pV12F->pNext);
     }
 
-    // Make sure it is enabled in the existing structure, if present
-    if (pV12F)
-    {
-        if (!pV12F->timelineSemaphore) {
-            // TODO: Const cast is not safe and we should be cloning the entire pNext chain if we
-            // need modify anything, but this is painful and const_cast works most of the time
-            auto* pWritableV12F = const_cast<VkPhysicalDeviceVulkan12Features*>(pV12F);
-            pWritableV12F->timelineSemaphore = true;
-            LAYER_LOG("Enabling additional extension: %s", target);
-        }
+    // Check if user provided a VkPhysicalDeviceVulkan12Features
+    auto* config2 = searchNextList<VkPhysicalDeviceTimelineSemaphoreFeatures>(
+        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES,
+        createInfo.pNext);
 
-        timeline_enabled = true;
+    if (config2)
+    {
+        if (!config2->timelineSemaphore)
+        {
+            LAYER_LOG("Instance extension force enabled: %s", target.c_str());
+            config2->timelineSemaphore = true;
+        }
+        else
+        {
+            LAYER_LOG("Instance extension already enabled: %s", target.c_str());
+        }
     }
 
-    // Enable it if not enabled already by the application
-    if (!timeline_enabled)
+    // Add a config if not configured by the application
+    if (!config1 && !config2)
     {
-        newTimelineFeatures.pNext = const_cast<void*>(createInfo.pNext);
-        newTimelineFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES;
-        newTimelineFeatures.timelineSemaphore = true;
-        createInfo.pNext = reinterpret_cast<const void*>(&newTimelineFeatures);
-        LAYER_LOG("Enabling additional extension: %s", target);
+        newFeatures.pNext = const_cast<void*>(createInfo.pNext);
+        newFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES;
+        newFeatures.timelineSemaphore = true;
+        createInfo.pNext = reinterpret_cast<const void*>(&newFeatures);
+        LAYER_LOG("Instance extension config added: %s", target.c_str());
     }
 }
 
@@ -852,16 +866,36 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDevice_default(
 
     // Create structures we allocate here, but populated elsewhere
     VkPhysicalDeviceTimelineSemaphoreFeatures newTimelineFeatures;
-    std::vector<const char*> newEnabledExtensions;
 
-    // Enable timeline semaphores
-    enableDeviceVkKhrTimelineSemaphore(
-        newCreateInfo,
-        supportedExtensions,
-        newEnabledExtensions,
-        newTimelineFeatures);
+    // Create a copy of the extension list we can patch
+    std::vector<const char *> newExtensions;
+    const auto start = pCreateInfo->ppEnabledExtensionNames;
+    const auto end = pCreateInfo->ppEnabledExtensionNames + pCreateInfo->enabledExtensionCount;
+    newExtensions.insert(newExtensions.end(), start, end);
 
-    auto fpCreateDevice = reinterpret_cast<PFN_vkCreateDevice>(fpGetInstanceProcAddr(layer->instance, "vkCreateDevice"));
+    // Enable extra extensions
+    for (const auto& newExt : Device::extraExtensions)
+    {
+        if (newExt == "VK_KHR_timeline_semaphore")
+        {
+            enableDeviceVkKhrTimelineSemaphore(
+                newCreateInfo,
+                supportedExtensions,
+                newExtensions,
+                newTimelineFeatures);
+        }
+        else
+        {
+            LAYER_ERR("Unknown instance extension: %s", newExt.c_str());
+        }
+    }
+
+    // Patch extension pointer and size after extending it
+    newCreateInfo.enabledExtensionCount = newExtensions.size();
+    newCreateInfo.ppEnabledExtensionNames = newExtensions.data();
+
+    auto fpCreateDeviceRaw = fpGetInstanceProcAddr(layer->instance, "vkCreateDevice");
+    auto fpCreateDevice = reinterpret_cast<PFN_vkCreateDevice>(fpCreateDeviceRaw);
     if (!fpCreateDevice)
     {
         return VK_ERROR_INITIALIZATION_FAILED;

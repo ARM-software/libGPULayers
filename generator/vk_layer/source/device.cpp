@@ -40,6 +40,9 @@
 static std::unordered_map<void*, std::unique_ptr<Device>> g_devices;
 
 /* See header for documentation. */
+const std::vector<std::string> Device::extraExtensions { };
+
+/* See header for documentation. */
 void Device::store(
     VkDevice handle,
     std::unique_ptr<Device> device

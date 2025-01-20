@@ -170,6 +170,11 @@ public:
      */
     DeviceDispatchTable driver {};
 
+    /**
+     * @brief The minimum set of device extensions needed by this layer.
+     */
+    static const std::vector<std::string> extraExtensions;
+
 private:
     /**
      * @brief The instance this device is created with.
