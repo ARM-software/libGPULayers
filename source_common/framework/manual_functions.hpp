@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024 Arm Limited
+ * Copyright (c) 2024-2025 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -40,11 +40,9 @@
 #include "instance.hpp"
 #include "version.hpp"
 
-
-#include "framework/instance_functions.hpp"
-
 #include "framework/device_dispatch_table.hpp"
 #include "framework/device_functions.hpp"
+#include "framework/instance_functions.hpp"
 #include "framework/utils.hpp"
 
 /**
@@ -110,6 +108,54 @@ PFN_vkVoidFunction getDeviceLayerFunction(
     const char* name);
 
 /**
+ * @brief Fetch the maximum supported instance API version.
+ *
+ * @param fpGetProcAddr   vkGetInstanceProcAddr() function pointer.
+ *
+ * @return The major/minor version numbers, or zeros on error.
+ */
+APIVersion getInstanceAPIVersion(
+    PFN_vkGetInstanceProcAddr fpGetProcAddr);
+
+/**
+ * @brief Fetch the application requested instance API version.
+ *
+ * @param pCreateInfo   The application instance creation info.
+ *
+ * @return The major/minor version numbers.
+ */
+APIVersion getApplicationAPIVersion(
+    const VkInstanceCreateInfo* pCreateInfo);
+
+/**
+ * @brief Fetch the maximum supported device API version.
+ *
+ * @param fpGetProcAddr    vkGetInstanceProcAddr() function pointer.
+ * @param instance         The instance.
+ * @param physicalDevice   The physical device.
+ *
+ * @return The major/minor version numbers, or zeros on error.
+ */
+APIVersion getDeviceAPIVersion(
+    PFN_vkGetInstanceProcAddr fpGetProcAddr,
+    VkInstance instance,
+    VkPhysicalDevice physicalDevice);
+
+/**
+ * @brief Return an increased API version, if supported.
+ *
+ * @param userVersion       The user-requested version.
+ * @param maxVersion        The max version supported by the platform.
+ * @param requiredVersion   The layer-requested min version
+ *
+ * @return The major/minor version numbers, or zeros on error.
+ */
+APIVersion increaseAPIVersion(
+    const APIVersion& userVersion,
+    const APIVersion& maxVersion,
+    const APIVersion& requiredVersion);
+
+/**
  * @brief Fetch the list of supported extensions from the instance.
  *
  * WARNING: This function only works on Android and only works for the bottom
@@ -148,7 +194,7 @@ std::vector<std::string> getDeviceExtensionList(
  * @return @c true if @c target is found in @c extensionList.
  */
 bool isInExtensionList(
-    const std::string& target,
+    const char*  target,
     uint32_t extensionCount,
     const char* const* extensionList);
 
