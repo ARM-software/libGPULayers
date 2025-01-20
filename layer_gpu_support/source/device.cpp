@@ -34,6 +34,11 @@
 static std::unordered_map<void*, std::unique_ptr<Device>> g_devices;
 
 /* See header for documentation. */
+const std::vector<std::string> Device::extraExtensions {
+    "VK_KHR_timeline_semaphore"
+};
+
+/* See header for documentation. */
 void Device::store(
     VkDevice handle,
     std::unique_ptr<Device> device
@@ -88,4 +93,25 @@ Device::Device(
     device(_device)
 {
     initDriverDeviceDispatchTable(device, nlayerGetProcAddress, driver);
+
+    VkSemaphoreTypeCreateInfo timelineCreateInfo {
+        .sType = VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO,
+        .pNext = nullptr,
+        .semaphoreType = VK_SEMAPHORE_TYPE_TIMELINE,
+        .initialValue = queueSerializationTimelineSemCount
+    };
+
+    VkSemaphoreCreateInfo createInfo {
+        .sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
+        .pNext = &timelineCreateInfo,
+        .flags = 0
+    };
+
+    auto result = driver.vkCreateSemaphore(
+        device, &createInfo, nullptr, &queueSerializationTimelineSem);
+    if (result != VK_SUCCESS)
+    {
+        LAYER_ERR("Failed vkCreateSemaphore() for queue serialization");
+        queueSerializationTimelineSem = nullptr;
+    }
 }

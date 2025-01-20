@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024 Arm Limited
+ * Copyright (c) 2024-2025 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -131,4 +131,14 @@ public:
      * @brief The driver function dispatch table.
      */
     InstanceDispatchTable driver {};
+
+    /**
+     * @brief The minimum API version needed by this layer.
+     */
+    static const APIVersion minAPIVersion;
+
+    /**
+     * @brief The minimum set of instance extensions needed by this layer.
+     */
+    static const std::vector<std::string> extraExtensions;
 };

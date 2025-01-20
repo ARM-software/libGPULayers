@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024 Arm Limited
+ * Copyright (c) 2024-2025 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -38,6 +38,9 @@
  * @brief The dispatch lookup for all of the created Vulkan instances.
  */
 static std::unordered_map<void*, std::unique_ptr<Device>> g_devices;
+
+/* See header for documentation. */
+const std::vector<std::string> Device::extraExtensions { };
 
 /* See header for documentation. */
 void Device::store(

@@ -137,4 +137,14 @@ public:
      * @brief The layer configuration.
      */
     const LayerConfig config;
+
+    /**
+     * @brief The minimum API version needed by this layer.
+     */
+    static const APIVersion minAPIVersion;
+
+    /**
+     * @brief The minimum set of instance extensions needed by this layer.
+     */
+    static const std::vector<std::string> extraExtensions;
 };

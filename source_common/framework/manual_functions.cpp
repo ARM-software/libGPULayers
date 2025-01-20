@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024 Arm Limited
+ * Copyright (c) 2024-2025 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -94,6 +94,29 @@ VkLayerInstanceCreateInfo* getChainInfo(
     return const_cast<VkLayerInstanceCreateInfo*>(info);
 }
 
+/**
+ * @brief Helper to search a Vulkan "pNext" list for a matching structure.
+ */
+template <typename T>
+T* searchNextList(
+    VkStructureType sType,
+    const void* pNext
+) {
+    const auto* pStruct = reinterpret_cast<const T*>(pNext);
+    while(pStruct)
+    {
+        if (pStruct->sType == sType)
+        {
+            break;
+        }
+        pStruct = reinterpret_cast<const T*>(pStruct->pNext);
+    }
+
+    // Const cast is not ideal here but we don't have functionality to
+    // clone a writable copy of the entire pNext chain yet ...
+    return const_cast<T*>(pStruct);
+}
+
 /* See header for documentation. */
 VkLayerDeviceCreateInfo* getChainInfo(
     const VkDeviceCreateInfo* pCreateInfo
@@ -182,6 +205,131 @@ PFN_vkVoidFunction getDeviceLayerFunction(
 }
 
 /* See header for documentation. */
+APIVersion getInstanceAPIVersion(
+    PFN_vkGetInstanceProcAddr fpGetProcAddr
+) {
+    auto fpFunctionRaw = fpGetProcAddr(nullptr, "vkEnumerateInstanceVersion");
+    auto fpFunction = reinterpret_cast<PFN_vkEnumerateInstanceVersion>(fpFunctionRaw);
+    if (!fpFunction)
+    {
+        LAYER_ERR("Failed to get vkEnumerateInstanceVersion()");
+        return { 0 , 0 };
+    }
+
+    uint32_t apiVersion = 0;
+    auto result = fpFunction(&apiVersion);
+    if (result != VK_SUCCESS)
+    {
+        LAYER_ERR("Failed to call vkEnumerateInstanceVersion()");
+        return { 0 , 0 };
+    }
+
+    uint32_t major = VK_API_VERSION_MAJOR(apiVersion);
+    uint32_t minor = VK_API_VERSION_MINOR(apiVersion);
+    return { major, minor };
+}
+
+/* See header for documentation. */
+APIVersion getApplicationAPIVersion(
+    const VkInstanceCreateInfo* pCreateInfo
+) {
+    uint32_t apiVersion = pCreateInfo->pApplicationInfo->apiVersion;
+    uint32_t major = VK_API_VERSION_MAJOR(apiVersion);
+    uint32_t minor = VK_API_VERSION_MINOR(apiVersion);
+    return { major, minor };
+}
+
+/* See header for documentation. */
+APIVersion getDeviceAPIVersion(
+    PFN_vkGetInstanceProcAddr fpGetProcAddr,
+    VkInstance instance,
+    VkPhysicalDevice physicalDevice
+) {
+    auto fpFunctionRaw = fpGetProcAddr(instance, "vkGetPhysicalDeviceProperties");
+    auto fpFunction = reinterpret_cast<PFN_vkGetPhysicalDeviceProperties>(fpFunctionRaw);
+    if (!fpFunction)
+    {
+        LAYER_ERR("Failed to get vkGetPhysicalDeviceProperties()");
+        return { 0 , 0 };
+    }
+
+    VkPhysicalDeviceProperties properties {};
+    fpFunction(physicalDevice, &properties);
+
+    uint32_t major = VK_API_VERSION_MAJOR(properties.apiVersion);
+    uint32_t minor = VK_API_VERSION_MINOR(properties.apiVersion);
+    return { major, minor };
+}
+
+/**
+ * @brief Is version A >= version B.
+ */
+static bool isVersionGreaterEqual(
+    const APIVersion& a,
+    const APIVersion& b
+) {
+    // Different major version
+    if(a.first != b.first)
+    {
+        return a.first > b.first;
+    }
+
+    // Same major version, so test minor version
+    return a.second >= b.second;
+}
+
+/**
+ * @brief Is version A > version B.
+ */
+static bool isVersionGreater(
+    const APIVersion& a,
+    const APIVersion& b
+) {
+    // Different major version
+    if(a.first != b.first)
+    {
+        return a.first > b.first;
+    }
+
+    // Same major version, so test minor version
+    return a.second > b.second;
+}
+
+/* See header for documentation. */
+APIVersion increaseAPIVersion(
+    const APIVersion& userVersion,
+    const APIVersion& maxVersion,
+    const APIVersion& requiredVersion
+) {
+    // User version is good enough to support the layer, so stick with that
+    if(isVersionGreaterEqual(userVersion, requiredVersion))
+    {
+        LAYER_LOG(
+            "Instance API version %u.%u (user setting meets layer minimum)",
+            userVersion.first, userVersion.second);
+
+        return userVersion;
+    }
+
+    // Required version is higher than the max version so log a warning
+    // and try to continue using maxVersion but it may fail ...
+    if(isVersionGreater(requiredVersion, maxVersion))
+    {
+        LAYER_ERR(
+            "Instance API version %u.%u (lower than layer minimum)",
+            maxVersion.first, maxVersion.second);
+
+        return maxVersion;
+    }
+
+    LAYER_LOG(
+        "Instance API version %u.%u (increased to layer minimum)",
+        requiredVersion.first, requiredVersion.second);
+
+    return requiredVersion;
+}
+
+/* See header for documentation. */
 std::vector<std::string> getInstanceExtensionList(
     const VkInstanceCreateInfo* pCreateInfo
 ) {
@@ -253,7 +401,7 @@ std::vector<std::string> getDeviceExtensionList(
 
 /* See header for documentation. */
 bool isInExtensionList(
-    const std::string& target,
+    std::string target,
     uint32_t extensionCount,
     const char* const* extensionList
 ) {
@@ -280,6 +428,123 @@ std::vector<const char*> cloneExtensionList(
     }
 
     return data;
+}
+
+/**
+ * Enable VK_EXT_debug_utils if not enabled.
+ *
+ * Enabling this requires passing the extension string to vkCreateInstance().
+ *
+ * @param supported   The list of supported extension, or empty if unknown.
+ * @param active      The list of active extensions.
+ */
+static void enableInstanceVkExtDebugUtils(
+    const std::vector<std::string>& supported,
+    std::vector<const char*>& active
+) {
+    const std::string target { "VK_EXT_debug_utils" };
+
+    // Test if the desired extension is supported. If supported list is
+    // empty then we didn't query and assume extension is supported.
+    if (supported.size() && !isIn(target, supported))
+    {
+        LAYER_ERR("Instance extension not available: %s", target.c_str());
+        return;
+    }
+
+    // If it is already enabled then do nothing
+    if (isIn(target, active))
+    {
+        LAYER_LOG("Instance extension already enabled: %s", target.c_str());
+        return;
+    }
+
+    // Else add it to the list of enable extensions
+    LAYER_LOG("Instance extension added: %s", target.c_str());
+    active.push_back(target.c_str());
+}
+
+/**
+ * Enable VK_KHR_timeline_semaphore if not enabled.
+ *
+ * Enabling this requires passing the extension string to vkCreateDevice(),
+ * and passing either VkPhysicalDeviceTimelineSemaphoreFeatures or
+ * VkPhysicalDeviceVulkan12Features with the feature enabled.
+ *
+ * If the user has the extension enabled we patch t
+ *
+ * @param createInfo    The createInfo we can search to find user config.
+ * @param supported     The list of supported extensions.
+ * @param active        The list of active extensions.
+ * @param newFeatures   Pre-allocated struct we can use if we need to add it.
+ */
+static void enableDeviceVkKhrTimelineSemaphore(
+    VkDeviceCreateInfo& createInfo,
+    std::vector<std::string>& supported,
+    std::vector<const char*>& active,
+    VkPhysicalDeviceTimelineSemaphoreFeatures newFeatures
+) {
+    const std::string target { "VK_KHR_timeline_semaphore" };
+
+    // Test if the desired extension is supported
+    if (!isIn(target, supported))
+    {
+        LAYER_LOG("Device extension not available: %s", target.c_str());
+        return;
+    }
+
+    // If it is not already enabled then add to the list
+    if (!isIn(target, active))
+    {
+        LAYER_LOG("Instance extension added: %s", target.c_str());
+        active.push_back(target.c_str());
+    }
+
+    // Check if user provided a VkPhysicalDeviceTimelineSemaphoreFeatures
+    auto* config1 = searchNextList<VkPhysicalDeviceTimelineSemaphoreFeatures>(
+        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES,
+        createInfo.pNext);
+
+    if (config1)
+    {
+        if (!config1->timelineSemaphore)
+        {
+            LAYER_LOG("Instance extension force enabled: %s", target.c_str());
+            config1->timelineSemaphore = true;
+        }
+        else
+        {
+            LAYER_LOG("Instance extension already enabled: %s", target.c_str());
+        }
+    }
+
+    // Check if user provided a VkPhysicalDeviceVulkan12Features
+    auto* config2 = searchNextList<VkPhysicalDeviceTimelineSemaphoreFeatures>(
+        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES,
+        createInfo.pNext);
+
+    if (config2)
+    {
+        if (!config2->timelineSemaphore)
+        {
+            LAYER_LOG("Instance extension force enabled: %s", target.c_str());
+            config2->timelineSemaphore = true;
+        }
+        else
+        {
+            LAYER_LOG("Instance extension already enabled: %s", target.c_str());
+        }
+    }
+
+    // Add a config if not configured by the application
+    if (!config1 && !config2)
+    {
+        newFeatures.pNext = const_cast<void*>(createInfo.pNext);
+        newFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES;
+        newFeatures.timelineSemaphore = true;
+        createInfo.pNext = reinterpret_cast<const void*>(&newFeatures);
+        LAYER_LOG("Instance extension config added: %s", target.c_str());
+    }
 }
 
 /** See Vulkan API for documentation. */
@@ -478,6 +743,13 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateInstance_default(
 
     auto* chainInfo = getChainInfo(pCreateInfo);
     auto fpGetInstanceProcAddr = chainInfo->u.pLayerInfo->pfnNextGetInstanceProcAddr;
+
+    // Work out what version we should use, promoting to meet layer requirement
+    APIVersion appVersion = getApplicationAPIVersion(pCreateInfo);
+    APIVersion maxVersion = getInstanceAPIVersion(fpGetInstanceProcAddr);
+    APIVersion reqVersion = Instance::minAPIVersion;
+    APIVersion newVersion = increaseAPIVersion(appVersion, maxVersion, reqVersion);
+
     auto fpCreateInstanceRaw = fpGetInstanceProcAddr(nullptr, "vkCreateInstance");
     auto fpCreateInstance = reinterpret_cast<PFN_vkCreateInstance>(fpCreateInstanceRaw);
     if (!fpCreateInstance)
@@ -485,52 +757,51 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateInstance_default(
         return VK_ERROR_INITIALIZATION_FAILED;
     }
 
-    // Create a copy we can write
+    // Create structure copies we can modify
     VkInstanceCreateInfo newCreateInfo = *pCreateInfo;
+    VkApplicationInfo newAppInfo = *pCreateInfo->pApplicationInfo;
 
-    // Query extension state
-    std::string targetExt("VK_EXT_debug_utils");
-    // Assume common extensions are available (see comment at start of function)
-    bool targetSupported = true;
-    if (queryExtensions)
+    // Write the new application info
+    newAppInfo.apiVersion = VK_MAKE_API_VERSION(0, newVersion.first, newVersion.second, 0);
+    newCreateInfo.pApplicationInfo = &newAppInfo;
+
+    // Create a copy of the extension list we can patch
+    std::vector<const char *> newExtensions;
+    const auto start = pCreateInfo->ppEnabledExtensionNames;
+    const auto end = pCreateInfo->ppEnabledExtensionNames + pCreateInfo->enabledExtensionCount;
+    newExtensions.insert(newExtensions.end(), start, end);
+
+    // Enable extra extensions
+    for (const auto& newExt : Instance::extraExtensions)
     {
-        targetSupported = isIn(targetExt, supportedExtensions);
+        if (newExt == "VK_EXT_debug_utils")
+        {
+            enableInstanceVkExtDebugUtils(
+                supportedExtensions,
+                newExtensions);
+        }
+        else
+        {
+            LAYER_ERR("Unknown instance extension: %s", newExt.c_str());
+        }
     }
 
-    bool targetEnabled = isInExtensionList(
-        targetExt,
-        pCreateInfo->enabledExtensionCount,
-        pCreateInfo->ppEnabledExtensionNames);
-
-    if (!targetSupported)
-    {
-        LAYER_LOG("WARNING: Cannot enable additional extension: %s", targetExt.c_str());
-    }
-
-    // Enable the extension if we need to
-    std::vector<const char*> newExtList;
-    if (targetSupported && !targetEnabled)
-    {
-        LAYER_LOG("Enabling additional extension: %s", targetExt.c_str());
-        newExtList = cloneExtensionList(
-            pCreateInfo->enabledExtensionCount,
-            pCreateInfo->ppEnabledExtensionNames);
-
-        newExtList.push_back(targetExt.c_str());
-
-        newCreateInfo.enabledExtensionCount = newExtList.size();
-        newCreateInfo.ppEnabledExtensionNames = newExtList.data();
-    }
+    // Patch extension pointer and size after extending it
+    newCreateInfo.enabledExtensionCount = newExtensions.size();
+    newCreateInfo.ppEnabledExtensionNames = newExtensions.data();
 
     chainInfo->u.pLayerInfo = chainInfo->u.pLayerInfo->pNext;
-    auto res = fpCreateInstance(&newCreateInfo, pAllocator, pInstance);
-    if (res != VK_SUCCESS)
+    auto result = fpCreateInstance(&newCreateInfo, pAllocator, pInstance);
+    if (result != VK_SUCCESS)
     {
-        return res;
+        return result;
     }
 
     // Retake the lock to access layer-wide global store
-    auto instance = std::make_unique<Instance>(*pInstance, fpGetInstanceProcAddr);
+    auto instance = std::make_unique<Instance>(
+        *pInstance,
+        fpGetInstanceProcAddr);
+
     {
         std::lock_guard<std::mutex> lock { g_vulkanLock };
         Instance::store(*pInstance, instance);
@@ -576,10 +847,55 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDevice_default(
     // Release the lock to call into the driver
     lock.unlock();
 
+    // Get the list is supported extensions
+    auto supportedExtensions = getDeviceExtensionList(layer->instance, physicalDevice, pCreateInfo);
+
+    // Query the supported Vulkan version
     auto* chainInfo = getChainInfo(pCreateInfo);
     auto fpGetInstanceProcAddr = chainInfo->u.pLayerInfo->pfnNextGetInstanceProcAddr;
     auto fpGetDeviceProcAddr = chainInfo->u.pLayerInfo->pfnNextGetDeviceProcAddr;
-    auto fpCreateDevice = reinterpret_cast<PFN_vkCreateDevice>(fpGetInstanceProcAddr(layer->instance, "vkCreateDevice"));
+
+    // Log this for support purposes ...
+    APIVersion apiVersion = getDeviceAPIVersion(
+        fpGetInstanceProcAddr, layer->instance, physicalDevice);
+
+    LAYER_LOG("Device API version %u.%u", apiVersion.first, apiVersion.second);
+
+    // Create structure copies we can modify
+    VkDeviceCreateInfo newCreateInfo = *pCreateInfo;
+
+    // Create structures we allocate here, but populated elsewhere
+    VkPhysicalDeviceTimelineSemaphoreFeatures newTimelineFeatures;
+
+    // Create a copy of the extension list we can patch
+    std::vector<const char *> newExtensions;
+    const auto start = pCreateInfo->ppEnabledExtensionNames;
+    const auto end = pCreateInfo->ppEnabledExtensionNames + pCreateInfo->enabledExtensionCount;
+    newExtensions.insert(newExtensions.end(), start, end);
+
+    // Enable extra extensions
+    for (const auto& newExt : Device::extraExtensions)
+    {
+        if (newExt == "VK_KHR_timeline_semaphore")
+        {
+            enableDeviceVkKhrTimelineSemaphore(
+                newCreateInfo,
+                supportedExtensions,
+                newExtensions,
+                newTimelineFeatures);
+        }
+        else
+        {
+            LAYER_ERR("Unknown instance extension: %s", newExt.c_str());
+        }
+    }
+
+    // Patch extension pointer and size after extending it
+    newCreateInfo.enabledExtensionCount = newExtensions.size();
+    newCreateInfo.ppEnabledExtensionNames = newExtensions.data();
+
+    auto fpCreateDeviceRaw = fpGetInstanceProcAddr(layer->instance, "vkCreateDevice");
+    auto fpCreateDevice = reinterpret_cast<PFN_vkCreateDevice>(fpCreateDeviceRaw);
     if (!fpCreateDevice)
     {
         return VK_ERROR_INITIALIZATION_FAILED;
@@ -587,15 +903,16 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDevice_default(
 
     // Advance the link info for the next element on the chain
     chainInfo->u.pLayerInfo = chainInfo->u.pLayerInfo->pNext;
-    auto res = fpCreateDevice(physicalDevice, pCreateInfo, pAllocator, pDevice);
+    auto res = fpCreateDevice(physicalDevice, &newCreateInfo, pAllocator, pDevice);
     if (res != VK_SUCCESS)
     {
         return res;
     }
 
+    auto device = std::make_unique<Device>(layer, physicalDevice, *pDevice, fpGetDeviceProcAddr);
+
     // Retake the lock to access layer-wide global store
     lock.lock();
-    auto device = std::make_unique<Device>(layer, physicalDevice, *pDevice, fpGetDeviceProcAddr);
     Device::store(*pDevice, std::move(device));
 
     return VK_SUCCESS;

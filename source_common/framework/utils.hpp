@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024 Arm Limited
+ * Copyright (c) 2024-2025 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -56,7 +56,12 @@
 #endif
 
 /**
- * Tag type used for template function dispatch;
+ * @brief Type for a API version major/minor pair.
+ */
+using APIVersion = std::pair<uint32_t, uint32_t>;
+
+/**
+ * @brief Tag type used for template function dispatch;
  */
 struct user_tag {};
 

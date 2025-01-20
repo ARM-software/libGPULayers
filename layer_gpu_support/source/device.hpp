@@ -138,6 +138,27 @@ public:
     const Instance* instance;
 
     /**
+     * @brief The driver function dispatch table.
+     */
+    DeviceDispatchTable driver {};
+
+    /**
+     * @brief The minimum set of device extensions needed by this layer.
+     */
+    static const std::vector<std::string> extraExtensions;
+
+    /**
+     * @brief The timeline sem use for queue serialization.
+     */
+    VkSemaphore queueSerializationTimelineSem { nullptr };
+
+    /**
+     * @brief The current timeline sem target value the next use waits for.
+     */
+    uint64_t queueSerializationTimelineSemCount { 0 };
+
+private:
+    /**
      * @brief The physical device this device is created with.
      */
     const VkPhysicalDevice physicalDevice;
@@ -146,9 +167,4 @@ public:
      * @brief The device handle this device is created with.
      */
     const VkDevice device;
-
-    /**
-     * @brief The driver function dispatch table.
-     */
-    DeviceDispatchTable driver {};
 };
