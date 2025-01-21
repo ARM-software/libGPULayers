@@ -293,3 +293,36 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit2KHR<user_tag>(
     uint32_t submitCount,
     const VkSubmitInfo2* pSubmits,
     VkFence fence);
+
+// Functions for pipelines
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateComputePipelines<user_tag>(
+    VkDevice device,
+    VkPipelineCache pipelineCache,
+    uint32_t createInfoCount,
+    const VkComputePipelineCreateInfo* pCreateInfos,
+    const VkAllocationCallbacks* pAllocator,
+    VkPipeline* pPipelines);
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateGraphicsPipelines<user_tag>(
+    VkDevice device,
+    VkPipelineCache pipelineCache,
+    uint32_t createInfoCount,
+    const VkGraphicsPipelineCreateInfo* pCreateInfos,
+    const VkAllocationCallbacks* pAllocator,
+    VkPipeline* pPipelines);
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateRayTracingPipelinesKHR<user_tag>(
+    VkDevice device,
+    VkDeferredOperationKHR deferredOperation,
+    VkPipelineCache pipelineCache,
+    uint32_t createInfoCount,
+    const VkRayTracingPipelineCreateInfoKHR* pCreateInfos,
+    const VkAllocationCallbacks* pAllocator,
+    VkPipeline* pPipelines);

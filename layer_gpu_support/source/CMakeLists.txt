@@ -46,6 +46,7 @@ add_library(
         instance.cpp
         layer_config.cpp
         layer_device_functions_dispatch.cpp
+        layer_device_functions_pipelines.cpp
         layer_device_functions_queue.cpp
         layer_device_functions_render_pass.cpp
         layer_device_functions_trace_rays.cpp
