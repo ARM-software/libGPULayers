@@ -49,6 +49,8 @@ public:
      */
     LayerConfig();
 
+    // Config queries for serializer
+
     /**
      * @brief True if config wants to serialize before compute workloads.
      */
@@ -94,15 +96,41 @@ public:
      */
     bool serialize_cmdstream_transfer_post() const;
 
+    // Config queries for shaders
+
+    /**
+     * @brief True if config wants to disable shader caching.
+     */
+    bool shader_disable_cache() const;
+
+    /**
+     * @brief True if config wants to disable use of relaxed precision.
+     */
+    bool shader_disable_relaxed_precision() const;
+
+    /**
+     * @brief True if config wants to enable SPIR-V hash fuzzing.
+     */
+    bool shader_fuzz_spirv_hash() const;
+
 private:
     /**
-     * @brief Parse the serialization options for the serializer.
+     * @brief Parse the configuration options for the serializer.
      *
      * @param config   The JSON configuration.
      *
      * @throws json::out_of_bounds if required fields are missing.
      */
     void parse_serialization_options(const json& config);
+
+    /**
+     * @brief Parse the configuration options for the shader module.
+     *
+     * @param config   The JSON configuration.
+     *
+     * @throws json::out_of_bounds if required fields are missing.
+     */
+    void parse_shader_options(const json& config);
 
 private:
     /**
@@ -149,4 +177,19 @@ private:
      * @brief True if we force serialize after transfer workloads.
      */
     bool serialize_transfer_post { false };
+
+    /**
+     * @brief True if we force disable executable binary caching.
+     */
+    bool shader_disable_program_cache { false };
+
+    /**
+     * @brief True if we force remove use of relaxed precision decoration.
+     */
+    bool shader_disable_program_relaxed_precision { false };
+
+    /**
+     * @brief True if we change SPIR-V to change the program hash.
+     */
+    bool shader_enable_program_fuzz_spirv_hash { false };
 };

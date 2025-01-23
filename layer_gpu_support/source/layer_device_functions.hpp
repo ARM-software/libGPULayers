@@ -298,6 +298,31 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit2KHR<user_tag>(
 
 /* See Vulkan API for documentation. */
 template<>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateShaderModule<user_tag>(
+    VkDevice device,
+    const VkShaderModuleCreateInfo* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkShaderModule* pShaderModule);
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateShadersEXT<user_tag>(
+    VkDevice device,
+    uint32_t createInfoCount,
+    const VkShaderCreateInfoEXT* pCreateInfos,
+    const VkAllocationCallbacks* pAllocator,
+    VkShaderEXT* pShaders);
+
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPipelineKeyKHR<user_tag>(
+    VkDevice device,
+    const VkPipelineCreateInfoKHR* pPipelineCreateInfo,
+    VkPipelineBinaryKeyKHR* pPipelineKey);
+
+/* See Vulkan API for documentation. */
+template<>
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateComputePipelines<user_tag>(
     VkDevice device,
     VkPipelineCache pipelineCache,

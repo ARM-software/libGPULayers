@@ -87,6 +87,24 @@ void LayerConfig::parse_serialization_options(
 }
 
 /* See header for documentation. */
+void LayerConfig::parse_shader_options(
+    const json& config
+) {
+    // Decode serialization state
+    json shader = config.at("shader");
+
+    shader_disable_program_cache = shader.at("disable_cache");
+    shader_disable_program_relaxed_precision = shader.at("disable_relaxed_precision");
+    shader_enable_program_fuzz_spirv_hash = shader.at("enable_spirv_fuzz");
+
+    LAYER_LOG("Layer shader configuration");
+    LAYER_LOG("==========================");
+    LAYER_LOG(" - Disable binary cache: %d", shader_disable_program_cache);
+    LAYER_LOG(" - Disable relaxed precision %d", shader_disable_program_relaxed_precision);
+    LAYER_LOG(" - Enable SPIR-V fuzzer: %d", shader_enable_program_fuzz_spirv_hash);
+}
+
+/* See header for documentation. */
 LayerConfig::LayerConfig()
 {
 #ifdef __ANDROID__
@@ -126,6 +144,16 @@ LayerConfig::LayerConfig()
     catch(const json::out_of_range& e)
     {
         LAYER_ERR("Failed to read serialization config, using defaults");
+        LAYER_ERR("Error: %s", e.what());
+    }
+
+    try
+    {
+        parse_shader_options(data);
+    }
+    catch(const json::out_of_range& e)
+    {
+        LAYER_ERR("Failed to read shader config, using defaults");
         LAYER_ERR("Error: %s", e.what());
     }
 }
@@ -182,4 +210,22 @@ bool LayerConfig::serialize_cmdstream_transfer_pre() const
 bool LayerConfig::serialize_cmdstream_transfer_post() const
 {
     return serialize_transfer_post;
+}
+
+/* See header for documentation. */
+bool LayerConfig::shader_disable_cache() const
+{
+    return shader_disable_program_cache;
+}
+
+/* See header for documentation. */
+bool LayerConfig::shader_disable_relaxed_precision() const
+{
+    return shader_disable_program_relaxed_precision;
+}
+
+/* See header for documentation. */
+bool LayerConfig::shader_fuzz_spirv_hash() const
+{
+    return shader_enable_program_fuzz_spirv_hash;
 }

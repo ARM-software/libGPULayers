@@ -22,5 +22,10 @@
             }
         },
         "queue": false
+    },
+    "shader": {
+        "disable_cache": false,
+        "disable_relaxed_precision": false,
+        "enable_spirv_fuzz": false
     }
 }
