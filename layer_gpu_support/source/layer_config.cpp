@@ -63,6 +63,7 @@ void LayerConfig::parse_serialization_options(
     bool s_stream_tx_pre = s_stream.at("transfer").at("pre");
     bool s_stream_tx_post = s_stream.at("transfer").at("post");
 
+    // Write after all options read from JSON so we know it parsed correctly
     serialize_queues = (!s_none) && (s_all || s_queue);
     serialize_dispatch_pre = (!s_none) && (s_all || s_stream_c_pre);
     serialize_dispatch_post = (!s_none) && (s_all || s_stream_c_post);
@@ -93,15 +94,20 @@ void LayerConfig::parse_shader_options(
     // Decode serialization state
     json shader = config.at("shader");
 
-    shader_disable_program_cache = shader.at("disable_cache");
-    shader_disable_program_relaxed_precision = shader.at("disable_relaxed_precision");
-    shader_enable_program_fuzz_spirv_hash = shader.at("enable_spirv_fuzz");
+    bool disable_program_cache = shader.at("disable_cache");
+    bool disable_program_relaxed_precision = shader.at("disable_relaxed_precision");
+    bool enable_program_fuzz_spirv_hash = shader.at("enable_spirv_fuzz");
+
+    // Write after all options read from JSON so we know it parsed correctly
+    shader_disable_program_cache = disable_program_cache;
+    shader_disable_program_relaxed_precision = disable_program_relaxed_precision;
+    shader_enable_program_fuzz_spirv_hash = enable_program_fuzz_spirv_hash;
 
     LAYER_LOG("Layer shader configuration");
     LAYER_LOG("==========================");
     LAYER_LOG(" - Disable binary cache: %d", shader_disable_program_cache);
     LAYER_LOG(" - Disable relaxed precision %d", shader_disable_program_relaxed_precision);
-    LAYER_LOG(" - Enable SPIR-V fuzzer: %d", shader_enable_program_fuzz_spirv_hash);
+    LAYER_LOG(" - Enable SPIR-V hash fuzzer: %d", shader_enable_program_fuzz_spirv_hash);
 }
 
 /* See header for documentation. */

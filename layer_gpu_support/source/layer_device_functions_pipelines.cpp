@@ -50,7 +50,14 @@ static const std::map<uint32_t, size_t> SPIRV_DECORATE_OPCODES {
 // Decoration IDs for interesting SPIR-V decorations
 static const uint32_t SPIRV_DECORATE_RELAXED_PRECISION { 0 };
 
-std::vector<uint32_t> remove_relaxed_precision(
+/**
+ * @brief Modify a SPIR-V module to remove all use of relaxed precision.
+ *
+ * @param originalCode   The original binary.
+ *
+ * @return   The modified binary.
+ */
+static std::vector<uint32_t> remove_relaxed_precision(
     const std::vector<uint32_t>& originalCode
 ) {
     // This module assumes the input SPIR-V is valid
@@ -104,7 +111,14 @@ std::vector<uint32_t> remove_relaxed_precision(
     return code;
 }
 
-std::vector<uint32_t> fuzz_spirv(
+/**
+ * @brief Modify a SPIR-V module so it functionally the same with a different hash.
+ *
+ * @param originalCode   The original binary.
+ *
+ * @return   The modified binary.
+ */
+static std::vector<uint32_t> fuzz_spirv(
     const std::vector<uint32_t>& originalCode
 ) {
     // This module assumes the input SPIR-V is valid
@@ -116,7 +130,6 @@ std::vector<uint32_t> fuzz_spirv(
 
     return code;
 }
-
 
 /* See Vulkan API for documentation. */
 template<>
