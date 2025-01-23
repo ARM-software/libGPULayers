@@ -79,6 +79,21 @@ irrespective of other settings.
 }
 ```
 
+## Shaders and Pipelines
+
+The shaders and pipelines override allows some control over how the shader
+compiler handles compilation tasks.
+
+#### Configuration options
+
+```jsonc
+"shader": {
+    "disable_cache": false,              // Disable use of binary caches
+    "disable_relaxed_precision": false,  // Disable use of relaxed precision decoration
+    "enable_spirv_fuzz": false           // Enable SPIR-V fuzzing to change binary hash
+}
+```
+
 - - -
 
 _Copyright © 2025, Arm Limited and contributors._

@@ -63,6 +63,7 @@ void LayerConfig::parse_serialization_options(
     bool s_stream_tx_pre = s_stream.at("transfer").at("pre");
     bool s_stream_tx_post = s_stream.at("transfer").at("post");
 
+    // Write after all options read from JSON so we know it parsed correctly
     serialize_queues = (!s_none) && (s_all || s_queue);
     serialize_dispatch_pre = (!s_none) && (s_all || s_stream_c_pre);
     serialize_dispatch_post = (!s_none) && (s_all || s_stream_c_post);
@@ -84,6 +85,29 @@ void LayerConfig::parse_serialization_options(
     LAYER_LOG(" - Serialize trace rays post: %d", serialize_trace_rays_post);
     LAYER_LOG(" - Serialize transfer pre: %d", serialize_transfer_pre);
     LAYER_LOG(" - Serialize transfer post: %d", serialize_transfer_post);
+}
+
+/* See header for documentation. */
+void LayerConfig::parse_shader_options(
+    const json& config
+) {
+    // Decode serialization state
+    json shader = config.at("shader");
+
+    bool disable_program_cache = shader.at("disable_cache");
+    bool disable_program_relaxed_precision = shader.at("disable_relaxed_precision");
+    bool enable_program_fuzz_spirv_hash = shader.at("enable_spirv_fuzz");
+
+    // Write after all options read from JSON so we know it parsed correctly
+    shader_disable_program_cache = disable_program_cache;
+    shader_disable_program_relaxed_precision = disable_program_relaxed_precision;
+    shader_enable_program_fuzz_spirv_hash = enable_program_fuzz_spirv_hash;
+
+    LAYER_LOG("Layer shader configuration");
+    LAYER_LOG("==========================");
+    LAYER_LOG(" - Disable binary cache: %d", shader_disable_program_cache);
+    LAYER_LOG(" - Disable relaxed precision %d", shader_disable_program_relaxed_precision);
+    LAYER_LOG(" - Enable SPIR-V hash fuzzer: %d", shader_enable_program_fuzz_spirv_hash);
 }
 
 /* See header for documentation. */
@@ -126,6 +150,16 @@ LayerConfig::LayerConfig()
     catch(const json::out_of_range& e)
     {
         LAYER_ERR("Failed to read serialization config, using defaults");
+        LAYER_ERR("Error: %s", e.what());
+    }
+
+    try
+    {
+        parse_shader_options(data);
+    }
+    catch(const json::out_of_range& e)
+    {
+        LAYER_ERR("Failed to read shader config, using defaults");
         LAYER_ERR("Error: %s", e.what());
     }
 }
@@ -182,4 +216,22 @@ bool LayerConfig::serialize_cmdstream_transfer_pre() const
 bool LayerConfig::serialize_cmdstream_transfer_post() const
 {
     return serialize_transfer_post;
+}
+
+/* See header for documentation. */
+bool LayerConfig::shader_disable_cache() const
+{
+    return shader_disable_program_cache;
+}
+
+/* See header for documentation. */
+bool LayerConfig::shader_disable_relaxed_precision() const
+{
+    return shader_disable_program_relaxed_precision;
+}
+
+/* See header for documentation. */
+bool LayerConfig::shader_fuzz_spirv_hash() const
+{
+    return shader_enable_program_fuzz_spirv_hash;
 }
