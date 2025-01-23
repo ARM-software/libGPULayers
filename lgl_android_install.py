@@ -50,6 +50,11 @@ if only a single choice is available. To avoid the interactive menus you can
 specify the device (--device/-D) and the package to use (--package/-P) on the
 command line.
 
+By default the application package will not automatically start, letting the
+script be used in existing workflows that may want to manage the application
+lifecycle externally. If you run the script with --auto-start, the script will
+start and stop the package automatically.
+
 You must specify one or more layer directories in the repository using the
 --layer option, e.g. "--layer layer_example". This option can be used multiple
 times to specify the installation of multiple stacked layers.
@@ -697,6 +702,10 @@ def parse_cli() -> argparse.Namespace:
         help='layer directory of a layer to install (required, repeatable)')
 
     parser.add_argument(
+        '--auto-start', '-A', action='store_true', default=False,
+        help='auto-start and stop the package (default=false)')
+
+    parser.add_argument(
         '--config', '-C', action='append', default=[],
         help='layer config  to install (repeatable)')
 
@@ -792,13 +801,15 @@ def main() -> int:
         perfetto_conf = configure_perfetto(conn, args.perfetto)
 
     # Restart the package so it actually loads the layer ...
-    AndroidUtils.stop_package(conn)
-    AndroidUtils.start_package(conn, activity)
+    if args.auto_start:
+        AndroidUtils.stop_package(conn)
+        AndroidUtils.start_package(conn, activity)
 
     input('Press any key when finished to uninstall all layers')
 
     # Kill the package so we can cleanup
-    AndroidUtils.stop_package(conn)
+    if args.auto_start:
+        AndroidUtils.stop_package(conn)
 
     # Disable Perfetto trace
     if args.perfetto and perfetto_conf:
