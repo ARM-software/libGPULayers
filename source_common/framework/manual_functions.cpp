@@ -31,6 +31,7 @@
  */
 
 #include "framework/manual_functions.hpp"
+#include "utils/misc.hpp"
 
 /**
  * @brief Shared globals.
@@ -92,29 +93,6 @@ VkLayerInstanceCreateInfo* getChainInfo(
     }
 
     return const_cast<VkLayerInstanceCreateInfo*>(info);
-}
-
-/**
- * @brief Helper to search a Vulkan "pNext" list for a matching structure.
- */
-template <typename T>
-T* searchNextList(
-    VkStructureType sType,
-    const void* pNext
-) {
-    const auto* pStruct = reinterpret_cast<const T*>(pNext);
-    while(pStruct)
-    {
-        if (pStruct->sType == sType)
-        {
-            break;
-        }
-        pStruct = reinterpret_cast<const T*>(pStruct->pNext);
-    }
-
-    // Const cast is not ideal here but we don't have functionality to
-    // clone a writable copy of the entire pNext chain yet ...
-    return const_cast<T*>(pStruct);
 }
 
 /* See header for documentation. */
@@ -400,23 +378,6 @@ std::vector<std::string> getDeviceExtensionList(
 }
 
 /* See header for documentation. */
-bool isInExtensionList(
-    std::string target,
-    uint32_t extensionCount,
-    const char* const* extensionList
-) {
-    for(uint32_t i = 0; i < extensionCount; i++)
-    {
-        if (target == extensionList[i])
-        {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-/* See header for documentation. */
 std::vector<const char*> cloneExtensionList(
     uint32_t extensionCount,
     const char* const* extensionList
@@ -471,7 +432,8 @@ static void enableInstanceVkExtDebugUtils(
  * and passing either VkPhysicalDeviceTimelineSemaphoreFeatures or
  * VkPhysicalDeviceVulkan12Features with the feature enabled.
  *
- * If the user has the extension enabled we patch t
+ * If the user has the extension enabled but the feature disabled we patch
+ * their existing structures to enable it.
  *
  * @param createInfo    The createInfo we can search to find user config.
  * @param supported     The list of supported extensions.
@@ -484,7 +446,7 @@ static void enableDeviceVkKhrTimelineSemaphore(
     std::vector<const char*>& active,
     VkPhysicalDeviceTimelineSemaphoreFeatures newFeatures
 ) {
-    const std::string target { "VK_KHR_timeline_semaphore" };
+    const std::string target { VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME };
 
     // Test if the desired extension is supported
     if (!isIn(target, supported))
@@ -501,6 +463,8 @@ static void enableDeviceVkKhrTimelineSemaphore(
     }
 
     // Check if user provided a VkPhysicalDeviceTimelineSemaphoreFeatures
+    // TODO: This currently relies on const_cast to make user struct writable
+    //       We should replace this with a generic clone (issue #56)
     auto* config1 = searchNextList<VkPhysicalDeviceTimelineSemaphoreFeatures>(
         VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES,
         createInfo.pNext);
@@ -519,8 +483,10 @@ static void enableDeviceVkKhrTimelineSemaphore(
     }
 
     // Check if user provided a VkPhysicalDeviceVulkan12Features
-    auto* config2 = searchNextList<VkPhysicalDeviceTimelineSemaphoreFeatures>(
-        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES,
+    // TODO: This currently relies on const_cast to make user struct writable
+    //       We should replace this with a generic clone (issue #56)
+    auto* config2 = searchNextList<VkPhysicalDeviceVulkan12Features>(
+        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES,
         createInfo.pNext);
 
     if (config2)
@@ -876,7 +842,7 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDevice_default(
     // Enable extra extensions
     for (const auto& newExt : Device::extraExtensions)
     {
-        if (newExt == "VK_KHR_timeline_semaphore")
+        if (newExt == VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME)
         {
             enableDeviceVkKhrTimelineSemaphore(
                 newCreateInfo,
@@ -909,7 +875,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDevice_default(
         return res;
     }
 
-    auto device = std::make_unique<Device>(layer, physicalDevice, *pDevice, fpGetDeviceProcAddr);
+    auto device = std::make_unique<Device>(
+        layer, physicalDevice, *pDevice, fpGetDeviceProcAddr, newCreateInfo);
 
     // Retake the lock to access layer-wide global store
     lock.lock();

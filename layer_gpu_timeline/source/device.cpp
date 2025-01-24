@@ -97,12 +97,15 @@ Device::Device(
     Instance* _instance,
     VkPhysicalDevice _physicalDevice,
     VkDevice _device,
-    PFN_vkGetDeviceProcAddr nlayerGetProcAddress
+    PFN_vkGetDeviceProcAddr nlayerGetProcAddress,
+    const VkDeviceCreateInfo& createInfo
 ):
     instance(_instance),
     physicalDevice(_physicalDevice),
     device(_device)
 {
+    UNUSED(createInfo);
+
     initDriverDeviceDispatchTable(device, nlayerGetProcAddress, driver);
 
     // Init the shared comms module for the first device built

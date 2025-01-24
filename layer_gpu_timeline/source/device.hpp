@@ -118,16 +118,20 @@ public:
     /**
      * @brief Create a new layer device object.
      *
+     * Create info is transient, so the constructor must copy what it needs.
+     *
      * @param instance               The layer instance object this device is created with.
      * @param physicalDevice         The physical device this logical device is for.
      * @param device                 The device handle this device is created with.
      * @param nlayerGetProcAddress   The vkGetDeviceProcAddress function for the driver.
+     * @param createInfo             The create info used to create the device.
      */
     Device(
         Instance* instance,
         VkPhysicalDevice physicalDevice,
         VkDevice device,
-        PFN_vkGetDeviceProcAddr nlayerGetProcAddress);
+        PFN_vkGetDeviceProcAddr nlayerGetProcAddress,
+        const VkDeviceCreateInfo& createInfo);
 
     /**
      * @brief Destroy this layer device object.

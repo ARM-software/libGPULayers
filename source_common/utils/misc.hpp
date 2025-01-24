@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2022-2024 Arm Limited
+ * Copyright (c) 2022-2025 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -36,6 +36,8 @@
 #include <sstream>
 #include <string>
 #include <vector>
+
+#include <vulkan/vulkan.h>
 
 /**
  * @brief Macro to stringize a value.
@@ -144,6 +146,54 @@ void vecAppend(
 
     // Merge secondary into this command buffer
     dst.insert(std::end(dst), std::begin(src), std::end(src));
+}
+
+/**
+ * @brief Is an extension in the passed extension list.
+ *
+ * @param target           The target extension to look for.
+ * @param extensionCount   The number of extensions in the list.
+ * @param extensionList    The list of extensions.
+ *
+ * @return @c true if @c target is found in @c extensionList.
+ */
+static inline bool isInExtensionList(
+    std::string target,
+    uint32_t extensionCount,
+    const char* const* extensionList
+) {
+    for(uint32_t i = 0; i < extensionCount; i++)
+    {
+        if (target == extensionList[i])
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/**
+ * @brief Helper to search a Vulkan "pNext" list for a matching structure.
+ */
+template <typename T>
+T* searchNextList(
+    VkStructureType sType,
+    const void* pNext
+) {
+    const auto* pStruct = reinterpret_cast<const T*>(pNext);
+    while(pStruct)
+    {
+        if (pStruct->sType == sType)
+        {
+            break;
+        }
+        pStruct = reinterpret_cast<const T*>(pStruct->pNext);
+    }
+
+    // Const cast is not ideal here but we don't have functionality to
+    // clone a writable copy of the entire pNext chain yet ...
+    return const_cast<T*>(pStruct);
 }
 
 /**

@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: MIT
 # -----------------------------------------------------------------------------
-# Copyright (c) 2024 Arm Limited
+# Copyright (c) 2024-2025 Arm Limited
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to
@@ -26,6 +26,7 @@ set(LIB_BINARY lib_layer_framework)
 add_library(
     ${LIB_BINARY} STATIC
         device_functions.cpp
+        device_query.cpp
         instance_functions.cpp
         manual_functions.cpp)
 
