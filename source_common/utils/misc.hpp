@@ -33,6 +33,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cinttypes>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
