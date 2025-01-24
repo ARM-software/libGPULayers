@@ -39,7 +39,7 @@ const APIVersion Instance::minAPIVersion { 1, 1 };
 
 /* See header for documentation. */
 const std::vector<std::string> Instance::extraExtensions {
-    "VK_EXT_debug_utils"
+    VK_EXT_DEBUG_UTILS_EXTENSION_NAME
 };
 
 /* See header for documentation. */
