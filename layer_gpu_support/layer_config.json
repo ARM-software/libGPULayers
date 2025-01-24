@@ -27,5 +27,10 @@
         "disable_cache": false,
         "disable_relaxed_precision": false,
         "enable_spirv_fuzz": false
+    },
+    "framebuffer": {
+        "disable_compression": false,
+        "force_default_compression": false,
+        "force_fixed_rate_compression": 0
     }
 }

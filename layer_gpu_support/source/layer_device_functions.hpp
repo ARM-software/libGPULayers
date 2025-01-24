@@ -351,3 +351,13 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateRayTracingPipelinesKHR<user_tag>(
     const VkRayTracingPipelineCreateInfoKHR* pCreateInfos,
     const VkAllocationCallbacks* pAllocator,
     VkPipeline* pPipelines);
+
+// Functions for images
+
+/* See Vulkan API for documentation. */
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateImage<user_tag>(
+    VkDevice device,
+    const VkImageCreateInfo* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkImage* pImage);

@@ -186,6 +186,12 @@ PFN_vkVoidFunction getDeviceLayerFunction(
 APIVersion getInstanceAPIVersion(
     PFN_vkGetInstanceProcAddr fpGetProcAddr
 ) {
+    // TODO: This will crash in Khronos validation if we try to use this
+    // with the validation layer beneath us due to Android loader v0 protocol.
+#if 0
+    return { 1, 3 };
+#endif
+
     auto fpFunctionRaw = fpGetProcAddr(nullptr, "vkEnumerateInstanceVersion");
     auto fpFunction = reinterpret_cast<PFN_vkEnumerateInstanceVersion>(fpFunctionRaw);
     if (!fpFunction)
@@ -403,7 +409,7 @@ static void enableInstanceVkExtDebugUtils(
     const std::vector<std::string>& supported,
     std::vector<const char*>& active
 ) {
-    const std::string target { VK_EXT_DEBUG_UTILS_EXTENSION_NAME };
+    static const std::string target { VK_EXT_DEBUG_UTILS_EXTENSION_NAME };
 
     // Test if the desired extension is supported. If supported list is
     // empty then we didn't query and assume extension is supported.
@@ -446,7 +452,7 @@ static void enableDeviceVkKhrTimelineSemaphore(
     std::vector<const char*>& active,
     VkPhysicalDeviceTimelineSemaphoreFeatures newFeatures
 ) {
-    const std::string target { VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME };
+    static const std::string target { VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME };
 
     // Test if the desired extension is supported
     if (!isIn(target, supported))
@@ -458,7 +464,7 @@ static void enableDeviceVkKhrTimelineSemaphore(
     // If it is not already enabled then add to the list
     if (!isIn(target, active))
     {
-        LAYER_LOG("Instance extension added: %s", target.c_str());
+        LAYER_LOG("Device extension added: %s", target.c_str());
         active.push_back(target.c_str());
     }
 
@@ -473,12 +479,12 @@ static void enableDeviceVkKhrTimelineSemaphore(
     {
         if (!config1->timelineSemaphore)
         {
-            LAYER_LOG("Instance extension force enabled: %s", target.c_str());
+            LAYER_LOG("Device extension force enabled: %s", target.c_str());
             config1->timelineSemaphore = true;
         }
         else
         {
-            LAYER_LOG("Instance extension already enabled: %s", target.c_str());
+            LAYER_LOG("Device extension already enabled: %s", target.c_str());
         }
     }
 
@@ -493,12 +499,12 @@ static void enableDeviceVkKhrTimelineSemaphore(
     {
         if (!config2->timelineSemaphore)
         {
-            LAYER_LOG("Instance extension force enabled: %s", target.c_str());
+            LAYER_LOG("Device extension force enabled: %s", target.c_str());
             config2->timelineSemaphore = true;
         }
         else
         {
-            LAYER_LOG("Instance extension already enabled: %s", target.c_str());
+            LAYER_LOG("Device extension already enabled: %s", target.c_str());
         }
     }
 
@@ -509,7 +515,7 @@ static void enableDeviceVkKhrTimelineSemaphore(
         newFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES;
         newFeatures.timelineSemaphore = true;
         createInfo.pNext = reinterpret_cast<const void*>(&newFeatures);
-        LAYER_LOG("Instance extension config added: %s", target.c_str());
+        LAYER_LOG("Device extension config added: %s", target.c_str());
     }
 }
 
@@ -533,7 +539,7 @@ static void enableDeviceVkExtImageCompressionControl(
     std::vector<const char*>& active,
     VkPhysicalDeviceImageCompressionControlFeaturesEXT newFeatures
 ) {
-    const std::string target { VK_EXT_IMAGE_COMPRESSION_CONTROL_EXTENSION_NAME };
+    static const std::string target { VK_EXT_IMAGE_COMPRESSION_CONTROL_EXTENSION_NAME };
 
     // Test if the desired extension is supported
     if (!isIn(target, supported))
@@ -545,38 +551,39 @@ static void enableDeviceVkExtImageCompressionControl(
     // If it is not already enabled then add to the list
     if (!isIn(target, active))
     {
-        LAYER_LOG("Instance extension added: %s", target.c_str());
+        LAYER_LOG("Device extension added: %s", target.c_str());
         active.push_back(target.c_str());
     }
 
     // Check if user provided a VkPhysicalDeviceImageCompressionControlFeaturesEXT
     // TODO: This currently relies on const_cast to make user struct writable
     //       We should replace this with a generic clone (issue #56)
-    auto* config1 = searchNextList<VkPhysicalDeviceImageCompressionControlFeaturesEXT>(
+    auto* config = searchNextList<VkPhysicalDeviceImageCompressionControlFeaturesEXT>(
         VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_COMPRESSION_CONTROL_FEATURES_EXT,
         createInfo.pNext);
 
-    if (config1)
+    if (config)
     {
-        if (!config1->imageCompressionControl)
+        if (!config->imageCompressionControl)
         {
-            LAYER_LOG("Instance extension force enabled: %s", target.c_str());
-            config1->imageCompressionControl = true;
+            LAYER_LOG("Device extension force enabled: %s", target.c_str());
+            config->imageCompressionControl = true;
         }
         else
         {
-            LAYER_LOG("Instance extension already enabled: %s", target.c_str());
+            LAYER_LOG("Device extension already enabled: %s", target.c_str());
         }
     }
 
     // Add a config if not already configured by the application
-    if (!config1)
+    if (!config)
     {
         newFeatures.pNext = const_cast<void*>(createInfo.pNext);
         newFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_COMPRESSION_CONTROL_FEATURES_EXT;
         newFeatures.imageCompressionControl = true;
+
         createInfo.pNext = reinterpret_cast<const void*>(&newFeatures);
-        LAYER_LOG("Instance extension config added: %s", target.c_str());
+        LAYER_LOG("Device extension config added: %s", target.c_str());
     }
 }
 
@@ -823,6 +830,14 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateInstance_default(
     newCreateInfo.enabledExtensionCount = newExtensions.size();
     newCreateInfo.ppEnabledExtensionNames = newExtensions.data();
 
+    // Log it for debug purposes
+    unsigned int i = 0;
+    for (auto ext : newExtensions)
+    {
+        LAYER_LOG("Requested instance extension list: [%u] = %s", i, ext);
+        i++;
+    }
+
     chainInfo->u.pLayerInfo = chainInfo->u.pLayerInfo->pNext;
     auto result = fpCreateInstance(&newCreateInfo, pAllocator, pInstance);
     if (result != VK_SUCCESS)
@@ -918,7 +933,7 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDevice_default(
                 newExtensions,
                 newTimelineFeatures);
         }
-        if (newExt == VK_EXT_IMAGE_COMPRESSION_CONTROL_EXTENSION_NAME)
+        else if (newExt == VK_EXT_IMAGE_COMPRESSION_CONTROL_EXTENSION_NAME)
         {
             enableDeviceVkExtImageCompressionControl(
                 newCreateInfo,
@@ -935,6 +950,14 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDevice_default(
     // Patch extension pointer and size after extending it
     newCreateInfo.enabledExtensionCount = newExtensions.size();
     newCreateInfo.ppEnabledExtensionNames = newExtensions.data();
+
+    // Log it for debug purposes
+    unsigned int i = 0;
+    for (auto ext : newExtensions)
+    {
+        LAYER_LOG("Requested device extension list: [%u] = %s", i, ext);
+        i++;
+    }
 
     auto fpCreateDeviceRaw = fpGetInstanceProcAddr(layer->instance, "vkCreateDevice");
     auto fpCreateDevice = reinterpret_cast<PFN_vkCreateDevice>(fpCreateDeviceRaw);

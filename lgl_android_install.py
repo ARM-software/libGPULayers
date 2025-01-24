@@ -800,14 +800,16 @@ def main() -> int:
     if args.perfetto:
         perfetto_conf = configure_perfetto(conn, args.perfetto)
 
-    # Restart the package so it actually loads the layer ...
+    # Always kill the package to ensure the new layers load
+    AndroidUtils.stop_package(conn)
+
+    # Restart the package if requested
     if args.auto_start:
-        AndroidUtils.stop_package(conn)
         AndroidUtils.start_package(conn, activity)
 
     input('Press any key when finished to uninstall all layers')
 
-    # Kill the package so we can cleanup
+    # Kill the package if requested
     if args.auto_start:
         AndroidUtils.stop_package(conn)
 

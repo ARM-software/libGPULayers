@@ -142,6 +142,16 @@ public:
     const Instance* instance;
 
     /**
+     * @brief The physical device this device is created with.
+     */
+    const VkPhysicalDevice physicalDevice;
+
+    /**
+     * @brief The device handle this device is created with.
+     */
+    const VkDevice device;
+
+    /**
      * @brief The driver function dispatch table.
      */
     DeviceDispatchTable driver {};
@@ -160,15 +170,4 @@ public:
      * @brief The current timeline sem target value the next use waits for.
      */
     uint64_t queueSerializationTimelineSemCount { 0 };
-
-private:
-    /**
-     * @brief The physical device this device is created with.
-     */
-    const VkPhysicalDevice physicalDevice;
-
-    /**
-     * @brief The device handle this device is created with.
-     */
-    const VkDevice device;
 };
