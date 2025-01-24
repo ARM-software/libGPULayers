@@ -185,20 +185,6 @@ std::vector<std::string> getDeviceExtensionList(
     const VkDeviceCreateInfo* pCreateInfo);
 
 /**
- * @brief Is an extension in the passed extension list.
- *
- * @param target           The target extension to look for.
- * @param extensionCount   The number of extensions in the list.
- * @param extensionList    The list of extensions.
- *
- * @return @c true if @c target is found in @c extensionList.
- */
-bool isInExtensionList(
-    std::string target,
-    uint32_t extensionCount,
-    const char* const* extensionList);
-
-/**
  * @brief Clone the target extension list.
  *
  * @param extensionCount   The number of extensions in the list.
