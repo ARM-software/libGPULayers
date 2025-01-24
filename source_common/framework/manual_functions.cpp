@@ -513,6 +513,73 @@ static void enableDeviceVkKhrTimelineSemaphore(
     }
 }
 
+/**
+ * Enable VK_EXT_image_compression_control if not enabled.
+ *
+ * Enabling this requires passing the extension string to vkCreateDevice(),
+ * and passing VkPhysicalDeviceImageCompressionControlFeaturesEXT.
+ *
+ * If the user has the extension enabled but the feature disabled we patch
+ * their existing structures to enable it.
+ *
+ * @param createInfo    The createInfo we can search to find user config.
+ * @param supported     The list of supported extensions.
+ * @param active        The list of active extensions.
+ * @param newFeatures   Pre-allocated struct we can use if we need to add it.
+ */
+static void enableDeviceVkExtImageCompressionControl(
+    VkDeviceCreateInfo& createInfo,
+    std::vector<std::string>& supported,
+    std::vector<const char*>& active,
+    VkPhysicalDeviceImageCompressionControlFeaturesEXT newFeatures
+) {
+    const std::string target { VK_EXT_IMAGE_COMPRESSION_CONTROL_EXTENSION_NAME };
+
+    // Test if the desired extension is supported
+    if (!isIn(target, supported))
+    {
+        LAYER_LOG("Device extension not available: %s", target.c_str());
+        return;
+    }
+
+    // If it is not already enabled then add to the list
+    if (!isIn(target, active))
+    {
+        LAYER_LOG("Instance extension added: %s", target.c_str());
+        active.push_back(target.c_str());
+    }
+
+    // Check if user provided a VkPhysicalDeviceImageCompressionControlFeaturesEXT
+    // TODO: This currently relies on const_cast to make user struct writable
+    //       We should replace this with a generic clone (issue #56)
+    auto* config1 = searchNextList<VkPhysicalDeviceImageCompressionControlFeaturesEXT>(
+        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_COMPRESSION_CONTROL_FEATURES_EXT,
+        createInfo.pNext);
+
+    if (config1)
+    {
+        if (!config1->imageCompressionControl)
+        {
+            LAYER_LOG("Instance extension force enabled: %s", target.c_str());
+            config1->imageCompressionControl = true;
+        }
+        else
+        {
+            LAYER_LOG("Instance extension already enabled: %s", target.c_str());
+        }
+    }
+
+    // Add a config if not already configured by the application
+    if (!config1)
+    {
+        newFeatures.pNext = const_cast<void*>(createInfo.pNext);
+        newFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_COMPRESSION_CONTROL_FEATURES_EXT;
+        newFeatures.imageCompressionControl = true;
+        createInfo.pNext = reinterpret_cast<const void*>(&newFeatures);
+        LAYER_LOG("Instance extension config added: %s", target.c_str());
+    }
+}
+
 /** See Vulkan API for documentation. */
 PFN_vkVoidFunction layer_vkGetInstanceProcAddr_default(
     VkInstance instance,
@@ -832,6 +899,7 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDevice_default(
 
     // Create structures we allocate here, but populated elsewhere
     VkPhysicalDeviceTimelineSemaphoreFeatures newTimelineFeatures;
+    VkPhysicalDeviceImageCompressionControlFeaturesEXT newCompressionControlFeatures;
 
     // Create a copy of the extension list we can patch
     std::vector<const char *> newExtensions;
@@ -849,6 +917,14 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDevice_default(
                 supportedExtensions,
                 newExtensions,
                 newTimelineFeatures);
+        }
+        if (newExt == VK_EXT_IMAGE_COMPRESSION_CONTROL_EXTENSION_NAME)
+        {
+            enableDeviceVkExtImageCompressionControl(
+                newCreateInfo,
+                supportedExtensions,
+                newExtensions,
+                newCompressionControlFeatures);
         }
         else
         {
