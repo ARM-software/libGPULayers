@@ -35,7 +35,8 @@ static std::unordered_map<void*, std::unique_ptr<Device>> g_devices;
 
 /* See header for documentation. */
 const std::vector<std::string> Device::extraExtensions {
-    VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME
+    VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME,
+    VK_EXT_IMAGE_COMPRESSION_CONTROL_EXTENSION_NAME
 };
 
 /* See header for documentation. */
