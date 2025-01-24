@@ -113,6 +113,32 @@ public:
      */
     bool shader_fuzz_spirv_hash() const;
 
+    // Config queries for framebuffers
+
+    /**
+     * @brief True if we disable all framebuffer compression.
+     */
+    bool framebuffer_disable_all_compression() const;
+
+    /**
+     * @brief True if we force default framebuffer compression.
+     */
+    bool framebuffer_force_default_compression() const;
+
+    /**
+     * @brief True if we force fixed rate compression.
+     *
+     * If non-zero, this setting specifies the minimum number of bits per
+     * component allowed. If an image format cannot compress to this level
+     * the next highest level that is supported will be used. If no compression
+     * is available that meets this threshold then default compression will
+     * be used.
+     *
+     * If zero, then no force is set and default compression will be used.
+     */
+    uint32_t framebuffer_force_fixed_rate_compression() const;
+
+
 private:
     /**
      * @brief Parse the configuration options for the serializer.
@@ -132,64 +158,101 @@ private:
      */
     void parse_shader_options(const json& config);
 
+    /**
+     * @brief Parse the configuration options for the framebuffer module.
+     *
+     * @param config   The JSON configuration.
+     *
+     * @throws json::out_of_bounds if required fields are missing.
+     */
+    void parse_framebuffer_options(const json& config);
+
 private:
     /**
      * @brief True if we force serialize across queues.
      */
-    bool serialize_queues { false };
+    bool conf_serialize_queues { false };
 
     /**
      * @brief True if we force serialize before compute dispatches.
      */
-    bool serialize_dispatch_pre { false };
+    bool conf_serialize_dispatch_pre { false };
 
     /**
      * @brief True if we force serialize after compute dispatches.
      */
-    bool serialize_dispatch_post { false };
+    bool conf_serialize_dispatch_post { false };
 
     /**
      * @brief True if we force serialize before render pass workloads.
      */
-    bool serialize_render_pass_pre { false };
+    bool conf_serialize_render_pass_pre { false };
 
     /**
      * @brief True if we force serialize after render pass workloads.
      */
-    bool serialize_render_pass_post { false };
+    bool conf_serialize_render_pass_post { false };
 
     /**
      * @brief True if we force serialize before trace rays workloads.
      */
-    bool serialize_trace_rays_pre { false };
+    bool conf_serialize_trace_rays_pre { false };
 
     /**
      * @brief True if we force serialize after trace rays workloads.
      */
-    bool serialize_trace_rays_post { false };
+    bool conf_serialize_trace_rays_post { false };
 
     /**
      * @brief True if we force serialize before transfer workloads.
      */
-    bool serialize_transfer_pre { false };
+    bool conf_serialize_transfer_pre { false };
 
     /**
      * @brief True if we force serialize after transfer workloads.
      */
-    bool serialize_transfer_post { false };
+    bool conf_serialize_transfer_post { false };
 
     /**
      * @brief True if we force disable executable binary caching.
      */
-    bool shader_disable_program_cache { false };
+    bool conf_shader_disable_program_cache { false };
 
     /**
      * @brief True if we force remove use of relaxed precision decoration.
      */
-    bool shader_disable_program_relaxed_precision { false };
+    bool conf_shader_disable_relaxed_precision { false };
 
     /**
      * @brief True if we change SPIR-V to change the program hash.
      */
-    bool shader_enable_program_fuzz_spirv_hash { false };
+    bool conf_shader_enable_fuzz_spirv_hash { false };
+
+    /**
+     * @brief True if we disable all framebuffer compression.
+     *
+     * This has precedence over default compression and forcing fixed rate
+     * compression.
+     */
+    bool conf_framebuffer_disable_compression { false };
+
+    /**
+     * @brief True if we for all compression to default framebuffer compression.
+     *
+     * This has precedence over forcing fixed rate compression.
+     */
+    bool conf_framebuffer_force_default_compression { false };
+
+    /**
+     * @brief True if we force fixed rate compression.
+     *
+     * If non-zero, this setting specifies the minimum number of bits per
+     * component allowed. If an image format cannot compress to this level
+     * the next highest level that is supported will be used. If no compression
+     * is available that meets this threshold then default compression will
+     * be used.
+     *
+     * If zero, then no force is set and default compression will be used.
+     */
+    uint32_t conf_framebuffer_force_fixed_rate_compression { 0 };
 };

@@ -81,7 +81,7 @@ irrespective of other settings.
 
 ## Shaders and Pipelines
 
-The shaders and pipelines override allows some control over how the shader
+The shaders and pipelines overrides allow some control over how the shader
 compiler handles compilation tasks.
 
 #### Configuration options
@@ -91,6 +91,34 @@ compiler handles compilation tasks.
     "disable_cache": false,              // Disable use of binary caches
     "disable_relaxed_precision": false,  // Disable use of relaxed precision decoration
     "enable_spirv_fuzz": false           // Enable SPIR-V fuzzing to change binary hash
+}
+```
+
+## Framebuffers
+
+The framebuffer overrides allows some control over how the framebuffers are
+allocated and handled by the driver.
+
+* If the `disable_compression` option is `true` then compression is always
+  disabled, irrespective of other settings.
+* Else, if the `force_default_compression` option is `true` then all images
+  will be forced to use default compression (i.e. stripping all application use
+  of fixed rate compression), irrespective of the fixed rate setting.
+* Else, the `force_fixed_rate_compression` will be used to force fixed rate
+  compression as close as possible (but no lower) than the specified bits
+  per component setting. Images that do not support a fixed rate compression
+  level that meets this bit rate requirement will be left at the original
+  application setting.
+
+#### Configuration options
+
+```jsonc
+"framebuffer": {
+    "disable_compression": false,        // Disable all use of compression
+    "force_default_compression": false,  // Force driver default compression
+    "force_fixed_rate_compression": 0    // Force use of fixed rate compression as close
+                                         // to this bits-per-channel as possible, but
+                                         // no lower (0 = do not force)
 }
 ```
 
