@@ -403,7 +403,7 @@ static void enableInstanceVkExtDebugUtils(
     const std::vector<std::string>& supported,
     std::vector<const char*>& active
 ) {
-    const std::string target { "VK_EXT_debug_utils" };
+    const std::string target { VK_EXT_DEBUG_UTILS_EXTENSION_NAME };
 
     // Test if the desired extension is supported. If supported list is
     // empty then we didn't query and assume extension is supported.
@@ -740,7 +740,7 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateInstance_default(
     // Enable extra extensions
     for (const auto& newExt : Instance::extraExtensions)
     {
-        if (newExt == "VK_EXT_debug_utils")
+        if (newExt == VK_EXT_DEBUG_UTILS_EXTENSION_NAME)
         {
             enableInstanceVkExtDebugUtils(
                 supportedExtensions,
