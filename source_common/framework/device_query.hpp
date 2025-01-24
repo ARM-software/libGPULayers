@@ -42,34 +42,4 @@
  * @return @c true if enabled, @c false otherwise.
  */
 bool isEnabledVkKhrTimelineSemaphore(
-    const VkDeviceCreateInfo& createInfo
-) {
-    // Check Vulkan 1.2 core feature first
-    auto* coreFeature = searchNextList<VkPhysicalDeviceVulkan12Features>(
-        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES,
-        createInfo.pNext);
-    if (coreFeature)
-    {
-        return coreFeature->timelineSemaphore;
-    }
-
-    // Check the extension second
-    bool extEnabled = isInExtensionList(
-      VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME,
-      createInfo.enabledExtensionCount,
-      createInfo.ppEnabledExtensionNames);
-    if (!extEnabled)
-    {
-        return false;
-    }
-
-    auto* extFeature = searchNextList<VkPhysicalDeviceTimelineSemaphoreFeatures>(
-        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES,
-        createInfo.pNext);
-    if (extFeature)
-    {
-        return extFeature->timelineSemaphore;
-    }
-
-    return false;
-}
+    const VkDeviceCreateInfo& createInfo0);
