@@ -28,9 +28,7 @@ layer drivers running on the target device over a simple network protocol.
 
 Android devices using layers can tunnel their connection using adb reverse
 to forward a Unix domain socket on the device to a TCP socket on the host.
-
-   adb reverse localabstract:lglcomms tcp:63412
-
+This is done automatically by the script.
 '''
 
 import argparse
@@ -60,7 +58,7 @@ def parse_cli() -> argparse.Namespace:
         help='enable the communications unit test helper service')
 
     parser.add_argument(
-        '--android-port', '-A', type=int, default=62142,
+        '--android-port', '-A', type=int, default=0,
         help='enable adb reverse on the specified port for network comms')
 
     parser.add_argument(
@@ -79,20 +77,9 @@ def main() -> int:
     '''
     args = parse_cli()
 
-    # Configure Android adb reverse on the specified port
-    conn = ADBConnect()
-    try:
-        conn.adb(
-            'reverse',
-            'localabstract:lglcomms',
-            f'tcp:{args.android_port}')
-
-    except sp.CalledProcessError:
-        print('ERROR: Could not setup Android network comms')
-        return 1
-
     # Create a server instance
     svr = server.CommsServer(args.android_port)
+    print(f'Server using host port {svr.port}\n')
 
     # Register all the services with it
     print('Registering host services:')
@@ -118,6 +105,18 @@ def main() -> int:
     # Start it running
     svr_thread = threading.Thread(target=svr.run, daemon=True)
     svr_thread.start()
+
+    # Configure Android adb reverse on the specified port
+    conn = ADBConnect()
+    try:
+        conn.adb(
+            'reverse',
+            'localabstract:lglcomms',
+            f'tcp:{svr.port}')
+
+    except sp.CalledProcessError:
+        print('ERROR: Could not setup Android network comms')
+        return 1
 
     # Press to exit
     try:
