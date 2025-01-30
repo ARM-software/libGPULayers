@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024 Arm Limited
+ * Copyright (c) 2024-2025 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -25,6 +25,7 @@
 
 #include <mutex>
 #include <nlohmann/json.hpp>
+#include <time.h>
 
 #include "utils/misc.hpp"
 
@@ -36,6 +37,74 @@ using json = nlohmann::json;
 using namespace std::placeholders;
 
 extern std::mutex g_vulkanLock;
+
+/**
+ * @brief Get the CLOCK_MONOTONIC_RAW timestamp in nanoseconds.
+ *
+ * CLOCK_MONOTONIC_RAW is clock source 5 in Perfetto.
+ *
+ * @returns Current time in nanoseconds.
+ */
+static uint64_t getClockMonotonicRaw()
+{
+    struct timespec ts;
+
+    auto error = clock_gettime(CLOCK_MONOTONIC_RAW, &ts);
+    if (error) {
+        return 0;
+    }
+
+    // Accumulate the nanosecond value
+    uint64_t sec = static_cast<uint64_t>(ts.tv_sec);
+    uint64_t nsec = static_cast<uint64_t>(ts.tv_nsec);
+    nsec += sec * 1000000000ull;
+
+    return nsec;
+}
+
+/**
+ * @brief Emit the queue submit time metadata.
+ *
+ * @param queue      The queue being submitted to.
+ * @param callback   The data emit callback.
+ */
+static void emitQueueMetadata(
+    VkQueue queue,
+    std::function<void(const std::string&)> callback
+) {
+    // Write the queue submit metadata
+    json submitMetadata {
+        { "type", "submit" },
+        { "queue", reinterpret_cast<uintptr_t>(queue) },
+        { "timestamp", getClockMonotonicRaw() }
+    };
+
+    callback(submitMetadata.dump());
+}
+
+/**
+ * @brief Emit the command buffer submit time metadata.
+ *
+ * @param layer           The layer context.
+ * @param queue           The queue being submitted to.
+ * @param commandBuffer   The command buffer being submitted.
+ * @param callback        The data emit callback.
+ */
+static void emitCommandBufferMetadata(
+    Device& layer,
+    VkQueue queue,
+    VkCommandBuffer commandBuffer,
+    std::function<void(const std::string&)> callback
+) {
+    // Fetch layer proxies for this workload
+    auto& tracker = layer.getStateTracker();
+    auto& trackQueue = tracker.getQueue(queue);
+    auto& trackCB = tracker.getCommandBuffer(commandBuffer);
+
+    // Play the layer command stream into the queue
+    const auto& LCS = trackCB.getSubmitCommandStream();
+    trackQueue.runSubmitCommandStream(LCS, callback);
+}
 
 /* See Vulkan API for documentation. */
 template<>
@@ -82,19 +151,20 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit<user_tag>(
 
     auto onSubmit = std::bind(&Device::onWorkloadSubmit, layer, _1);
 
-    auto& tracker = layer->getStateTracker();
-    auto& trackQueue = tracker.getQueue(queue);
-
     // This is run with the lock held to ensure that all queue submit
-    // messages are sent sequentially to the host tool
+    // messages are sent sequentially and contiguously to the host tool
+
+    // Add queue-level metadata
+    emitQueueMetadata(queue, onSubmit);
+
+    // Add per-command buffer metadata
     for (uint32_t i = 0; i < submitCount; i++)
     {
         const auto& submit = pSubmits[i];
         for (uint32_t j = 0; j < submit.commandBufferCount; j++)
         {
-            auto& trackCB = tracker.getCommandBuffer(submit.pCommandBuffers[j]);
-            const auto& LCS = trackCB.getSubmitCommandStream();
-            trackQueue.runSubmitCommandStream(LCS, onSubmit);
+            VkCommandBuffer commandBuffer = submit.pCommandBuffers[j];
+            emitCommandBufferMetadata(*layer, queue, commandBuffer, onSubmit);
         }
     }
 
@@ -119,19 +189,20 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit2<user_tag>(
 
     auto onSubmit = std::bind(&Device::onWorkloadSubmit, layer, _1);
 
-    auto& tracker = layer->getStateTracker();
-    auto& trackQueue = tracker.getQueue(queue);
-
     // This is run with the lock held to ensure that all queue submit
-    // messages are sent sequentially to the host tool
+    // messages are sent sequentially and contiguously to the host tool
+
+    // Add queue-level metadata
+    emitQueueMetadata(queue, onSubmit);
+
+    // Add per-command buffer metadata
     for (uint32_t i = 0; i < submitCount; i++)
     {
         const auto& submit = pSubmits[i];
         for (uint32_t j = 0; j < submit.commandBufferInfoCount; j++)
         {
-            auto& trackCB = tracker.getCommandBuffer(submit.pCommandBufferInfos[j].commandBuffer);
-            const auto& LCS = trackCB.getSubmitCommandStream();
-            trackQueue.runSubmitCommandStream(LCS, onSubmit);
+            VkCommandBuffer commandBuffer = submit.pCommandBufferInfos[j].commandBuffer;
+            emitCommandBufferMetadata(*layer, queue, commandBuffer, onSubmit);
         }
     }
 
@@ -156,19 +227,20 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit2KHR<user_tag>(
 
     auto onSubmit = std::bind(&Device::onWorkloadSubmit, layer, _1);
 
-    auto& tracker = layer->getStateTracker();
-    auto& trackQueue = tracker.getQueue(queue);
-
     // This is run with the lock held to ensure that all queue submit
-    // messages are sent sequentially to the host tool
+    // messages are sent sequentially and contiguously to the host tool
+
+    // Add queue-level metadata
+    emitQueueMetadata(queue, onSubmit);
+
+    // Add per-command buffer metadata
     for (uint32_t i = 0; i < submitCount; i++)
     {
         const auto& submit = pSubmits[i];
         for (uint32_t j = 0; j < submit.commandBufferInfoCount; j++)
         {
-            auto& trackCB = tracker.getCommandBuffer(submit.pCommandBufferInfos[j].commandBuffer);
-            const auto& LCS = trackCB.getSubmitCommandStream();
-            trackQueue.runSubmitCommandStream(LCS, onSubmit);
+            VkCommandBuffer commandBuffer = submit.pCommandBufferInfos[j].commandBuffer;
+            emitCommandBufferMetadata(*layer, queue, commandBuffer, onSubmit);
         }
     }
 

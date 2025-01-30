@@ -29,7 +29,9 @@ gi.require_version('Gtk', '3.0')
 # pylint: disable=wrong-import-position
 from gi.repository import Gtk
 
-from lglpy.timeline.drawable.timeline_base import TimelineWidgetBase
+from ...data.raw_trace import MetadataSubmit
+from ...data.processed_trace import GPUWorkload
+from ...drawable.timeline_base import TimelineWidgetBase
 
 
 class TimelineWidget(TimelineWidgetBase):
@@ -79,9 +81,19 @@ class TimelineWidget(TimelineWidgetBase):
                 'activate', self.on_select_events_by_frame, clicked)
             menu.append(menui)
 
+            menui = Gtk.MenuItem('Select by submit')
+            menui.connect_object(
+                'activate', self.on_select_events_by_submit, clicked)
+            menu.append(menui)
+
             menui = Gtk.MenuItem('Select by workload')
             menui.connect_object(
                 'activate', self.on_select_events_by_workload, clicked)
+            menu.append(menui)
+
+            menui = Gtk.MenuItem('Select by queue')
+            menui.connect_object(
+                'activate', self.on_select_events_by_queue, clicked)
             menu.append(menui)
 
             menu.show_all()
@@ -119,14 +131,44 @@ class TimelineWidget(TimelineWidgetBase):
         '''
         Right click menu handler -> highlight by single frame.
         '''
-        # Do nothing if the event user data doesn't have frame metadata
-        if clicked_object.user_data.frame is None:
+        # Do nothing if the event doesn't have user data
+        if clicked_object.user_data is None:
+            return
+
+        # Do nothing if no frame ...
+        target_frame = clicked_object.user_data.get_frame()
+        if target_frame is None:
             return
 
         self.clear_active_objects()
 
         def filt(x):
-            return x.user_data.frame == clicked_object.user_data.frame
+            return target_frame == x.user_data.get_frame()
+
+        to_activate = []
+        for drawable in self.drawable_trace.each_object(obj_filter=filt):
+            to_activate.append(drawable)
+
+        self.add_multiple_to_active_objects(to_activate)
+        self.parent.queue_draw()
+
+    def on_select_events_by_submit(self, clicked_object):
+        '''
+        Right click menu handler -> highlight by single submit.
+        '''
+        # Do nothing if the event doesn't have user data
+        if clicked_object.user_data is None:
+            return
+
+        # Do nothing if no submit ...
+        target_submit = clicked_object.user_data.get_submit()
+        if target_submit is None:
+            return
+
+        self.clear_active_objects()
+
+        def filt(x):
+            return target_submit == x.user_data.get_submit()
 
         to_activate = []
         for drawable in self.drawable_trace.each_object(obj_filter=filt):
@@ -139,10 +181,54 @@ class TimelineWidget(TimelineWidgetBase):
         '''
         Right click menu handler -> highlight by single workload.
         '''
+        # Do nothing if the event doesn't have user data
+        if clicked_object.user_data is None:
+            return
+
+        # Do nothing if no workload ...
+        target_workload = clicked_object.user_data.get_workload()
+        if target_workload is None:
+            return
+
+        target_submit = clicked_object.user_data.get_submit()
+        if target_submit is None:
+            return
+
         self.clear_active_objects()
 
         def filt(x):
-            return x.user_data.tag_id == clicked_object.user_data.tag_id
+            # Is a workload
+            if isinstance(x.user_data, GPUWorkload):
+                return target_workload == x.user_data.get_workload()
+
+            # Is a submit
+            assert isinstance(x.user_data, MetadataSubmit)
+            return target_submit == x.user_data.get_submit()
+
+        to_activate = []
+        for drawable in self.drawable_trace.each_object(obj_filter=filt):
+            to_activate.append(drawable)
+
+        self.add_multiple_to_active_objects(to_activate)
+        self.parent.queue_draw()
+
+    def on_select_events_by_queue(self, clicked_object):
+        '''
+        Right click menu handler -> highlight by single queue.
+        '''
+        # Do nothing if the event user data doesn't have submit metadata
+        if clicked_object.user_data is None:
+            return
+
+        # Do nothing if no queue ...
+        target_queue = clicked_object.user_data.get_queue()
+        if target_queue is None:
+            return
+
+        self.clear_active_objects()
+
+        def filt(x):
+            return target_queue == x.user_data.get_queue()
 
         to_activate = []
         for drawable in self.drawable_trace.each_object(obj_filter=filt):

@@ -290,6 +290,7 @@ class TimelineView(View):
 
         # Spec includes lanes that collide, but only one exists at a time
         self.timeline_spec = (
+            TLSpec('Submit', 0, 1, True, True, True),
             TLSpec('Compute', 1, 1, True, True, True),
             TLSpec('Non-fragment', 2, 1, True, True, True),
             TLSpec('Binning', 2, 1, True, True, True),
@@ -299,6 +300,8 @@ class TimelineView(View):
         )
 
         self.timeline_colors = (
+            TLColor('Submit', 'win', 'window', True),
+            TLColor('Submit', 'fbo', 'fbo', True),
             TLColor('Compute', 'win', 'window', True),
             TLColor('Compute', 'fbo', 'fbo', True),
             TLColor('Non-fragment', 'win', 'window', True),
@@ -382,6 +385,29 @@ class TimelineView(View):
             channel = DrawableChannel(
                 tl.name, trace, tl.layer, tl.cull, tl.click)
             channel.label_visible = tl.label
+
+        # Add submits
+        seen_submits = set()
+        channel = trace.get_channel('Submit')
+        for name, stream in trace_data.streams.items():
+
+            for event in stream:
+
+                # Skip if no submit, or we've already processed it
+                if not event.submit or event.submit in seen_submits:
+                    continue
+
+                submit = event.submit
+                seen_submits.add(submit)
+
+                stime = submit.start_time
+                etime = stime + 50
+
+                workload = 'fbo'
+                style = self.timeline_styles.get_style('Submit', 0, workload)
+                draw = TLSpec.get_box(
+                    'Submit', stime, etime, style, '', '', submit)
+                channel.add_object(draw)
 
         # Add scheduling channels
         for name, stream in trace_data.streams.items():

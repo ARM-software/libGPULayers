@@ -34,12 +34,21 @@ from typing import Any, TypedDict
 from lglpy.comms.server import Message
 
 
+class SubmitMetadataType(TypedDict):
+    '''
+    Structured dict type for type hinting.
+    '''
+    queue: int
+    timestamp: int
+    workloads: list[Any]
+
+
 class FrameMetadataType(TypedDict):
     '''
     Structured dict type for type hinting.
     '''
     frame: int
-    workloads: list[Any]
+    submits: list[SubmitMetadataType]
 
 
 class GPUTimelineService:
@@ -60,7 +69,7 @@ class GPUTimelineService:
         # Create a default frame record
         self.frame: FrameMetadataType = {
             'frame': 0,
-            'workloads': []
+            'submits': []
         }
 
         # pylint: disable=consider-using-with
@@ -96,11 +105,28 @@ class GPUTimelineService:
         next_frame = msg['fid']
         self.frame = {
             'frame': next_frame,
-            'workloads': []
+            'submits': []
         }
 
         if next_frame % 100 == 0:
             print(f'Starting frame {next_frame} ...')
+
+    def handle_submit(self, msg: Any) -> None:
+        '''
+        Handle a submit boundary workload.
+
+        Args:
+            msg: The Python decode of a JSON payload.
+        '''
+        # Write frame packet to the file
+        submit: SubmitMetadataType = {
+            'queue': msg['queue'],
+            'timestamp': msg['timestamp'],
+            'workloads': []
+        }
+
+        # Reset the local frame state for the next frame
+        self.frame['submits'].append(submit)
 
     def handle_render_pass(self, msg: Any) -> None:
         '''
@@ -113,10 +139,12 @@ class GPUTimelineService:
         Args:
             msg: The Python decode of a JSON payload.
         '''
+        submit = self.frame['submits'][-1]
+
         # Find the last workload
         last_render_pass = None
-        if self.frame['workloads']:
-            last_workload = self.frame['workloads'][-1]
+        if submit['workloads']:
+            last_workload = submit['workloads'][-1]
             if last_workload['type'] == 'renderpass':
                 last_render_pass = last_workload
 
@@ -128,7 +156,7 @@ class GPUTimelineService:
 
         # Otherwise this is a new record
         else:
-            self.frame['workloads'].append(msg)
+            submit['workloads'].append(msg)
 
     def handle_generic(self, msg: Any) -> None:
         '''
@@ -137,7 +165,8 @@ class GPUTimelineService:
         Args:
             msg: The Python decode of a JSON payload.
         '''
-        self.frame['workloads'].append(msg)
+        submit = self.frame['submits'][-1]
+        submit['workloads'].append(msg)
 
     def handle_message(self, message: Message) -> None:
         '''
@@ -160,6 +189,9 @@ class GPUTimelineService:
 
         if payload_type == 'frame':
             self.handle_frame(payload)
+
+        elif payload_type == 'submit':
+            self.handle_submit(payload)
 
         elif payload_type == 'renderpass':
             self.handle_render_pass(payload)

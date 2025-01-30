@@ -29,6 +29,7 @@ timeline visualization.
 from collections import defaultdict
 
 from ...data.raw_trace import GPUStreamID
+from ...data.processed_trace import GPUWorkload
 from ...drawable.text_pane_widget import TextPaneWidget
 
 
@@ -73,8 +74,12 @@ class TimelineInfoWidget(TextPaneWidget):
         out_frames = set()
         in_frames = {}
 
-        for event in self.timeline_widget.drawable_trace.each_object():
-            frame = event.user_data.frame
+        def ch_filter(x):
+            return x.name != 'Submit'
+
+        trace = self.timeline_widget.drawable_trace
+        for event in trace.each_object(ch_filter):
+            frame = event.user_data.get_frame()
 
             # Event is not entirely in active range
             # - Work starts and/or ends before time range
@@ -179,7 +184,7 @@ class TimelineInfoWidget(TextPaneWidget):
         trace = self.timeline_widget.drawable_trace
 
         def ch_filt(x):
-            return len(x)
+            return len(x) and x.name != 'Submit'
 
         channels = [x.name for x in trace.each_channel(ch_filt)]
         label_len = max(len(x) for x in channels) + len(' stream:')
@@ -270,6 +275,10 @@ class TimelineInfoWidget(TextPaneWidget):
         max_name_len = 0
 
         for event in active:
+            # Skip things that are not GPU workloads
+            if not isinstance(event, GPUWorkload):
+                continue
+
             total_stream_time[event.stream] += event.duration
             total_tag_time[event.tag_id] += event.duration
 
