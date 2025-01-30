@@ -66,6 +66,7 @@ class GPUWorkload:
             metadata: Parsed metadata annotation.
         '''
         # Common data we from the Perfetto event
+        self.submit_id = event.submit_id
         self.tag_id = event.user_label
         self.start_time = event.start_time
         self.duration = event.duration
@@ -175,8 +176,9 @@ class GPUWorkload:
         Returns:
             Returns the label for use in the UI.
         '''
-        assert False, 'Subclass must implement this'
-        return ''
+        # Subclass will override this if metadata exists
+        # Submit ID isn't useful, but traces back to Perfetto data for debug
+        return f'Submit: {self.submit_id}'
 
     def get_short_label(self) -> str:
         '''
@@ -185,8 +187,9 @@ class GPUWorkload:
         Returns:
             Returns the label for use in the UI.
         '''
-        assert False, 'Subclass must implement this'
-        return ''
+        # Subclass will override this if metadata exists
+        # Submit ID isn't useful, but traces back to Perfetto data for debug
+        return f'Submit: {self.submit_id}'
 
 
 class GPURenderPass(GPUWorkload):

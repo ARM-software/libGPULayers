@@ -358,6 +358,10 @@ class RenderstageEvent:
         self.start_time = start_time
         self.duration = int(spec.duration)
 
+        self.submit_id = None
+        if spec.HasField('submission_id'):
+            self.submit_id = spec.submission_id
+
         # Decode the interned stream and stage types
         # Interning is resolved later as packets may be out-of-order
         self.stream_iid = int(spec.hw_queue_iid)
