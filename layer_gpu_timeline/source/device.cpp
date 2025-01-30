@@ -26,6 +26,7 @@
 #include <array>
 #include <iostream>
 #include <fstream>
+#include <nlohmann/json.hpp>
 #include <sys/stat.h>
 #include <vector>
 
@@ -34,6 +35,8 @@
 
 #include "device.hpp"
 #include "instance.hpp"
+
+using json = nlohmann::json;
 
 /**
  * @brief The dispatch lookup for all of the created Vulkan devices.
@@ -114,4 +117,25 @@ Device::Device(
         commsModule = std::make_unique<Comms::CommsModule>("lglcomms");
         commsWrapper = std::make_unique<TimelineComms>(*commsModule);
     }
+
+    // Determine the driver version and emit the preamble message
+    VkPhysicalDeviceProperties deviceProperties;
+    instance->driver.vkGetPhysicalDeviceProperties(physicalDevice, &deviceProperties);
+
+    std::string name { deviceProperties.deviceName };
+
+    uint32_t driverVersion = deviceProperties.driverVersion;
+    uint32_t major = VK_VERSION_MAJOR(driverVersion);
+    uint32_t minor = VK_VERSION_MINOR(driverVersion);
+    uint32_t patch = VK_VERSION_PATCH(driverVersion);
+
+    json deviceMetadata {
+        { "type", "device" },
+        { "deviceName", name },
+        { "driverMajor", major },
+        { "driverMinor", minor },
+        { "driverPatch", patch }
+    };
+
+    commsWrapper->txMessage(deviceMetadata.dump());
 }
