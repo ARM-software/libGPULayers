@@ -153,7 +153,7 @@ class CommsServer:
     next message.
 
     Attributes:
-        port: The port the server listens on.
+        port: The port the server listens on, or 0 for auto-assign.
         endpoints: The mapping of addresses to registered microservices.
         sockl: The listener socket, or None if not listening.
         sockd: The client data socket, or None if no client connected.
@@ -167,13 +167,21 @@ class CommsServer:
         Args:
             port: The local TCP/IP port to listen on.
         '''
-        self.port = port
         self.endpoints = {}  # type: dict[int, Any]
         self.register_endpoint(self)
 
         self.shutdown = False
-        self.sockl = None  # type: Optional[socket.socket]
         self.sockd = None  # type: Optional[socket.socket]
+
+        self.sockl = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sockl.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
+        # Set up the listening socket
+        self.sockl.bind(('localhost', port))
+        self.sockl.listen(1)
+
+        # Work out which port was assigned if not user-defined
+        self.port = self.sockl.getsockname()[1]
 
     def register_endpoint(self, endpoint: Any) -> int:
         '''
@@ -220,13 +228,6 @@ class CommsServer:
         '''
         Enter server connection handler run loop.
         '''
-        self.sockl = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sockl.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-
-        # Set up the listening socket
-        self.sockl.bind(('localhost', self.port))
-        self.sockl.listen(1)
-
         # Accept a new client connection and assign a data socket
         while not self.shutdown:
             print('Waiting for client connection')
@@ -250,7 +251,6 @@ class CommsServer:
                 continue
 
         self.sockl.close()
-        self.sockl = None
 
     def run_client(self) -> None:
         '''
