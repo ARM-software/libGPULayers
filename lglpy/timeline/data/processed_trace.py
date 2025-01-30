@@ -30,8 +30,8 @@ import re
 from typing import Optional, Union
 
 from .raw_trace import RawTrace, RenderstageEvent, MetadataWork, \
-    MetadataRenderPass, MetadataDispatch, MetadataBufferTransfer, \
-    MetadataImageTransfer, GPUStreamID, GPUStageID
+    MetadataRenderPass, MetadataDispatch, MetadataTraceRays, \
+    MetadataBufferTransfer, MetadataImageTransfer, GPUStreamID, GPUStageID
 
 LABEL_HEURISTICS = True
 LABEL_MAX_LEN = 60
@@ -74,12 +74,12 @@ class GPUWorkload:
         self.stage = event.stage
 
         # Common data we get from the layer metadata
-        self.frame = None
+        self.submit = None
         self.label_stack = None
         self.parsed_label_name = None
 
         if metadata:
-            self.frame = metadata.frame
+            self.submit = metadata.submit
             self.label_stack = metadata.label_stack
 
     def get_label_name(self) -> Optional[str]:
@@ -190,6 +190,36 @@ class GPUWorkload:
         # Subclass will override this if metadata exists
         # Submit ID isn't useful, but traces back to Perfetto data for debug
         return f'Submit: {self.submit_id}'
+
+    def get_frame(self):
+        '''
+        Get the frame of this workload.
+        '''
+        if self.submit:
+            return self.submit.frame
+
+        return None
+
+    def get_submit(self):
+        '''
+        Get the submit of this workload.
+        '''
+        return self.submit
+
+    def get_queue(self):
+        '''
+        Get the queue of this workload.
+        '''
+        if self.submit:
+            return self.submit.queue
+
+        return None
+
+    def get_workload(self):
+        '''
+        Get the workload of this workload.
+        '''
+        return self.tag_id
 
 
 class GPURenderPass(GPUWorkload):
@@ -316,7 +346,7 @@ class GPURenderPass(GPUWorkload):
 
 class GPUDispatch(GPUWorkload):
     '''
-    Workload class representing a render pass.
+    Workload class representing a compute dispatch.
     '''
 
     def __init__(self, event: RenderstageEvent, metadata: MetadataDispatch):
@@ -372,6 +402,69 @@ class GPUDispatch(GPUWorkload):
                 dims.append(self.groups_z)
 
             line = f'{"x".join([str(dim) for dim in dims])} groups'
+
+        lines.append(line)
+        return '\n'.join(lines)
+
+
+class GPUTraceRays(GPUWorkload):
+    '''
+    Workload class representing a trace rays dispatch.
+    '''
+
+    def __init__(self, event: RenderstageEvent, metadata: MetadataTraceRays):
+        '''
+        Trace rays workload in a trace.
+
+        Args:
+            event: Parsed render stage event.
+            metadata: Parsed metadata annotation.
+        '''
+        # Populate common data
+        super().__init__(event, metadata)
+
+        # We must have metadata so no need to check
+        self.items_x = metadata.items_x
+        self.items_y = metadata.items_y
+        self.items_z = metadata.items_z
+
+    def get_long_label(self) -> str:
+        '''
+        Get the long form label for this workload.
+
+        Returns:
+            Returns the label for use in the UI.
+        '''
+        lines = []
+
+        if label_name := self.get_label_name():
+            lines.append(label_name)
+
+        lines.append(self.get_short_label())
+        return '\n'.join(lines)
+
+    def get_short_label(self) -> str:
+        '''
+        Get the short form label for this workload.
+
+        Returns:
+            Returns the label for use in the UI.
+        '''
+        lines = []
+
+        # If indirect then show a placeholder
+        if self.items_x == -1:
+            line = "?x?x? items"
+
+        # Else show the actual dimension
+        else:
+            dims = [self.items_x, self.items_y]
+
+            # Hide Z dimension unless greater than 1
+            if self.items_z > 1:
+                dims.append(self.items_z)
+
+            line = f'{"x".join([str(dim) for dim in dims])} items'
 
         lines.append(line)
         return '\n'.join(lines)
@@ -497,6 +590,7 @@ GPUWork = Union[
     # Specific workload if metadata
     GPURenderPass,
     GPUDispatch,
+    GPUTraceRays,
     GPUImageTransfer,
     GPUBufferTransfer
 ]
@@ -535,6 +629,9 @@ class GPUTrace:
 
             elif isinstance(event_meta, MetadataDispatch):
                 workload = GPUDispatch(event, event_meta)
+
+            elif isinstance(event_meta, MetadataTraceRays):
+                workload = GPUTraceRays(event, event_meta)
 
             elif isinstance(event_meta, MetadataImageTransfer):
                 workload = GPUImageTransfer(event, event_meta)

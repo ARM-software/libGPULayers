@@ -143,7 +143,7 @@ class MetadataAttachment:
         '''
         Parsed GPU Timeline layer payload for a single render pass attachment.
 
-        Attributes:
+        Args:
             metadata: JSON payload from the layer.
         '''
         self.binding = str(metadata['binding'])
@@ -167,7 +167,7 @@ class MetadataAttachments:
         '''
         Parsed GPU Timeline layer attachment payload for a single render pass.
 
-        Attributes:
+        Args:
             metadata: JSON payload from the layer.
         '''
         self.attachments = []  # type: list[MetadataAttachment]
@@ -179,6 +179,53 @@ class MetadataAttachments:
         self.attachments.sort(key=lambda x: x.binding)
 
 
+class MetadataSubmit:
+    '''
+    Baseclass for a submit.
+
+    Attributes:
+        frame:       The frame index in the application.
+        queue:       The queue handle.
+        start_time:  The submit time.
+    '''
+
+    def __init__(self, frame: int, metadata: JSONType):
+        '''
+        Construct a new submit event.
+
+        Args:
+            frame: The frame index in the application.
+            metadata: JSON payload from the layer.
+        '''
+        self.frame = frame
+        self.queue = int(metadata['queue'])
+        self.start_time = int(metadata['timestamp'])
+
+    def get_frame(self):
+        '''
+        Get the frame of this submit.
+        '''
+        return self.frame
+
+    def get_submit(self):
+        '''
+        Get the submit of this submit.
+        '''
+        return self
+
+    def get_queue(self):
+        '''
+        Get the queue of this submit.
+        '''
+        return self.queue
+
+    def get_workload(self):
+        '''
+        Get the workload of this workload.
+        '''
+        return None
+
+
 class MetadataWorkload:
     '''
     Baseclass for a parsed GPU Timeline layer payload for a workload.
@@ -186,19 +233,20 @@ class MetadataWorkload:
     Attributes:
         frame: The frame index in the application.
         tag_id: The unique workload tag ID to cross-reference with Perfetto.
+        submit: The submit information.
         label_stack: Debug label stack, or None if no user labels.
     '''
 
-    def __init__(self, frame: int, metadata: JSONType):
+    def __init__(self, submit: MetadataSubmit, metadata: JSONType):
         '''
         Parsed GPU Timeline layer payload for a single render pass.
 
-        Attributes:
-            frame: The frame index in the application.
+        Args:
+            submit: The submit information.
             metadata: JSON payload from the layer.
         '''
-        self.frame = frame
         self.tag_id = int(metadata['tid'])
+        self.submit = submit
 
         self.label_stack = metadata.get('label', None)
 
@@ -223,15 +271,15 @@ class MetadataRenderPass(MetadataWorkload):
         attachments: List of render pass attachments.
     '''
 
-    def __init__(self, frame: int, metadata: JSONType):
+    def __init__(self, submit: MetadataSubmit, metadata: JSONType):
         '''
         Parsed GPU Timeline layer payload for a single render pass.
 
-        Attributes:
-            frame: The frame index in the application.
+        Args:
+            submit: The submit information.
             metadata: JSON payload from the layer.
         '''
-        super().__init__(frame, metadata)
+        super().__init__(submit, metadata)
 
         self.width = int(metadata['width'])
         self.height = int(metadata['height'])
@@ -250,19 +298,53 @@ class MetadataDispatch(MetadataWorkload):
         groups_z: Depth of the dispatch in work groups, or -1 if unknown.
     '''
 
-    def __init__(self, frame: int, metadata: JSONType):
+    def __init__(self, submit: MetadataSubmit, metadata: JSONType):
         '''
         Parsed GPU Timeline layer payload for a single dispatch.
 
-        Attributes:
-            frame: The frame index in the application.
+        Args:
+            submit: The submit information.
             metadata: JSON payload from the layer.
         '''
-        super().__init__(frame, metadata)
+        super().__init__(submit, metadata)
 
         self.groups_x = int(metadata['xGroups'])
         self.groups_y = int(metadata['yGroups'])
         self.groups_z = int(metadata['zGroups'])
+
+    def get_perfetto_tag_id(self) -> str:
+        '''
+        Get the tag ID formatted to match the Perfetto data.
+
+        Returns:
+            The Perfetto-formatted tag ID.
+        '''
+        return f't{self.tag_id}'
+
+
+class MetadataTraceRays(MetadataWorkload):
+    '''
+    Parsed GPU Timeline layer payload for a ray tracing pipeline workload.
+
+    Attributes:
+        items_x: Width of the dispatch in work items, or -1 if unknown.
+        items_y: Height of the dispatch in work items, or -1 if unknown.
+        items_z: Depth of the dispatch in work items, or -1 if unknown.
+    '''
+
+    def __init__(self, submit: MetadataSubmit, metadata: JSONType):
+        '''
+        Parsed GPU Timeline layer payload for a single dispatch.
+
+        Args:
+            submit: The submit information.
+            metadata: JSON payload from the layer.
+        '''
+        super().__init__(submit, metadata)
+
+        self.items_x = int(metadata['xItems'])
+        self.items_y = int(metadata['yItems'])
+        self.items_z = int(metadata['zItems'])
 
     def get_perfetto_tag_id(self) -> str:
         '''
@@ -283,15 +365,15 @@ class MetadataImageTransfer(MetadataWorkload):
         pixel_count: Number of pixels written, or -1 if unknown.
     '''
 
-    def __init__(self, frame: int, metadata: JSONType):
+    def __init__(self, submit: MetadataSubmit, metadata: JSONType):
         '''
         Parsed GPU Timeline layer payload for a single image transfer.
 
-        Attributes:
-            frame: The frame index in the application.
+        Args:
+            submit: The submit information.
             metadata: JSON payload from the layer.
         '''
-        super().__init__(frame, metadata)
+        super().__init__(submit, metadata)
 
         self.subtype = str(metadata['subtype'])
 
@@ -311,15 +393,15 @@ class MetadataBufferTransfer(MetadataWorkload):
         byte_count: Number of bytes written, or -1 if unknown.
     '''
 
-    def __init__(self, frame: int, metadata: JSONType):
+    def __init__(self, submit: MetadataSubmit, metadata: JSONType):
         '''
         Parsed GPU Timeline layer payload for a single buffer transfer.
 
-        Attributes:
-            frame: The frame index in the application.
+        Args:
+            submit: The submit information.
             metadata: JSON payload from the layer.
         '''
-        super().__init__(frame, metadata)
+        super().__init__(submit, metadata)
 
         self.subtype = str(metadata['subtype'])
 
@@ -383,6 +465,7 @@ class RenderstageEvent:
 MetadataWork = Union[
     MetadataRenderPass,
     MetadataDispatch,
+    MetadataTraceRays,
     MetadataImageTransfer,
     MetadataBufferTransfer
 ]
@@ -569,12 +652,15 @@ class RawTrace:
 
     @classmethod
     def load_metadata_from_file(
-            cls, metadata_file: str) -> dict[str, MetadataWork]:
+            cls,
+            metadata_file: str,
+            start_time: int) -> dict[str, MetadataWork]:
         '''
         Load the raw metadata from file.
 
         Args:
             metadata_file: The file path of the metadata payload.
+            start_time: The start time bias to apply to align with Perfetto.
         '''
         metadata = {}  # type: dict[str, MetadataWork]
         with open(metadata_file, 'rb') as handle:
@@ -597,32 +683,40 @@ class RawTrace:
 
                 frame_id = data['frame']
 
-                for workload in data['workloads']:
-                    meta = None  # type: Optional[MetadataWork]
+                for submit in data['submits']:
+                    # Create metadata with bias to match Perfetto
+                    submeta = MetadataSubmit(frame_id, submit)
+                    submeta.start_time -= start_time
 
-                    if workload['type'] == 'renderpass':
-                        meta = MetadataRenderPass(frame_id, workload)
+                    for workload in submit['workloads']:
+                        meta = None  # type: Optional[MetadataWork]
 
-                    elif workload['type'] == 'dispatch':
-                        meta = MetadataDispatch(frame_id, workload)
+                        if workload['type'] == 'renderpass':
+                            meta = MetadataRenderPass(submeta, workload)
 
-                    elif workload['type'] == 'imagetransfer':
-                        meta = MetadataImageTransfer(frame_id, workload)
+                        elif workload['type'] == 'dispatch':
+                            meta = MetadataDispatch(submeta, workload)
 
-                    elif workload['type'] == 'buffertransfer':
-                        meta = MetadataBufferTransfer(frame_id, workload)
+                        elif workload['type'] == 'tracerays':
+                            meta = MetadataTraceRays(submeta, workload)
 
-                    else:
-                        assert False, f'Unknown workload {workload["type"]}'
+                        elif workload['type'] == 'imagetransfer':
+                            meta = MetadataImageTransfer(submeta, workload)
 
-                    if meta:
-                        metadata[meta.get_perfetto_tag_id()] = meta
+                        elif workload['type'] == 'buffertransfer':
+                            meta = MetadataBufferTransfer(submeta, workload)
+
+                        else:
+                            assert False, f'Unknown workload {workload["type"]}'
+
+                        if meta:
+                            metadata[meta.get_perfetto_tag_id()] = meta
 
         return metadata
 
     @classmethod
     def load_perfetto_from_file(
-            cls, perfetto_file: str) -> list[RenderstageEvent]:
+            cls, perfetto_file: str) -> tuple[list[RenderstageEvent], int]:
         '''
         Load the raw Perfetto trace from file.
 
@@ -686,7 +780,7 @@ class RawTrace:
             config.replace_interned_stream(event)
             config.replace_interned_stage(event)
 
-        return trace_events
+        return (trace_events, start_time)
 
     def __init__(self, trace_file: str, metadata_file: str):
         '''
@@ -696,8 +790,10 @@ class RawTrace:
             trace_file: The file path of the Perfetto trace payload.
             metadata_file: The file path of the Timeline layer trace payload.
         '''
-        self.events = self.load_perfetto_from_file(trace_file)
+        trace_events, start_time = self.load_perfetto_from_file(trace_file)
+        self.events = trace_events
 
         self.metadata = None
         if metadata_file:
-            self.metadata = self.load_metadata_from_file(metadata_file)
+            self.metadata = \
+                self.load_metadata_from_file(metadata_file, start_time)

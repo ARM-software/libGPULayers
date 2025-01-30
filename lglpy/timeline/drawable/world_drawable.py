@@ -130,7 +130,7 @@ class WorldDrawableRect(WorldDrawable):
         # Draw label if present and above minimal size
         if self.style.bind_font(gc):
             # Try the full label
-            if self.label.fits_centered(gc, w, 4):
+            if self.label and self.label.fits_centered(gc, w, 4):
                 self.label.draw_centered(gc, (x, y), (w, h))
             elif self.label_short and self.label_short.fits_centered(gc, w, 4):
                 self.label_short.draw_centered(gc, (x, y), (w, h))

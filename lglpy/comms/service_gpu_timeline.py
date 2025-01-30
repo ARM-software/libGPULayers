@@ -34,12 +34,21 @@ from typing import Any, TypedDict
 from lglpy.comms.server import Message
 
 
+class SubmitMetadataType(TypedDict):
+    '''
+    Structured dict type for type hinting.
+    '''
+    queue: int
+    timestamp: int
+    workloads: list[Any]
+
+
 class FrameMetadataType(TypedDict):
     '''
     Structured dict type for type hinting.
     '''
     frame: int
-    workloads: list[Any]
+    submits: list[SubmitMetadataType]
 
 
 class GPUTimelineService:
@@ -102,7 +111,6 @@ class GPUTimelineService:
         if next_frame % 100 == 0:
             print(f'Starting frame {next_frame} ...')
 
-
     def handle_submit(self, msg: Any) -> None:
         '''
         Handle a submit boundary workload.
@@ -111,7 +119,7 @@ class GPUTimelineService:
             msg: The Python decode of a JSON payload.
         '''
         # Write frame packet to the file
-        submit = {
+        submit: SubmitMetadataType = {
             'queue': msg['queue'],
             'timestamp': msg['timestamp'],
             'workloads': []
