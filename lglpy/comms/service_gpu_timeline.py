@@ -84,6 +84,21 @@ class GPUTimelineService:
         '''
         return 'GPUTimeline'
 
+    def handle_device(self, msg: Any) -> None:
+        '''
+        Handle a device config packet.
+
+        Args:
+            msg: The Python decode of a JSON payload.
+        '''
+        # Reset the local frame state for the next frame
+        major = msg["driverMajor"]
+        minor = msg["driverMinor"]
+        patch = msg["driverPatch"]
+
+        print(f'Device: {msg["deviceName"]}')
+        print(f'Driver: r{major}p{minor} ({patch})')
+
     def handle_frame(self, msg: Any) -> None:
         '''
         Handle a frame boundary workload.
@@ -187,7 +202,10 @@ class GPUTimelineService:
 
         payload_type = payload['type']
 
-        if payload_type == 'frame':
+        if payload_type == 'device':
+            self.handle_device(payload)
+
+        elif payload_type == 'frame':
             self.handle_frame(payload)
 
         elif payload_type == 'submit':
