@@ -128,7 +128,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueuePresentKHR<user_tag>(
     json frame {
         { "type", "frame" },
         { "device", reinterpret_cast<uintptr_t>(layer->device) },
-        { "fid", tracker.totalStats.getFrameCount() }
+        { "fid", tracker.totalStats.getFrameCount() },
+        { "timestamp", getClockMonotonicRaw() }
     };
 
     layer->onFrame(frame.dump());

@@ -48,6 +48,7 @@ class FrameMetadataType(TypedDict):
     Structured dict type for type hinting.
     '''
     frame: int
+    presentTimestamp: int
     submits: list[SubmitMetadataType]
 
 
@@ -68,8 +69,10 @@ class GPUTimelineService:
             The endpoint name.
         '''
         # Create a default frame record
+        # End time written on queuePresent
         self.frame: FrameMetadataType = {
             'frame': 0,
+            'presentTimestamp': 0,
             'submits': []
         }
 
@@ -112,6 +115,9 @@ class GPUTimelineService:
         Args:
             msg: The Python decode of a JSON payload.
         '''
+        # Update end time of the current frame
+        self.frame['presentTimestamp'] = msg['timestamp']
+
         # Write frame packet to the file
         last_frame = json.dumps(self.frame).encode('utf-8')
         length = struct.pack('<I', len(last_frame))
@@ -123,6 +129,7 @@ class GPUTimelineService:
         next_frame = msg['fid']
         self.frame = {
             'frame': next_frame,
+            'presentTimestamp': 0,
             'submits': []
         }
 
