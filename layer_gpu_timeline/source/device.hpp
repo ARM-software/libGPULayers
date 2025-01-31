@@ -170,17 +170,6 @@ public:
 
 public:
     /**
-     * @brief The driver function dispatch table.
-     */
-    DeviceDispatchTable driver {};
-
-    /**
-     * @brief The minimum set of device extensions needed by this layer.
-     */
-    static const std::vector<std::string> extraExtensions;
-
-private:
-    /**
      * @brief The instance this device is created with.
      */
     const Instance* instance;
@@ -195,6 +184,17 @@ private:
      */
     const VkDevice device;
 
+    /**
+     * @brief The driver function dispatch table.
+     */
+    DeviceDispatchTable driver {};
+
+    /**
+     * @brief The minimum set of device extensions needed by this layer.
+     */
+    static const std::vector<std::string> extraExtensions;
+
+private:
     /**
      * @brief State tracker for this device.
      */

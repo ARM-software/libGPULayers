@@ -69,12 +69,14 @@ static uint64_t getClockMonotonicRaw()
  * @param callback   The data emit callback.
  */
 static void emitQueueMetadata(
+    VkDevice device,
     VkQueue queue,
     std::function<void(const std::string&)> callback
 ) {
     // Write the queue submit metadata
     json submitMetadata {
         { "type", "submit" },
+        { "device", reinterpret_cast<uintptr_t>(device) },
         { "queue", reinterpret_cast<uintptr_t>(queue) },
         { "timestamp", getClockMonotonicRaw() }
     };
@@ -125,6 +127,7 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueuePresentKHR<user_tag>(
     // messages are sent sequentially to the host tool
     json frame {
         { "type", "frame" },
+        { "device", reinterpret_cast<uintptr_t>(layer->device) },
         { "fid", tracker.totalStats.getFrameCount() }
     };
 
@@ -155,7 +158,7 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit<user_tag>(
     // messages are sent sequentially and contiguously to the host tool
 
     // Add queue-level metadata
-    emitQueueMetadata(queue, onSubmit);
+    emitQueueMetadata(layer->device, queue, onSubmit);
 
     // Add per-command buffer metadata
     for (uint32_t i = 0; i < submitCount; i++)
@@ -193,7 +196,7 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit2<user_tag>(
     // messages are sent sequentially and contiguously to the host tool
 
     // Add queue-level metadata
-    emitQueueMetadata(queue, onSubmit);
+    emitQueueMetadata(layer->device, queue, onSubmit);
 
     // Add per-command buffer metadata
     for (uint32_t i = 0; i < submitCount; i++)
@@ -231,7 +234,7 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit2KHR<user_tag>(
     // messages are sent sequentially and contiguously to the host tool
 
     // Add queue-level metadata
-    emitQueueMetadata(queue, onSubmit);
+    emitQueueMetadata(layer->device, queue, onSubmit);
 
     // Add per-command buffer metadata
     for (uint32_t i = 0; i < submitCount; i++)
