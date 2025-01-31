@@ -160,13 +160,15 @@ class CommsServer:
         shutdown Flag fro tracking shutdown status.
     '''
 
-    def __init__(self, port: int):
+    def __init__(self, port: int, verbose: bool = False):
         '''
         Construct, but do not start, a server instance.
 
         Args:
             port: The local TCP/IP port to listen on.
+            verbose: Should this use verbose logging?
         '''
+        self.verbose = verbose
         self.endpoints = {}  # type: dict[int, Any]
         self.register_endpoint(self)
 
@@ -230,19 +232,23 @@ class CommsServer:
         '''
         # Accept a new client connection and assign a data socket
         while not self.shutdown:
-            print('Waiting for client connection')
+            if self.verbose:
+                print('Waiting for client connection')
             try:
                 self.sockd, _ = self.sockl.accept()
-                print('  + Client connected')
+                if self.verbose:
+                    print('  + Client connected')
 
                 self.run_client()
 
-                print('  + Client disconnected')
+                if self.verbose:
+                    print('  + Client disconnected')
                 self.sockd.close()
                 self.sockd = None
 
             except ClientDropped:
-                print('  + Client disconnected')
+                if self.verbose:
+                    print('  + Client disconnected')
                 if self.sockd:
                     self.sockd.close()
                     self.sockd = None
