@@ -25,13 +25,119 @@
 
 #include "trackers/queue.hpp"
 
+#include "trackers/layer_command_stream.hpp"
+#include "utils/misc.hpp"
+
 #include <cassert>
+#include <variant>
+#include <vector>
 
 namespace Tracker
 {
+namespace
+{
+
+    /**
+     * @brief A visitor implementation that processes each command stream instruction, and
+     *        correctly updates the Queue's state, as well as serializing workload objects
+     *        into the message data callback.
+     */
+    class SubmitCommandInstructionVisitor
+    {
+    public:
+        SubmitCommandInstructionVisitor(QueueState& _queueState, std::function<void(const std::string&)> _callback)
+            : queueState(_queueState),
+              callback(_callback)
+        {
+        }
+
+        // visitor should not be copied or moved from
+        SubmitCommandInstructionVisitor(const SubmitCommandInstructionVisitor&) = delete;
+        SubmitCommandInstructionVisitor(SubmitCommandInstructionVisitor&&) noexcept = delete;
+        SubmitCommandInstructionVisitor& operator=(const SubmitCommandInstructionVisitor&) = delete;
+        SubmitCommandInstructionVisitor& operator=(SubmitCommandInstructionVisitor&&) noexcept = delete;
+
+        /**
+         * @brief Visit a debug-label push marker instruction
+         *
+         * @param instruction The push instruction
+         */
+        void operator()(const LCSInstructionMarkerPush& instruction)
+        {
+            queueState.debugStack.emplace_back(instruction.getLabel());
+        }
+
+        /**
+         * @brief Visit a debug-label pop marker instruction
+         *
+         * @param instruction The pop instruction
+         */
+        void operator()(const LCSInstructionMarkerPop& instruction)
+        {
+            UNUSED(instruction);
+
+            queueState.debugStack.pop_back();
+        }
+
+        /**
+         * @brief Visit a renderpass workload instruction
+         *
+         * @param instruction The workload instruction
+         */
+        void operator()(const LCSInstructionWorkload<LCSRenderPass>& instruction)
+        {
+            const auto& workload = instruction.getWorkload();
+            const auto tagID = workload.getTagID();
+
+            // Workload is a new render pass
+            if (tagID > 0)
+            {
+                assert(queueState.lastRenderPassTagID == 0);
+                callback(workload.getBeginMetadata(queueState.debugStack));
+
+                queueState.lastRenderPassTagID = 0;
+                if (workload.isSuspending())
+                {
+                    queueState.lastRenderPassTagID = tagID;
+                }
+            }
+            // Workload is a continuation
+            else
+            {
+                assert(queueState.lastRenderPassTagID != 0);
+                callback(workload.getContinuationMetadata(queueState.lastRenderPassTagID));
+                if (!workload.isSuspending())
+                {
+                    queueState.lastRenderPassTagID = 0;
+                }
+            }
+        }
+
+        /**
+         * @brief Visit a dispatch/trace rays/image transfer/buffer transfer workload instruction
+         *
+         * @param instruction The workload instruction
+         */
+        template<typename WorkloadType>
+        requires(std::is_same_v<WorkloadType, LCSDispatch> || std::is_same_v<WorkloadType, LCSTraceRays>
+                 || std::is_same_v<WorkloadType, LCSImageTransfer> || std::is_same_v<WorkloadType, LCSBufferTransfer>)
+        void operator()(const LCSInstructionWorkload<WorkloadType>& instruction)
+        {
+            const auto& workload = instruction.getWorkload();
+
+            callback(workload.getMetadata(queueState.debugStack));
+        }
+
+    private:
+        QueueState& queueState;
+        std::function<void(const std::string&)> callback;
+    };
+
+}
+
 /* See header for details. */
 Queue::Queue(VkQueue _handle)
-    : handle(_handle) {
+    : state(_handle) {
 
       };
 
@@ -39,54 +145,11 @@ Queue::Queue(VkQueue _handle)
 void Queue::runSubmitCommandStream(const std::vector<LCSInstruction>& stream,
                                    std::function<void(const std::string&)> callback)
 {
+    SubmitCommandInstructionVisitor visitor {state, callback};
+
     for (auto& instr : stream)
     {
-        LCSOpcode opCode = instr.first;
-        const LCSWorkload* opData = instr.second.get();
-
-        if (opCode == LCSOpcode::MARKER_BEGIN)
-        {
-            debugStack.push_back(opData->getMetadata());
-        }
-        else if (opCode == LCSOpcode::MARKER_END)
-        {
-            debugStack.pop_back();
-        }
-        else if (opCode == LCSOpcode::RENDER_PASS)
-        {
-            auto* workload = dynamic_cast<const LCSRenderPass*>(opData);
-            uint64_t tagID = workload->getTagID();
-
-            // Workload is a new render pass
-            if (tagID > 0)
-            {
-                assert(lastRenderPassTagID == 0);
-                callback(workload->getMetadata(&debugStack));
-
-                lastRenderPassTagID = 0;
-                if (workload->isSuspending())
-                {
-                    lastRenderPassTagID = tagID;
-                }
-            }
-            // Workload is a continuation
-            else
-            {
-                assert(lastRenderPassTagID != 0);
-                callback(workload->getMetadata(nullptr, lastRenderPassTagID));
-                if (!workload->isSuspending())
-                {
-                    lastRenderPassTagID = 0;
-                }
-            }
-        }
-        else if ((opCode == LCSOpcode::DISPATCH) || (opCode == LCSOpcode::TRACE_RAYS)
-                 || (opCode == LCSOpcode::IMAGE_TRANSFER) || (opCode == LCSOpcode::BUFFER_TRANSFER))
-        {
-            uint64_t tagID = opData->getTagID();
-            std::string log = joinString(debugStack, "|");
-            callback(opData->getMetadata(&debugStack, tagID));
-        }
+        std::visit(visitor, instr);
     }
 }
 

@@ -49,7 +49,6 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
-#include <utility>
 #include <vector>
 
 #include <vulkan/vulkan.h>
@@ -202,11 +201,6 @@ private:
      * @brief The current render pass if we are in one.
      */
     std::shared_ptr<LCSRenderPass> currentRenderPass;
-
-    /**
-     * @brief The recorded workloads.
-     */
-    std::vector<std::shared_ptr<LCSWorkload>> workloads;
 
     /**
      * @brief The recorded commands.
