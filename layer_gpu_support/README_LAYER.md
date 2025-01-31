@@ -6,6 +6,39 @@ quickly test your application with a set of API behavior overrides applied,
 which can help to identify likely problem areas in the application if an
 override causes an issue to disappear.
 
+## What devices are supported?
+
+This layer requires Vulkan 1.1 and timeline semaphores, but it does not rely on
+any vendor-specific behavior.
+
+## How do I use the layer?
+
+### Prerequisites
+
+Device setup steps:
+
+* Ensure your Android device is in developer mode, with `adb` support enabled
+  in developer settings.
+* Ensure the Android device is connected to your development workstation, and
+  visible to `adb` with an authorized debug connection.
+
+Application setup steps:
+
+* Build a debuggable build of your application and install it on the Android
+  device.
+
+Tooling setup steps
+
+* Install the Android platform tools and ensure `adb` is on your `PATH`
+  environment variable.
+* Install the Android NDK and set the `ANDROID_NDK_HOME` environment variable
+  to its installation path.
+
+### Layer build
+
+Build the Support layer for Android using the provided build script, or using
+equivalent manual commands, from the `layer_gpu_support` directory.
+
 ## Using this layer
 
 This layer requires you to provide a configuration file that specifies the
@@ -24,9 +57,12 @@ For Android you can run this layer with the following command line:
 python3 lgl_android_install.py --layer layer_gpu_support --config <your.json>
 ```
 
-## What devices are supported?
+You can then start your application to observe the impact of the layer
+overrides.
 
-This layer is device agnostic and should support any GPU.
+When the test has finished, press any key in the terminal to prompt the script
+to remove the layer from the device and save the data files to the specified
+host paths.
 
 ## Behavior overrides
 
