@@ -1,17 +1,125 @@
 # Layer: GPU Timeline
 
-This layer is used with Arm GPUs for tracking submitted schedulable workloads
-and emitting useful metadata that can be used in tooling visualizations. This
-data can be combined with raw workload execution timing information captured
-by the Android Perfetto service, providing developers with more useful
-information about how their application is scheduled on to the Arm GPU.
+This layer is used with Arm GPU tooling that can show the scheduling of
+workloads on to the GPU hardware. The layer provides additional semantic
+annotation, extending the scheduling data from the Android Perfetto render
+stages telemetry with useful API-aware context.
+
+![Timeline visualization](./docs/viewer.png)
+
+Visualizations generated using this tooling show the execution of each workload
+event, grouping events by the hardware scheduling stream used. These streams
+can run in parallel on the GPU, and the visualization shows the level of
+parallelization achieved.
 
 ## What devices are supported?
 
-The Arm GPU driver integration with the Perfetto render stages scheduler event
-trace is supported at production quality since the r47p0 driver version.
-However, associating additional metadata from this layer relies on additional
-functionality which requires an r51p0 or later driver version.
+The first Arm GPU driver integration with Android Perfetto render stages
+tracing is in the r47p0 driver version. However, associating metadata from
+this layer with Perfetto trace events requires a newer r51p0 or later driver
+version, although some hardware vendors have backported this functionality
+to an r49p1-based driver.
+
+## How do I use the layer?
+
+### Prerequisites
+
+Device setup steps:
+
+* Ensure your Android device is in developer mode, with `adb` support enabled
+  in developer settings.
+* Ensure the Android device is connected to your development workstation, and
+  visible to `adb` with an authorized debug connection.
+
+Application setup steps:
+
+* Build a debuggable build of your application and install it on the Android
+  device.
+
+Tooling setup steps
+
+* Install the Android platform tools and ensure `adb` is on your `PATH`
+  environment variable.
+* Install the Android NDK and set the `ANDROID_NDK_HOME` environment variable
+  to its installation path.
+* The viewer uses PyGTK, and requires the native GTK3 libraries and PyGTK to be
+  installed. GTK installation instructions can be found on the official GTK
+  website:
+  https://www.gtk.org/docs/installations/
+
+### Layer build
+
+Build the Timeline layer for Android using the provided build script, or using
+equivalent manual commands, from the `layer_gpu_timeline` directory.
+
+### Layer run
+
+Capture a Timeline capture using the Android helper utility from the root
+directory. Run the following script to install the layer and auto-start
+the application under test:
+
+```sh
+python3 lgl_android_install.py --layer layer_gpu_timeline --timeline-perfetto <out.perfetto> --timeline-metadata <out.metadata> --auto-start
+```
+
+When the test has finished, press any key in the terminal to prompt the script
+to remove the layer from the device and save the data files to the specified
+host paths.
+
+## Timeline visualization
+
+This project includes an experimental Python viewer which can parse and
+visualize the data in the two data files captured earlier.
+
+Run the following command to start the tool:
+
+```sh
+python3 lgl_mali_timeline_viewer.py <out.perfetto> <out.meta>
+```
+
+Once the tool has loaded the data select "Views > Timeline" in the menu bar to
+open the visualization. **Note:** The Python tool is relatively slow at parsing
+the trace files, but once loaded the viewer is relatively fast.
+
+### Event content
+
+Event boxes show:
+
+* The user debug label associated with the workload.
+* The dimensions of the workload.
+* The number of draw calls in a render pass.
+* The color attachments with loadOp and storeOp usage highlighted.
+
+### Controls
+
+The viewer consists of two main areas - the Timeline canvas that shows the
+events, and the Information panel that can show a summary of the current
+active events and time range.
+
+Navigation uses the mouse:
+
+* Zoom: Mouse wheel.
+* Pan: Middle mouse button, hold and drag.
+
+Selecting active events:
+
+* Select event:
+  * Left click to select/deselect
+  * Shift + Left click to add to selection
+  * Left click and drag to select multiple selection
+* Select by group:
+  * Right click on an event, and use context menu
+* Clear selection:
+  * Right click on a blank space on the canvas, and use context menu
+
+Selecting an active time range:
+
+* Set start time:
+  * Left click on the action bar
+* Set end time:
+  * Right click on the action bar
+* Clear time:
+  * Right click on a blank space on the canvas, and use context menu
 
 ## What workloads are supported?
 
@@ -98,4 +206,4 @@ stack at that point in the command stream.
 
 - - -
 
-_Copyright © 2024, Arm Limited and contributors._
+_Copyright © 2024-2025, Arm Limited and contributors._

@@ -409,6 +409,38 @@ class TimelineView(View):
                     'Submit', stime, etime, style, '', '', submit)
                 channel.add_object(draw)
 
+        # Add presents
+        seen_submits = set()
+        seen_presents = set()
+        channel = trace.get_channel('Submit')
+        for name, stream in trace_data.streams.items():
+
+            for event in stream:
+
+                # Skip if no submit, or we've already processed it
+                if not event.submit or event.submit in seen_submits:
+                    continue
+
+                submit = event.submit
+
+                # Skip if no present, or we've already processed it
+                if not submit.present or submit.present in seen_presents:
+                    continue
+
+                present = submit.present
+
+                seen_submits.add(submit)
+                seen_presents.add(present)
+
+                stime = present.start_time
+                etime = stime + 50
+
+                workload = 'window'
+                style = self.timeline_styles.get_style('Submit', 0, workload)
+                draw = TLSpec.get_box(
+                    'Submit', stime, etime, style, '', '', submit)
+                channel.add_object(draw)
+
         # Add scheduling channels
         for name, stream in trace_data.streams.items():
             name = name.get_ui_name(name)
