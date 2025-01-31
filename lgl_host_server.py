@@ -96,7 +96,7 @@ def main() -> int:
     print(f'  - [{endpoint_id}] = {service.get_service_name()}')
 
     if args.timeline:
-        service = service_gpu_timeline.GPUTimelineService(args.timeline)
+        service = service_gpu_timeline.GPUTimelineService(args.timeline, True)
         endpoint_id = svr.register_endpoint(service)
         print(f'  - [{endpoint_id}] = {service.get_service_name()}')
 

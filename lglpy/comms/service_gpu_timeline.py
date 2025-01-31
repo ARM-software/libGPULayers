@@ -56,12 +56,13 @@ class GPUTimelineService:
     A service for handling network comms from the layer_gpu_timeline layer.
     '''
 
-    def __init__(self, file_path: str):
+    def __init__(self, file_path: str, verbose: bool = False):
         '''
         Initialize the timeline service.
 
         Args:
             file_path: File to write on the filesystem
+            verbose: Should this use verbose logging?
 
         Returns:
             The endpoint name.
@@ -74,6 +75,7 @@ class GPUTimelineService:
 
         # pylint: disable=consider-using-with
         self.file_handle = open(file_path, 'wb')
+        self.verbose = verbose
 
     def get_service_name(self) -> str:
         '''
@@ -96,8 +98,9 @@ class GPUTimelineService:
         minor = msg["driverMinor"]
         patch = msg["driverPatch"]
 
-        print(f'Device: {msg["deviceName"]}')
-        print(f'Driver: r{major}p{minor} ({patch})')
+        if self.verbose:
+            print(f'Device: {msg["deviceName"]}')
+            print(f'Driver: r{major}p{minor} ({patch})')
 
     def handle_frame(self, msg: Any) -> None:
         '''
@@ -123,7 +126,7 @@ class GPUTimelineService:
             'submits': []
         }
 
-        if next_frame % 100 == 0:
+        if self.verbose and (next_frame % 100 == 0):
             print(f'Starting frame {next_frame} ...')
 
     def handle_submit(self, msg: Any) -> None:
