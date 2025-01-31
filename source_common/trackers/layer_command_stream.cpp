@@ -45,6 +45,15 @@ LCSWorkload::LCSWorkload(
 }
 
 /* See header for details. */
+LCSRenderPassBase::LCSRenderPassBase(
+    uint64_t _tagID,
+    bool _suspending
+) : LCSWorkload(_tagID),
+    suspending(_suspending)
+{
+}
+
+/* See header for details. */
 LCSRenderPass::LCSRenderPass(
     uint64_t _tagID,
     const RenderPass& renderPass,
@@ -53,10 +62,9 @@ LCSRenderPass::LCSRenderPass(
     bool _suspending,
     bool _oneTimeSubmit
 ) :
-    LCSWorkload(_tagID),
+    LCSRenderPassBase(_tagID, _suspending),
     width(_width),
     height(_height),
-    suspending(_suspending),
     oneTimeSubmit(_oneTimeSubmit)
 {
     // Copy these as the render pass object may be transient.
@@ -65,7 +73,7 @@ LCSRenderPass::LCSRenderPass(
 }
 
 /* See header for details. */
-std::string LCSRenderPass::getBeginMetadata(
+std::string LCSRenderPass::getMetadata(
      const std::vector<std::string> & debugLabel) const
 {
     // Draw count for a multi-submit command buffer cannot be reliably
@@ -130,7 +138,7 @@ std::string LCSRenderPass::getBeginMetadata(
 }
 
 /* See header for details. */
-std::string LCSRenderPass::getContinuationMetadata(
+std::string LCSRenderPassContinuation::getMetadata(
     uint64_t tagIDContinuation) const
 {
     json metadata = {
