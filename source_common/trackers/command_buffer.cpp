@@ -73,28 +73,44 @@ uint64_t CommandBuffer::renderPassBegin(const RenderPass& renderPass,
                                         bool resuming,
                                         bool suspending)
 {
-    uint64_t tagID {0};
-
     assert(!currentRenderPass);
 
-    // Assign ID and update the stats tracker for new render passes only
-    if (!resuming)
-    {
-        tagID = Tracker::LCSWorkload::assignTagID();
-        stats.incRenderPassCount();
-    }
-
-    // Populate render pass with config information
+    // Record the current draw call count so that the delta can be computed at
+    // the end of the renderpass; this gives the number of draw calls in that pass
     renderPassStartDrawCount = stats.getDrawCallCount();
 
-    auto workload = std::make_shared<LCSRenderPass>(tagID, renderPass, width, height, suspending, oneTimeSubmit);
+    // Create the workload object and populate with config information
+    if (!resuming)
+    {
+        // Assign ID and update the stats tracker for new render passes only
+        const auto tagID = Tracker::LCSWorkload::assignTagID();
+        stats.incRenderPassCount();
 
-    currentRenderPass = workload;
+        // Create a new renderpass object
+        const auto workload =
+            std::make_shared<LCSRenderPass>(tagID, renderPass, width, height, suspending, oneTimeSubmit);
 
-    // Add a command to the layer-side command stream
-    workloadCommandStream.emplace_back(LCSInstructionWorkload(workload));
+        // Track the workload as it will be modified at the end of the renderpass
+        currentRenderPass = workload;
 
-    return tagID;
+        // Add a command to the layer-side command stream
+        workloadCommandStream.emplace_back(LCSInstructionWorkload(workload));
+
+        return tagID;
+    }
+    else
+    {
+        // Create a renderpass continuation object
+        const auto workload = std::make_shared<LCSRenderPassContinuation>(suspending);
+
+        // Track the workload as it will be modified at the end of the renderpass
+        currentRenderPass = workload;
+
+        // Add a command to the layer-side command stream
+        workloadCommandStream.emplace_back(LCSInstructionWorkload(workload));
+
+        return 0;
+    }
 }
 
 /* See header for documentation. */

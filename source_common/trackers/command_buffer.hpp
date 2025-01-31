@@ -200,7 +200,7 @@ private:
     /**
      * @brief The current render pass if we are in one.
      */
-    std::shared_ptr<LCSRenderPass> currentRenderPass;
+    std::shared_ptr<LCSRenderPassBase> currentRenderPass;
 
     /**
      * @brief The recorded commands.
