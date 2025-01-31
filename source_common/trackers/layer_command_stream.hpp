@@ -39,6 +39,7 @@
 #pragma once
 
 #include <atomic>
+#include <cstdint>
 #include <memory>
 #include <string>
 #include <type_traits>
@@ -129,6 +130,9 @@ public:
         drawCallCount = count;
     }
 
+    /** @return The number of draw calls in this renderpass */
+    uint64_t getDrawCallCount() const { return drawCallCount; }
+
 protected:
 
     /**
@@ -179,13 +183,20 @@ public:
         bool suspending,
         bool oneTimeSubmit);
 
-    /**
-     * @brief Get the metadata for this render pass workload.
-     *
-     * @param debugLabel   The debug label stack of the VkQueue at submit time.
-     */
-    std::string getMetadata(
-        const std::vector<std::string> & debugLabel) const;
+    /** @return The width of the renderpass in pixels */
+    uint32_t getWidth() const { return width; }
+
+    /** @return The height of the renderpass in pixels */
+    uint32_t getHeight() const { return height; }
+
+    /** @return The number of subpasses */
+    uint32_t getSubpassCount() const { return subpassCount; }
+
+    /** @return True if it is a one-time submit renderpass */
+    bool isOneTimeSubmit() const { return oneTimeSubmit; }
+
+    /** @return The list of attachments */
+    std::vector<RenderPassAttachment> const & getAttachments() const { return attachments; }
 
 private:
 
@@ -231,14 +242,6 @@ public:
     : LCSRenderPassBase(0, _suspending)
     {
     }
-
-    /**
-     * @brief Get the metadata for this render pass continuation workload.
-     *
-     * @param tagIDContinuation   The ID of the workload if this is a continuation of it.
-     */
-    std::string getMetadata(
-        uint64_t tagIDContinuation) const;
 };
 
 /**
@@ -263,13 +266,14 @@ public:
         int64_t yGroups,
         int64_t zGroups);
 
-    /**
-     * @brief Get the metadata for this workload
-     *
-     * @param debugLabel          The debug label stack for the VkQueue at submit time.
-     */
-    std::string getMetadata(
-        const std::vector<std::string> & debugLabel) const;
+    /** @return The number of work groups in the X dimension, or -1 if unknown. */
+    int64_t getXGroups() const { return xGroups; }
+
+    /** @return The number of work groups in the y dimension, or -1 if unknown. */
+    int64_t getYGroups() const { return yGroups; }
+
+    /** @return The number of work groups in the z dimension, or -1 if unknown. */
+    int64_t getZGroups() const { return zGroups; }
 
 private:
     /**
@@ -310,13 +314,14 @@ public:
         int64_t yItems,
         int64_t zItems);
 
-    /**
-     * @brief Get the metadata for this workload
-     *
-     * @param debugLabel          The debug label stack for the VkQueue at submit time.
-     */
-    std::string getMetadata(
-        const std::vector<std::string> & debugLabel) const;
+    /** @return The number of work items in the X dimension, or -1 if unknown. */
+    int64_t getXItems() const { return xItems; }
+
+    /** @return The number of work items in the y dimension, or -1 if unknown. */
+    int64_t getYItems() const { return yItems; }
+
+    /** @return The number of work items in the z dimension, or -1 if unknown. */
+    int64_t getZItems() const { return zItems; }
 
 private:
     /**
@@ -355,13 +360,11 @@ public:
         const std::string& transferType,
         int64_t pixelCount);
 
-    /**
-     * @brief Get the metadata for this workload
-     *
-     * @param debugLabel          The debug label stack for the VkQueue at submit time.
-     */
-    std::string getMetadata(
-        const std::vector<std::string> & debugLabel) const;
+    /** @return The subtype of the transfer */
+    std::string const & getTransferType() const { return transferType; }
+
+    /** @return The size of the transfer, in pixels */
+    int64_t getPixelCount() const { return pixelCount; }
 
 private:
     /**
@@ -396,13 +399,11 @@ public:
         const std::string& transferType,
         int64_t byteCount);
 
-    /**
-     * @brief Get the metadata for this workload
-     *
-     * @param debugLabel          The debug label stack for the VkQueue at submit time.
-     */
-    std::string getMetadata(
-        const std::vector<std::string> & debugLabel) const;
+    /** @return The subtype of the transfer */
+    std::string const & getTransferType() const { return transferType; }
+
+    /** @return The size of the transfer, in bytes */
+    int64_t getByteCount() const { return byteCount; }
 
 private:
     /**
