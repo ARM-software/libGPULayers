@@ -39,13 +39,11 @@
 #pragma once
 
 #include "trackers/render_pass.hpp"
-#include "utils/misc.hpp"
 
 #include <atomic>
 #include <memory>
 #include <string>
 #include <type_traits>
-#include <utility>
 #include <variant>
 #include <vector>
 
@@ -102,9 +100,52 @@ private:
 };
 
 /**
+ * @brief Common base class for classes representing render pass workload in the command stream.
+ */
+class LCSRenderPassBase : public LCSWorkload
+{
+public:
+    /**
+     * @brief Is this a suspending render pass?
+     *
+     * @return @c true if this instance suspends rather than ends.
+     */
+    bool isSuspending() const { return suspending; }
+
+    /**
+     * @brief Update this workload with the final draw count.
+     *
+     * @param count   The number of draw calls tracked by the command buffer.
+     */
+    void setDrawCallCount(uint64_t count) { drawCallCount = count; }
+
+protected:
+    /**
+     * @brief The number of draw calls in the render pass.
+     *
+     * Note: This is updated by ther command buffer tracker when the render
+     * pass is suspended or ended.
+     */
+    uint64_t drawCallCount {0};
+
+    /**
+     * @brief Is this workload suspending rather than ending?
+     */
+    bool suspending;
+
+    /**
+     * @brief Construct the common renderbase workload
+     *
+     * @param tagID           The assigned tagID.
+     * @param suspending      Is this a render pass part that suspends later?
+     */
+    LCSRenderPassBase(uint64_t tagID, bool suspending);
+};
+
+/**
  * @brief Class representing a render pass workload in the command stream.
  */
-class LCSRenderPass : public LCSWorkload
+class LCSRenderPass : public LCSRenderPassBase
 {
 public:
     /**
@@ -125,34 +166,18 @@ public:
                   bool oneTimeSubmit);
 
     /**
-     * @brief Is this a suspending render pass?
-     *
-     * @return @c true if this instance suspends rather than ends.
-     */
-    bool isSuspending() const { return suspending; };
-
-    /**
-     * @brief Update this workload with the final draw count.
-     *
-     * @param count   The number of draw calls tracked by the command buffer.
-     */
-    void setDrawCallCount(uint64_t count) { drawCallCount = count; };
-
-    /**
-     * @brief Get the metadata for this workload if beginning a new render pass.
+     * @brief Get the metadata for this render pass workload.
      *
      * @param debugLabel   The debug label stack of the VkQueue at submit time.
      */
-    std::string getBeginMetadata(const std::vector<std::string>& debugLabel) const;
-
-    /**
-     * @brief Get the metadata for this workload if continuing an existing render pass.
-     *
-     * @param tagIDContinuation   The ID of the workload if this is a continuation of it.
-     */
-    std::string getContinuationMetadata(uint64_t tagIDContinuation) const;
+    std::string getMetadata(const std::vector<std::string>& debugLabel) const;
 
 private:
+    /**
+     * @brief The attachments for this render pass.
+     */
+    std::vector<RenderPassAttachment> attachments;
+
     /**
      * @brief Width of this workload, in pixels.
      */
@@ -164,32 +189,38 @@ private:
     uint32_t height;
 
     /**
-     * @brief Is this workload suspending rather than ending?
-     */
-    bool suspending;
-
-    /**
-     * @brief Is this workload in a one-time-submit command buffer?
-     */
-    bool oneTimeSubmit;
-
-    /**
      * @brief The number of subpasses in the render pass.
      */
     uint32_t subpassCount;
 
     /**
-     * @brief The number of draw calls in the render pass.
-     *
-     * Note: This is updated by ther command buffer tracker when the render
-     * pass is suspended or ended.
+     * @brief Is this workload in a one-time-submit command buffer?
      */
-    uint64_t drawCallCount {0};
+    bool oneTimeSubmit;
+};
+
+/**
+ * @brief Class representing the continuation of a split render pass workload continuation in the command stream.
+ */
+class LCSRenderPassContinuation : public LCSRenderPassBase
+{
+public:
+    /**
+     * @brief Create a new workload representing a split render pass.
+     *
+     * @param _suspending      Is this a render pass part that suspends later?
+     */
+    LCSRenderPassContinuation(bool _suspending)
+        : LCSRenderPassBase(0, _suspending)
+    {
+    }
 
     /**
-     * @brief The attachments for this render pass.
+     * @brief Get the metadata for this render pass continuation workload.
+     *
+     * @param tagIDContinuation   The ID of the workload if this is a continuation of it.
      */
-    std::vector<RenderPassAttachment> attachments;
+    std::string getMetadata(uint64_t tagIDContinuation) const;
 };
 
 /**
@@ -432,6 +463,8 @@ using LCSInstruction = std::variant<
     LCSInstructionMarkerPop,
     // the instruction represents a renderpass workload operation
     LCSInstructionWorkload<LCSRenderPass>,
+    // the instruction represents a continuation of a renderpass workload operation
+    LCSInstructionWorkload<LCSRenderPassContinuation>,
     // the instruction represents a dispatch workload operation
     LCSInstructionWorkload<LCSDispatch>,
     // the instruction represents a trace rays workload operation

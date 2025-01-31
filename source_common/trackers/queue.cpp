@@ -90,26 +90,34 @@ namespace
             const auto tagID = workload.getTagID();
 
             // Workload is a new render pass
-            if (tagID > 0)
-            {
-                assert(queueState.lastRenderPassTagID == 0);
-                callback(workload.getBeginMetadata(queueState.debugStack));
+            assert(tagID > 0);
+            assert(queueState.lastRenderPassTagID == 0);
 
-                queueState.lastRenderPassTagID = 0;
-                if (workload.isSuspending())
-                {
-                    queueState.lastRenderPassTagID = tagID;
-                }
-            }
-            // Workload is a continuation
-            else
+            callback(workload.getMetadata(queueState.debugStack));
+
+            queueState.lastRenderPassTagID = (workload.isSuspending() ? tagID : 0);
+        }
+
+        /**
+         * @brief Visit a renderpass continuation workload instruction
+         *
+         * @param instruction The workload instruction
+         */
+        void operator()(const LCSInstructionWorkload<LCSRenderPassContinuation>& instruction)
+        {
+            const auto& workload = instruction.getWorkload();
+            const auto tagID = workload.getTagID();
+
+            UNUSED(tagID); // other than for the assert
+
+            assert(tagID == 0);
+            assert(queueState.lastRenderPassTagID != 0);
+
+            callback(workload.getMetadata(queueState.lastRenderPassTagID));
+
+            if (!workload.isSuspending())
             {
-                assert(queueState.lastRenderPassTagID != 0);
-                callback(workload.getContinuationMetadata(queueState.lastRenderPassTagID));
-                if (!workload.isSuspending())
-                {
-                    queueState.lastRenderPassTagID = 0;
-                }
+                queueState.lastRenderPassTagID = 0;
             }
         }
 
