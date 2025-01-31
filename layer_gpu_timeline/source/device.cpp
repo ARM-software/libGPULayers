@@ -28,6 +28,7 @@
 #include <fstream>
 #include <nlohmann/json.hpp>
 #include <sys/stat.h>
+#include <unistd.h>
 #include <vector>
 
 #include "comms/comms_module.hpp"
@@ -129,8 +130,12 @@ Device::Device(
     uint32_t minor = VK_VERSION_MINOR(driverVersion);
     uint32_t patch = VK_VERSION_PATCH(driverVersion);
 
+    pid_t processPID = getpid();
+
     json deviceMetadata {
         { "type", "device" },
+        { "pid", static_cast<uint32_t>(processPID) },
+        { "device", reinterpret_cast<uintptr_t>(device) },
         { "deviceName", name },
         { "driverMajor", major },
         { "driverMinor", minor },
