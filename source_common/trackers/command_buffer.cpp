@@ -25,7 +25,6 @@
 
 #include "trackers/command_buffer.hpp"
 
-#include "framework/utils.hpp"
 #include "utils/misc.hpp"
 
 #include <cassert>
@@ -44,7 +43,6 @@ void CommandBuffer::reset()
 {
     oneTimeSubmit = false;
     stats.reset();
-    workloads.clear();
     workloadCommandStream.clear();
 }
 
@@ -57,22 +55,15 @@ void CommandBuffer::begin(bool _oneTimeSubmit)
 /* See header for documentation. */
 void CommandBuffer::debugMarkerBegin(std::string marker)
 {
-    // Create a workload we can reference later
-    auto workload = std::make_shared<LCSMarker>(marker);
-    workloads.push_back(workload);
-
     // Add command to update queue debug stack on submit
-    auto instr = std::make_pair(LCSOpcode::MARKER_BEGIN, workload);
-    workloadCommandStream.push_back(instr);
+    workloadCommandStream.emplace_back(LCSInstructionMarkerPush(marker));
 }
 
 /* See header for documentation. */
 void CommandBuffer::debugMarkerEnd()
 {
     // Add command with empty workload to update queue debug stack on submit
-    auto workload = std::shared_ptr<LCSWorkload>();
-    auto instr = std::make_pair(LCSOpcode::MARKER_END, workload);
-    workloadCommandStream.push_back(instr);
+    workloadCommandStream.emplace_back(LCSInstructionMarkerPop());
 }
 
 /* See header for documentation. */
@@ -99,11 +90,9 @@ uint64_t CommandBuffer::renderPassBegin(const RenderPass& renderPass,
     auto workload = std::make_shared<LCSRenderPass>(tagID, renderPass, width, height, suspending, oneTimeSubmit);
 
     currentRenderPass = workload;
-    workloads.push_back(workload);
 
     // Add a command to the layer-side command stream
-    auto instr = std::make_pair(LCSOpcode::RENDER_PASS, workload);
-    workloadCommandStream.push_back(instr);
+    workloadCommandStream.emplace_back(LCSInstructionWorkload(workload));
 
     return tagID;
 }
@@ -133,11 +122,9 @@ uint64_t CommandBuffer::dispatch(int64_t xGroups, int64_t yGroups, int64_t zGrou
 
     // Add a workload to the render pass
     auto workload = std::make_shared<LCSDispatch>(tagID, xGroups, yGroups, zGroups);
-    workloads.push_back(workload);
 
     // Add a command to the layer-side command stream
-    auto instr = std::make_pair(LCSOpcode::DISPATCH, workload);
-    workloadCommandStream.push_back(instr);
+    workloadCommandStream.emplace_back(LCSInstructionWorkload(workload));
 
     return tagID;
 }
@@ -150,11 +137,9 @@ uint64_t CommandBuffer::traceRays(int64_t xItems, int64_t yItems, int64_t zItems
 
     // Add a workload to the render pass
     auto workload = std::make_shared<LCSTraceRays>(tagID, xItems, yItems, zItems);
-    workloads.push_back(workload);
 
     // Add a command to the layer-side command stream
-    auto instr = std::make_pair(LCSOpcode::TRACE_RAYS, workload);
-    workloadCommandStream.push_back(instr);
+    workloadCommandStream.emplace_back(LCSInstructionWorkload(workload));
 
     return tagID;
 }
@@ -167,11 +152,9 @@ uint64_t CommandBuffer::imageTransfer(const std::string& transferType, int64_t p
 
     // Add a workload to the render pass
     auto workload = std::make_shared<LCSImageTransfer>(tagID, transferType, pixelCount);
-    workloads.push_back(workload);
 
     // Add a command to the layer-side command stream
-    auto instr = std::make_pair(LCSOpcode::IMAGE_TRANSFER, workload);
-    workloadCommandStream.push_back(instr);
+    workloadCommandStream.emplace_back(LCSInstructionWorkload(workload));
 
     return tagID;
 }
@@ -184,11 +167,9 @@ uint64_t CommandBuffer::bufferTransfer(const std::string& transferType, int64_t 
 
     // Add a workload to the render pass
     auto workload = std::make_shared<LCSBufferTransfer>(tagID, transferType, byteCount);
-    workloads.push_back(workload);
 
     // Add a command to the layer-side command stream
-    auto instr = std::make_pair(LCSOpcode::BUFFER_TRANSFER, workload);
-    workloadCommandStream.push_back(instr);
+    workloadCommandStream.emplace_back(LCSInstructionWorkload(workload));
 
     return tagID;
 }
@@ -200,7 +181,6 @@ void CommandBuffer::executeCommands(CommandBuffer& secondary)
     stats.mergeCounts(secondary.getStats());
 
     // Integrate secondary layer commands
-    vecAppend(workloads, secondary.workloads);
     vecAppend(workloadCommandStream, secondary.workloadCommandStream);
 }
 
