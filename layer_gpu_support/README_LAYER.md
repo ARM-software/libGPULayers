@@ -39,7 +39,7 @@ Tooling setup steps
 Build the Support layer for Android using the provided build script, or using
 equivalent manual commands, from the `layer_gpu_support` directory.
 
-##= Running using the layer
+### Running using the layer
 
 This layer requires you to provide a configuration file that specifies the
 overrides to apply. Details of the configuration options in each override
