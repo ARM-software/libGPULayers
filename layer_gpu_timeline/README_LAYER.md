@@ -5,7 +5,7 @@ workloads on to the GPU hardware. The layer provides additional semantic
 annotation, extending the scheduling data from the Android Perfetto render
 stages telemetry with useful API-aware context.
 
-![Timeline visualization](./docs/viewer.png?raw=true)
+![Timeline visualization](./docs/viewer.png)
 
 Visualizations generated using this tooling show the execution of each workload
 event, grouping events by the hardware scheduling stream used. These streams
