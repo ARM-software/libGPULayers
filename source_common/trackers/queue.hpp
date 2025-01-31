@@ -41,7 +41,7 @@
 
 #pragma once
 
-#include <functional>
+#include <cstdint>
 #include <string>
 #include <vector>
 #include <vulkan/vulkan.h>
@@ -50,6 +50,66 @@
 
 namespace Tracker
 {
+/**
+ * @brief Represents the interface to some workload visitor that can be passed to Queue::runSubmitCommandStream
+ * and which will be called once per item within the submitted command stream for that queue.
+ */
+class SubmitCommandWorkloadVisitor
+{
+public:
+    /** @brief Destructor for the visitor */
+    virtual ~SubmitCommandWorkloadVisitor() noexcept = default;
+
+    /**
+     * @brief Visit a renderpass workload object
+     *
+     * @param renderpass The renderpass
+     * @param debugStack The stack of debug labels that are associated with this renderpass
+     */
+    virtual void operator()(LCSRenderPass const & renderpass, std::vector<std::string> const & debugStack) = 0;
+
+    /**
+     * @brief Visit a renderpass continuation workload object
+     *
+     * @param continuation The renderpass continuation
+     * @param debugStack The stack of debug labels that are associated with this renderpass
+     * @param renderpassTagID The renderpass tag that the continuation was associated with
+     */
+    virtual void operator()(LCSRenderPassContinuation const & continuation, std::vector<std::string> const & debugStack, uint64_t renderpassTagID) = 0;
+
+    /**
+     * @brief Visit a dispatch workload object
+     *
+     * @param dispatch The dispatch
+     * @param debugStack The stack of debug labels that are associated with this dispatch
+     */
+    virtual void operator()(LCSDispatch const & dispatch, std::vector<std::string> const & debugStack) = 0;
+
+    /**
+     * @brief Visit a trace rays workload object
+     *
+     * @param traceRays The trace rays
+     * @param debugStack The stack of debug labels that are associated with this trace rays
+     */
+    virtual void operator()(LCSTraceRays const & traceRays, std::vector<std::string> const & debugStack) = 0;
+
+    /**
+     * @brief Visit an image transfer workload object
+     *
+     * @param imageTransfer The image transfer
+     * @param debugStack The stack of debug labels that are associated with this image transfer
+     */
+    virtual void operator()(LCSImageTransfer const & imageTransfer, std::vector<std::string> const & debugStack) = 0;
+
+    /**
+     * @brief Visit a buffer transfer workload object
+     *
+     * @param bufferTransfer The buffer transfer
+     * @param debugStack The stack of debug labels that are associated with this buffer transfer
+     */
+    virtual void operator()(LCSBufferTransfer const & bufferTransfer, std::vector<std::string> const & debugStack) = 0;
+};
+
 /**
  * Metadata tracked by the queue when it emits commands, that can be
  * shared with the LCSInstruction visitor object during instruction processing
@@ -91,12 +151,12 @@ public:
     /**
      * @brief Execute a layer command stream.
      *
-     * @param stream     The layer command stream to execute.
-     * @param callback   The callback to pass submitted workloads to.
+     * @param stream            The layer command stream to execute.
+     * @param workload_visitor  The visitor to pass submitted workloads to.
      */
     void runSubmitCommandStream(
         const std::vector<LCSInstruction>& stream,
-        std::function<void(const std::string&)> callback);
+        SubmitCommandWorkloadVisitor & workload_visitor);
 
 private:
     QueueState state;

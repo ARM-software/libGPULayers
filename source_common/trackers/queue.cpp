@@ -44,9 +44,9 @@ class SubmitCommandInstructionVisitor {
 public:
     SubmitCommandInstructionVisitor(
         QueueState & _queueState,
-        std::function<void(const std::string&)> _callback)
+        SubmitCommandWorkloadVisitor & _workload_visitor)
     :   queueState(_queueState),
-        callback(_callback)
+        workload_visitor(_workload_visitor)
     {
 
     }
@@ -94,7 +94,7 @@ public:
         assert(tagID > 0);
         assert(queueState.lastRenderPassTagID == 0);
 
-        callback(workload.getMetadata(queueState.debugStack));
+        workload_visitor(workload, queueState.debugStack);
 
         queueState.lastRenderPassTagID = (workload.isSuspending()
             ? tagID
@@ -116,7 +116,7 @@ public:
         assert(tagID == 0);
         assert(queueState.lastRenderPassTagID != 0);
 
-        callback(workload.getMetadata(queueState.lastRenderPassTagID));
+        workload_visitor(workload, queueState.debugStack, queueState.lastRenderPassTagID);
 
         if (!workload.isSuspending())
         {
@@ -140,12 +140,12 @@ public:
     {
         auto const & workload = instruction.getWorkload();
 
-        callback(workload.getMetadata(queueState.debugStack));
+        workload_visitor(workload, queueState.debugStack);
     }
 
 private:
     QueueState & queueState;
-    std::function<void(const std::string&)> callback;
+    SubmitCommandWorkloadVisitor & workload_visitor;
 };
 
 }
@@ -157,19 +157,18 @@ Queue::Queue(
 ):
     state(_handle)
 {
-
-};
+}
 
 /* See header for details. */
 void Queue::runSubmitCommandStream(
     const std::vector<LCSInstruction>& stream,
-    std::function<void(const std::string&)> callback
+    SubmitCommandWorkloadVisitor & workload_visitor
 ) {
-    SubmitCommandInstructionVisitor visitor { state, callback };
+    SubmitCommandInstructionVisitor instruction_visitor { state, workload_visitor };
 
     for (auto& instr: stream)
     {
-        std::visit(visitor, instr);
+        std::visit(instruction_visitor, instr);
     }
 }
 
