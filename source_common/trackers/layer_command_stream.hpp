@@ -41,7 +41,9 @@
 #include <atomic>
 #include <memory>
 #include <string>
+#include <type_traits>
 #include <utility>
+#include <variant>
 #include <vector>
 #include <vulkan/vulkan.h>
 
@@ -50,50 +52,12 @@
 
 namespace Tracker
 {
-
-/**
- * @brief Enumeration of layer command stream opcodes.
- */
-enum class LCSOpcode
-{
-    MARKER_BEGIN,
-    MARKER_END,
-    RENDER_PASS,
-    DISPATCH,
-    TRACE_RAYS,
-    BUFFER_TRANSFER,
-    IMAGE_TRANSFER
-};
-
 /**
  * @brief Base class representing a GPU workload in the command stream.
  */
 class LCSWorkload
 {
 public:
-    /**
-     * @brief Create a new workload.
-     *
-     * @param tagID   The assigned tagID.
-     */
-    LCSWorkload(
-        uint64_t tagID);
-
-    /**
-     * @brief Destroy a workload.
-     */
-    virtual ~LCSWorkload() = default;
-
-    /**
-     * @brief Get the metadata for this workload
-     *
-     * @param debugLabel          The debug label stack for the VkQueue at submit time.
-     * @param tagIDContinuation   The ID of the workload if this is a continuation of it.
-     */
-    virtual std::string getMetadata(
-        const std::vector<std::string>* debugLabel=nullptr,
-        uint64_t tagIDContinuation=0) const = 0;
-
     /**
      * @brief Get this workload's tagID.
      *
@@ -121,6 +85,19 @@ protected:
      * Render pass continuations are assigned tagID of zero.
      */
     uint64_t tagID;
+
+    /**
+     * @brief Create a new workload.
+     *
+     * @param tagID   The assigned tagID.
+     */
+    LCSWorkload(
+        uint64_t tagID);
+
+    /**
+     * @brief Destroy a workload; this is protected since we should never really be dealing with workloads in the abstract sense (or at least not deleting them as such)
+     */
+    ~LCSWorkload() noexcept = default;
 
 private:
     /**
@@ -154,11 +131,6 @@ public:
         bool oneTimeSubmit);
 
     /**
-     * @brief Destroy a workload.
-     */
-    virtual ~LCSRenderPass() = default;
-
-    /**
      * @brief Is this a suspending render pass?
      *
      * @return @c true if this instance suspends rather than ends.
@@ -178,29 +150,24 @@ public:
         drawCallCount = count;
     };
 
-    /* See base class for documentation. */
-    virtual std::string getMetadata(
-        const std::vector<std::string>* debugLabel=nullptr,
-        uint64_t tagIDContinuation=0) const;
-
-private:
     /**
      * @brief Get the metadata for this workload if beginning a new render pass.
      *
      * @param debugLabel   The debug label stack of the VkQueue at submit time.
      */
     std::string getBeginMetadata(
-        const std::vector<std::string>* debugLabel=nullptr) const;
+        const std::vector<std::string> & debugLabel) const;
 
     /**
      * @brief Get the metadata for this workload if continuing an existing render pass.
      *
-     * @param debugLabel          The debug label stack of the VkQueue at submit time.
      * @param tagIDContinuation   The ID of the workload if this is a continuation of it.
      */
     std::string getContinuationMetadata(
-        const std::vector<std::string>* debugLabel=nullptr,
-        uint64_t tagIDContinuation=0) const;
+        uint64_t tagIDContinuation) const;
+
+private:
+
 
     /**
      * @brief Width of this workload, in pixels.
@@ -264,14 +231,12 @@ public:
         int64_t zGroups);
 
     /**
-     * @brief Destroy a workload.
+     * @brief Get the metadata for this workload
+     *
+     * @param debugLabel          The debug label stack for the VkQueue at submit time.
      */
-    virtual ~LCSDispatch() = default;
-
-    /* See base class for documentation. */
-    virtual std::string getMetadata(
-        const std::vector<std::string>* debugLabel=nullptr,
-        uint64_t tagIDContinuation=0) const;
+    std::string getMetadata(
+        const std::vector<std::string> & debugLabel) const;
 
 private:
     /**
@@ -313,14 +278,12 @@ public:
         int64_t zItems);
 
     /**
-     * @brief Destroy a workload.
+     * @brief Get the metadata for this workload
+     *
+     * @param debugLabel          The debug label stack for the VkQueue at submit time.
      */
-    virtual ~LCSTraceRays() = default;
-
-    /* See base class for documentation. */
-    virtual std::string getMetadata(
-        const std::vector<std::string>* debugLabel=nullptr,
-        uint64_t tagIDContinuation=0) const;
+    std::string getMetadata(
+        const std::vector<std::string> & debugLabel) const;
 
 private:
     /**
@@ -360,14 +323,12 @@ public:
         int64_t pixelCount);
 
     /**
-     * @brief Destroy a workload.
+     * @brief Get the metadata for this workload
+     *
+     * @param debugLabel          The debug label stack for the VkQueue at submit time.
      */
-    virtual ~LCSImageTransfer() = default;
-
-    /* See base class for documentation. */
-    virtual std::string getMetadata(
-        const std::vector<std::string>* debugLabel=nullptr,
-        uint64_t tagIDContinuation=0) const;
+    std::string getMetadata(
+        const std::vector<std::string> & debugLabel) const;
 
 private:
     /**
@@ -403,14 +364,12 @@ public:
         int64_t byteCount);
 
     /**
-     * @brief Destroy a workload.
+     * @brief Get the metadata for this workload
+     *
+     * @param debugLabel          The debug label stack for the VkQueue at submit time.
      */
-    virtual ~LCSBufferTransfer() = default;
-
-    /* See base class for documentation. */
-    virtual std::string getMetadata(
-        const std::vector<std::string>* debugLabel=nullptr,
-        uint64_t tagIDContinuation=0) const;
+    std::string getMetadata(
+        const std::vector<std::string> & debugLabel) const;
 
 private:
     /**
@@ -425,12 +384,9 @@ private:
 };
 
 /**
- * @brief Class representing a marker workload in the command stream.
- *
- * Note there is no class for a marker end, as is has no payload and can use
- * just the opcode to indicate behavior.
+ * @brief Class representing a marker instruction in the command stream that represents a debug label push operation.
  */
-class LCSMarker : public LCSWorkload
+class LCSInstructionMarkerPush
 {
 public:
     /**
@@ -438,35 +394,91 @@ public:
      *
      * @param label   The application debug label.
      */
-    LCSMarker(
+    LCSInstructionMarkerPush(
         const std::string& label);
 
     /**
-     * @brief Destroy a workload.
+     * @brief Get the stored debug label
+     *
+     * @return The label string
      */
-    virtual ~LCSMarker() = default;
-
-    /* See base class for documentation. */
-    virtual std::string getMetadata(
-        const std::vector<std::string>* debugLabel=nullptr,
-        uint64_t tagIDContinuation=0) const
+    const std::string & getLabel() const
     {
-        UNUSED(debugLabel);
-        UNUSED(tagIDContinuation);
-        return label;
-    };
+        return *label;
+    }
 
 private:
     /**
      * @brief The application debug label.
+     *
+     * The label is stored in a shared point to avoid copying the actual string when it is shared between subcommandbuffers
      */
-    std::string label;
+    std::shared_ptr<std::string> label;
 };
 
 /**
- * @brief Instructions are an opcode with a data pointer.
- *
- * Data pointers may be null for some opcodes.
+ * @brief Class representing a marker instruction in the command stream that represents a debug label pop operation.
  */
-using LCSInstruction = std::pair<LCSOpcode, std::shared_ptr<LCSWorkload>>;
+class LCSInstructionMarkerPop
+{
+    // there are no members, as this type is just a marker within LCSInstruction variant
+};
+
+/**
+ * @brief Class representing a workload instruction in the command stream.
+ */
+template<typename WorkloadType> requires (std::is_base_of_v<LCSWorkload, WorkloadType>)
+class LCSInstructionWorkload
+{
+public:
+    /**
+     * @brief Create a new workload instruction from a pre-made workload pointer.
+     *
+     * @param wrkload The workload object (must not be null)
+     */
+    LCSInstructionWorkload(
+        std::shared_ptr<WorkloadType> wrkload)
+    : workload(std::move(wrkload))
+    {
+    }
+
+    /**
+     * @brief Get the stored workload
+     *
+     * @return The workload
+     */
+    const WorkloadType & getWorkload() const
+    {
+        return *workload;
+    }
+
+private:
+    /**
+     * @brief The stored workload
+     *
+     * The workload is stored in a shared point to avoid copying the actual value when it is shared between subcommandbuffers
+     */
+    std::shared_ptr<WorkloadType> workload;
+};
+
+/**
+ * @brief Instructions are a variant representing the operation.
+ */
+using LCSInstruction = std::variant<
+    // the instruction is a debug-label push operation
+    LCSInstructionMarkerPush,
+    // the instruction is a debug-label pop operation
+    LCSInstructionMarkerPop,
+    // the instruction represents a renderpass workload operation
+    LCSInstructionWorkload<LCSRenderPass>,
+    // the instruction represents a dispatch workload operation
+    LCSInstructionWorkload<LCSDispatch>,
+    // the instruction represents a trace rays workload operation
+    LCSInstructionWorkload<LCSTraceRays>,
+    // the instruction represents an image transfer workload operation
+    LCSInstructionWorkload<LCSImageTransfer>,
+    // the instruction represents a buffer transfer workload operation
+    LCSInstructionWorkload<LCSBufferTransfer>
+>;
+
 }

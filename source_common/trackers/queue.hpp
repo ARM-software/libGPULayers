@@ -41,17 +41,43 @@
 
 #pragma once
 
-#include <atomic>
 #include <functional>
 #include <string>
 #include <vector>
 #include <vulkan/vulkan.h>
 
-#include "framework/utils.hpp"
 #include "trackers/layer_command_stream.hpp"
 
 namespace Tracker
 {
+/**
+ * Metadata tracked by the queue when it emits commands, that can be
+ * shared with the LCSInstruction visitor object during instruction processing
+ */
+struct QueueState
+{
+    /** 
+     * @brief Construct the state object
+     *
+     * @param queue The queue which the state tracks
+     */
+    QueueState(VkQueue queue) : handle(queue) {}
+
+    /**
+     * The handle of the native queue we are wrapping.
+     */
+    VkQueue handle;
+
+    /**
+     * @brief The stack of user debug labels for this queue.
+     */
+    std::vector<std::string> debugStack {};
+
+    /**
+     * @brief The last non-zero render pass tagID submitted.
+     */
+    uint64_t lastRenderPassTagID { 0 };
+};
 
 /**
  * @brief The state tracker for a queue.
@@ -73,20 +99,7 @@ public:
         std::function<void(const std::string&)> callback);
 
 private:
-    /**
-     * The handle of the native queue we are wrapping.
-     */
-    VkQueue handle;
-
-    /**
-     * @brief The stack of user debug labels for this queue.
-     */
-    std::vector<std::string> debugStack;
-
-    /**
-     * @brief The last non-zero render pass tagID submitted.
-     */
-    uint64_t lastRenderPassTagID { 0 };
+    QueueState state;
 };
 
 }

@@ -26,7 +26,6 @@
 #include <cassert>
 
 #include "trackers/command_buffer.hpp"
-#include "framework/utils.hpp"
 #include "utils/misc.hpp"
 
 namespace Tracker
@@ -45,7 +44,6 @@ void CommandBuffer::reset()
 {
     oneTimeSubmit = false;
     stats.reset();
-    workloads.clear();
     workloadCommandStream.clear();
 }
 
@@ -61,22 +59,15 @@ void CommandBuffer::begin(
 void CommandBuffer::debugMarkerBegin(
     std::string marker
 ) {
-    // Create a workload we can reference later
-    auto workload = std::make_shared<LCSMarker>(marker);
-    workloads.push_back(workload);
-
     // Add command to update queue debug stack on submit
-    auto instr = std::make_pair(LCSOpcode::MARKER_BEGIN, workload);
-    workloadCommandStream.push_back(instr);
+    workloadCommandStream.emplace_back(LCSInstructionMarkerPush(marker));
 }
 
 /* See header for documentation. */
 void CommandBuffer::debugMarkerEnd()
 {
     // Add command with empty workload to update queue debug stack on submit
-    auto workload = std::shared_ptr<LCSWorkload>();
-    auto instr = std::make_pair(LCSOpcode::MARKER_END, workload);
-    workloadCommandStream.push_back(instr);
+    workloadCommandStream.emplace_back(LCSInstructionMarkerPop());
 }
 
 /* See header for documentation. */
@@ -105,11 +96,9 @@ uint64_t CommandBuffer::renderPassBegin(
         tagID, renderPass, width, height, suspending, oneTimeSubmit);
 
     currentRenderPass = workload;
-    workloads.push_back(workload);
 
     // Add a command to the layer-side command stream
-    auto instr = std::make_pair(LCSOpcode::RENDER_PASS, workload);
-    workloadCommandStream.push_back(instr);
+    workloadCommandStream.emplace_back(LCSInstructionWorkload(workload));
 
     return tagID;
 }
@@ -143,11 +132,9 @@ uint64_t CommandBuffer::dispatch(
     // Add a workload to the render pass
     auto workload = std::make_shared<LCSDispatch>(
         tagID, xGroups, yGroups, zGroups);
-    workloads.push_back(workload);
 
     // Add a command to the layer-side command stream
-    auto instr = std::make_pair(LCSOpcode::DISPATCH, workload);
-    workloadCommandStream.push_back(instr);
+    workloadCommandStream.emplace_back(LCSInstructionWorkload(workload));
 
     return tagID;
 }
@@ -164,11 +151,9 @@ uint64_t CommandBuffer::traceRays(
     // Add a workload to the render pass
     auto workload = std::make_shared<LCSTraceRays>(
         tagID, xItems, yItems, zItems);
-    workloads.push_back(workload);
 
     // Add a command to the layer-side command stream
-    auto instr = std::make_pair(LCSOpcode::TRACE_RAYS, workload);
-    workloadCommandStream.push_back(instr);
+    workloadCommandStream.emplace_back(LCSInstructionWorkload(workload));
 
     return tagID;
 }
@@ -184,11 +169,9 @@ uint64_t CommandBuffer::imageTransfer(
     // Add a workload to the render pass
     auto workload = std::make_shared<LCSImageTransfer>(
         tagID, transferType, pixelCount);
-    workloads.push_back(workload);
 
     // Add a command to the layer-side command stream
-    auto instr = std::make_pair(LCSOpcode::IMAGE_TRANSFER, workload);
-    workloadCommandStream.push_back(instr);
+    workloadCommandStream.emplace_back(LCSInstructionWorkload(workload));
 
     return tagID;
 }
@@ -204,11 +187,9 @@ uint64_t CommandBuffer::bufferTransfer(
     // Add a workload to the render pass
     auto workload = std::make_shared<LCSBufferTransfer>(
         tagID, transferType, byteCount);
-    workloads.push_back(workload);
 
     // Add a command to the layer-side command stream
-    auto instr = std::make_pair(LCSOpcode::BUFFER_TRANSFER, workload);
-    workloadCommandStream.push_back(instr);
+    workloadCommandStream.emplace_back(LCSInstructionWorkload(workload));
 
     return tagID;
 }
@@ -221,7 +202,6 @@ void CommandBuffer::executeCommands(
     stats.mergeCounts(secondary.getStats());
 
     // Integrate secondary layer commands
-    vecAppend(workloads, secondary.workloads);
     vecAppend(workloadCommandStream, secondary.workloadCommandStream);
 }
 
