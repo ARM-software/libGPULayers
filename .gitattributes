@@ -10,3 +10,6 @@
 *.py text
 *.sh text
 *.txt text
+
+*.png binary
+*.jpg binary
