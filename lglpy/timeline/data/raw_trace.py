@@ -179,6 +179,51 @@ class MetadataAttachments:
         self.attachments.sort(key=lambda x: x.binding)
 
 
+class MetadataPresent:
+    '''
+    Baseclass for a submit.
+
+    Attributes:
+        frame:       The frame index in the application.
+        start_time:  The present submit time.
+    '''
+
+    def __init__(self, frame: int, timestamp: int):
+        '''
+        Construct a new submit event.
+
+        Args:
+            frame: The frame index in the application.
+            timestamp:  The present submit time.
+        '''
+        self.frame = frame
+        self.start_time = timestamp
+
+    def get_frame(self):
+        '''
+        Get the frame of this submit.
+        '''
+        return self.frame
+
+    def get_submit(self):
+        '''
+        Get the submit of this submit.
+        '''
+        return self
+
+    def get_queue(self):
+        '''
+        Get the queue of this submit.
+        '''
+        return ModuleNotFoundError
+
+    def get_workload(self):
+        '''
+        Get the workload of this workload.
+        '''
+        return None
+
+
 class MetadataSubmit:
     '''
     Baseclass for a submit.
@@ -189,15 +234,18 @@ class MetadataSubmit:
         start_time:  The submit time.
     '''
 
-    def __init__(self, frame: int, metadata: JSONType):
+    def __init__(
+            self, frame: int, present: MetadataPresent, metadata: JSONType):
         '''
         Construct a new submit event.
 
         Args:
             frame: The frame index in the application.
+            present: The frame present information for the associated frame.
             metadata: JSON payload from the layer.
         '''
         self.frame = frame
+        self.present = present
         self.queue = int(metadata['queue'])
         self.start_time = int(metadata['timestamp'])
 
@@ -682,10 +730,13 @@ class RawTrace:
                 data = json.loads(bin_data.decode(encoding='utf-8'))
 
                 frame_id = data['frame']
+                present_time = data['presentTimestamp']
+
+                present = MetadataPresent(frame_id, present_time - start_time)
 
                 for submit in data['submits']:
                     # Create metadata with bias to match Perfetto
-                    submeta = MetadataSubmit(frame_id, submit)
+                    submeta = MetadataSubmit(frame_id, present, submit)
                     submeta.start_time -= start_time
 
                     for workload in submit['workloads']:
