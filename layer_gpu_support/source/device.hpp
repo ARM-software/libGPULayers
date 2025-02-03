@@ -52,11 +52,10 @@
 
 #pragma once
 
-#include <vulkan/vk_layer.h>
-
 #include "framework/device_dispatch_table.hpp"
-
 #include "instance.hpp"
+
+#include <vulkan/vk_layer.h>
 
 /**
  * @brief This class implements the layer state tracker for a single device.
@@ -70,9 +69,7 @@ public:
      * @param handle   The dispatchable device handle to use as an indirect key.
      * @param device   The @c Device object to store.
      */
-    static void store(
-        VkDevice handle,
-        std::unique_ptr<Device> device);
+    static void store(VkDevice handle, std::unique_ptr<Device> device);
 
     /**
      * @brief Fetch a device from the global store of dispatchable devices.
@@ -81,8 +78,7 @@ public:
      *
      * @return The layer device context.
      */
-    static Device* retrieve(
-        VkDevice handle);
+    static Device* retrieve(VkDevice handle);
 
     /**
      * @brief Fetch a device from the global store of dispatchable devices.
@@ -91,8 +87,7 @@ public:
      *
      * @return The layer device context.
      */
-    static Device* retrieve(
-        VkQueue handle);
+    static Device* retrieve(VkQueue handle);
 
     /**
      * @brief Fetch a device from the global store of dispatchable devices.
@@ -101,16 +96,14 @@ public:
      *
      * @return The layer device context.
      */
-    static Device* retrieve(
-        VkCommandBuffer handle);
+    static Device* retrieve(VkCommandBuffer handle);
 
     /**
      * @brief Drop a device from the global store of dispatchable devices.
      *
      * @param device   The device to drop.
      */
-    static void destroy(
-        Device* device);
+    static void destroy(Device* device);
 
     /**
      * @brief Create a new layer device object.
@@ -123,12 +116,11 @@ public:
      * @param nlayerGetProcAddress   The vkGetProcAddress function in the driver/next layer down.
      * @param createInfo             The create info used to create the device.
      */
-    Device(
-        Instance* instance,
-        VkPhysicalDevice physicalDevice,
-        VkDevice device,
-        PFN_vkGetDeviceProcAddr nlayerGetProcAddress,
-        const VkDeviceCreateInfo& createInfo);
+    Device(Instance* instance,
+           VkPhysicalDevice physicalDevice,
+           VkDevice device,
+           PFN_vkGetDeviceProcAddr nlayerGetProcAddress,
+           const VkDeviceCreateInfo& createInfo);
 
     /**
      * @brief Destroy this layer device object.
@@ -164,10 +156,10 @@ public:
     /**
      * @brief The timeline sem use for queue serialization.
      */
-    VkSemaphore queueSerializationTimelineSem { nullptr };
+    VkSemaphore queueSerializationTimelineSem {nullptr};
 
     /**
      * @brief The current timeline sem target value the next use waits for.
      */
-    uint64_t queueSerializationTimelineSemCount { 0 };
+    uint64_t queueSerializationTimelineSemCount {0};
 };

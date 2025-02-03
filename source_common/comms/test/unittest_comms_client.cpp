@@ -35,21 +35,19 @@
  * TODO: Get the test server to echo back tx and tx_async messages in a
  * subsequent tx_rx message.
  */
-#include <gtest/gtest.h>
-
 #include "comms/comms_interface.hpp"
 #include "comms/comms_module.hpp"
 
-std::unique_ptr<Comms::MessageData> makeTestPayload(
-    const std::string& str
-) {
+#include <gtest/gtest.h>
+
+std::unique_ptr<Comms::MessageData> makeTestPayload(const std::string& str)
+{
     auto data = std::make_unique<Comms::MessageData>(str.begin(), str.end());
     return data;
 }
 
-std::string decodeTestPayload(
-    std::unique_ptr<Comms::MessageData> data
-) {
+std::string decodeTestPayload(std::unique_ptr<Comms::MessageData> data)
+{
     std::string str(data->begin(), data->end());
     return str;
 }

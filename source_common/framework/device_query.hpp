@@ -30,9 +30,9 @@
 
 #pragma once
 
-#include <vulkan/vulkan.h>
-
 #include "utils/misc.hpp"
+
+#include <vulkan/vulkan.h>
 
 /**
  * Test if VK_KHR_timeline_semaphore (or equivalent core feature) is enabled.
@@ -41,5 +41,4 @@
  *
  * @return @c true if enabled, @c false otherwise.
  */
-bool isEnabledVkKhrTimelineSemaphore(
-    const VkDeviceCreateInfo& createInfo0);
+bool isEnabledVkKhrTimelineSemaphore(const VkDeviceCreateInfo& createInfo0);

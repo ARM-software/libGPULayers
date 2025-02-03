@@ -23,25 +23,22 @@
  * ----------------------------------------------------------------------------
  */
 
-#include <mutex>
-
 #include "device.hpp"
-#include "layer_device_functions.hpp"
+#include "framework/device_dispatch_table.hpp"
+
+#include <mutex>
 
 extern std::mutex g_vulkanLock;
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit<user_tag>(
-    VkQueue queue,
-    uint32_t submitCount,
-    const VkSubmitInfo* pSubmits,
-    VkFence fence
-) {
+VKAPI_ATTR VkResult VKAPI_CALL
+    layer_vkQueueSubmit<user_tag>(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(queue);
 
     // Serialize in the order submits are called
@@ -60,7 +57,7 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit<user_tag>(
         .waitSemaphoreValueCount = 1,
         .pWaitSemaphoreValues = &waitValue,
         .signalSemaphoreValueCount = 1,
-        .pSignalSemaphoreValues = &signalValue
+        .pSignalSemaphoreValues = &signalValue,
     };
 
     VkSubmitInfo submitInfoPre {
@@ -72,7 +69,7 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit<user_tag>(
         .commandBufferCount = 0,
         .pCommandBuffers = 0,
         .signalSemaphoreCount = 0,
-        .pSignalSemaphores = nullptr
+        .pSignalSemaphores = nullptr,
     };
 
     VkSubmitInfo submitInfoPost {
@@ -84,7 +81,7 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit<user_tag>(
         .commandBufferCount = 0,
         .pCommandBuffers = 0,
         .signalSemaphoreCount = 1,
-        .pSignalSemaphores = &(layer->queueSerializationTimelineSem)
+        .pSignalSemaphores = &(layer->queueSerializationTimelineSem),
     };
 
     // Release the lock to call into the driver
@@ -107,16 +104,13 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit<user_tag>(
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit2<user_tag>(
-    VkQueue queue,
-    uint32_t submitCount,
-    const VkSubmitInfo2* pSubmits,
-    VkFence fence
-) {
+VKAPI_ATTR VkResult VKAPI_CALL
+    layer_vkQueueSubmit2<user_tag>(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(queue);
 
     // Serialize in the order submits are called
@@ -133,7 +127,7 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit2<user_tag>(
         .semaphore = layer->queueSerializationTimelineSem,
         .value = waitValue,
         .stageMask = VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-        .deviceIndex = 0
+        .deviceIndex = 0,
     };
 
     VkSemaphoreSubmitInfo timelineInfoPost {
@@ -142,7 +136,7 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit2<user_tag>(
         .semaphore = layer->queueSerializationTimelineSem,
         .value = signalValue,
         .stageMask = VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-        .deviceIndex = 0
+        .deviceIndex = 0,
     };
 
     VkSubmitInfo2 submitInfoPre {
@@ -154,7 +148,7 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit2<user_tag>(
         .commandBufferInfoCount = 0,
         .pCommandBufferInfos = nullptr,
         .signalSemaphoreInfoCount = 0,
-        .pSignalSemaphoreInfos = nullptr
+        .pSignalSemaphoreInfos = nullptr,
     };
 
     VkSubmitInfo2 submitInfoPost {
@@ -166,7 +160,7 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit2<user_tag>(
         .commandBufferInfoCount = 0,
         .pCommandBufferInfos = nullptr,
         .signalSemaphoreInfoCount = 1,
-        .pSignalSemaphoreInfos = &timelineInfoPost
+        .pSignalSemaphoreInfos = &timelineInfoPost,
     };
 
     // Release the lock to call into the driver
@@ -185,21 +179,17 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit2<user_tag>(
     }
 
     return result;
-
 }
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit2KHR<user_tag>(
-    VkQueue queue,
-    uint32_t submitCount,
-    const VkSubmitInfo2* pSubmits,
-    VkFence fence
-) {
+VKAPI_ATTR VkResult VKAPI_CALL
+    layer_vkQueueSubmit2KHR<user_tag>(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(queue);
 
     // Serialize in the order submits are called
@@ -216,7 +206,7 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit2KHR<user_tag>(
         .semaphore = layer->queueSerializationTimelineSem,
         .value = waitValue,
         .stageMask = VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-        .deviceIndex = 0
+        .deviceIndex = 0,
     };
 
     VkSemaphoreSubmitInfo timelineInfoPost {
@@ -225,7 +215,7 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit2KHR<user_tag>(
         .semaphore = layer->queueSerializationTimelineSem,
         .value = signalValue,
         .stageMask = VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-        .deviceIndex = 0
+        .deviceIndex = 0,
     };
 
     VkSubmitInfo2 submitInfoPre {
@@ -237,7 +227,7 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit2KHR<user_tag>(
         .commandBufferInfoCount = 0,
         .pCommandBufferInfos = nullptr,
         .signalSemaphoreInfoCount = 0,
-        .pSignalSemaphoreInfos = nullptr
+        .pSignalSemaphoreInfos = nullptr,
     };
 
     VkSubmitInfo2 submitInfoPost {
@@ -249,7 +239,7 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit2KHR<user_tag>(
         .commandBufferInfoCount = 0,
         .pCommandBufferInfos = nullptr,
         .signalSemaphoreInfoCount = 1,
-        .pSignalSemaphoreInfos = &timelineInfoPost
+        .pSignalSemaphoreInfos = &timelineInfoPost,
     };
 
     // Release the lock to call into the driver

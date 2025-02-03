@@ -23,23 +23,22 @@
  * ----------------------------------------------------------------------------
  */
 
-#include <mutex>
-
 #include "device.hpp"
-#include "layer_device_functions.hpp"
+#include "framework/device_dispatch_table.hpp"
+
+#include <mutex>
 
 extern std::mutex g_vulkanLock;
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDebugMarkerBeginEXT<user_tag>(
-    VkCommandBuffer commandBuffer,
-    const VkDebugMarkerMarkerInfoEXT* pMarkerInfo
-) {
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDebugMarkerBeginEXT<user_tag>(VkCommandBuffer commandBuffer,
+                                                                    const VkDebugMarkerMarkerInfoEXT* pMarkerInfo)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
 
     auto& tracker = layer->getStateTracker();
@@ -55,13 +54,12 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDebugMarkerBeginEXT<user_tag>(
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDebugMarkerEndEXT<user_tag>(
-    VkCommandBuffer commandBuffer
-) {
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDebugMarkerEndEXT<user_tag>(VkCommandBuffer commandBuffer)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
 
     auto& tracker = layer->getStateTracker();
@@ -77,14 +75,13 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDebugMarkerEndEXT<user_tag>(
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginDebugUtilsLabelEXT<user_tag>(
-    VkCommandBuffer commandBuffer,
-    const VkDebugUtilsLabelEXT* pLabelInfo
-) {
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginDebugUtilsLabelEXT<user_tag>(VkCommandBuffer commandBuffer,
+                                                                        const VkDebugUtilsLabelEXT* pLabelInfo)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
 
     auto& tracker = layer->getStateTracker();
@@ -100,13 +97,12 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginDebugUtilsLabelEXT<user_tag>(
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndDebugUtilsLabelEXT<user_tag>(
-    VkCommandBuffer commandBuffer
-) {
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndDebugUtilsLabelEXT<user_tag>(VkCommandBuffer commandBuffer)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
 
     auto& tracker = layer->getStateTracker();

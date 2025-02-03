@@ -43,15 +43,16 @@
 
 #pragma once
 
+#include "trackers/layer_command_stream.hpp"
+#include "trackers/stats.hpp"
+
 #include <memory>
 #include <string>
 #include <unordered_map>
 #include <utility>
 #include <vector>
-#include <vulkan/vulkan.h>
 
-#include "trackers/stats.hpp"
-#include "trackers/layer_command_stream.hpp"
+#include <vulkan/vulkan.h>
 
 namespace Tracker
 {
@@ -67,24 +68,17 @@ public:
      *
      * @param handle   The Vulkan command buffer handle we are tracking.
      */
-    CommandBuffer(
-        VkCommandBuffer handle);
+    CommandBuffer(VkCommandBuffer handle);
 
     /**
      * @brief Get the stats object for this command buffer;
      */
-    Stats& getStats()
-    {
-        return stats;
-    }
+    Stats& getStats() { return stats; }
 
     /**
      * @brief Get the layer submit-time command stream for this command buffer.
      */
-    const std::vector<LCSInstruction>& getSubmitCommandStream() const
-    {
-        return workloadCommandStream;
-    }
+    const std::vector<LCSInstruction>& getSubmitCommandStream() const { return workloadCommandStream; }
 
     /**
      * @brief Begin recording a render pass.
@@ -98,12 +92,11 @@ public:
      * @return Returns the tagID assigned to this workload. Always returns 0
      *         if @c resuming an existing workload.
      */
-    uint64_t renderPassBegin(
-        const RenderPass& renderPass,
-        uint32_t width,
-        uint32_t height,
-        bool resuming=false,
-        bool suspending=false);
+    uint64_t renderPassBegin(const RenderPass& renderPass,
+                             uint32_t width,
+                             uint32_t height,
+                             bool resuming = false,
+                             bool suspending = false);
 
     /**
      * @brief End the current render pass workload recording.
@@ -122,10 +115,7 @@ public:
      *
      * @return Returns the tagID assigned to this workload.
      */
-    uint64_t dispatch(
-        int64_t xGroups,
-        int64_t yGroups,
-        int64_t zGroups);
+    uint64_t dispatch(int64_t xGroups, int64_t yGroups, int64_t zGroups);
 
     /**
      * @brief Capture a trace rays dispatch.
@@ -136,10 +126,7 @@ public:
      *
      * @return Returns the tagID assigned to this workload.
      */
-    uint64_t traceRays(
-        int64_t xItems,
-        int64_t yItems,
-        int64_t zItems);
+    uint64_t traceRays(int64_t xItems, int64_t yItems, int64_t zItems);
 
     /**
      * @brief Capture a transfer where the destination is an image.
@@ -149,9 +136,7 @@ public:
      *
      * @return Returns the tagID assigned to this workload.
      */
-    uint64_t imageTransfer(
-        const std::string& transferType,
-        int64_t pixelCount);
+    uint64_t imageTransfer(const std::string& transferType, int64_t pixelCount);
 
     /**
      * @brief Capture a transfer where the destination is a buffer.
@@ -161,17 +146,14 @@ public:
      *
      * @return Returns the tagID assigned to this workload.
      */
-    uint64_t bufferTransfer(
-        const std::string& transferType,
-        int64_t byteCount);
+    uint64_t bufferTransfer(const std::string& transferType, int64_t byteCount);
 
     /**
      * @brief Begin a user debug marker range.
      *
      * @param marker   The marker label.
      */
-    void debugMarkerBegin(
-        std::string marker);
+    void debugMarkerBegin(std::string marker);
 
     /**
      * @brief End a user debug marker range.
@@ -181,8 +163,7 @@ public:
     /**
      * @brief Execute a secondary command buffer.
      */
-    void executeCommands(
-        CommandBuffer& secondary);
+    void executeCommands(CommandBuffer& secondary);
 
     /**
      * @brief Reset the command buffer back into the @a Initial state.
@@ -194,8 +175,7 @@ public:
      *
      * @param oneTimeSubmit   Is this a one-time submit recording?
      */
-    void begin(
-        bool oneTimeSubmit);
+    void begin(bool oneTimeSubmit);
 
 private:
     /**
@@ -206,12 +186,12 @@ private:
     /**
      * @brief Is this command buffer recording one-time-submit?
      */
-    bool oneTimeSubmit { false };
+    bool oneTimeSubmit {false};
 
     /**
      * @brief The command buffer draw count at the start of the render pass.
      */
-    uint64_t renderPassStartDrawCount { 0 };
+    uint64_t renderPassStartDrawCount {0};
 
     /**
      * @brief The cumulative stats of the commands in this command buffer.
@@ -245,8 +225,7 @@ public:
      *
      * @param handle       The Vulkan pool buffer handle we are wrapping.
      */
-    CommandPool(
-        VkCommandPool handle);
+    CommandPool(VkCommandPool handle);
 
     /**
      * @brief Allocate a command buffer in the pool with the given handle.
@@ -255,16 +234,14 @@ public:
      *
      * \return The layer wrapper object for the command buffer.
      */
-    CommandBuffer& allocateCommandBuffer(
-        VkCommandBuffer commandBuffer);
+    CommandBuffer& allocateCommandBuffer(VkCommandBuffer commandBuffer);
 
     /**
      * @brief Free the command buffer in the pool with the given handle.
      *
      * @param commandBuffer   The Vulkan handle of the command buffer to free.
      */
-    void freeCommandBuffer(
-        VkCommandBuffer commandBuffer);
+    void freeCommandBuffer(VkCommandBuffer commandBuffer);
 
     /**
      * @brief Reset all allocated command buffers into the @a Initial state.
@@ -277,7 +254,7 @@ private:
      */
     const VkCommandPool handle;
 
-   /**
+    /**
      * @brief The command buffers currently allocated in this command pool.
      */
     std::unordered_map<VkCommandBuffer, std::unique_ptr<CommandBuffer>> commandBuffers;

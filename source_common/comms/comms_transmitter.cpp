@@ -27,21 +27,21 @@
  * @file
  * The implementation of the communications module transmitter worker.
  */
-#include <iostream>
-#include <sys/socket.h>
-
 #include "comms/comms_transmitter.hpp"
+
 #include "comms/comms_module.hpp"
 #include "framework/utils.hpp"
+
+#include <iostream>
+
+#include <sys/socket.h>
 
 namespace Comms
 {
 
 /* See header for documentation. */
-Transmitter::Transmitter(
-    CommsModule& _parent
-) :
-    parent(_parent)
+Transmitter::Transmitter(CommsModule& _parent)
+    : parent(_parent)
 {
     // Create and start a worker thread
     worker = std::thread(&Transmitter::runTransmitter, this);
@@ -96,8 +96,7 @@ void Transmitter::stop()
 
     // Use a dummy message to wake worker thread if blocked on the queue
     auto stopData = std::make_unique<MessageData>();
-    auto message = std::make_shared<Message>(
-        0, MessageType::STOP, 0, std::move(stopData));
+    auto message = std::make_shared<Message>(0, MessageType::STOP, 0, std::move(stopData));
     parent.enqueueMessage(message);
 
     // Join on the worker thread
@@ -105,9 +104,8 @@ void Transmitter::stop()
 }
 
 /* See header for documentation. */
-void Transmitter::sendMessage(
-    const Message& message
-) {
+void Transmitter::sendMessage(const Message& message)
+{
     uint8_t* data = message.transmitData->data();
     size_t dataSize = message.transmitData->size();
 
@@ -126,11 +124,9 @@ void Transmitter::sendMessage(
 }
 
 /* See header for documentation. */
-void Transmitter::sendData(
-    uint8_t* data,
-    size_t dataSize
-) {
-    while(dataSize)
+void Transmitter::sendData(uint8_t* data, size_t dataSize)
+{
+    while (dataSize)
     {
         ssize_t sentSize = send(parent.sockfd, data, dataSize, 0);
         // An error occurred or server disconnected

@@ -25,5 +25,7 @@
 # depends on per-layer implementations of the root intercept Instance and
 # Device classes which get specialized for each use case.
 
+include(../cmake/clang-tools.cmake)
+
 add_subdirectory(comms)
 add_subdirectory(trackers)

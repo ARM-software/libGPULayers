@@ -23,32 +23,29 @@
  * ----------------------------------------------------------------------------
  */
 
-#include <cassert>
-
 #include "trackers/render_pass.hpp"
+
+#include <cassert>
 
 namespace Tracker
 {
 
 /* See header for details. */
-RenderPassAttachment::RenderPassAttachment(
-    RenderPassAttachName _name,
-    VkAttachmentLoadOp _loadOp,
-    VkAttachmentStoreOp _storeOp,
-    bool _resolve
-) :
-    name(_name),
-    loadOp(_loadOp),
-    storeOp(_storeOp),
-    resolve(_resolve)
+RenderPassAttachment::RenderPassAttachment(RenderPassAttachName _name,
+                                           VkAttachmentLoadOp _loadOp,
+                                           VkAttachmentStoreOp _storeOp,
+                                           bool _resolve)
+    : name(_name),
+      loadOp(_loadOp),
+      storeOp(_storeOp),
+      resolve(_resolve)
 {
-
 }
 
 /* See header for details. */
 std::string RenderPassAttachment::getAttachmentStr() const
 {
-    switch(name)
+    switch (name)
     {
     case RenderPassAttachName::COLOR0:
         return "C0";
@@ -78,18 +75,15 @@ std::string RenderPassAttachment::getAttachmentStr() const
 }
 
 /* See header for details. */
-RenderPass::RenderPass(
-    VkRenderPass _handle,
-    const VkRenderPassCreateInfo& createInfo
-) :
-    handle(_handle)
+RenderPass::RenderPass(VkRenderPass _handle, const VkRenderPassCreateInfo& createInfo)
+    : handle(_handle)
 {
     subpassCount = createInfo.subpassCount;
 
     auto& lastSubpass = createInfo.pSubpasses[subpassCount - 1];
 
     // Color attachments
-    for(uint32_t i = 0; i < lastSubpass.colorAttachmentCount; i++)
+    for (uint32_t i = 0; i < lastSubpass.colorAttachmentCount; i++)
     {
         auto& attachRef = lastSubpass.pColorAttachments[i];
         if (attachRef.attachment == VK_ATTACHMENT_UNUSED)
@@ -98,15 +92,11 @@ RenderPass::RenderPass(
         }
 
         auto& attachDesc = createInfo.pAttachments[attachRef.attachment];
-        attachments.emplace_back(
-            static_cast<RenderPassAttachName>(i),
-            attachDesc.loadOp,
-            attachDesc.storeOp,
-            false);
+        attachments.emplace_back(static_cast<RenderPassAttachName>(i), attachDesc.loadOp, attachDesc.storeOp, false);
     }
 
     // Color resolve attachments
-    for(uint32_t i = 0; i < lastSubpass.colorAttachmentCount; i++)
+    for (uint32_t i = 0; i < lastSubpass.colorAttachmentCount; i++)
     {
         // We may not have any resolve attachments
         if (!lastSubpass.pResolveAttachments)
@@ -121,11 +111,7 @@ RenderPass::RenderPass(
         }
 
         auto& attachDesc = createInfo.pAttachments[attachRef.attachment];
-        attachments.emplace_back(
-            static_cast<RenderPassAttachName>(i),
-            attachDesc.loadOp,
-            attachDesc.storeOp,
-            true);
+        attachments.emplace_back(static_cast<RenderPassAttachName>(i), attachDesc.loadOp, attachDesc.storeOp, true);
     }
 
     // Depth+Stencil attachments
@@ -139,66 +125,55 @@ RenderPass::RenderPass(
 
             // Canonicalize read-only attachments as storeOp=NONE
             VkAttachmentStoreOp depthStoreOp;
-            switch(attachRef.layout)
+            switch (attachRef.layout)
             {
-                case VK_IMAGE_LAYOUT_READ_ONLY_OPTIMAL:
-                case VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL:
-                case VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMAL:
-                    if (attachDesc.storeOp == VK_ATTACHMENT_STORE_OP_STORE)
-                    {
-                        depthStoreOp = VK_ATTACHMENT_STORE_OP_NONE;
-                    }
-                    break;
-                default:
-                    depthStoreOp = attachDesc.storeOp;
-                    break;
+            case VK_IMAGE_LAYOUT_READ_ONLY_OPTIMAL:
+            case VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL:
+            case VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMAL:
+                if (attachDesc.storeOp == VK_ATTACHMENT_STORE_OP_STORE)
+                {
+                    depthStoreOp = VK_ATTACHMENT_STORE_OP_NONE;
+                }
+                break;
+            default:
+                depthStoreOp = attachDesc.storeOp;
+                break;
             }
 
-            attachments.emplace_back(
-                RenderPassAttachName::DEPTH,
-                attachDesc.loadOp,
-                depthStoreOp,
-                false);
+            attachments.emplace_back(RenderPassAttachName::DEPTH, attachDesc.loadOp, depthStoreOp, false);
 
             // Canonicalize read-only attachments as storeOp=NONE
             VkAttachmentStoreOp stencilStoreOp;
-            switch(attachRef.layout)
+            switch (attachRef.layout)
             {
-                case VK_IMAGE_LAYOUT_READ_ONLY_OPTIMAL:
-                case VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL:
-                case VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL:
-                    if (attachDesc.stencilStoreOp == VK_ATTACHMENT_STORE_OP_STORE)
-                    {
-                        stencilStoreOp = VK_ATTACHMENT_STORE_OP_NONE;
-                    }
-                    break;
-                default:
-                    stencilStoreOp = attachDesc.stencilStoreOp;
-                    break;
+            case VK_IMAGE_LAYOUT_READ_ONLY_OPTIMAL:
+            case VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL:
+            case VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL:
+                if (attachDesc.stencilStoreOp == VK_ATTACHMENT_STORE_OP_STORE)
+                {
+                    stencilStoreOp = VK_ATTACHMENT_STORE_OP_NONE;
+                }
+                break;
+            default:
+                stencilStoreOp = attachDesc.stencilStoreOp;
+                break;
             }
 
-            attachments.emplace_back(
-                RenderPassAttachName::STENCIL,
-                attachDesc.stencilLoadOp,
-                stencilStoreOp,
-                false);
+            attachments.emplace_back(RenderPassAttachName::STENCIL, attachDesc.stencilLoadOp, stencilStoreOp, false);
         }
     }
 }
 
 /* See header for details. */
-RenderPass::RenderPass(
-    VkRenderPass _handle,
-    const VkRenderPassCreateInfo2& createInfo
-) :
-    handle(_handle)
+RenderPass::RenderPass(VkRenderPass _handle, const VkRenderPassCreateInfo2& createInfo)
+    : handle(_handle)
 {
     subpassCount = createInfo.subpassCount;
 
     auto& lastSubpass = createInfo.pSubpasses[subpassCount - 1];
 
     // Color attachments
-    for(uint32_t i = 0; i < lastSubpass.colorAttachmentCount; i++)
+    for (uint32_t i = 0; i < lastSubpass.colorAttachmentCount; i++)
     {
         auto& attachRef = lastSubpass.pColorAttachments[i];
         if (attachRef.attachment == VK_ATTACHMENT_UNUSED)
@@ -207,15 +182,11 @@ RenderPass::RenderPass(
         }
 
         auto& attachDesc = createInfo.pAttachments[attachRef.attachment];
-        attachments.emplace_back(
-            static_cast<RenderPassAttachName>(i),
-            attachDesc.loadOp,
-            attachDesc.storeOp,
-            false);
+        attachments.emplace_back(static_cast<RenderPassAttachName>(i), attachDesc.loadOp, attachDesc.storeOp, false);
     }
 
     // Color resolve attachments
-    for(uint32_t i = 0; i < lastSubpass.colorAttachmentCount; i++)
+    for (uint32_t i = 0; i < lastSubpass.colorAttachmentCount; i++)
     {
         // We may not have any resolve attachments
         if (!lastSubpass.pResolveAttachments)
@@ -230,11 +201,7 @@ RenderPass::RenderPass(
         }
 
         auto& attachDesc = createInfo.pAttachments[attachRef.attachment];
-        attachments.emplace_back(
-            static_cast<RenderPassAttachName>(i),
-            attachDesc.loadOp,
-            attachDesc.storeOp,
-            true);
+        attachments.emplace_back(static_cast<RenderPassAttachName>(i), attachDesc.loadOp, attachDesc.storeOp, true);
     }
 
     // Depth+Stencil attachments
@@ -248,64 +215,54 @@ RenderPass::RenderPass(
 
             // Canonicalize read-only attachments as storeOp=NONE
             VkAttachmentStoreOp depthStoreOp;
-            switch(attachRef.layout)
+            switch (attachRef.layout)
             {
-                case VK_IMAGE_LAYOUT_READ_ONLY_OPTIMAL:
-                case VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL:
-                case VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMAL:
-                    if (attachDesc.storeOp == VK_ATTACHMENT_STORE_OP_STORE)
-                    {
-                        depthStoreOp = VK_ATTACHMENT_STORE_OP_NONE;
-                    }
-                    break;
-                default:
-                    depthStoreOp = attachDesc.storeOp;
-                    break;
+            case VK_IMAGE_LAYOUT_READ_ONLY_OPTIMAL:
+            case VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL:
+            case VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMAL:
+                if (attachDesc.storeOp == VK_ATTACHMENT_STORE_OP_STORE)
+                {
+                    depthStoreOp = VK_ATTACHMENT_STORE_OP_NONE;
+                }
+                break;
+            default:
+                depthStoreOp = attachDesc.storeOp;
+                break;
             }
 
-            attachments.emplace_back(
-                RenderPassAttachName::DEPTH,
-                attachDesc.loadOp,
-                depthStoreOp,
-                false);
+            attachments.emplace_back(RenderPassAttachName::DEPTH, attachDesc.loadOp, depthStoreOp, false);
 
             // Canonicalize read-only attachments as storeOp=NONE
             VkAttachmentStoreOp stencilStoreOp;
-            switch(attachRef.layout)
+            switch (attachRef.layout)
             {
-                case VK_IMAGE_LAYOUT_READ_ONLY_OPTIMAL:
-                case VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL:
-                case VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL:
-                    if (attachDesc.stencilStoreOp == VK_ATTACHMENT_STORE_OP_STORE)
-                    {
-                        stencilStoreOp = VK_ATTACHMENT_STORE_OP_NONE;
-                    }
-                    break;
-                default:
-                    stencilStoreOp = attachDesc.stencilStoreOp;
-                    break;
+            case VK_IMAGE_LAYOUT_READ_ONLY_OPTIMAL:
+            case VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL:
+            case VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL:
+                if (attachDesc.stencilStoreOp == VK_ATTACHMENT_STORE_OP_STORE)
+                {
+                    stencilStoreOp = VK_ATTACHMENT_STORE_OP_NONE;
+                }
+                break;
+            default:
+                stencilStoreOp = attachDesc.stencilStoreOp;
+                break;
             }
 
-            attachments.emplace_back(
-                RenderPassAttachName::STENCIL,
-                attachDesc.stencilLoadOp,
-                stencilStoreOp,
-                false);
+            attachments.emplace_back(RenderPassAttachName::STENCIL, attachDesc.stencilLoadOp, stencilStoreOp, false);
         }
     }
 }
 
 /* See header for details. */
-RenderPass::RenderPass(
-    const VkRenderingInfo& createInfo
-) :
-    handle(VK_NULL_HANDLE)
+RenderPass::RenderPass(const VkRenderingInfo& createInfo)
+    : handle(VK_NULL_HANDLE)
 {
     // No subpasses in dynamic rendering
     subpassCount = 1;
 
     // Color attachments
-    for(uint32_t i = 0; i < createInfo.colorAttachmentCount; i++)
+    for (uint32_t i = 0; i < createInfo.colorAttachmentCount; i++)
     {
         auto& attachRef = createInfo.pColorAttachments[i];
         if (attachRef.imageView == VK_NULL_HANDLE)
@@ -313,28 +270,22 @@ RenderPass::RenderPass(
             continue;
         }
 
-        attachments.emplace_back(
-            static_cast<RenderPassAttachName>(i),
-            attachRef.loadOp,
-            attachRef.storeOp,
-            false);
+        attachments.emplace_back(static_cast<RenderPassAttachName>(i), attachRef.loadOp, attachRef.storeOp, false);
     }
 
     // Color resolve attachments
-    for(uint32_t i = 0; i < createInfo.colorAttachmentCount; i++)
+    for (uint32_t i = 0; i < createInfo.colorAttachmentCount; i++)
     {
         auto& attachRef = createInfo.pColorAttachments[i];
-        if ((attachRef.imageView == VK_NULL_HANDLE) ||
-            (attachRef.resolveMode == VK_RESOLVE_MODE_NONE))
+        if ((attachRef.imageView == VK_NULL_HANDLE) || (attachRef.resolveMode == VK_RESOLVE_MODE_NONE))
         {
             continue;
         }
 
-        attachments.emplace_back(
-            static_cast<RenderPassAttachName>(i),
-            VK_ATTACHMENT_LOAD_OP_DONT_CARE,
-            VK_ATTACHMENT_STORE_OP_STORE,
-            true);
+        attachments.emplace_back(static_cast<RenderPassAttachName>(i),
+                                 VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+                                 VK_ATTACHMENT_STORE_OP_STORE,
+                                 true);
     }
 
     // Depth attachments
@@ -344,36 +295,30 @@ RenderPass::RenderPass(
 
         // Canonicalize read-only attachments as storeOp=NONE
         VkAttachmentStoreOp depthStoreOp;
-        switch(attachRef.imageLayout)
+        switch (attachRef.imageLayout)
         {
-            case VK_IMAGE_LAYOUT_READ_ONLY_OPTIMAL:
-            case VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL:
-            case VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMAL:
-                if (attachRef.storeOp == VK_ATTACHMENT_STORE_OP_STORE)
-                {
-                    depthStoreOp = VK_ATTACHMENT_STORE_OP_NONE;
-                }
-                break;
-            default:
-                depthStoreOp = attachRef.storeOp;
-                break;
+        case VK_IMAGE_LAYOUT_READ_ONLY_OPTIMAL:
+        case VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL:
+        case VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMAL:
+            if (attachRef.storeOp == VK_ATTACHMENT_STORE_OP_STORE)
+            {
+                depthStoreOp = VK_ATTACHMENT_STORE_OP_NONE;
+            }
+            break;
+        default:
+            depthStoreOp = attachRef.storeOp;
+            break;
         }
 
-        attachments.emplace_back(
-            RenderPassAttachName::DEPTH,
-            attachRef.loadOp,
-            depthStoreOp,
-            false);
+        attachments.emplace_back(RenderPassAttachName::DEPTH, attachRef.loadOp, depthStoreOp, false);
 
         // Depth resolve attachment
-        if ((attachRef.imageView != VK_NULL_HANDLE) &&
-            (attachRef.resolveMode != VK_RESOLVE_MODE_NONE))
+        if ((attachRef.imageView != VK_NULL_HANDLE) && (attachRef.resolveMode != VK_RESOLVE_MODE_NONE))
         {
-            attachments.emplace_back(
-                RenderPassAttachName::DEPTH,
-                VK_ATTACHMENT_LOAD_OP_DONT_CARE,
-                VK_ATTACHMENT_STORE_OP_STORE,
-                true);
+            attachments.emplace_back(RenderPassAttachName::DEPTH,
+                                     VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+                                     VK_ATTACHMENT_STORE_OP_STORE,
+                                     true);
         }
     }
 
@@ -384,36 +329,30 @@ RenderPass::RenderPass(
 
         // Canonicalize read-only attachments as storeOp=NONE
         VkAttachmentStoreOp stencilStoreOp;
-        switch(attachRef.imageLayout)
+        switch (attachRef.imageLayout)
         {
-            case VK_IMAGE_LAYOUT_READ_ONLY_OPTIMAL:
-            case VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL:
-            case VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL:
-                if (attachRef.storeOp == VK_ATTACHMENT_STORE_OP_STORE)
-                {
-                    stencilStoreOp = VK_ATTACHMENT_STORE_OP_NONE;
-                }
-                break;
-            default:
-                stencilStoreOp = attachRef.storeOp;
-                break;
+        case VK_IMAGE_LAYOUT_READ_ONLY_OPTIMAL:
+        case VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL:
+        case VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL:
+            if (attachRef.storeOp == VK_ATTACHMENT_STORE_OP_STORE)
+            {
+                stencilStoreOp = VK_ATTACHMENT_STORE_OP_NONE;
+            }
+            break;
+        default:
+            stencilStoreOp = attachRef.storeOp;
+            break;
         }
 
-        attachments.emplace_back(
-            RenderPassAttachName::STENCIL,
-            attachRef.loadOp,
-            stencilStoreOp,
-            false);
+        attachments.emplace_back(RenderPassAttachName::STENCIL, attachRef.loadOp, stencilStoreOp, false);
 
         // Stencil resolve attachment
-        if ((attachRef.imageView != VK_NULL_HANDLE) &&
-            (attachRef.resolveMode != VK_RESOLVE_MODE_NONE))
+        if ((attachRef.imageView != VK_NULL_HANDLE) && (attachRef.resolveMode != VK_RESOLVE_MODE_NONE))
         {
-            attachments.emplace_back(
-                RenderPassAttachName::STENCIL,
-                VK_ATTACHMENT_LOAD_OP_DONT_CARE,
-                VK_ATTACHMENT_STORE_OP_STORE,
-                true);
+            attachments.emplace_back(RenderPassAttachName::STENCIL,
+                                     VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+                                     VK_ATTACHMENT_STORE_OP_STORE,
+                                     true);
         }
     }
 }

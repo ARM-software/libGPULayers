@@ -41,14 +41,15 @@
 
 #pragma once
 
+#include "framework/utils.hpp"
+#include "trackers/layer_command_stream.hpp"
+
 #include <atomic>
 #include <functional>
 #include <string>
 #include <vector>
-#include <vulkan/vulkan.h>
 
-#include "framework/utils.hpp"
-#include "trackers/layer_command_stream.hpp"
+#include <vulkan/vulkan.h>
 
 namespace Tracker
 {
@@ -59,8 +60,7 @@ namespace Tracker
 class Queue
 {
 public:
-    Queue(
-        VkQueue handle);
+    Queue(VkQueue handle);
 
     /**
      * @brief Execute a layer command stream.
@@ -68,9 +68,8 @@ public:
      * @param stream     The layer command stream to execute.
      * @param callback   The callback to pass submitted workloads to.
      */
-    void runSubmitCommandStream(
-        const std::vector<LCSInstruction>& stream,
-        std::function<void(const std::string&)> callback);
+    void runSubmitCommandStream(const std::vector<LCSInstruction>& stream,
+                                std::function<void(const std::string&)> callback);
 
 private:
     /**
@@ -86,7 +85,7 @@ private:
     /**
      * @brief The last non-zero render pass tagID submitted.
      */
-    uint64_t lastRenderPassTagID { 0 };
+    uint64_t lastRenderPassTagID {0};
 };
 
 }

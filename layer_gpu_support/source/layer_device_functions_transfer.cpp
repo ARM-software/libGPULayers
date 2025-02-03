@@ -23,10 +23,10 @@
  * ----------------------------------------------------------------------------
  */
 
-#include <mutex>
-
 #include "device.hpp"
-#include "layer_device_functions.hpp"
+#include "framework/device_dispatch_table.hpp"
+
+#include <mutex>
 
 extern std::mutex g_vulkanLock;
 
@@ -36,24 +36,24 @@ extern std::mutex g_vulkanLock;
  * @param layer           The layer context for the device.
  * @param commandBuffer   The command buffer we are recording.
  */
-static void preTransfer(
-    Device* layer,
-    VkCommandBuffer commandBuffer
-) {
+static void preTransfer(Device* layer, VkCommandBuffer commandBuffer)
+{
     if (!layer->instance->config.serialize_cmdstream_transfer_pre())
     {
         return;
     }
 
     // Execution dependency
-    layer->driver.vkCmdPipelineBarrier(
-        commandBuffer,
-        VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-        VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-        0,
-        0, nullptr,
-        0, nullptr,
-        0, nullptr);
+    layer->driver.vkCmdPipelineBarrier(commandBuffer,
+                                       VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+                                       VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+                                       0,
+                                       0,
+                                       nullptr,
+                                       0,
+                                       nullptr,
+                                       0,
+                                       nullptr);
 }
 
 /**
@@ -62,41 +62,40 @@ static void preTransfer(
  * @param layer           The layer context for the device.
  * @param commandBuffer   The command buffer we are recording.
  */
-static void postTransfer(
-    Device* layer,
-    VkCommandBuffer commandBuffer
-) {
+static void postTransfer(Device* layer, VkCommandBuffer commandBuffer)
+{
     if (!layer->instance->config.serialize_cmdstream_transfer_post())
     {
         return;
     }
 
     // Execution dependency
-    layer->driver.vkCmdPipelineBarrier(
-        commandBuffer,
-        VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-        VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-        0,
-        0, nullptr,
-        0, nullptr,
-        0, nullptr);
+    layer->driver.vkCmdPipelineBarrier(commandBuffer,
+                                       VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+                                       VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+                                       0,
+                                       0,
+                                       nullptr,
+                                       0,
+                                       nullptr,
+                                       0,
+                                       nullptr);
 }
 
 // Commands for transfers
 
 /* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdFillBuffer<user_tag>(
-    VkCommandBuffer commandBuffer,
-    VkBuffer dstBuffer,
-    VkDeviceSize dstOffset,
-    VkDeviceSize size,
-    uint32_t data
-) {
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdFillBuffer<user_tag>(VkCommandBuffer commandBuffer,
+                                                           VkBuffer dstBuffer,
+                                                           VkDeviceSize dstOffset,
+                                                           VkDeviceSize size,
+                                                           uint32_t data)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
 
     // Release the lock to call into the driver
@@ -108,19 +107,18 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdFillBuffer<user_tag>(
 }
 
 /* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdClearColorImage<user_tag>(
-    VkCommandBuffer commandBuffer,
-    VkImage image,
-    VkImageLayout imageLayout,
-    const VkClearColorValue* pColor,
-    uint32_t rangeCount,
-    const VkImageSubresourceRange* pRanges
-) {
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdClearColorImage<user_tag>(VkCommandBuffer commandBuffer,
+                                                                VkImage image,
+                                                                VkImageLayout imageLayout,
+                                                                const VkClearColorValue* pColor,
+                                                                uint32_t rangeCount,
+                                                                const VkImageSubresourceRange* pRanges)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
 
     // Release the lock to call into the driver
@@ -132,19 +130,18 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdClearColorImage<user_tag>(
 }
 
 /* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdClearDepthStencilImage<user_tag>(
-    VkCommandBuffer commandBuffer,
-    VkImage image,
-    VkImageLayout imageLayout,
-    const VkClearDepthStencilValue* pDepthStencil,
-    uint32_t rangeCount,
-    const VkImageSubresourceRange* pRanges
-) {
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdClearDepthStencilImage<user_tag>(VkCommandBuffer commandBuffer,
+                                                                       VkImage image,
+                                                                       VkImageLayout imageLayout,
+                                                                       const VkClearDepthStencilValue* pDepthStencil,
+                                                                       uint32_t rangeCount,
+                                                                       const VkImageSubresourceRange* pRanges)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
 
     // Release the lock to call into the driver
@@ -156,18 +153,17 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdClearDepthStencilImage<user_tag>(
 }
 
 /* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBuffer<user_tag>(
-    VkCommandBuffer commandBuffer,
-    VkBuffer srcBuffer,
-    VkBuffer dstBuffer,
-    uint32_t regionCount,
-    const VkBufferCopy* pRegions
-) {
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBuffer<user_tag>(VkCommandBuffer commandBuffer,
+                                                           VkBuffer srcBuffer,
+                                                           VkBuffer dstBuffer,
+                                                           uint32_t regionCount,
+                                                           const VkBufferCopy* pRegions)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
 
     // Release the lock to call into the driver
@@ -179,15 +175,14 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBuffer<user_tag>(
 }
 
 /* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBuffer2<user_tag>(
-    VkCommandBuffer commandBuffer,
-    const VkCopyBufferInfo2* pCopyBufferInfo
-) {
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBuffer2<user_tag>(VkCommandBuffer commandBuffer,
+                                                            const VkCopyBufferInfo2* pCopyBufferInfo)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
 
     // Release the lock to call into the driver
@@ -199,15 +194,14 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBuffer2<user_tag>(
 }
 
 /* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBuffer2KHR<user_tag>(
-    VkCommandBuffer commandBuffer,
-    const VkCopyBufferInfo2* pCopyBufferInfo
-) {
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBuffer2KHR<user_tag>(VkCommandBuffer commandBuffer,
+                                                               const VkCopyBufferInfo2* pCopyBufferInfo)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
 
     // Release the lock to call into the driver
@@ -219,19 +213,18 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBuffer2KHR<user_tag>(
 }
 
 /* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBufferToImage<user_tag>(
-    VkCommandBuffer commandBuffer,
-    VkBuffer srcBuffer,
-    VkImage dstImage,
-    VkImageLayout dstImageLayout,
-    uint32_t regionCount,
-    const VkBufferImageCopy* pRegions
-) {
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBufferToImage<user_tag>(VkCommandBuffer commandBuffer,
+                                                                  VkBuffer srcBuffer,
+                                                                  VkImage dstImage,
+                                                                  VkImageLayout dstImageLayout,
+                                                                  uint32_t regionCount,
+                                                                  const VkBufferImageCopy* pRegions)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
 
     // Release the lock to call into the driver
@@ -243,15 +236,15 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBufferToImage<user_tag>(
 }
 
 /* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBufferToImage2<user_tag>(
-    VkCommandBuffer commandBuffer,
-    const VkCopyBufferToImageInfo2* pCopyBufferToImageInfo
-) {
+template<>
+VKAPI_ATTR void VKAPI_CALL
+    layer_vkCmdCopyBufferToImage2<user_tag>(VkCommandBuffer commandBuffer,
+                                            const VkCopyBufferToImageInfo2* pCopyBufferToImageInfo)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
 
     // Release the lock to call into the driver
@@ -263,15 +256,15 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBufferToImage2<user_tag>(
 }
 
 /* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBufferToImage2KHR<user_tag>(
-    VkCommandBuffer commandBuffer,
-    const VkCopyBufferToImageInfo2* pCopyBufferToImageInfo
-) {
+template<>
+VKAPI_ATTR void VKAPI_CALL
+    layer_vkCmdCopyBufferToImage2KHR<user_tag>(VkCommandBuffer commandBuffer,
+                                               const VkCopyBufferToImageInfo2* pCopyBufferToImageInfo)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
 
     // Release the lock to call into the driver
@@ -283,40 +276,39 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBufferToImage2KHR<user_tag>(
 }
 
 /* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImage<user_tag>(
-    VkCommandBuffer commandBuffer,
-    VkImage srcImage,
-    VkImageLayout srcImageLayout,
-    VkImage dstImage,
-    VkImageLayout dstImageLayout,
-    uint32_t regionCount,
-    const VkImageCopy* pRegions
-) {
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImage<user_tag>(VkCommandBuffer commandBuffer,
+                                                          VkImage srcImage,
+                                                          VkImageLayout srcImageLayout,
+                                                          VkImage dstImage,
+                                                          VkImageLayout dstImageLayout,
+                                                          uint32_t regionCount,
+                                                          const VkImageCopy* pRegions)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
 
     // Release the lock to call into the driver
     lock.unlock();
 
     preTransfer(layer, commandBuffer);
-    layer->driver.vkCmdCopyImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
+    layer->driver
+        .vkCmdCopyImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
     postTransfer(layer, commandBuffer);
 }
 
 /* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImage2<user_tag>(
-    VkCommandBuffer commandBuffer,
-    const VkCopyImageInfo2* pCopyImageInfo
-) {
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImage2<user_tag>(VkCommandBuffer commandBuffer,
+                                                           const VkCopyImageInfo2* pCopyImageInfo)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
 
     // Release the lock to call into the driver
@@ -328,15 +320,14 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImage2<user_tag>(
 }
 
 /* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImage2KHR<user_tag>(
-    VkCommandBuffer commandBuffer,
-    const VkCopyImageInfo2* pCopyImageInfo
-) {
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImage2KHR<user_tag>(VkCommandBuffer commandBuffer,
+                                                              const VkCopyImageInfo2* pCopyImageInfo)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
 
     // Release the lock to call into the driver
@@ -348,19 +339,18 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImage2KHR<user_tag>(
 }
 
 /* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImageToBuffer<user_tag>(
-    VkCommandBuffer commandBuffer,
-    VkImage srcImage,
-    VkImageLayout srcImageLayout,
-    VkBuffer dstBuffer,
-    uint32_t regionCount,
-    const VkBufferImageCopy* pRegions
-) {
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImageToBuffer<user_tag>(VkCommandBuffer commandBuffer,
+                                                                  VkImage srcImage,
+                                                                  VkImageLayout srcImageLayout,
+                                                                  VkBuffer dstBuffer,
+                                                                  uint32_t regionCount,
+                                                                  const VkBufferImageCopy* pRegions)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
 
     // Release the lock to call into the driver
@@ -372,15 +362,15 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImageToBuffer<user_tag>(
 }
 
 /* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImageToBuffer2<user_tag>(
-    VkCommandBuffer commandBuffer,
-    const VkCopyImageToBufferInfo2* pCopyImageToBufferInfo
-) {
+template<>
+VKAPI_ATTR void VKAPI_CALL
+    layer_vkCmdCopyImageToBuffer2<user_tag>(VkCommandBuffer commandBuffer,
+                                            const VkCopyImageToBufferInfo2* pCopyImageToBufferInfo)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
 
     // Release the lock to call into the driver
@@ -392,15 +382,15 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImageToBuffer2<user_tag>(
 }
 
 /* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImageToBuffer2KHR<user_tag>(
-    VkCommandBuffer commandBuffer,
-    const VkCopyImageToBufferInfo2* pCopyImageToBufferInfo
-) {
+template<>
+VKAPI_ATTR void VKAPI_CALL
+    layer_vkCmdCopyImageToBuffer2KHR<user_tag>(VkCommandBuffer commandBuffer,
+                                               const VkCopyImageToBufferInfo2* pCopyImageToBufferInfo)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
 
     // Release the lock to call into the driver

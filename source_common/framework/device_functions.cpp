@@ -23,6 +23,8 @@
  * ----------------------------------------------------------------------------
  */
 
+// clang-format off
+
 #include <mutex>
 
 // Include from per-layer code
@@ -7773,3 +7775,4 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkWriteMicromapsPropertiesEXT_default(
     return layer->driver.vkWriteMicromapsPropertiesEXT(device, micromapCount, pMicromaps, queryType, dataSize, pData, stride);
 }
 
+// clang-format on

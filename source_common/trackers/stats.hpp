@@ -32,6 +32,7 @@
 
 #include <cstdint>
 #include <unordered_map>
+
 #include <vulkan/vulkan.h>
 
 namespace Tracker
@@ -50,58 +51,37 @@ public:
     /**
      * @brief Increment the frame counter.
      */
-    void incFrameCount()
-    {
-        frameCount += 1;
-    }
+    void incFrameCount() { frameCount += 1; }
 
     /**
      * @brief Increment the render pass counter.
      */
-    void incRenderPassCount()
-    {
-        renderPassCount += 1;
-    }
+    void incRenderPassCount() { renderPassCount += 1; }
 
     /**
      * @brief Increment the draw counter.
      */
-    void incDrawCallCount()
-    {
-        drawCallCount += 1;
-    }
+    void incDrawCallCount() { drawCallCount += 1; }
 
     /**
      * @brief Increment the compute dispatch counter.
      */
-    void incDispatchCount()
-    {
-        dispatchCount += 1;
-    }
+    void incDispatchCount() { dispatchCount += 1; }
 
     /**
      * @brief Increment the trace rays counter.
      */
-    void incTraceRaysCount()
-    {
-        traceRaysCount += 1;
-    };
+    void incTraceRaysCount() { traceRaysCount += 1; };
 
     /**
      * @brief Increment the buffer transfer counter.
      */
-    void incBufferTransferCount()
-    {
-        bufferTransferCount += 1;
-    }
+    void incBufferTransferCount() { bufferTransferCount += 1; }
 
     /**
      * @brief Increment the image transfer counter.
      */
-    void incImageTransferCount()
-    {
-        imageTransferCount += 1;
-    }
+    void incImageTransferCount() { imageTransferCount += 1; }
 
     /**
      * @brief Increment all counters with values from another stats object.
@@ -134,94 +114,77 @@ public:
     /**
      * @brief Get the frame counter.
      */
-    uint64_t getFrameCount() const
-    {
-        return frameCount;
-    }
+    uint64_t getFrameCount() const { return frameCount; }
 
     /**
      * @brief Increment the render pass counter.
      */
-    uint64_t getRenderPassCount() const
-    {
-        return renderPassCount;
-    }
+    uint64_t getRenderPassCount() const { return renderPassCount; }
 
     /**
      * @brief Increment the draw counter.
      */
-    uint64_t getDrawCallCount() const
-    {
-        return drawCallCount;
-    }
+    uint64_t getDrawCallCount() const { return drawCallCount; }
 
     /**
      * @brief Increment the compute dispatch counter.
      */
-    uint64_t getDispatchCount() const
-    {
-        return dispatchCount;
-    }
+    uint64_t getDispatchCount() const { return dispatchCount; }
 
     /**
      * @brief Increment the trace rays counter.
      */
-    uint64_t getTraceRaysCount() const
-    {
-        return traceRaysCount;
-    };
+    uint64_t getTraceRaysCount() const { return traceRaysCount; };
 
     /**
      * @brief Increment the buffer transfer counter.
      */
-    uint64_t getBufferTransferCount() const
-    {
-        return bufferTransferCount;
-    }
+    uint64_t getBufferTransferCount() const { return bufferTransferCount; }
 
     /**
      * @brief Increment the image transfer counter.
      */
     uint64_t getImageTransferCount() const
     {
-        return imageTransferCount;;
+        return imageTransferCount;
+        ;
     }
 
 private:
     /**
      * @brief The number of frames tracked.
      */
-    uint64_t frameCount { 0 };
+    uint64_t frameCount {0};
 
     /**
      * @brief The number of render passes tracked.
      */
-    uint64_t renderPassCount { 0 };
+    uint64_t renderPassCount {0};
 
     /**
      * @brief The number of draw calls tracked.
      */
-    uint64_t drawCallCount { 0 };
+    uint64_t drawCallCount {0};
 
     /**
      * @brief The number of compute dispatches tracked.
      */
-    uint64_t dispatchCount { 0 };
+    uint64_t dispatchCount {0};
 
     /**
      * @brief The number of trace rays calls tracked.
      */
-    uint64_t traceRaysCount { 0 };
+    uint64_t traceRaysCount {0};
 
     /**
      * @brief The number of buffer transfers tracked.
      */
-    uint64_t bufferTransferCount { 0 };
+    uint64_t bufferTransferCount {0};
 
     /**
      * @brief The number of image transfers tracked.
      */
-    uint64_t imageTransferCount { 0 };
+    uint64_t imageTransferCount {0};
 };
 
 }
