@@ -24,11 +24,9 @@
  */
 
 #include <cassert>
-#include <nlohmann/json.hpp>
+#include <memory>
 
 #include "trackers/layer_command_stream.hpp"
-
-using json = nlohmann::json;
 
 namespace Tracker
 {
@@ -44,14 +42,13 @@ LCSWorkload::LCSWorkload(
 }
 
 /* See header for details. */
-LCSMarker::LCSMarker(
-    const std::string& _label
-) :
-    LCSWorkload(0),
-    label(_label)
+LCSRenderPassBase::LCSRenderPassBase(
+    uint64_t _tagID,
+    bool _suspending
+) : LCSWorkload(_tagID),
+    suspending(_suspending)
 {
-
-};
+}
 
 /* See header for details. */
 LCSRenderPass::LCSRenderPass(
@@ -62,114 +59,14 @@ LCSRenderPass::LCSRenderPass(
     bool _suspending,
     bool _oneTimeSubmit
 ) :
-    LCSWorkload(_tagID),
+    LCSRenderPassBase(_tagID, _suspending),
     width(_width),
     height(_height),
-    suspending(_suspending),
     oneTimeSubmit(_oneTimeSubmit)
 {
     // Copy these as the render pass object may be transient.
     subpassCount = renderPass.getSubpassCount();
     attachments = renderPass.getAttachments();
-}
-
-/* See header for details. */
-std::string LCSRenderPass::getBeginMetadata(
-     const std::vector<std::string>* debugLabel) const
-{
-    // Draw count for a multi-submit command buffer cannot be reliably
-    // associated with a single tagID if restartable across command buffer
-    // boundaries because different command buffer submit combinations can
-    // result in different draw counts for the same starting tagID.
-    int64_t drawCount = static_cast<int64_t>(drawCallCount);
-    if (!oneTimeSubmit && suspending)
-    {
-        drawCount = -1;
-    }
-
-    json metadata = {
-        { "type", "renderpass" },
-        { "tid", tagID },
-        { "width", width },
-        { "height", height },
-        { "drawCallCount", drawCount }
-    };
-
-    if (debugLabel && debugLabel->size())
-    {
-        metadata["label"] = *debugLabel;
-    }
-
-    // Default is 1, so only store if we need it
-    if (subpassCount != 1)
-    {
-        metadata["subpassCount"] = subpassCount;
-    }
-
-    json attachPoints = json::array();
-    for (const auto& attachment : attachments)
-    {
-        json attachPoint {
-            { "binding", attachment.getAttachmentStr() },
-        };
-
-        // Default is false, so only serialize if we need it
-        if (attachment.isLoaded())
-        {
-            attachPoint["load"] = true;
-        }
-
-        // Default is true, so only serialize if we need it
-        if (!attachment.isStored())
-        {
-            attachPoint["store"] = false;
-        }
-
-        // Default is false, so only serialize if we need it
-        if (attachment.isResolved())
-        {
-            attachPoint["resolve"] = true;
-        }
-
-        attachPoints.push_back(attachPoint);
-    }
-
-    metadata["attachments"] = attachPoints;
-    return metadata.dump();
-}
-
-/* See header for details. */
-std::string LCSRenderPass::getContinuationMetadata(
-    const std::vector<std::string>* debugLabel,
-    uint64_t tagIDContinuation) const
-{
-    json metadata = {
-        { "type", "renderpass" },
-        { "tid", tagIDContinuation },
-        { "drawCallCount", drawCallCount }
-    };
-
-    if (debugLabel && debugLabel->size())
-    {
-        metadata["label"] = *debugLabel;
-    }
-
-    return metadata.dump();
-}
-
-/* See header for details. */
-std::string LCSRenderPass::getMetadata(
-    const std::vector<std::string>* debugLabel,
-    uint64_t tagIDContinuation) const
-{
-    if (tagID)
-    {
-        assert(tagIDContinuation == 0);
-        return getBeginMetadata(debugLabel);
-    }
-
-    assert(tagIDContinuation != 0);
-    return getContinuationMetadata(debugLabel, tagIDContinuation);
 }
 
 /* See header for details. */
@@ -188,29 +85,6 @@ LCSDispatch::LCSDispatch(
 }
 
 /* See header for details. */
-std::string LCSDispatch::getMetadata(
-    const std::vector<std::string>* debugLabel,
-    uint64_t tagIDContinuation
-) const {
-    UNUSED(tagIDContinuation);
-
-    json metadata = {
-        { "type", "dispatch" },
-        { "tid", tagID },
-        { "xGroups", xGroups },
-        { "yGroups", yGroups },
-        { "zGroups", zGroups }
-    };
-
-    if (debugLabel && debugLabel->size())
-    {
-        metadata["label"] = *debugLabel;
-    }
-
-    return metadata.dump();
-}
-
-/* See header for details. */
 LCSTraceRays::LCSTraceRays(
     uint64_t _tagID,
     int64_t _xItems,
@@ -223,29 +97,6 @@ LCSTraceRays::LCSTraceRays(
     zItems(_zItems)
 {
 
-}
-
-/* See header for details. */
-std::string LCSTraceRays::getMetadata(
-    const std::vector<std::string>* debugLabel,
-    uint64_t tagIDContinuation
-) const {
-    UNUSED(tagIDContinuation);
-
-    json metadata = {
-        { "type", "tracerays" },
-        { "tid", tagID },
-        { "xItems", xItems },
-        { "yItems", yItems },
-        { "zItems", zItems }
-    };
-
-    if (debugLabel && debugLabel->size())
-    {
-        metadata["label"] = *debugLabel;
-    }
-
-    return metadata.dump();
 }
 
 /* See header for details. */
@@ -262,29 +113,6 @@ LCSImageTransfer::LCSImageTransfer(
 }
 
 /* See header for details. */
-std::string LCSImageTransfer::getMetadata(
-    const std::vector<std::string>* debugLabel,
-    uint64_t tagIDContinuation
-) const
-{
-    UNUSED(tagIDContinuation);
-
-    json metadata = {
-        { "type", "imagetransfer" },
-        { "tid", tagID },
-        { "subtype", transferType },
-        { "pixelCount", pixelCount }
-    };
-
-    if (debugLabel && debugLabel->size())
-    {
-        metadata["label"] = *debugLabel;
-    }
-
-    return metadata.dump();
-}
-
-/* See header for details. */
 LCSBufferTransfer::LCSBufferTransfer(
     uint64_t _tagID,
     const std::string& _transferType,
@@ -298,25 +126,12 @@ LCSBufferTransfer::LCSBufferTransfer(
 }
 
 /* See header for details. */
-std::string LCSBufferTransfer::getMetadata(
-    const std::vector<std::string>* debugLabel,
-    uint64_t tagIDContinuation
-) const {
-    UNUSED(tagIDContinuation);
+LCSInstructionMarkerPush::LCSInstructionMarkerPush(
+    const std::string& _label
+) :
+    label(std::make_shared<std::string>(_label))
+{
 
-    json metadata = {
-        { "type", "buffertransfer" },
-        { "tid", tagID },
-        { "subtype", transferType },
-        { "byteCount", byteCount }
-    };
-
-    if (debugLabel && debugLabel->size())
-    {
-        metadata["label"] = *debugLabel;
-    }
-
-    return metadata.dump();
 }
 
 }

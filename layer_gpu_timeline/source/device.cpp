@@ -23,10 +23,6 @@
  * ----------------------------------------------------------------------------
  */
 
-#include <array>
-#include <iostream>
-#include <fstream>
-#include <nlohmann/json.hpp>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <vector>
@@ -36,8 +32,7 @@
 
 #include "device.hpp"
 #include "instance.hpp"
-
-using json = nlohmann::json;
+#include "workload_metadata_builder.hpp"
 
 /**
  * @brief The dispatch lookup for all of the created Vulkan devices.
@@ -132,15 +127,5 @@ Device::Device(
 
     pid_t processPID = getpid();
 
-    json deviceMetadata {
-        { "type", "device" },
-        { "pid", static_cast<uint32_t>(processPID) },
-        { "device", reinterpret_cast<uintptr_t>(device) },
-        { "deviceName", name },
-        { "driverMajor", major },
-        { "driverMinor", minor },
-        { "driverPatch", patch }
-    };
-
-    commsWrapper->txMessage(deviceMetadata.dump());
+    WorkloadMetadataEmitterVisitor::emitMetadata(*this, processPID, major, minor, patch, std::move(name));
 }

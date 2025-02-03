@@ -24,17 +24,13 @@
  */
 
 #include <mutex>
-#include <nlohmann/json.hpp>
 #include <time.h>
 
-#include "utils/misc.hpp"
+#include "trackers/queue.hpp"
 
 #include "device.hpp"
 #include "layer_device_functions.hpp"
-
-using json = nlohmann::json;
-
-using namespace std::placeholders;
+#include "workload_metadata_builder.hpp"
 
 extern std::mutex g_vulkanLock;
 
@@ -65,38 +61,30 @@ static uint64_t getClockMonotonicRaw()
 /**
  * @brief Emit the queue submit time metadata.
  *
- * @param queue      The queue being submitted to.
- * @param callback   The data emit callback.
+ * @param queue             The queue being submitted to.
+ * @param workloadVisitor   The data emit callback.
  */
 static void emitQueueMetadata(
     VkDevice device,
     VkQueue queue,
-    std::function<void(const std::string&)> callback
+    WorkloadMetadataEmitterVisitor & workloadVisitor
 ) {
-    // Write the queue submit metadata
-    json submitMetadata {
-        { "type", "submit" },
-        { "device", reinterpret_cast<uintptr_t>(device) },
-        { "queue", reinterpret_cast<uintptr_t>(queue) },
-        { "timestamp", getClockMonotonicRaw() }
-    };
-
-    callback(submitMetadata.dump());
+    workloadVisitor.emitSubmit(device, queue, getClockMonotonicRaw());
 }
 
 /**
  * @brief Emit the command buffer submit time metadata.
  *
- * @param layer           The layer context.
- * @param queue           The queue being submitted to.
- * @param commandBuffer   The command buffer being submitted.
- * @param callback        The data emit callback.
+ * @param layer             The layer context.
+ * @param queue             The queue being submitted to.
+ * @param commandBuffer     The command buffer being submitted.
+ * @param workloadVisitor   The data emit callback.
  */
 static void emitCommandBufferMetadata(
     Device& layer,
     VkQueue queue,
     VkCommandBuffer commandBuffer,
-    std::function<void(const std::string&)> callback
+    Tracker::SubmitCommandWorkloadVisitor & workloadVisitor
 ) {
     // Fetch layer proxies for this workload
     auto& tracker = layer.getStateTracker();
@@ -105,7 +93,7 @@ static void emitCommandBufferMetadata(
 
     // Play the layer command stream into the queue
     const auto& LCS = trackCB.getSubmitCommandStream();
-    trackQueue.runSubmitCommandStream(LCS, callback);
+    trackQueue.runSubmitCommandStream(LCS, workloadVisitor);
 }
 
 /* See Vulkan API for documentation. */
@@ -125,14 +113,7 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueuePresentKHR<user_tag>(
 
     // This is run with the lock held to ensure that all queue submit
     // messages are sent sequentially to the host tool
-    json frame {
-        { "type", "frame" },
-        { "device", reinterpret_cast<uintptr_t>(layer->device) },
-        { "fid", tracker.totalStats.getFrameCount() },
-        { "timestamp", getClockMonotonicRaw() }
-    };
-
-    layer->onFrame(frame.dump());
+    WorkloadMetadataEmitterVisitor::emitFrame(*layer, tracker.totalStats.getFrameCount(), getClockMonotonicRaw());
 
     // Release the lock to call into the driver
     lock.unlock();
@@ -153,13 +134,12 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit<user_tag>(
     std::unique_lock<std::mutex> lock { g_vulkanLock };
     auto* layer = Device::retrieve(queue);
 
-    auto onSubmit = std::bind(&Device::onWorkloadSubmit, layer, _1);
-
     // This is run with the lock held to ensure that all queue submit
     // messages are sent sequentially and contiguously to the host tool
+    WorkloadMetadataEmitterVisitor workloadVisitor {*layer};
 
     // Add queue-level metadata
-    emitQueueMetadata(layer->device, queue, onSubmit);
+    emitQueueMetadata(layer->device, queue, workloadVisitor);
 
     // Add per-command buffer metadata
     for (uint32_t i = 0; i < submitCount; i++)
@@ -168,7 +148,7 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit<user_tag>(
         for (uint32_t j = 0; j < submit.commandBufferCount; j++)
         {
             VkCommandBuffer commandBuffer = submit.pCommandBuffers[j];
-            emitCommandBufferMetadata(*layer, queue, commandBuffer, onSubmit);
+            emitCommandBufferMetadata(*layer, queue, commandBuffer, workloadVisitor);
         }
     }
 
@@ -191,13 +171,12 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit2<user_tag>(
     std::unique_lock<std::mutex> lock { g_vulkanLock };
     auto* layer = Device::retrieve(queue);
 
-    auto onSubmit = std::bind(&Device::onWorkloadSubmit, layer, _1);
-
     // This is run with the lock held to ensure that all queue submit
     // messages are sent sequentially and contiguously to the host tool
+    WorkloadMetadataEmitterVisitor workloadVisitor {*layer};
 
     // Add queue-level metadata
-    emitQueueMetadata(layer->device, queue, onSubmit);
+    emitQueueMetadata(layer->device, queue, workloadVisitor);
 
     // Add per-command buffer metadata
     for (uint32_t i = 0; i < submitCount; i++)
@@ -206,7 +185,7 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit2<user_tag>(
         for (uint32_t j = 0; j < submit.commandBufferInfoCount; j++)
         {
             VkCommandBuffer commandBuffer = submit.pCommandBufferInfos[j].commandBuffer;
-            emitCommandBufferMetadata(*layer, queue, commandBuffer, onSubmit);
+            emitCommandBufferMetadata(*layer, queue, commandBuffer, workloadVisitor);
         }
     }
 
@@ -229,13 +208,12 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit2KHR<user_tag>(
     std::unique_lock<std::mutex> lock { g_vulkanLock };
     auto* layer = Device::retrieve(queue);
 
-    auto onSubmit = std::bind(&Device::onWorkloadSubmit, layer, _1);
-
     // This is run with the lock held to ensure that all queue submit
     // messages are sent sequentially and contiguously to the host tool
+    WorkloadMetadataEmitterVisitor workloadVisitor {*layer};
 
     // Add queue-level metadata
-    emitQueueMetadata(layer->device, queue, onSubmit);
+    emitQueueMetadata(layer->device, queue, workloadVisitor);
 
     // Add per-command buffer metadata
     for (uint32_t i = 0; i < submitCount; i++)
@@ -244,7 +222,7 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit2KHR<user_tag>(
         for (uint32_t j = 0; j < submit.commandBufferInfoCount; j++)
         {
             VkCommandBuffer commandBuffer = submit.pCommandBufferInfos[j].commandBuffer;
-            emitCommandBufferMetadata(*layer, queue, commandBuffer, onSubmit);
+            emitCommandBufferMetadata(*layer, queue, commandBuffer, workloadVisitor);
         }
     }
 

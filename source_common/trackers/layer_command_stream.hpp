@@ -39,61 +39,24 @@
 #pragma once
 
 #include <atomic>
+#include <cstdint>
 #include <memory>
 #include <string>
-#include <utility>
+#include <type_traits>
+#include <variant>
 #include <vector>
 #include <vulkan/vulkan.h>
 
 #include "trackers/render_pass.hpp"
-#include "utils/misc.hpp"
 
 namespace Tracker
 {
-
-/**
- * @brief Enumeration of layer command stream opcodes.
- */
-enum class LCSOpcode
-{
-    MARKER_BEGIN,
-    MARKER_END,
-    RENDER_PASS,
-    DISPATCH,
-    TRACE_RAYS,
-    BUFFER_TRANSFER,
-    IMAGE_TRANSFER
-};
-
 /**
  * @brief Base class representing a GPU workload in the command stream.
  */
 class LCSWorkload
 {
 public:
-    /**
-     * @brief Create a new workload.
-     *
-     * @param tagID   The assigned tagID.
-     */
-    LCSWorkload(
-        uint64_t tagID);
-
-    /**
-     * @brief Destroy a workload.
-     */
-    virtual ~LCSWorkload() = default;
-
-    /**
-     * @brief Get the metadata for this workload
-     *
-     * @param debugLabel          The debug label stack for the VkQueue at submit time.
-     * @param tagIDContinuation   The ID of the workload if this is a continuation of it.
-     */
-    virtual std::string getMetadata(
-        const std::vector<std::string>* debugLabel=nullptr,
-        uint64_t tagIDContinuation=0) const = 0;
-
     /**
      * @brief Get this workload's tagID.
      *
@@ -122,6 +85,19 @@ protected:
      */
     uint64_t tagID;
 
+    /**
+     * @brief Create a new workload.
+     *
+     * @param tagID   The assigned tagID.
+     */
+    LCSWorkload(
+        uint64_t tagID);
+
+    /**
+     * @brief Destroy a workload; this is protected since we should never really be dealing with workloads in the abstract sense (or at least not deleting them as such)
+     */
+    ~LCSWorkload() noexcept = default;
+
 private:
     /**
      * @brief The workload tagID allocator.
@@ -130,9 +106,63 @@ private:
 };
 
 /**
+ * @brief Common base class for classes representing render pass workload in the command stream.
+ */
+class LCSRenderPassBase : public LCSWorkload {
+public:
+    /**
+     * @brief Is this a suspending render pass?
+     *
+     * @return @c true if this instance suspends rather than ends.
+     */
+    bool isSuspending() const
+    {
+        return suspending;
+    }
+
+    /**
+     * @brief Update this workload with the final draw count.
+     *
+     * @param count   The number of draw calls tracked by the command buffer.
+     */
+    void setDrawCallCount(uint64_t count)
+    {
+        drawCallCount = count;
+    }
+
+    /** @return The number of draw calls in this renderpass */
+    uint64_t getDrawCallCount() const { return drawCallCount; }
+
+protected:
+
+    /**
+     * @brief Construct the common renderbase workload
+     *
+     * @param tagID           The assigned tagID.
+     * @param suspending      Is this a render pass part that suspends later?
+     */
+    LCSRenderPassBase(
+        uint64_t tagID,
+        bool suspending);
+
+    /**
+     * @brief The number of draw calls in the render pass.
+     *
+     * Note: This is updated by ther command buffer tracker when the render
+     * pass is suspended or ended.
+     */
+    uint64_t drawCallCount { 0 };
+
+    /**
+     * @brief Is this workload suspending rather than ending?
+     */
+    bool suspending;
+};
+
+/**
  * @brief Class representing a render pass workload in the command stream.
  */
-class LCSRenderPass : public LCSWorkload
+class LCSRenderPass : public LCSRenderPassBase
 {
 public:
     /**
@@ -153,54 +183,27 @@ public:
         bool suspending,
         bool oneTimeSubmit);
 
-    /**
-     * @brief Destroy a workload.
-     */
-    virtual ~LCSRenderPass() = default;
+    /** @return The width of the renderpass in pixels */
+    uint32_t getWidth() const { return width; }
 
-    /**
-     * @brief Is this a suspending render pass?
-     *
-     * @return @c true if this instance suspends rather than ends.
-     */
-    bool isSuspending() const
-    {
-        return suspending;
-    };
+    /** @return The height of the renderpass in pixels */
+    uint32_t getHeight() const { return height; }
 
-    /**
-     * @brief Update this workload with the final draw count.
-     *
-     * @param count   The number of draw calls tracked by the command buffer.
-     */
-    void setDrawCallCount(uint64_t count)
-    {
-        drawCallCount = count;
-    };
+    /** @return The number of subpasses */
+    uint32_t getSubpassCount() const { return subpassCount; }
 
-    /* See base class for documentation. */
-    virtual std::string getMetadata(
-        const std::vector<std::string>* debugLabel=nullptr,
-        uint64_t tagIDContinuation=0) const;
+    /** @return True if it is a one-time submit renderpass */
+    bool isOneTimeSubmit() const { return oneTimeSubmit; }
+
+    /** @return The list of attachments */
+    std::vector<RenderPassAttachment> const & getAttachments() const { return attachments; }
 
 private:
-    /**
-     * @brief Get the metadata for this workload if beginning a new render pass.
-     *
-     * @param debugLabel   The debug label stack of the VkQueue at submit time.
-     */
-    std::string getBeginMetadata(
-        const std::vector<std::string>* debugLabel=nullptr) const;
 
     /**
-     * @brief Get the metadata for this workload if continuing an existing render pass.
-     *
-     * @param debugLabel          The debug label stack of the VkQueue at submit time.
-     * @param tagIDContinuation   The ID of the workload if this is a continuation of it.
+     * @brief The attachments for this render pass.
      */
-    std::string getContinuationMetadata(
-        const std::vector<std::string>* debugLabel=nullptr,
-        uint64_t tagIDContinuation=0) const;
+    std::vector<RenderPassAttachment> attachments;
 
     /**
      * @brief Width of this workload, in pixels.
@@ -213,32 +216,32 @@ private:
     uint32_t height;
 
     /**
-     * @brief Is this workload suspending rather than ending?
-     */
-    bool suspending;
-
-    /**
-     * @brief Is this workload in a one-time-submit command buffer?
-     */
-    bool oneTimeSubmit;
-
-    /**
      * @brief The number of subpasses in the render pass.
      */
     uint32_t subpassCount;
 
     /**
-     * @brief The number of draw calls in the render pass.
-     *
-     * Note: This is updated by ther command buffer tracker when the render
-     * pass is suspended or ended.
+     * @brief Is this workload in a one-time-submit command buffer?
      */
-    uint64_t drawCallCount { 0 };
+    bool oneTimeSubmit;
+};
 
+/**
+ * @brief Class representing the continuation of a split render pass workload continuation in the command stream.
+ */
+class LCSRenderPassContinuation : public LCSRenderPassBase
+{
+public:
     /**
-     * @brief The attachments for this render pass.
+     * @brief Create a new workload representing a split render pass.
+     *
+     * @param _suspending      Is this a render pass part that suspends later?
      */
-    std::vector<RenderPassAttachment> attachments;
+    LCSRenderPassContinuation(
+        bool _suspending)
+    : LCSRenderPassBase(0, _suspending)
+    {
+    }
 };
 
 /**
@@ -263,15 +266,14 @@ public:
         int64_t yGroups,
         int64_t zGroups);
 
-    /**
-     * @brief Destroy a workload.
-     */
-    virtual ~LCSDispatch() = default;
+    /** @return The number of work groups in the X dimension, or -1 if unknown. */
+    int64_t getXGroups() const { return xGroups; }
 
-    /* See base class for documentation. */
-    virtual std::string getMetadata(
-        const std::vector<std::string>* debugLabel=nullptr,
-        uint64_t tagIDContinuation=0) const;
+    /** @return The number of work groups in the y dimension, or -1 if unknown. */
+    int64_t getYGroups() const { return yGroups; }
+
+    /** @return The number of work groups in the z dimension, or -1 if unknown. */
+    int64_t getZGroups() const { return zGroups; }
 
 private:
     /**
@@ -312,15 +314,14 @@ public:
         int64_t yItems,
         int64_t zItems);
 
-    /**
-     * @brief Destroy a workload.
-     */
-    virtual ~LCSTraceRays() = default;
+    /** @return The number of work items in the X dimension, or -1 if unknown. */
+    int64_t getXItems() const { return xItems; }
 
-    /* See base class for documentation. */
-    virtual std::string getMetadata(
-        const std::vector<std::string>* debugLabel=nullptr,
-        uint64_t tagIDContinuation=0) const;
+    /** @return The number of work items in the y dimension, or -1 if unknown. */
+    int64_t getYItems() const { return yItems; }
+
+    /** @return The number of work items in the z dimension, or -1 if unknown. */
+    int64_t getZItems() const { return zItems; }
 
 private:
     /**
@@ -359,15 +360,11 @@ public:
         const std::string& transferType,
         int64_t pixelCount);
 
-    /**
-     * @brief Destroy a workload.
-     */
-    virtual ~LCSImageTransfer() = default;
+    /** @return The subtype of the transfer */
+    std::string const & getTransferType() const { return transferType; }
 
-    /* See base class for documentation. */
-    virtual std::string getMetadata(
-        const std::vector<std::string>* debugLabel=nullptr,
-        uint64_t tagIDContinuation=0) const;
+    /** @return The size of the transfer, in pixels */
+    int64_t getPixelCount() const { return pixelCount; }
 
 private:
     /**
@@ -402,15 +399,11 @@ public:
         const std::string& transferType,
         int64_t byteCount);
 
-    /**
-     * @brief Destroy a workload.
-     */
-    virtual ~LCSBufferTransfer() = default;
+    /** @return The subtype of the transfer */
+    std::string const & getTransferType() const { return transferType; }
 
-    /* See base class for documentation. */
-    virtual std::string getMetadata(
-        const std::vector<std::string>* debugLabel=nullptr,
-        uint64_t tagIDContinuation=0) const;
+    /** @return The size of the transfer, in bytes */
+    int64_t getByteCount() const { return byteCount; }
 
 private:
     /**
@@ -425,12 +418,9 @@ private:
 };
 
 /**
- * @brief Class representing a marker workload in the command stream.
- *
- * Note there is no class for a marker end, as is has no payload and can use
- * just the opcode to indicate behavior.
+ * @brief Class representing a marker instruction in the command stream that represents a debug label push operation.
  */
-class LCSMarker : public LCSWorkload
+class LCSInstructionMarkerPush
 {
 public:
     /**
@@ -438,35 +428,93 @@ public:
      *
      * @param label   The application debug label.
      */
-    LCSMarker(
+    LCSInstructionMarkerPush(
         const std::string& label);
 
     /**
-     * @brief Destroy a workload.
+     * @brief Get the stored debug label
+     *
+     * @return The label string
      */
-    virtual ~LCSMarker() = default;
-
-    /* See base class for documentation. */
-    virtual std::string getMetadata(
-        const std::vector<std::string>* debugLabel=nullptr,
-        uint64_t tagIDContinuation=0) const
+    const std::string & getLabel() const
     {
-        UNUSED(debugLabel);
-        UNUSED(tagIDContinuation);
-        return label;
-    };
+        return *label;
+    }
 
 private:
     /**
      * @brief The application debug label.
+     *
+     * The label is stored in a shared pointer to avoid copying the actual string when it is shared between subcommandbuffers
      */
-    std::string label;
+    std::shared_ptr<std::string> label;
 };
 
 /**
- * @brief Instructions are an opcode with a data pointer.
- *
- * Data pointers may be null for some opcodes.
+ * @brief Class representing a marker instruction in the command stream that represents a debug label pop operation.
  */
-using LCSInstruction = std::pair<LCSOpcode, std::shared_ptr<LCSWorkload>>;
+class LCSInstructionMarkerPop
+{
+    // there are no members, as this type is just a marker within LCSInstruction variant
+};
+
+/**
+ * @brief Class representing a workload instruction in the command stream.
+ */
+template<typename WorkloadType> requires (std::is_base_of_v<LCSWorkload, WorkloadType>)
+class LCSInstructionWorkload
+{
+public:
+    /**
+     * @brief Create a new workload instruction from a pre-made workload pointer.
+     *
+     * @param wrkload The workload object (must not be null)
+     */
+    LCSInstructionWorkload(
+        std::shared_ptr<WorkloadType> wrkload)
+    : workload(std::move(wrkload))
+    {
+    }
+
+    /**
+     * @brief Get the stored workload
+     *
+     * @return The workload
+     */
+    const WorkloadType & getWorkload() const
+    {
+        return *workload;
+    }
+
+private:
+    /**
+     * @brief The stored workload
+     *
+     * The workload is stored in a shared point to avoid copying the actual value when it is shared between subcommandbuffers
+     */
+    std::shared_ptr<WorkloadType> workload;
+};
+
+/**
+ * @brief Instructions are a variant representing the operation.
+ */
+using LCSInstruction = std::variant<
+    // the instruction is a debug-label push operation
+    LCSInstructionMarkerPush,
+    // the instruction is a debug-label pop operation
+    LCSInstructionMarkerPop,
+    // the instruction represents a renderpass workload operation
+    LCSInstructionWorkload<LCSRenderPass>,
+    // the instruction represents a continuation of a renderpass workload operation
+    LCSInstructionWorkload<LCSRenderPassContinuation>,
+    // the instruction represents a dispatch workload operation
+    LCSInstructionWorkload<LCSDispatch>,
+    // the instruction represents a trace rays workload operation
+    LCSInstructionWorkload<LCSTraceRays>,
+    // the instruction represents an image transfer workload operation
+    LCSInstructionWorkload<LCSImageTransfer>,
+    // the instruction represents a buffer transfer workload operation
+    LCSInstructionWorkload<LCSBufferTransfer>
+>;
+
 }

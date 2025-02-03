@@ -53,7 +53,8 @@ add_library(
         layer_device_functions_render_pass.cpp
         layer_device_functions_trace_rays.cpp
         layer_device_functions_transfer.cpp
-        timeline_comms.cpp)
+        timeline_comms.cpp
+        workload_metadata_builder.cpp)
 
 target_include_directories(
     ${VK_LAYER} PRIVATE
