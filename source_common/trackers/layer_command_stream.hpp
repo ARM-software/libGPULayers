@@ -125,6 +125,14 @@ public:
 
 protected:
     /**
+     * @brief Construct the common renderbase workload
+     *
+     * @param tagID           The assigned tagID.
+     * @param suspending      Is this a render pass part that suspends later?
+     */
+    LCSRenderPassBase(uint64_t tagID, bool suspending);
+
+    /**
      * @brief The number of draw calls in the render pass.
      *
      * Note: This is updated by ther command buffer tracker when the render
@@ -136,14 +144,6 @@ protected:
      * @brief Is this workload suspending rather than ending?
      */
     bool suspending;
-
-    /**
-     * @brief Construct the common renderbase workload
-     *
-     * @param tagID           The assigned tagID.
-     * @param suspending      Is this a render pass part that suspends later?
-     */
-    LCSRenderPassBase(uint64_t tagID, bool suspending);
 };
 
 /**
@@ -411,7 +411,7 @@ private:
     /**
      * @brief The application debug label.
      *
-     * The label is stored in a shared point to avoid copying the actual string when it is shared between
+     * The label is stored in a shared pointer to avoid copying the actual string when it is shared between
      * subcommandbuffers
      */
     std::shared_ptr<std::string> label;

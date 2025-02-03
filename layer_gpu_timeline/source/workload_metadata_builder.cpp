@@ -220,7 +220,7 @@ std::string serialize(const Tracker::LCSBufferTransfer& bufferTransfer, const st
 }
 }
 
-void WorkloadMetadataEmitterVisitor::emitMetadata(Device& layerDevice,
+void WorkloadMetadataEmitterVisitor::emitMetadata(Device& device,
                                                   uint32_t pid,
                                                   uint32_t major,
                                                   uint32_t minor,
@@ -230,14 +230,14 @@ void WorkloadMetadataEmitterVisitor::emitMetadata(Device& layerDevice,
     json deviceMetadata {
         {"type", "device"},
         {"pid", pid},
-        {"device", reinterpret_cast<uintptr_t>(layerDevice.device)},
+        {"device", reinterpret_cast<uintptr_t>(device.device)},
         {"deviceName", std::move(name)},
         {"driverMajor", major},
         {"driverMinor", minor},
         {"driverPatch", patch},
     };
 
-    layerDevice.txMessage(deviceMetadata.dump());
+    device.txMessage(deviceMetadata.dump());
 }
 
 void WorkloadMetadataEmitterVisitor::emitFrame(Device& device, uint64_t frameNumber, uint64_t timestamp)
@@ -252,23 +252,23 @@ void WorkloadMetadataEmitterVisitor::emitFrame(Device& device, uint64_t frameNum
     device.txMessage(frame.dump());
 }
 
-void WorkloadMetadataEmitterVisitor::emitSubmit(VkDevice device, VkQueue queue, uint64_t timestamp)
+void WorkloadMetadataEmitterVisitor::emitSubmit(VkDevice vkDevice, VkQueue vkQueue, uint64_t timestamp)
 {
     // Write the queue submit metadata
     json submitMetadata {
         {"type", "submit"},
-        {"device", reinterpret_cast<uintptr_t>(device)},
-        {"queue", reinterpret_cast<uintptr_t>(queue)},
+        {"device", reinterpret_cast<uintptr_t>(vkDevice)},
+        {"queue", reinterpret_cast<uintptr_t>(vkQueue)},
         {"timestamp", timestamp},
     };
 
-    layerDevice.txMessage(submitMetadata.dump());
+    device.txMessage(submitMetadata.dump());
 }
 
 void WorkloadMetadataEmitterVisitor::operator()(const Tracker::LCSRenderPass& renderpass,
                                                 const std::vector<std::string>& debugStack)
 {
-    layerDevice.txMessage(serialize(renderpass, debugStack));
+    device.txMessage(serialize(renderpass, debugStack));
 }
 
 void WorkloadMetadataEmitterVisitor::operator()(const Tracker::LCSRenderPassContinuation& continuation,
@@ -277,29 +277,29 @@ void WorkloadMetadataEmitterVisitor::operator()(const Tracker::LCSRenderPassCont
 {
     UNUSED(debugStack);
 
-    layerDevice.txMessage(serialize(continuation, renderpassTagID));
+    device.txMessage(serialize(continuation, renderpassTagID));
 }
 
 void WorkloadMetadataEmitterVisitor::operator()(const Tracker::LCSDispatch& dispatch,
                                                 const std::vector<std::string>& debugStack)
 {
-    layerDevice.txMessage(serialize(dispatch, debugStack));
+    device.txMessage(serialize(dispatch, debugStack));
 }
 
 void WorkloadMetadataEmitterVisitor::operator()(const Tracker::LCSTraceRays& traceRays,
                                                 const std::vector<std::string>& debugStack)
 {
-    layerDevice.txMessage(serialize(traceRays, debugStack));
+    device.txMessage(serialize(traceRays, debugStack));
 }
 
 void WorkloadMetadataEmitterVisitor::operator()(const Tracker::LCSImageTransfer& imageTransfer,
                                                 const std::vector<std::string>& debugStack)
 {
-    layerDevice.txMessage(serialize(imageTransfer, debugStack));
+    device.txMessage(serialize(imageTransfer, debugStack));
 }
 
 void WorkloadMetadataEmitterVisitor::operator()(const Tracker::LCSBufferTransfer& bufferTransfer,
                                                 const std::vector<std::string>& debugStack)
 {
-    layerDevice.txMessage(serialize(bufferTransfer, debugStack));
+    device.txMessage(serialize(bufferTransfer, debugStack));
 }

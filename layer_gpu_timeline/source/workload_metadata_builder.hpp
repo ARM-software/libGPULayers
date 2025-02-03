@@ -77,10 +77,11 @@ public:
     /**
      * Construct a new workload metadata emitter that will output paylaods for the provided device
      *
-     * @param device The device object that the payloads are produced for, and to which they are passed for transmission
+     * @param _device The device object that the payloads are produced for, and to which they are passed for
+     * transmission
      */
-    WorkloadMetadataEmitterVisitor(Device& device)
-        : layerDevice(device)
+    WorkloadMetadataEmitterVisitor(Device& _device)
+        : device(_device)
     {
     }
 
@@ -106,12 +107,12 @@ public:
      * @brief Called at the start of the submit to emit a "Submit" record, delimiting the subsequent items from any
      * later submit
      *
-     * @param device The device the submit belongs to
-     * @param queue The queue that was submitted to
+     * @param vkDevice The device the submit belongs to
+     * @param vkQueue The queue that was submitted to
      * @param timestamp The timestamp of the submission
      */
-    void emitSubmit(VkDevice device, VkQueue queue, uint64_t timestamp);
+    void emitSubmit(VkDevice vkDevice, VkQueue vkQueue, uint64_t timestamp);
 
 private:
-    Device& layerDevice;
+    Device& device;
 };
