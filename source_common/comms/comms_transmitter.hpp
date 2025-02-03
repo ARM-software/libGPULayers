@@ -29,11 +29,11 @@
  */
 #pragma once
 
+#include "comms/comms_message.hpp"
+
 #include <atomic>
 #include <memory>
 #include <thread>
-
-#include "comms/comms_message.hpp"
 
 namespace Comms
 {
@@ -52,8 +52,7 @@ public:
      *
      * @param parent   The parent comms module.
      */
-    Transmitter(
-        CommsModule& parent);
+    Transmitter(CommsModule& parent);
 
     /**
      * @brief Destroy this transmitter.
@@ -78,8 +77,7 @@ private:
      *
      * @param message   The message to send.
      */
-    void sendMessage(
-        const Message& message);
+    void sendMessage(const Message& message);
 
     /**
      * @brief Send N bytes of data to the socket.
@@ -87,9 +85,7 @@ private:
      * @param data       The data to send.
      * @param dataSize   The number of bytes in the data.
      */
-    void sendData(
-        uint8_t* data,
-        size_t dataSize);
+    void sendData(uint8_t* data, size_t dataSize);
 
 private:
     /**

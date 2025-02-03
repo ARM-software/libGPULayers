@@ -29,11 +29,11 @@
  */
 #pragma once
 
+#include "comms/comms_message.hpp"
+
 #include <memory>
 #include <thread>
 #include <unordered_map>
-
-#include "comms/comms_message.hpp"
 
 namespace Comms
 {
@@ -52,8 +52,7 @@ public:
      *
      * @param parent   The parent comms module.
      */
-    Receiver(
-        CommsModule& parent);
+    Receiver(CommsModule& parent);
 
     /**
      * @brief Destroy this receiver.
@@ -72,8 +71,7 @@ public:
      *
      * @param message   The message waiting for a response.
      */
-    void parkMessage(
-        std::shared_ptr<Message> message);
+    void parkMessage(std::shared_ptr<Message> message);
 
 private:
     /**
@@ -87,9 +85,7 @@ private:
      * @param messageID   The message to wake.
      * @param data        The response data payload from the host.
      */
-    void wakeMessage(
-        MessageID messageID,
-        std::unique_ptr<MessageData> data);
+    void wakeMessage(MessageID messageID, std::unique_ptr<MessageData> data);
 
     /**
      * @brief Receive N bytes of data from the socket.
@@ -99,9 +95,7 @@ private:
      *
      * @return @c true if we received a message, @c false otherwise.
      */
-    bool receiveData(
-        uint8_t* data,
-        size_t dataSize);
+    bool receiveData(uint8_t* data, size_t dataSize);
 
 private:
     /**

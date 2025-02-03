@@ -23,16 +23,17 @@
  * ----------------------------------------------------------------------------
  */
 
-#include <array>
-#include <iostream>
-#include <fstream>
-#include <sys/stat.h>
-#include <vector>
+#include "device.hpp"
 
 #include "framework/utils.hpp"
-
-#include "device.hpp"
 #include "instance.hpp"
+
+#include <array>
+#include <fstream>
+#include <iostream>
+#include <vector>
+
+#include <sys/stat.h>
 
 /**
  * @brief The dispatch lookup for all of the created Vulkan instances.
@@ -40,62 +41,54 @@
 static std::unordered_map<void*, std::unique_ptr<Device>> g_devices;
 
 /* See header for documentation. */
-const std::vector<std::string> Device::extraExtensions { };
+const std::vector<std::string> Device::extraExtensions {};
 
 /* See header for documentation. */
-void Device::store(
-    VkDevice handle,
-    std::unique_ptr<Device> device
-) {
+void Device::store(VkDevice handle, std::unique_ptr<Device> device)
+{
     void* key = getDispatchKey(handle);
-    g_devices.insert({ key, std::move(device) });
+    g_devices.insert({key, std::move(device)});
 }
 
 /* See header for documentation. */
-Device* Device::retrieve(
-    VkDevice handle
-) {
+Device* Device::retrieve(VkDevice handle)
+{
     void* key = getDispatchKey(handle);
     assert(isInMap(key, g_devices));
     return g_devices.at(key).get();
 }
 
 /* See header for documentation. */
-Device* Device::retrieve(
-    VkQueue handle
-) {
+Device* Device::retrieve(VkQueue handle)
+{
     void* key = getDispatchKey(handle);
     assert(isInMap(key, g_devices));
     return g_devices.at(key).get();
 }
 
 /* See header for documentation. */
-Device* Device::retrieve(
-    VkCommandBuffer handle
-) {
+Device* Device::retrieve(VkCommandBuffer handle)
+{
     void* key = getDispatchKey(handle);
     assert(isInMap(key, g_devices));
     return g_devices.at(key).get();
 }
 
 /* See header for documentation. */
-void Device::destroy(
-    Device* device
-) {
+void Device::destroy(Device* device)
+{
     g_devices.erase(getDispatchKey(device));
 }
 
 /* See header for documentation. */
-Device::Device(
-    Instance* _instance,
-    VkPhysicalDevice _physicalDevice,
-    VkDevice _device,
-    PFN_vkGetDeviceProcAddr nlayerGetProcAddress,
-    const VkDeviceCreateInfo& createInfo
-):
-    instance(_instance),
-    physicalDevice(_physicalDevice),
-    device(_device)
+Device::Device(Instance* _instance,
+               VkPhysicalDevice _physicalDevice,
+               VkDevice _device,
+               PFN_vkGetDeviceProcAddr nlayerGetProcAddress,
+               const VkDeviceCreateInfo& createInfo)
+    : instance(_instance),
+      physicalDevice(_physicalDevice),
+      device(_device)
 {
     UNUSED(createInfo);
 

@@ -23,15 +23,13 @@
  * ----------------------------------------------------------------------------
  */
 
-#include <memory>
-
 #include "timeline_comms.hpp"
 
+#include <memory>
+
 /* See header for documentation. */
-TimelineComms::TimelineComms(
-    Comms::CommsInterface& _comms
-):
-    comms(_comms)
+TimelineComms::TimelineComms(Comms::CommsInterface& _comms)
+    : comms(_comms)
 {
     if (comms.isConnected())
     {
@@ -40,8 +38,7 @@ TimelineComms::TimelineComms(
 }
 
 /* See header for documentation. */
-void TimelineComms::txMessage(
-    const std::string& message)
+void TimelineComms::txMessage(const std::string& message)
 {
     // Message endpoint is not available
     if (endpoint == 0)

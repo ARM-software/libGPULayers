@@ -23,31 +23,29 @@
  * ----------------------------------------------------------------------------
  */
 
-#include <mutex>
-
 #include "device.hpp"
-#include "layer_device_functions.hpp"
+#include "framework/device_dispatch_table.hpp"
+
+#include <mutex>
 
 extern std::mutex g_vulkanLock;
 
 /* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateCommandPool<user_tag>(
-    VkDevice device,
-    const VkCommandPoolCreateInfo* pCreateInfo,
-    const VkAllocationCallbacks* pAllocator,
-    VkCommandPool* pCommandPool
-) {
+template<>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateCommandPool<user_tag>(VkDevice device,
+                                                                   const VkCommandPoolCreateInfo* pCreateInfo,
+                                                                   const VkAllocationCallbacks* pAllocator,
+                                                                   VkCommandPool* pCommandPool)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(device);
 
     // Release the lock to call into the driver
     lock.unlock();
-    VkResult result = layer->driver.vkCreateCommandPool(
-        device, pCreateInfo, pAllocator, pCommandPool);
+    VkResult result = layer->driver.vkCreateCommandPool(device, pCreateInfo, pAllocator, pCommandPool);
     if (result != VK_SUCCESS)
     {
         return result;
@@ -61,16 +59,15 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateCommandPool<user_tag>(
 }
 
 /* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkResetCommandPool<user_tag>(
-    VkDevice device,
-    VkCommandPool commandPool,
-    VkCommandPoolResetFlags flags
-) {
+template<>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkResetCommandPool<user_tag>(VkDevice device,
+                                                                  VkCommandPool commandPool,
+                                                                  VkCommandPoolResetFlags flags)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(device);
 
     auto& tracker = layer->getStateTracker();
@@ -82,16 +79,15 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkResetCommandPool<user_tag>(
 }
 
 /* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroyCommandPool<user_tag>(
-    VkDevice device,
-    VkCommandPool commandPool,
-    const VkAllocationCallbacks* pAllocator
-) {
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyCommandPool<user_tag>(VkDevice device,
+                                                                VkCommandPool commandPool,
+                                                                const VkAllocationCallbacks* pAllocator)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(device);
 
     auto& tracker = layer->getStateTracker();

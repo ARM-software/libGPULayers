@@ -38,15 +38,16 @@
 
 #pragma once
 
+#include "trackers/render_pass.hpp"
+#include "utils/misc.hpp"
+
 #include <atomic>
 #include <memory>
 #include <string>
 #include <utility>
 #include <vector>
-#include <vulkan/vulkan.h>
 
-#include "trackers/render_pass.hpp"
-#include "utils/misc.hpp"
+#include <vulkan/vulkan.h>
 
 namespace Tracker
 {
@@ -76,8 +77,7 @@ public:
      *
      * @param tagID   The assigned tagID.
      */
-    LCSWorkload(
-        uint64_t tagID);
+    LCSWorkload(uint64_t tagID);
 
     /**
      * @brief Destroy a workload.
@@ -90,29 +90,22 @@ public:
      * @param debugLabel          The debug label stack for the VkQueue at submit time.
      * @param tagIDContinuation   The ID of the workload if this is a continuation of it.
      */
-    virtual std::string getMetadata(
-        const std::vector<std::string>* debugLabel=nullptr,
-        uint64_t tagIDContinuation=0) const = 0;
+    virtual std::string getMetadata(const std::vector<std::string>* debugLabel = nullptr,
+                                    uint64_t tagIDContinuation = 0) const = 0;
 
     /**
      * @brief Get this workload's tagID.
      *
      * @return The assigned ID.
      */
-    uint64_t getTagID() const
-    {
-        return tagID;
-    }
+    uint64_t getTagID() const { return tagID; }
 
     /**
      * @brief Get a unique tagID to label a workload in a command buffer.
      *
      * @return The assigned ID.
      */
-    static uint64_t assignTagID()
-    {
-        return nextTagID.fetch_add(1, std::memory_order_relaxed);
-    }
+    static uint64_t assignTagID() { return nextTagID.fetch_add(1, std::memory_order_relaxed); }
 
 protected:
     /**
@@ -145,13 +138,12 @@ public:
      * @param suspending      Is this a render pass part that suspends later?
      * @param oneTimeSubmit   Is this recorded into a one-time-submit command buffer?
      */
-    LCSRenderPass(
-        uint64_t tagID,
-        const RenderPass& renderPass,
-        uint32_t width,
-        uint32_t height,
-        bool suspending,
-        bool oneTimeSubmit);
+    LCSRenderPass(uint64_t tagID,
+                  const RenderPass& renderPass,
+                  uint32_t width,
+                  uint32_t height,
+                  bool suspending,
+                  bool oneTimeSubmit);
 
     /**
      * @brief Destroy a workload.
@@ -163,25 +155,18 @@ public:
      *
      * @return @c true if this instance suspends rather than ends.
      */
-    bool isSuspending() const
-    {
-        return suspending;
-    };
+    bool isSuspending() const { return suspending; };
 
     /**
      * @brief Update this workload with the final draw count.
      *
      * @param count   The number of draw calls tracked by the command buffer.
      */
-    void setDrawCallCount(uint64_t count)
-    {
-        drawCallCount = count;
-    };
+    void setDrawCallCount(uint64_t count) { drawCallCount = count; };
 
     /* See base class for documentation. */
-    virtual std::string getMetadata(
-        const std::vector<std::string>* debugLabel=nullptr,
-        uint64_t tagIDContinuation=0) const;
+    virtual std::string getMetadata(const std::vector<std::string>* debugLabel = nullptr,
+                                    uint64_t tagIDContinuation = 0) const;
 
 private:
     /**
@@ -189,8 +174,7 @@ private:
      *
      * @param debugLabel   The debug label stack of the VkQueue at submit time.
      */
-    std::string getBeginMetadata(
-        const std::vector<std::string>* debugLabel=nullptr) const;
+    std::string getBeginMetadata(const std::vector<std::string>* debugLabel = nullptr) const;
 
     /**
      * @brief Get the metadata for this workload if continuing an existing render pass.
@@ -198,9 +182,8 @@ private:
      * @param debugLabel          The debug label stack of the VkQueue at submit time.
      * @param tagIDContinuation   The ID of the workload if this is a continuation of it.
      */
-    std::string getContinuationMetadata(
-        const std::vector<std::string>* debugLabel=nullptr,
-        uint64_t tagIDContinuation=0) const;
+    std::string getContinuationMetadata(const std::vector<std::string>* debugLabel = nullptr,
+                                        uint64_t tagIDContinuation = 0) const;
 
     /**
      * @brief Width of this workload, in pixels.
@@ -233,7 +216,7 @@ private:
      * Note: This is updated by ther command buffer tracker when the render
      * pass is suspended or ended.
      */
-    uint64_t drawCallCount { 0 };
+    uint64_t drawCallCount {0};
 
     /**
      * @brief The attachments for this render pass.
@@ -257,11 +240,7 @@ public:
      * @param yGroups   The number of work groups in the Y dimension.
      * @param zGroups   The number of work groups in the Z dimension.
      */
-    LCSDispatch(
-        uint64_t tagID,
-        int64_t xGroups,
-        int64_t yGroups,
-        int64_t zGroups);
+    LCSDispatch(uint64_t tagID, int64_t xGroups, int64_t yGroups, int64_t zGroups);
 
     /**
      * @brief Destroy a workload.
@@ -269,9 +248,8 @@ public:
     virtual ~LCSDispatch() = default;
 
     /* See base class for documentation. */
-    virtual std::string getMetadata(
-        const std::vector<std::string>* debugLabel=nullptr,
-        uint64_t tagIDContinuation=0) const;
+    virtual std::string getMetadata(const std::vector<std::string>* debugLabel = nullptr,
+                                    uint64_t tagIDContinuation = 0) const;
 
 private:
     /**
@@ -306,11 +284,7 @@ public:
      * @param yItems   The number of work items in the Y dimension.
      * @param zItems   The number of work items in the Z dimension.
      */
-    LCSTraceRays(
-        uint64_t tagID,
-        int64_t xItems,
-        int64_t yItems,
-        int64_t zItems);
+    LCSTraceRays(uint64_t tagID, int64_t xItems, int64_t yItems, int64_t zItems);
 
     /**
      * @brief Destroy a workload.
@@ -318,9 +292,8 @@ public:
     virtual ~LCSTraceRays() = default;
 
     /* See base class for documentation. */
-    virtual std::string getMetadata(
-        const std::vector<std::string>* debugLabel=nullptr,
-        uint64_t tagIDContinuation=0) const;
+    virtual std::string getMetadata(const std::vector<std::string>* debugLabel = nullptr,
+                                    uint64_t tagIDContinuation = 0) const;
 
 private:
     /**
@@ -354,10 +327,7 @@ public:
      * @param transferType   The subtype of the transfer.
      * @param pixelCount     The size of the transfer, in pixels.
      */
-    LCSImageTransfer(
-        uint64_t tagID,
-        const std::string& transferType,
-        int64_t pixelCount);
+    LCSImageTransfer(uint64_t tagID, const std::string& transferType, int64_t pixelCount);
 
     /**
      * @brief Destroy a workload.
@@ -365,9 +335,8 @@ public:
     virtual ~LCSImageTransfer() = default;
 
     /* See base class for documentation. */
-    virtual std::string getMetadata(
-        const std::vector<std::string>* debugLabel=nullptr,
-        uint64_t tagIDContinuation=0) const;
+    virtual std::string getMetadata(const std::vector<std::string>* debugLabel = nullptr,
+                                    uint64_t tagIDContinuation = 0) const;
 
 private:
     /**
@@ -397,10 +366,7 @@ public:
      * @param transferType   The subtype of the transfer.
      * @param byteCount      The size of the transfer, in bytes.
      */
-    LCSBufferTransfer(
-        uint64_t tagID,
-        const std::string& transferType,
-        int64_t byteCount);
+    LCSBufferTransfer(uint64_t tagID, const std::string& transferType, int64_t byteCount);
 
     /**
      * @brief Destroy a workload.
@@ -408,9 +374,8 @@ public:
     virtual ~LCSBufferTransfer() = default;
 
     /* See base class for documentation. */
-    virtual std::string getMetadata(
-        const std::vector<std::string>* debugLabel=nullptr,
-        uint64_t tagIDContinuation=0) const;
+    virtual std::string getMetadata(const std::vector<std::string>* debugLabel = nullptr,
+                                    uint64_t tagIDContinuation = 0) const;
 
 private:
     /**
@@ -438,8 +403,7 @@ public:
      *
      * @param label   The application debug label.
      */
-    LCSMarker(
-        const std::string& label);
+    LCSMarker(const std::string& label);
 
     /**
      * @brief Destroy a workload.
@@ -447,9 +411,8 @@ public:
     virtual ~LCSMarker() = default;
 
     /* See base class for documentation. */
-    virtual std::string getMetadata(
-        const std::vector<std::string>* debugLabel=nullptr,
-        uint64_t tagIDContinuation=0) const
+    virtual std::string getMetadata(const std::vector<std::string>* debugLabel = nullptr,
+                                    uint64_t tagIDContinuation = 0) const
     {
         UNUSED(debugLabel);
         UNUSED(tagIDContinuation);

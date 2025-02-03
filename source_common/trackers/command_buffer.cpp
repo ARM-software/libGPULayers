@@ -23,22 +23,21 @@
  * ----------------------------------------------------------------------------
  */
 
-#include <cassert>
-
 #include "trackers/command_buffer.hpp"
+
 #include "framework/utils.hpp"
 #include "utils/misc.hpp"
+
+#include <cassert>
 
 namespace Tracker
 {
 
 /* See header for documentation. */
-CommandBuffer::CommandBuffer(
-    VkCommandBuffer _handle) :
-    handle(_handle)
-{
+CommandBuffer::CommandBuffer(VkCommandBuffer _handle)
+    : handle(_handle) {
 
-};
+      };
 
 /* See header for documentation. */
 void CommandBuffer::reset()
@@ -50,17 +49,14 @@ void CommandBuffer::reset()
 }
 
 /* See header for documentation. */
-void CommandBuffer::begin(
-    bool _oneTimeSubmit
-)
+void CommandBuffer::begin(bool _oneTimeSubmit)
 {
     oneTimeSubmit = _oneTimeSubmit;
 }
 
 /* See header for documentation. */
-void CommandBuffer::debugMarkerBegin(
-    std::string marker
-) {
+void CommandBuffer::debugMarkerBegin(std::string marker)
+{
     // Create a workload we can reference later
     auto workload = std::make_shared<LCSMarker>(marker);
     workloads.push_back(workload);
@@ -80,14 +76,13 @@ void CommandBuffer::debugMarkerEnd()
 }
 
 /* See header for documentation. */
-uint64_t CommandBuffer::renderPassBegin(
-    const RenderPass& renderPass,
-    uint32_t width,
-    uint32_t height,
-    bool resuming,
-    bool suspending
-) {
-    uint64_t tagID { 0 };
+uint64_t CommandBuffer::renderPassBegin(const RenderPass& renderPass,
+                                        uint32_t width,
+                                        uint32_t height,
+                                        bool resuming,
+                                        bool suspending)
+{
+    uint64_t tagID {0};
 
     assert(!currentRenderPass);
 
@@ -101,8 +96,7 @@ uint64_t CommandBuffer::renderPassBegin(
     // Populate render pass with config information
     renderPassStartDrawCount = stats.getDrawCallCount();
 
-    auto workload = std::make_shared<LCSRenderPass>(
-        tagID, renderPass, width, height, suspending, oneTimeSubmit);
+    auto workload = std::make_shared<LCSRenderPass>(tagID, renderPass, width, height, suspending, oneTimeSubmit);
 
     currentRenderPass = workload;
     workloads.push_back(workload);
@@ -132,17 +126,13 @@ bool CommandBuffer::renderPassEnd()
 }
 
 /* See header for documentation. */
-uint64_t CommandBuffer::dispatch(
-    int64_t xGroups,
-    int64_t yGroups,
-    int64_t zGroups
-) {
+uint64_t CommandBuffer::dispatch(int64_t xGroups, int64_t yGroups, int64_t zGroups)
+{
     uint64_t tagID = Tracker::LCSWorkload::assignTagID();
     stats.incDispatchCount();
 
     // Add a workload to the render pass
-    auto workload = std::make_shared<LCSDispatch>(
-        tagID, xGroups, yGroups, zGroups);
+    auto workload = std::make_shared<LCSDispatch>(tagID, xGroups, yGroups, zGroups);
     workloads.push_back(workload);
 
     // Add a command to the layer-side command stream
@@ -153,17 +143,13 @@ uint64_t CommandBuffer::dispatch(
 }
 
 /* See header for documentation. */
-uint64_t CommandBuffer::traceRays(
-    int64_t xItems,
-    int64_t yItems,
-    int64_t zItems
-) {
+uint64_t CommandBuffer::traceRays(int64_t xItems, int64_t yItems, int64_t zItems)
+{
     uint64_t tagID = Tracker::LCSWorkload::assignTagID();
     stats.incTraceRaysCount();
 
     // Add a workload to the render pass
-    auto workload = std::make_shared<LCSTraceRays>(
-        tagID, xItems, yItems, zItems);
+    auto workload = std::make_shared<LCSTraceRays>(tagID, xItems, yItems, zItems);
     workloads.push_back(workload);
 
     // Add a command to the layer-side command stream
@@ -174,16 +160,13 @@ uint64_t CommandBuffer::traceRays(
 }
 
 /* See header for documentation. */
-uint64_t CommandBuffer::imageTransfer(
-    const std::string& transferType,
-    int64_t pixelCount
-) {
+uint64_t CommandBuffer::imageTransfer(const std::string& transferType, int64_t pixelCount)
+{
     uint64_t tagID = Tracker::LCSWorkload::assignTagID();
     stats.incImageTransferCount();
 
     // Add a workload to the render pass
-    auto workload = std::make_shared<LCSImageTransfer>(
-        tagID, transferType, pixelCount);
+    auto workload = std::make_shared<LCSImageTransfer>(tagID, transferType, pixelCount);
     workloads.push_back(workload);
 
     // Add a command to the layer-side command stream
@@ -194,16 +177,13 @@ uint64_t CommandBuffer::imageTransfer(
 }
 
 /* See header for documentation. */
-uint64_t CommandBuffer::bufferTransfer(
-    const std::string& transferType,
-    int64_t byteCount
-) {
+uint64_t CommandBuffer::bufferTransfer(const std::string& transferType, int64_t byteCount)
+{
     uint64_t tagID = Tracker::LCSWorkload::assignTagID();
     stats.incBufferTransferCount();
 
     // Add a workload to the render pass
-    auto workload = std::make_shared<LCSBufferTransfer>(
-        tagID, transferType, byteCount);
+    auto workload = std::make_shared<LCSBufferTransfer>(tagID, transferType, byteCount);
     workloads.push_back(workload);
 
     // Add a command to the layer-side command stream
@@ -214,9 +194,8 @@ uint64_t CommandBuffer::bufferTransfer(
 }
 
 /* See header for documentation. */
-void CommandBuffer::executeCommands(
-    CommandBuffer& secondary
-) {
+void CommandBuffer::executeCommands(CommandBuffer& secondary)
+{
     // Integrate secondary statistics into the primary
     stats.mergeCounts(secondary.getStats());
 
@@ -226,21 +205,15 @@ void CommandBuffer::executeCommands(
 }
 
 /* See header for documentation. */
-CommandPool::CommandPool(
-    VkCommandPool _handle) :
-    handle(_handle)
-{
+CommandPool::CommandPool(VkCommandPool _handle)
+    : handle(_handle) {
 
-};
+      };
 
 /* See header for documentation. */
-CommandBuffer& CommandPool::allocateCommandBuffer(
-    VkCommandBuffer commandBuffer
-) {
-    auto result = commandBuffers.insert({
-        commandBuffer,
-        std::make_unique<CommandBuffer>(commandBuffer)
-    });
+CommandBuffer& CommandPool::allocateCommandBuffer(VkCommandBuffer commandBuffer)
+{
+    auto result = commandBuffers.insert({commandBuffer, std::make_unique<CommandBuffer>(commandBuffer)});
 
     // Validate that insertion worked
     assert(result.second);
@@ -250,9 +223,8 @@ CommandBuffer& CommandPool::allocateCommandBuffer(
 }
 
 /* See header for documentation. */
-void CommandPool::freeCommandBuffer(
-    VkCommandBuffer commandBuffer
-) {
+void CommandPool::freeCommandBuffer(VkCommandBuffer commandBuffer)
+{
     commandBuffers.erase(commandBuffer);
 }
 

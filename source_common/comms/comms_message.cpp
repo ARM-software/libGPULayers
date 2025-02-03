@@ -33,18 +33,15 @@
 namespace Comms
 {
 
-Message::Message(
-    EndpointID _endpointID,
-    MessageType _messageType,
-    MessageID _messageID,
-    std::unique_ptr<MessageData> _transmitData
-) :
-    endpointID(_endpointID),
-    messageType(_messageType),
-    messageID(_messageID),
-    transmitData(std::move(_transmitData))
+Message::Message(EndpointID _endpointID,
+                 MessageType _messageType,
+                 MessageID _messageID,
+                 std::unique_ptr<MessageData> _transmitData)
+    : endpointID(_endpointID),
+      messageType(_messageType),
+      messageID(_messageID),
+      transmitData(std::move(_transmitData))
 {
-
 }
 
 }

@@ -47,22 +47,20 @@ public:
      *
      * @param comms   The common comms module used by all services.
      */
-    TimelineComms(
-        Comms::CommsInterface& comms);
+    TimelineComms(Comms::CommsInterface& comms);
 
     /**
      * @brief Send a message to the GPU timeline endpoint service.
      *
      * @param message   The message to send.
      */
-    void txMessage(
-        const std::string& message);
+    void txMessage(const std::string& message);
 
 private:
     /**
      * @brief The endpoint ID of the service, or 0 if not found.
      */
-    Comms::EndpointID endpoint { 0 };
+    Comms::EndpointID endpoint {0};
 
     /**
      * @brief The common module for network messaging.

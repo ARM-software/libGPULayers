@@ -23,10 +23,10 @@
  * ----------------------------------------------------------------------------
  */
 
-#include <mutex>
-
 #include "device.hpp"
-#include "layer_device_functions.hpp"
+#include "framework/device_dispatch_table.hpp"
+
+#include <mutex>
 
 extern std::mutex g_vulkanLock;
 
@@ -36,24 +36,24 @@ extern std::mutex g_vulkanLock;
  * @param layer           The layer context for the device.
  * @param commandBuffer   The command buffer we are recording.
  */
-static void preDispatch(
-    Device* layer,
-    VkCommandBuffer commandBuffer
-) {
+static void preDispatch(Device* layer, VkCommandBuffer commandBuffer)
+{
     if (!layer->instance->config.serialize_cmdstream_compute_dispatch_pre())
     {
         return;
     }
 
     // Execution dependency
-    layer->driver.vkCmdPipelineBarrier(
-        commandBuffer,
-        VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-        VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-        0,
-        0, nullptr,
-        0, nullptr,
-        0, nullptr);
+    layer->driver.vkCmdPipelineBarrier(commandBuffer,
+                                       VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+                                       VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+                                       0,
+                                       0,
+                                       nullptr,
+                                       0,
+                                       nullptr,
+                                       0,
+                                       nullptr);
 }
 
 /**
@@ -62,38 +62,37 @@ static void preDispatch(
  * @param layer           The layer context for the device.
  * @param commandBuffer   The command buffer we are recording.
  */
-static void postDispatch(
-    Device* layer,
-    VkCommandBuffer commandBuffer
-) {
+static void postDispatch(Device* layer, VkCommandBuffer commandBuffer)
+{
     if (!layer->instance->config.serialize_cmdstream_compute_dispatch_post())
     {
         return;
     }
 
     // Execution dependency
-    layer->driver.vkCmdPipelineBarrier(
-        commandBuffer,
-        VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-        VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-        0,
-        0, nullptr,
-        0, nullptr,
-        0, nullptr);
+    layer->driver.vkCmdPipelineBarrier(commandBuffer,
+                                       VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+                                       VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+                                       0,
+                                       0,
+                                       nullptr,
+                                       0,
+                                       nullptr,
+                                       0,
+                                       nullptr);
 }
 
 /* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatch<user_tag>(
-    VkCommandBuffer commandBuffer,
-    uint32_t groupCountX,
-    uint32_t groupCountY,
-    uint32_t groupCountZ
-) {
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatch<user_tag>(VkCommandBuffer commandBuffer,
+                                                         uint32_t groupCountX,
+                                                         uint32_t groupCountY,
+                                                         uint32_t groupCountZ)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
 
     // Release the lock to call into the driver
@@ -105,66 +104,65 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatch<user_tag>(
 }
 
 /* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchBase<user_tag>(
-    VkCommandBuffer commandBuffer,
-    uint32_t baseGroupX,
-    uint32_t baseGroupY,
-    uint32_t baseGroupZ,
-    uint32_t groupCountX,
-    uint32_t groupCountY,
-    uint32_t groupCountZ
-) {
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchBase<user_tag>(VkCommandBuffer commandBuffer,
+                                                             uint32_t baseGroupX,
+                                                             uint32_t baseGroupY,
+                                                             uint32_t baseGroupZ,
+                                                             uint32_t groupCountX,
+                                                             uint32_t groupCountY,
+                                                             uint32_t groupCountZ)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
 
     // Release the lock to call into the driver
     lock.unlock();
 
     preDispatch(layer, commandBuffer);
-    layer->driver.vkCmdDispatchBase(commandBuffer, baseGroupX, baseGroupY, baseGroupZ, groupCountX, groupCountY, groupCountZ);
+    layer->driver
+        .vkCmdDispatchBase(commandBuffer, baseGroupX, baseGroupY, baseGroupZ, groupCountX, groupCountY, groupCountZ);
     postDispatch(layer, commandBuffer);
 }
 
 /* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchBaseKHR<user_tag>(
-    VkCommandBuffer commandBuffer,
-    uint32_t baseGroupX,
-    uint32_t baseGroupY,
-    uint32_t baseGroupZ,
-    uint32_t groupCountX,
-    uint32_t groupCountY,
-    uint32_t groupCountZ
-) {
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchBaseKHR<user_tag>(VkCommandBuffer commandBuffer,
+                                                                uint32_t baseGroupX,
+                                                                uint32_t baseGroupY,
+                                                                uint32_t baseGroupZ,
+                                                                uint32_t groupCountX,
+                                                                uint32_t groupCountY,
+                                                                uint32_t groupCountZ)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
 
     // Release the lock to call into the driver
     lock.unlock();
 
     preDispatch(layer, commandBuffer);
-    layer->driver.vkCmdDispatchBaseKHR(commandBuffer, baseGroupX, baseGroupY, baseGroupZ, groupCountX, groupCountY, groupCountZ);
+    layer->driver
+        .vkCmdDispatchBaseKHR(commandBuffer, baseGroupX, baseGroupY, baseGroupZ, groupCountX, groupCountY, groupCountZ);
     postDispatch(layer, commandBuffer);
 }
 
 /* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchIndirect<user_tag>(
-    VkCommandBuffer commandBuffer,
-    VkBuffer buffer,
-    VkDeviceSize offset
-) {
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchIndirect<user_tag>(VkCommandBuffer commandBuffer,
+                                                                 VkBuffer buffer,
+                                                                 VkDeviceSize offset)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
 
     // Release the lock to call into the driver

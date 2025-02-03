@@ -38,7 +38,7 @@
 #include <sys/time.h>
 
 #if defined(VK_USE_PLATFORM_ANDROID_KHR)
-  #include <android/log.h>
+#  include <android/log.h>
 #endif
 
 /**
@@ -50,9 +50,9 @@
  * Annotation for exported symbol from shared object on Android only.
  */
 #if defined(VK_USE_PLATFORM_ANDROID_KHR)
-    #define VK_LAYER_EXPORT_ANDROID VK_LAYER_EXPORT
+#  define VK_LAYER_EXPORT_ANDROID VK_LAYER_EXPORT
 #else
-    #define VK_LAYER_EXPORT_ANDROID
+#  define VK_LAYER_EXPORT_ANDROID
 #endif
 
 /**
@@ -63,7 +63,9 @@ using APIVersion = std::pair<uint32_t, uint32_t>;
 /**
  * @brief Tag type used for template function dispatch;
  */
-struct user_tag {};
+struct user_tag
+{
+};
 
 /**
  * @brief Convert a dispatchable API handle to the underlying dispatch key.
@@ -72,9 +74,8 @@ struct user_tag {};
  *
  * @return The dispatch key.
  */
-static inline void* getDispatchKey(
-    void* ptr
-) {
+inline static void* getDispatchKey(void* ptr)
+{
     return *static_cast<void**>(ptr);
 }
 
@@ -82,43 +83,47 @@ static inline void* getDispatchKey(
  * @brief Enable to enable API entrypoint tracing to the log/logcat.
  */
 #if !defined(CONFIG_TRACE)
-  #define CONFIG_TRACE 0
+#  define CONFIG_TRACE 0
 #endif
 
 /**
  * @brief Enable to enable layer logging to the log/logcat.
  */
 #if !defined(CONFIG_LOG)
-  #define CONFIG_LOG 1
+#  define CONFIG_LOG 1
 #endif
 
 #if CONFIG_TRACE
-  #ifdef __ANDROID__
-    #if !defined(LGL_LOG_TAG)
-        #error "LGL_LOG_TAG not defined"
-    #endif
+#  ifdef __ANDROID__
+#    if !defined(LGL_LOG_TAG)
+#      error "LGL_LOG_TAG not defined"
+#    endif
 
-    #define LAYER_TRACE(x) __android_log_print(ANDROID_LOG_INFO, LGL_LOG_TAG, "API Trace: %s", x)
-  #else
-    #define LAYER_TRACE(x) printf("API Trace: %s\n", x)
-  #endif
+#    define LAYER_TRACE(x) __android_log_print(ANDROID_LOG_INFO, LGL_LOG_TAG, "API Trace: %s", x)
+#  else
+#    define LAYER_TRACE(x) printf("API Trace: %s\n", x)
+#  endif
 #else
-    #define LAYER_TRACE(x)
+#  define LAYER_TRACE(x)
 #endif
 
 #if CONFIG_LOG
-  #ifdef __ANDROID__
-    #if !defined(LGL_LOG_TAG)
-        #error "LGL_LOG_TAG not defined"
-    #endif
+#  ifdef __ANDROID__
+#    if !defined(LGL_LOG_TAG)
+#      error "LGL_LOG_TAG not defined"
+#    endif
 
-    #define LAYER_LOG(...) __android_log_print(ANDROID_LOG_INFO, LGL_LOG_TAG, __VA_ARGS__)
-    #define LAYER_ERR(...) __android_log_print(ANDROID_LOG_INFO, LGL_LOG_TAG, __VA_ARGS__)
-  #else
-    #define LAYER_LOG(...) printf(__VA_ARGS__); printf("\n");
-    #define LAYER_ERR(...) printf(__VA_ARGS__); printf("\n");
-  #endif
+#    define LAYER_LOG(...) __android_log_print(ANDROID_LOG_INFO, LGL_LOG_TAG, __VA_ARGS__)
+#    define LAYER_ERR(...) __android_log_print(ANDROID_LOG_INFO, LGL_LOG_TAG, __VA_ARGS__)
+#  else
+#    define LAYER_LOG(...)                                                                                             \
+        printf(__VA_ARGS__);                                                                                           \
+        printf("\n");
+#    define LAYER_ERR(...)                                                                                             \
+        printf(__VA_ARGS__);                                                                                           \
+        printf("\n");
+#  endif
 #else
-    #define LAYER_LOG(...)
-    #define LAYER_ERR(...)
+#  define LAYER_LOG(...)
+#  define LAYER_ERR(...)
 #endif

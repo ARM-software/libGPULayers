@@ -44,7 +44,7 @@ using json = nlohmann::json;
 class LayerConfig
 {
 public:
-     /**
+    /**
      * @brief Create a new layer config.
      */
     LayerConfig();
@@ -138,7 +138,6 @@ public:
      */
     uint32_t framebuffer_force_fixed_rate_compression() const;
 
-
 private:
     /**
      * @brief Parse the configuration options for the serializer.
@@ -171,62 +170,62 @@ private:
     /**
      * @brief True if we force serialize across queues.
      */
-    bool conf_serialize_queues { false };
+    bool conf_serialize_queues {false};
 
     /**
      * @brief True if we force serialize before compute dispatches.
      */
-    bool conf_serialize_dispatch_pre { false };
+    bool conf_serialize_dispatch_pre {false};
 
     /**
      * @brief True if we force serialize after compute dispatches.
      */
-    bool conf_serialize_dispatch_post { false };
+    bool conf_serialize_dispatch_post {false};
 
     /**
      * @brief True if we force serialize before render pass workloads.
      */
-    bool conf_serialize_render_pass_pre { false };
+    bool conf_serialize_render_pass_pre {false};
 
     /**
      * @brief True if we force serialize after render pass workloads.
      */
-    bool conf_serialize_render_pass_post { false };
+    bool conf_serialize_render_pass_post {false};
 
     /**
      * @brief True if we force serialize before trace rays workloads.
      */
-    bool conf_serialize_trace_rays_pre { false };
+    bool conf_serialize_trace_rays_pre {false};
 
     /**
      * @brief True if we force serialize after trace rays workloads.
      */
-    bool conf_serialize_trace_rays_post { false };
+    bool conf_serialize_trace_rays_post {false};
 
     /**
      * @brief True if we force serialize before transfer workloads.
      */
-    bool conf_serialize_transfer_pre { false };
+    bool conf_serialize_transfer_pre {false};
 
     /**
      * @brief True if we force serialize after transfer workloads.
      */
-    bool conf_serialize_transfer_post { false };
+    bool conf_serialize_transfer_post {false};
 
     /**
      * @brief True if we force disable executable binary caching.
      */
-    bool conf_shader_disable_program_cache { false };
+    bool conf_shader_disable_program_cache {false};
 
     /**
      * @brief True if we force remove use of relaxed precision decoration.
      */
-    bool conf_shader_disable_relaxed_precision { false };
+    bool conf_shader_disable_relaxed_precision {false};
 
     /**
      * @brief True if we change SPIR-V to change the program hash.
      */
-    bool conf_shader_enable_fuzz_spirv_hash { false };
+    bool conf_shader_enable_fuzz_spirv_hash {false};
 
     /**
      * @brief True if we disable all framebuffer compression.
@@ -234,14 +233,14 @@ private:
      * This has precedence over default compression and forcing fixed rate
      * compression.
      */
-    bool conf_framebuffer_disable_compression { false };
+    bool conf_framebuffer_disable_compression {false};
 
     /**
      * @brief True if we for all compression to default framebuffer compression.
      *
      * This has precedence over forcing fixed rate compression.
      */
-    bool conf_framebuffer_force_default_compression { false };
+    bool conf_framebuffer_force_default_compression {false};
 
     /**
      * @brief True if we force fixed rate compression.
@@ -254,5 +253,5 @@ private:
      *
      * If zero, then no force is set and default compression will be used.
      */
-    uint32_t conf_framebuffer_force_fixed_rate_compression { 0 };
+    uint32_t conf_framebuffer_force_fixed_rate_compression {0};
 };

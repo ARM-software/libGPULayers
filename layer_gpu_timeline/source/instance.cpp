@@ -23,11 +23,11 @@
  * ----------------------------------------------------------------------------
  */
 
-#include <cassert>
+#include "instance.hpp"
 
 #include "framework/utils.hpp"
 
-#include "instance.hpp"
+#include <cassert>
 
 /**
  * @brief The dispatch lookup for all of the created Vulkan instances.
@@ -35,54 +35,46 @@
 static std::unordered_map<void*, std::unique_ptr<Instance>> g_instances;
 
 /* See header for documentation. */
-const APIVersion Instance::minAPIVersion { 1, 1 };
+const APIVersion Instance::minAPIVersion {1, 1};
 
 /* See header for documentation. */
 const std::vector<std::string> Instance::extraExtensions {
-    VK_EXT_DEBUG_UTILS_EXTENSION_NAME
+    VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
 };
 
 /* See header for documentation. */
-void Instance::store(
-    VkInstance handle,
-    std::unique_ptr<Instance>& instance
-) {
+void Instance::store(VkInstance handle, std::unique_ptr<Instance>& instance)
+{
     void* key = getDispatchKey(handle);
-    g_instances.insert({ key, std::move(instance) });
+    g_instances.insert({key, std::move(instance)});
 }
 
 /* See header for documentation. */
-Instance* Instance::retrieve(
-    VkInstance handle
-) {
+Instance* Instance::retrieve(VkInstance handle)
+{
     void* key = getDispatchKey(handle);
     assert(isInMap(key, g_instances));
     return g_instances.at(key).get();
 }
 
 /* See header for documentation. */
-Instance* Instance::retrieve(
-    VkPhysicalDevice handle
-) {
+Instance* Instance::retrieve(VkPhysicalDevice handle)
+{
     void* key = getDispatchKey(handle);
     assert(isInMap(key, g_instances));
     return g_instances.at(key).get();
 }
 
 /* See header for documentation. */
-void Instance::destroy(
-    Instance* instance
-) {
+void Instance::destroy(Instance* instance)
+{
     g_instances.erase(getDispatchKey(instance->instance));
 }
 
 /* See header for documentation. */
-Instance::Instance(
-    VkInstance _instance,
-    PFN_vkGetInstanceProcAddr _nlayerGetProcAddress
-) :
-    instance(_instance),
-    nlayerGetProcAddress(_nlayerGetProcAddress)
+Instance::Instance(VkInstance _instance, PFN_vkGetInstanceProcAddr _nlayerGetProcAddress)
+    : instance(_instance),
+      nlayerGetProcAddress(_nlayerGetProcAddress)
 {
     initDriverInstanceDispatchTable(instance, nlayerGetProcAddress, driver);
 }

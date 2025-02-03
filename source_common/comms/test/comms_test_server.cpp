@@ -30,9 +30,10 @@
 
 #include "comms/test/comms_test_server.hpp"
 
-#include <arpa/inet.h>
 #include <cstring>
 #include <iostream>
+
+#include <arpa/inet.h>
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <unistd.h>
@@ -41,9 +42,8 @@ namespace CommsTest
 {
 
 /* See header for documentation. */
-CommsTestServer::CommsTestServer(
-    const std::string& domainAddress
-) {
+CommsTestServer::CommsTestServer(const std::string& domainAddress)
+{
     int pipeErr = pipe(stopRequestPipe);
     if (pipeErr)
     {
@@ -59,7 +59,9 @@ CommsTestServer::CommsTestServer(
     }
 
     // Build the address to listen on
-    struct sockaddr_un servAddr {};
+    struct sockaddr_un servAddr
+    {
+    };
     servAddr.sun_family = AF_UNIX;
 
     // Copy the domain address, inserting leading NUL needed for abstract UDS
@@ -67,10 +69,9 @@ CommsTestServer::CommsTestServer(
     servAddr.sun_path[0] = '\0';
 
     // Bind the socket to the address
-    int bindErr = bind(
-        listenSockfd,
-        reinterpret_cast<const struct sockaddr*>(&servAddr),
-        offsetof(struct sockaddr_un, sun_path) + domainAddress.size() + 1);
+    int bindErr = bind(listenSockfd,
+                       reinterpret_cast<const struct sockaddr*>(&servAddr),
+                       offsetof(struct sockaddr_un, sun_path) + domainAddress.size() + 1);
     if (bindErr)
     {
         std::cout << "  - ERROR: Svr socket bind failed" << std::endl;
@@ -80,8 +81,8 @@ CommsTestServer::CommsTestServer(
     }
 
     // Listen on the socket
-    int listenErr = listen(listenSockfd,  5);
-    if(listenErr)
+    int listenErr = listen(listenSockfd, 5);
+    if (listenErr)
     {
         std::cout << "  - ERROR: Svr socket listen failed" << std::endl;
         close(listenSockfd);
@@ -95,9 +96,8 @@ CommsTestServer::CommsTestServer(
 }
 
 /* See header for documentation. */
-CommsTestServer::CommsTestServer(
-    int port
-) {
+CommsTestServer::CommsTestServer(int port)
+{
     int pipeErr = pipe(stopRequestPipe);
     if (pipeErr)
     {
@@ -119,16 +119,15 @@ CommsTestServer::CommsTestServer(
         std::cout << "  - WARN: Svr socket setsockopt failed" << std::endl;
     }
 
-    struct sockaddr_in servAddr {};
+    struct sockaddr_in servAddr
+    {
+    };
     servAddr.sin_family = AF_INET;
     servAddr.sin_port = htons(port);
     servAddr.sin_addr.s_addr = INADDR_ANY;
 
     // Bind the socket to the address
-    int bindErr = bind(
-        listenSockfd,
-        reinterpret_cast<const struct sockaddr*>(&servAddr),
-        sizeof(struct sockaddr_in));
+    int bindErr = bind(listenSockfd, reinterpret_cast<const struct sockaddr*>(&servAddr), sizeof(struct sockaddr_in));
     if (bindErr)
     {
         std::cout << "  - ERROR: Svr socket bind failed " << std::endl;
@@ -138,8 +137,8 @@ CommsTestServer::CommsTestServer(
     }
 
     // Listen on the socket
-    int listenErr = listen(listenSockfd,  5);
-    if(listenErr)
+    int listenErr = listen(listenSockfd, 5);
+    if (listenErr)
     {
         std::cout << "  - ERROR: Svr socket listen failed" << std::endl;
         close(listenSockfd);
@@ -190,7 +189,7 @@ void CommsTestServer::stop()
 void CommsTestServer::runServer()
 {
     int dataSockfd = accept(listenSockfd, NULL, NULL);
-    if(dataSockfd < 0)
+    if (dataSockfd < 0)
     {
         std::cout << "  - ERROR: Svr socket accept failed" << std::endl;
         close(listenSockfd);
@@ -220,10 +219,9 @@ void CommsTestServer::runServer()
 
         // Store the message for later checking
         std::string decodedPayload(payload->begin(), payload->end());
-        received.emplace_back(
-            static_cast<Comms::EndpointID>(header.endpointID),
-            static_cast<Comms::MessageType>(header.messageType),
-            std::move(payload));
+        received.emplace_back(static_cast<Comms::EndpointID>(header.endpointID),
+                              static_cast<Comms::MessageType>(header.messageType),
+                              std::move(payload));
 
         // If this is a tx_rx message reverse payload and send it back ...
         if (header.messageType == static_cast<uint8_t>(Comms::MessageType::TX_RX))
@@ -252,11 +250,8 @@ void CommsTestServer::runServer()
 }
 
 /* See header for documentation. */
-bool CommsTestServer::receiveData(
-    int sockfd,
-    uint8_t* data,
-    size_t dataSize
-) {
+bool CommsTestServer::receiveData(int sockfd, uint8_t* data, size_t dataSize)
+{
     int pipefd = stopRequestPipe[0];
     int maxfd = std::max(sockfd, pipefd);
 
@@ -298,12 +293,9 @@ bool CommsTestServer::receiveData(
 }
 
 /* See header for documentation. */
-void CommsTestServer::send_data(
-    int sockfd,
-    uint8_t* data,
-    size_t dataSize
-) {
-    while(dataSize)
+void CommsTestServer::send_data(int sockfd, uint8_t* data, size_t dataSize)
+{
+    while (dataSize)
     {
         ssize_t sentSize = send(sockfd, data, dataSize, 0);
         // An error occurred

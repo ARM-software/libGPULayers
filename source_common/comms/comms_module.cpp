@@ -28,24 +28,24 @@
  * The implementation of the main communications module.
  */
 
-#include <arpa/inet.h>
+#include "comms_module.hpp"
+
+#include "framework/utils.hpp"
+
+#include <cstring>
 #include <iostream>
+
+#include <arpa/inet.h>
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <unistd.h>
-#include <cstring>
-
-#include "framework/utils.hpp"
-#include "comms_module.hpp"
-
 
 namespace Comms
 {
 
 /* See header for documentation. */
-CommsModule::CommsModule(
-    const std::string& domainAddress
-) {
+CommsModule::CommsModule(const std::string& domainAddress)
+{
     sockfd = socket(AF_UNIX, SOCK_STREAM, 0);
     if (sockfd < 0)
     {
@@ -53,17 +53,18 @@ CommsModule::CommsModule(
         return;
     }
 
-    struct sockaddr_un servAddr {};
+    struct sockaddr_un servAddr
+    {
+    };
     servAddr.sun_family = AF_UNIX;
 
     // Copy the domain address, inserting leading NUL needed for abstract UDS
     std::strcpy(servAddr.sun_path + 1, domainAddress.c_str());
     servAddr.sun_path[0] = '\0';
 
-    int conn = connect(
-        sockfd,
-        reinterpret_cast<const struct sockaddr*>(&servAddr),
-        offsetof(struct sockaddr_un, sun_path) + domainAddress.size() + 1);
+    int conn = connect(sockfd,
+                       reinterpret_cast<const struct sockaddr*>(&servAddr),
+                       offsetof(struct sockaddr_un, sun_path) + domainAddress.size() + 1);
     if (conn != 0)
     {
         LAYER_LOG("  - ERROR: Client UDS connection failed");
@@ -77,10 +78,8 @@ CommsModule::CommsModule(
 }
 
 /* See header for documentation. */
-CommsModule::CommsModule(
-    const std::string& hostAddress,
-    int port
-) {
+CommsModule::CommsModule(const std::string& hostAddress, int port)
+{
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0)
     {
@@ -88,15 +87,14 @@ CommsModule::CommsModule(
         return;
     }
 
-    struct sockaddr_in servAddr {};
+    struct sockaddr_in servAddr
+    {
+    };
     servAddr.sin_family = AF_INET;
     servAddr.sin_port = htons(port);
     servAddr.sin_addr.s_addr = inet_addr(hostAddress.c_str());
 
-    int conn = connect(
-        sockfd,
-        reinterpret_cast<const struct sockaddr*>(&servAddr),
-        sizeof(servAddr));
+    int conn = connect(sockfd, reinterpret_cast<const struct sockaddr*>(&servAddr), sizeof(servAddr));
     if (conn != 0)
     {
         LAYER_LOG("  - ERROR: Client TCP connection failed");
@@ -139,9 +137,8 @@ bool CommsModule::isConnected()
 }
 
 /* See header for documentation. */
-EndpointID CommsModule::getEndpointID(
-    const std::string& name
-) {
+EndpointID CommsModule::getEndpointID(const std::string& name)
+{
     std::lock_guard<std::mutex> lock(registryLock);
     if (registry.empty())
     {
@@ -159,10 +156,8 @@ EndpointID CommsModule::getEndpointID(
             }
 
             uint8_t svcId = (*resp)[0];
-            size_t size = static_cast<size_t>((*resp)[4] << 24)
-                        | static_cast<size_t>((*resp)[3] << 16)
-                        | static_cast<size_t>((*resp)[2] << 8)
-                        | static_cast<size_t>((*resp)[1] << 0);
+            size_t size = static_cast<size_t>((*resp)[4] << 24) | static_cast<size_t>((*resp)[3] << 16)
+                        | static_cast<size_t>((*resp)[2] << 8) | static_cast<size_t>((*resp)[1] << 0);
 
             // If not enough bytes to read the service name then stop
             if (resp->size() < 5 + size)
@@ -186,51 +181,33 @@ EndpointID CommsModule::getEndpointID(
         return registry[name];
     }
     // Service not found
-    catch(std::out_of_range const&)
+    catch (const std::out_of_range&)
     {
         return NO_ENDPOINT;
     }
 }
 
 /* See header for documentation. */
-void CommsModule::txAsync(
-    EndpointID endpoint,
-    std::unique_ptr<MessageData> data
-) {
-    auto message = std::make_shared<Message>(
-        endpoint,
-        MessageType::TX_ASYNC,
-        0,
-        std::move(data));
+void CommsModule::txAsync(EndpointID endpoint, std::unique_ptr<MessageData> data)
+{
+    auto message = std::make_shared<Message>(endpoint, MessageType::TX_ASYNC, 0, std::move(data));
 
     enqueueMessage(std::move(message));
 }
 
 /* See header for documentation. */
-void CommsModule::tx(
-    EndpointID endpoint,
-    std::unique_ptr<MessageData> data
-) {
-    auto message = std::make_shared<Message>(
-        endpoint,
-        MessageType::TX,
-        0,
-        std::move(data));
+void CommsModule::tx(EndpointID endpoint, std::unique_ptr<MessageData> data)
+{
+    auto message = std::make_shared<Message>(endpoint, MessageType::TX, 0, std::move(data));
 
     enqueueMessage(message);
     message->wait();
 }
 
 /* See header for documentation. */
-std::unique_ptr<MessageData> CommsModule::txRx(
-    EndpointID endpoint,
-    std::unique_ptr<MessageData> data
-) {
-    auto message = std::make_shared<Message>(
-        endpoint,
-        MessageType::TX_RX,
-        assignMessageID(),
-        std::move(data));
+std::unique_ptr<MessageData> CommsModule::txRx(EndpointID endpoint, std::unique_ptr<MessageData> data)
+{
+    auto message = std::make_shared<Message>(endpoint, MessageType::TX_RX, assignMessageID(), std::move(data));
 
     enqueueMessage(message);
     message->wait();
@@ -245,9 +222,8 @@ MessageID CommsModule::assignMessageID()
 }
 
 /* See header for documentation. */
-void CommsModule::enqueueMessage(
-    std::shared_ptr<Message> message
-) {
+void CommsModule::enqueueMessage(std::shared_ptr<Message> message)
+{
     messageQueue.put(std::move(message));
 }
 

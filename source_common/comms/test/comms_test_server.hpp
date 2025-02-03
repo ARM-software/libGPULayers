@@ -30,11 +30,11 @@
 
 #pragma once
 
+#include "comms/comms_message.hpp"
+
 #include <atomic>
 #include <string>
 #include <thread>
-
-#include "comms/comms_message.hpp"
 
 namespace CommsTest
 {
@@ -52,13 +52,12 @@ public:
      * @param messageType    The type of the message.
      * @param data            The received data.
      */
-    TestMessage(
-        Comms::EndpointID endpointID,
-        Comms::MessageType messageType,
-        std::unique_ptr<Comms::MessageData> data) :
-        endpointID(endpointID),
-        messageType(messageType),
-        data(std::move(data)) { }
+    TestMessage(Comms::EndpointID endpointID, Comms::MessageType messageType, std::unique_ptr<Comms::MessageData> data)
+        : endpointID(endpointID),
+          messageType(messageType),
+          data(std::move(data))
+    {
+    }
 
     /**
      * @brief The endpoint of the message.
@@ -76,7 +75,6 @@ public:
     std::unique_ptr<Comms::MessageData> data;
 };
 
-
 class CommsTestServer
 {
 public:
@@ -88,16 +86,14 @@ public:
      *
      * @param domainAddress   The unix domain address to use.
      */
-    CommsTestServer(
-        const std::string& domainAddress);
+    CommsTestServer(const std::string& domainAddress);
 
     /**
      * @brief Construct a new server listening on TCP/IP socket.
      *
      * @param port   The port number to use.
      */
-    CommsTestServer(
-        int port);
+    CommsTestServer(int port);
 
     /**
      * @brief Close the host connection and stop all worker threads.
@@ -128,10 +124,7 @@ private:
      *
      * @return @c true if we received a message, @c false otherwise.
      */
-    bool receiveData(
-        int sockfd,
-        uint8_t* data,
-        size_t dataSize);
+    bool receiveData(int sockfd, uint8_t* data, size_t dataSize);
 
     /**
      * @brief Send N bytes of data to the socket.
@@ -140,10 +133,7 @@ private:
      * @param data       The data to send.
      * @param dataSize   The number of bytes in the data.
      */
-    void send_data(
-        int sockfd,
-        uint8_t* data,
-        size_t dataSize);
+    void send_data(int sockfd, uint8_t* data, size_t dataSize);
 
 public:
     /**
@@ -155,7 +145,7 @@ private:
     /**
      * @brief The socket for listening for connections.
      */
-    int listenSockfd { -1 };
+    int listenSockfd {-1};
 
     /**
      * @brief Pipe used to unblock the read socket rather than use timeouts.

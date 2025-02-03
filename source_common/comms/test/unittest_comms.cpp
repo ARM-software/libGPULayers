@@ -32,31 +32,28 @@
  * A normal tx message guarantees that the messages is sent before returning,
  * but does not guarantee that the server has received and processed it.
  */
-#include <gtest/gtest.h>
-
 #include "comms/comms_interface.hpp"
 #include "comms/comms_module.hpp"
 #include "comms/test/comms_test_server.hpp"
 
+#include <gtest/gtest.h>
+
 using namespace CommsTest;
 
-std::unique_ptr<Comms::MessageData> makeTestPayload(
-    const std::string& str
-) {
+std::unique_ptr<Comms::MessageData> makeTestPayload(const std::string& str)
+{
     auto data = std::make_unique<Comms::MessageData>(str.begin(), str.end());
     return data;
 }
 
-std::string decodeTestPayload(
-    std::unique_ptr<Comms::MessageData> data
-) {
+std::string decodeTestPayload(std::unique_ptr<Comms::MessageData> data)
+{
     std::string str(data->begin(), data->end());
     return str;
 }
 
-std::string decodeTestPayload(
-    TestMessage& msg
-) {
+std::string decodeTestPayload(TestMessage& msg)
+{
     std::string str(msg.data->begin(), msg.data->end());
     return str;
 }
@@ -111,7 +108,7 @@ TEST(Comms, test_uds_tx_nb)
 
     EXPECT_EQ(server.received[0].endpointID, 2);
     EXPECT_EQ(server.received[0].data->size(), 4);
-    EXPECT_EQ(decodeTestPayload(server.received[0]),"abcd");
+    EXPECT_EQ(decodeTestPayload(server.received[0]), "abcd");
 }
 
 /** @brief Test lifecycle with a TX_ASYNC sent message. */
@@ -136,7 +133,7 @@ TEST(Comms, test_uds_tx_async_0b)
 
     EXPECT_EQ(server.received[1].endpointID, 2);
     EXPECT_EQ(server.received[1].data->size(), 4);
-    EXPECT_EQ(decodeTestPayload(server.received[1]),"abcd");
+    EXPECT_EQ(decodeTestPayload(server.received[1]), "abcd");
 }
 
 /** @brief Test lifecycle with a TX_ASYNC sent message. */
@@ -158,11 +155,11 @@ TEST(Comms, test_uds_tx_async_nb)
 
     EXPECT_EQ(server.received[0].endpointID, 1);
     EXPECT_EQ(server.received[0].data->size(), 4);
-    EXPECT_EQ(decodeTestPayload(server.received[0]),"abcd");
+    EXPECT_EQ(decodeTestPayload(server.received[0]), "abcd");
 
     EXPECT_EQ(server.received[1].endpointID, 2);
     EXPECT_EQ(server.received[1].data->size(), 3);
-    EXPECT_EQ(decodeTestPayload(server.received[1]),"efg");
+    EXPECT_EQ(decodeTestPayload(server.received[1]), "efg");
 }
 
 /** @brief Test lifecycle with a TX_RX sent message. */
@@ -202,11 +199,11 @@ TEST(Comms, test_uds_tx_rx_nb)
 
     EXPECT_EQ(server.received[0].endpointID, 1);
     EXPECT_EQ(server.received[0].data->size(), 4);
-    EXPECT_EQ(decodeTestPayload(server.received[0]),"abcd");
+    EXPECT_EQ(decodeTestPayload(server.received[0]), "abcd");
 
     // Validate it was responded to correctly
     EXPECT_EQ(resps.size(), 4);
-    EXPECT_EQ(resps,"dcba");
+    EXPECT_EQ(resps, "dcba");
 }
 
 // ----------------------------------------------------------------------------
@@ -258,7 +255,7 @@ TEST(Comms, test_tcp_tx_nb)
 
     EXPECT_EQ(server.received[0].endpointID, 2);
     EXPECT_EQ(server.received[0].data->size(), 4);
-    EXPECT_EQ(decodeTestPayload(server.received[0]),"abcd");
+    EXPECT_EQ(decodeTestPayload(server.received[0]), "abcd");
 }
 
 /** @brief Test lifecycle with a TX_ASYNC sent message. */
@@ -283,7 +280,7 @@ TEST(Comms, test_tcp_tx_async_0b)
 
     EXPECT_EQ(server.received[1].endpointID, 2);
     EXPECT_EQ(server.received[1].data->size(), 4);
-    EXPECT_EQ(decodeTestPayload(server.received[1]),"abcd");
+    EXPECT_EQ(decodeTestPayload(server.received[1]), "abcd");
 }
 
 /** @brief Test lifecycle with a TX_ASYNC sent message. */
@@ -305,11 +302,11 @@ TEST(Comms, test_tcp_tx_async_nb)
 
     EXPECT_EQ(server.received[0].endpointID, 1);
     EXPECT_EQ(server.received[0].data->size(), 4);
-    EXPECT_EQ(decodeTestPayload(server.received[0]),"abcd");
+    EXPECT_EQ(decodeTestPayload(server.received[0]), "abcd");
 
     EXPECT_EQ(server.received[1].endpointID, 2);
     EXPECT_EQ(server.received[1].data->size(), 3);
-    EXPECT_EQ(decodeTestPayload(server.received[1]),"efg");
+    EXPECT_EQ(decodeTestPayload(server.received[1]), "efg");
 }
 
 /** @brief Test lifecycle with a TX_RX sent message. */
@@ -349,9 +346,9 @@ TEST(Comms, test_tcp_tx_rx_nb)
 
     EXPECT_EQ(server.received[0].endpointID, 1);
     EXPECT_EQ(server.received[0].data->size(), 4);
-    EXPECT_EQ(decodeTestPayload(server.received[0]),"abcd");
+    EXPECT_EQ(decodeTestPayload(server.received[0]), "abcd");
 
     // Validate it was responded to correctly
     EXPECT_EQ(resps.size(), 4);
-    EXPECT_EQ(resps,"dcba");
+    EXPECT_EQ(resps, "dcba");
 }

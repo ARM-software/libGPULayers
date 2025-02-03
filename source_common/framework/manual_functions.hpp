@@ -29,21 +29,20 @@
  * implemented as library code which can be swapped for alternative
  * implementations on a per-layer basis if needed.
  */
+#include "device.hpp"
+#include "framework/device_dispatch_table.hpp"
+#include "framework/device_functions.hpp"
+#include "framework/instance_functions.hpp"
+#include "framework/utils.hpp"
+#include "instance.hpp"
+#include "version.hpp"
+
 #include <array>
 #include <cstring>
 #include <mutex>
 #include <string>
 #include <thread>
 #include <vector>
-
-#include "device.hpp"
-#include "instance.hpp"
-#include "version.hpp"
-
-#include "framework/device_dispatch_table.hpp"
-#include "framework/device_functions.hpp"
-#include "framework/instance_functions.hpp"
-#include "framework/utils.hpp"
 
 /**
  * @brief Extract the layer chain info from the instance creation info.
@@ -52,8 +51,7 @@
  *
  * @return The instance creation info, or @c nullptr if not found.
  */
-VkLayerInstanceCreateInfo* getChainInfo(
-    const VkInstanceCreateInfo* pCreateInfo);
+VkLayerInstanceCreateInfo* getChainInfo(const VkInstanceCreateInfo* pCreateInfo);
 
 /**
  * @brief Extract the layer chain info from the device creation info.
@@ -62,8 +60,7 @@ VkLayerInstanceCreateInfo* getChainInfo(
  *
  * @return The instance creation info, or @c nullptr if not found.
  */
-VkLayerDeviceCreateInfo* getChainInfo(
-    const VkDeviceCreateInfo* pCreateInfo);
+VkLayerDeviceCreateInfo* getChainInfo(const VkDeviceCreateInfo* pCreateInfo);
 
 /**
  * @brief Fetch the function for a given static instance entrypoint name.
@@ -76,8 +73,7 @@ VkLayerDeviceCreateInfo* getChainInfo(
  * @return The layer function pointer, or \c nullptr if the layer doesn't
  *         intercept the function.
  */
-PFN_vkVoidFunction getFixedInstanceLayerFunction(
-    const char* name);
+PFN_vkVoidFunction getFixedInstanceLayerFunction(const char* name);
 
 /**
  * @brief Fetch the function for a given dynamic instance entrypoint name.
@@ -90,8 +86,7 @@ PFN_vkVoidFunction getFixedInstanceLayerFunction(
  * @return The layer function pointer, or \c nullptr if the layer doesn't
  *         intercept the function.
  */
-PFN_vkVoidFunction getInstanceLayerFunction(
-    const char* name);
+PFN_vkVoidFunction getInstanceLayerFunction(const char* name);
 
 /**
  * @brief Fetch the function for a given dynamic instance entrypoint name.
@@ -104,8 +99,7 @@ PFN_vkVoidFunction getInstanceLayerFunction(
  * @return The layer function pointer, or \c nullptr if the layer doesn't
  *         intercept the function.
  */
-PFN_vkVoidFunction getDeviceLayerFunction(
-    const char* name);
+PFN_vkVoidFunction getDeviceLayerFunction(const char* name);
 
 /**
  * @brief Fetch the maximum supported instance API version.
@@ -114,8 +108,7 @@ PFN_vkVoidFunction getDeviceLayerFunction(
  *
  * @return The major/minor version numbers, or zeros on error.
  */
-APIVersion getInstanceAPIVersion(
-    PFN_vkGetInstanceProcAddr fpGetProcAddr);
+APIVersion getInstanceAPIVersion(PFN_vkGetInstanceProcAddr fpGetProcAddr);
 
 /**
  * @brief Fetch the application requested instance API version.
@@ -124,8 +117,7 @@ APIVersion getInstanceAPIVersion(
  *
  * @return The major/minor version numbers.
  */
-APIVersion getApplicationAPIVersion(
-    const VkInstanceCreateInfo* pCreateInfo);
+APIVersion getApplicationAPIVersion(const VkInstanceCreateInfo* pCreateInfo);
 
 /**
  * @brief Fetch the maximum supported device API version.
@@ -136,10 +128,9 @@ APIVersion getApplicationAPIVersion(
  *
  * @return The major/minor version numbers, or zeros on error.
  */
-APIVersion getDeviceAPIVersion(
-    PFN_vkGetInstanceProcAddr fpGetProcAddr,
-    VkInstance instance,
-    VkPhysicalDevice physicalDevice);
+APIVersion getDeviceAPIVersion(PFN_vkGetInstanceProcAddr fpGetProcAddr,
+                               VkInstance instance,
+                               VkPhysicalDevice physicalDevice);
 
 /**
  * @brief Return an increased API version, if supported.
@@ -150,10 +141,9 @@ APIVersion getDeviceAPIVersion(
  *
  * @return The major/minor version numbers, or zeros on error.
  */
-APIVersion increaseAPIVersion(
-    const APIVersion& userVersion,
-    const APIVersion& maxVersion,
-    const APIVersion& requiredVersion);
+APIVersion increaseAPIVersion(const APIVersion& userVersion,
+                              const APIVersion& maxVersion,
+                              const APIVersion& requiredVersion);
 
 /**
  * @brief Fetch the list of supported extensions from the instance.
@@ -167,8 +157,7 @@ APIVersion increaseAPIVersion(
  *
  * @return The list of supported extensions; empty list on failure.
  */
-std::vector<std::string> getInstanceExtensionList(
-    const VkInstanceCreateInfo* pCreateInfo);
+std::vector<std::string> getInstanceExtensionList(const VkInstanceCreateInfo* pCreateInfo);
 
 /**
  * @brief Fetch the list of supported extensions from a physical device.
@@ -179,10 +168,9 @@ std::vector<std::string> getInstanceExtensionList(
  *
  * @return The list of supported extensions; empty list on failure.
  */
-std::vector<std::string> getDeviceExtensionList(
-    VkInstance instance,
-    VkPhysicalDevice physicalDevice,
-    const VkDeviceCreateInfo* pCreateInfo);
+std::vector<std::string> getDeviceExtensionList(VkInstance instance,
+                                                VkPhysicalDevice physicalDevice,
+                                                const VkDeviceCreateInfo* pCreateInfo);
 
 /**
  * @brief Clone the target extension list.
@@ -192,6 +180,4 @@ std::vector<std::string> getDeviceExtensionList(
  *
  * @return the cloned list.
  */
-std::vector<const char*> cloneExtensionList(
-    uint32_t extensionCount,
-    const char* const* extensionList);
+std::vector<const char*> cloneExtensionList(uint32_t extensionCount, const char* const* extensionList);

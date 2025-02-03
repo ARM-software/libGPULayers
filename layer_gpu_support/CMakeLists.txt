@@ -33,6 +33,7 @@ set(LGL_CONFIG_TRACE 0)
 set(LGL_CONFIG_LOG 1)
 
 include(../source_common/compiler_helper.cmake)
+include(../cmake/clang-tools.cmake)
 
 # Build steps
 add_subdirectory(source)

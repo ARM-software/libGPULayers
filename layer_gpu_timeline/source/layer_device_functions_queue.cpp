@@ -23,14 +23,14 @@
  * ----------------------------------------------------------------------------
  */
 
-#include <mutex>
-#include <nlohmann/json.hpp>
-#include <time.h>
-
+#include "device.hpp"
+#include "framework/device_dispatch_table.hpp"
 #include "utils/misc.hpp"
 
-#include "device.hpp"
-#include "layer_device_functions.hpp"
+#include <mutex>
+
+#include <nlohmann/json.hpp>
+#include <time.h>
 
 using json = nlohmann::json;
 
@@ -50,7 +50,8 @@ static uint64_t getClockMonotonicRaw()
     struct timespec ts;
 
     auto error = clock_gettime(CLOCK_MONOTONIC_RAW, &ts);
-    if (error) {
+    if (error)
+    {
         return 0;
     }
 
@@ -68,17 +69,14 @@ static uint64_t getClockMonotonicRaw()
  * @param queue      The queue being submitted to.
  * @param callback   The data emit callback.
  */
-static void emitQueueMetadata(
-    VkDevice device,
-    VkQueue queue,
-    std::function<void(const std::string&)> callback
-) {
+static void emitQueueMetadata(VkDevice device, VkQueue queue, std::function<void(const std::string&)> callback)
+{
     // Write the queue submit metadata
     json submitMetadata {
-        { "type", "submit" },
-        { "device", reinterpret_cast<uintptr_t>(device) },
-        { "queue", reinterpret_cast<uintptr_t>(queue) },
-        { "timestamp", getClockMonotonicRaw() }
+        {"type", "submit"},
+        {"device", reinterpret_cast<uintptr_t>(device)},
+        {"queue", reinterpret_cast<uintptr_t>(queue)},
+        {"timestamp", getClockMonotonicRaw()},
     };
 
     callback(submitMetadata.dump());
@@ -92,12 +90,11 @@ static void emitQueueMetadata(
  * @param commandBuffer   The command buffer being submitted.
  * @param callback        The data emit callback.
  */
-static void emitCommandBufferMetadata(
-    Device& layer,
-    VkQueue queue,
-    VkCommandBuffer commandBuffer,
-    std::function<void(const std::string&)> callback
-) {
+static void emitCommandBufferMetadata(Device& layer,
+                                      VkQueue queue,
+                                      VkCommandBuffer commandBuffer,
+                                      std::function<void(const std::string&)> callback)
+{
     // Fetch layer proxies for this workload
     auto& tracker = layer.getStateTracker();
     auto& trackQueue = tracker.getQueue(queue);
@@ -110,14 +107,12 @@ static void emitCommandBufferMetadata(
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueuePresentKHR<user_tag>(
-    VkQueue queue,
-    const VkPresentInfoKHR* pPresentInfo
-) {
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueuePresentKHR<user_tag>(VkQueue queue, const VkPresentInfoKHR* pPresentInfo)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(queue);
 
     auto& tracker = layer->getStateTracker();
@@ -126,10 +121,10 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueuePresentKHR<user_tag>(
     // This is run with the lock held to ensure that all queue submit
     // messages are sent sequentially to the host tool
     json frame {
-        { "type", "frame" },
-        { "device", reinterpret_cast<uintptr_t>(layer->device) },
-        { "fid", tracker.totalStats.getFrameCount() },
-        { "timestamp", getClockMonotonicRaw() }
+        {"type", "frame"},
+        {"device", reinterpret_cast<uintptr_t>(layer->device)},
+        {"fid", tracker.totalStats.getFrameCount()},
+        {"timestamp", getClockMonotonicRaw()},
     };
 
     layer->onFrame(frame.dump());
@@ -141,16 +136,13 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueuePresentKHR<user_tag>(
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit<user_tag>(
-    VkQueue queue,
-    uint32_t submitCount,
-    const VkSubmitInfo* pSubmits,
-    VkFence fence
-) {
+VKAPI_ATTR VkResult VKAPI_CALL
+    layer_vkQueueSubmit<user_tag>(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(queue);
 
     auto onSubmit = std::bind(&Device::onWorkloadSubmit, layer, _1);
@@ -179,16 +171,13 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit<user_tag>(
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit2<user_tag>(
-    VkQueue queue,
-    uint32_t submitCount,
-    const VkSubmitInfo2* pSubmits,
-    VkFence fence
-) {
+VKAPI_ATTR VkResult VKAPI_CALL
+    layer_vkQueueSubmit2<user_tag>(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(queue);
 
     auto onSubmit = std::bind(&Device::onWorkloadSubmit, layer, _1);
@@ -217,16 +206,13 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit2<user_tag>(
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit2KHR<user_tag>(
-    VkQueue queue,
-    uint32_t submitCount,
-    const VkSubmitInfo2* pSubmits,
-    VkFence fence
-) {
+VKAPI_ATTR VkResult VKAPI_CALL
+    layer_vkQueueSubmit2KHR<user_tag>(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(queue);
 
     auto onSubmit = std::bind(&Device::onWorkloadSubmit, layer, _1);

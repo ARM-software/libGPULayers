@@ -24,57 +24,45 @@
  */
 
 #include "trackers/device.hpp"
+
 #include "utils/misc.hpp"
 
 namespace Tracker
 {
 
 /* See header for documentation. */
-void Device::createCommandPool(
-    VkCommandPool commandPool
-) {
-    commandPools.insert({
-        commandPool,
-        std::make_unique<CommandPool>(commandPool)
-    });
+void Device::createCommandPool(VkCommandPool commandPool)
+{
+    commandPools.insert({commandPool, std::make_unique<CommandPool>(commandPool)});
 }
 
 /* See header for documentation. */
-CommandPool& Device::getCommandPool(
-    VkCommandPool commandPool
-) {
+CommandPool& Device::getCommandPool(VkCommandPool commandPool)
+{
     assert(isInMap(commandPool, commandPools));
     return *commandPools.at(commandPool);
 }
 
 /* See header for documentation. */
-void Device::destroyCommandPool(
-    VkCommandPool commandPool
-) {
+void Device::destroyCommandPool(VkCommandPool commandPool)
+{
     commandPools.erase(commandPool);
 }
 
 /* See header for documentation. */
-void Device::allocateCommandBuffer(
-    VkCommandPool commandPool,
-    VkCommandBuffer commandBuffer
-) {
+void Device::allocateCommandBuffer(VkCommandPool commandPool, VkCommandBuffer commandBuffer)
+{
     // Allocate in the pool
     auto& pool = getCommandPool(commandPool);
     auto& buffer = pool.allocateCommandBuffer(commandBuffer);
 
     // Insert into the tracker lookup map
-    commandBuffers.insert({
-        commandBuffer,
-        buffer
-    });
+    commandBuffers.insert({commandBuffer, buffer});
 }
 
 /* See header for documentation. */
-void Device::freeCommandBuffer(
-    VkCommandPool commandPool,
-    VkCommandBuffer commandBuffer
-) {
+void Device::freeCommandBuffer(VkCommandPool commandPool, VkCommandBuffer commandBuffer)
+{
     // Remove from the tracker lookup map
     commandBuffers.erase(commandBuffer);
 
@@ -84,74 +72,55 @@ void Device::freeCommandBuffer(
 }
 
 /* See header for documentation. */
-CommandBuffer& Device::getCommandBuffer(
-    VkCommandBuffer commandBuffer
-) {
+CommandBuffer& Device::getCommandBuffer(VkCommandBuffer commandBuffer)
+{
     assert(isInMap(commandBuffer, commandBuffers));
     return commandBuffers.at(commandBuffer);
 }
 
 /* See header for documentation. */
-void Device::createRenderPass(
-    VkRenderPass renderPass,
-    const VkRenderPassCreateInfo& createInfo
-) {
-    renderPasses.insert({
-        renderPass,
-        std::make_unique<RenderPass>(renderPass, createInfo)
-    });
+void Device::createRenderPass(VkRenderPass renderPass, const VkRenderPassCreateInfo& createInfo)
+{
+    renderPasses.insert({renderPass, std::make_unique<RenderPass>(renderPass, createInfo)});
 }
 
 /* See header for documentation. */
-void Device::createRenderPass(
-    VkRenderPass renderPass,
-    const VkRenderPassCreateInfo2& createInfo
-) {
-    renderPasses.insert({
-        renderPass,
-        std::make_unique<RenderPass>(renderPass, createInfo)
-    });
+void Device::createRenderPass(VkRenderPass renderPass, const VkRenderPassCreateInfo2& createInfo)
+{
+    renderPasses.insert({renderPass, std::make_unique<RenderPass>(renderPass, createInfo)});
 }
 
 /* See header for documentation. */
-RenderPass& Device::getRenderPass(
-    VkRenderPass renderPass
-) {
+RenderPass& Device::getRenderPass(VkRenderPass renderPass)
+{
     assert(isInMap(renderPass, renderPasses));
     return *renderPasses.at(renderPass);
 }
 
 /* See header for documentation. */
-void Device::destroyRenderPass(
-    VkRenderPass renderPass
-) {
+void Device::destroyRenderPass(VkRenderPass renderPass)
+{
     renderPasses.erase(renderPass);
 }
 
 /* See header for documentation. */
-Queue& Device::getQueue(
-    VkQueue queue
-) {
+Queue& Device::getQueue(VkQueue queue)
+{
     // Create a tracker for a queue on first use
     if (!isInMap(queue, queues))
     {
-        queues.insert({
-            queue,
-            std::make_unique<Queue>(queue)
-        });
+        queues.insert({queue, std::make_unique<Queue>(queue)});
     }
 
     return *queues.at(queue);
 }
 
 /* See header for documentation. */
-void Device::queueSubmit(
-    VkCommandBuffer commandBuffer
-) {
+void Device::queueSubmit(VkCommandBuffer commandBuffer)
+{
     auto& cbStats = getCommandBuffer(commandBuffer).getStats();
     frameStats.mergeCounts(cbStats);
 }
-
 
 /* See header for documentation. */
 void Device::queuePresent()

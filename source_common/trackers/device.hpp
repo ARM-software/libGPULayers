@@ -38,12 +38,13 @@
 
 #pragma once
 
-#include <unordered_map>
-#include <vulkan/vulkan.h>
-
 #include "trackers/command_buffer.hpp"
 #include "trackers/queue.hpp"
 #include "trackers/render_pass.hpp"
+
+#include <unordered_map>
+
+#include <vulkan/vulkan.h>
 
 namespace Tracker
 {
@@ -59,16 +60,14 @@ public:
      *
      * @param commandPool   The native handle to track.
      */
-    void createCommandPool(
-        VkCommandPool commandPool);
+    void createCommandPool(VkCommandPool commandPool);
 
     /**
      * @brief Get the tracker for a native command pool.
      *
      * @param commandPool   The native handle we are tracking.
      */
-    CommandPool& getCommandPool(
-        VkCommandPool commandPool);
+    CommandPool& getCommandPool(VkCommandPool commandPool);
 
     /**
      * @brief Create a new command buffer in a pool within this device.
@@ -76,9 +75,7 @@ public:
      * @param commandPool     The native parent command pool handle.
      * @param commandBuffer   The native handle to track.
      */
-    void allocateCommandBuffer(
-        VkCommandPool commandPool,
-        VkCommandBuffer commandBuffer);
+    void allocateCommandBuffer(VkCommandPool commandPool, VkCommandBuffer commandBuffer);
 
     /**
      * @brief Free a command buffer in a pool within this device.
@@ -86,25 +83,21 @@ public:
      * @param commandPool     The native parent command pool handle.
      * @param commandBuffer   The native handle to stop tracking.
      */
-    void freeCommandBuffer(
-        VkCommandPool commandPool,
-        VkCommandBuffer commandBuffer);
+    void freeCommandBuffer(VkCommandPool commandPool, VkCommandBuffer commandBuffer);
 
     /**
      * @brief Get the tracker for native command buffer.
      *
      * @param commandBuffer   The native handle we are tracking.
      */
-    CommandBuffer& getCommandBuffer(
-        VkCommandBuffer commandBuffer);
+    CommandBuffer& getCommandBuffer(VkCommandBuffer commandBuffer);
 
     /**
      * @brief Destroy a command pool within this device.
      *
      * @param commandPool   The native handle to stop tracking.
      */
-    void destroyCommandPool(
-        VkCommandPool commandPool);
+    void destroyCommandPool(VkCommandPool commandPool);
 
     /**
      * @brief Get the tracker for a native queue.
@@ -114,8 +107,7 @@ public:
      *
      * @param queue   The native handle we are tracking.
      */
-    Queue& getQueue(
-        VkQueue queue);
+    Queue& getQueue(VkQueue queue);
 
     /**
      * @brief Create a new render pass tracker within this device.
@@ -123,9 +115,7 @@ public:
      * @param renderPass   The native handle to track.
      * @param createInfo   The render pass configuration information.
      */
-    void createRenderPass(
-        VkRenderPass renderPass,
-        const VkRenderPassCreateInfo& createInfo);
+    void createRenderPass(VkRenderPass renderPass, const VkRenderPassCreateInfo& createInfo);
 
     /**
      * @brief Create a new render pass tracker within this device.
@@ -133,33 +123,28 @@ public:
      * @param renderPass   The native handle to track.
      * @param createInfo   The render pass configuration information.
      */
-    void createRenderPass(
-        VkRenderPass renderPass,
-        const VkRenderPassCreateInfo2& createInfo);
+    void createRenderPass(VkRenderPass renderPass, const VkRenderPassCreateInfo2& createInfo);
 
     /**
      * @brief Get the tracker for a native render pass.
      *
      * @param renderPass   The native handle we are tracking.
      */
-    RenderPass& getRenderPass(
-        VkRenderPass renderPass);
+    RenderPass& getRenderPass(VkRenderPass renderPass);
 
     /**
      * @brief Destroy a render pass within this device.
      *
      * @param renderPass   The native handle to stop tracking.
      */
-    void destroyRenderPass(
-        VkRenderPass renderPass);
+    void destroyRenderPass(VkRenderPass renderPass);
 
     /**
      * @brief Submit a command buffer to a queue within this device.
      *
      * @param commandBuffer   The native command buffer we are tracking.
      */
-    void queueSubmit(
-        VkCommandBuffer commandBuffer);
+    void queueSubmit(VkCommandBuffer commandBuffer);
 
     /**
      * @brief Submit a display present command to a queue within this device.

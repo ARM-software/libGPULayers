@@ -502,6 +502,9 @@ def generate_instance_decls(
     file.write('#pragma once\n')
     file.write('\n')
 
+    file.write('// clang-format off\n')
+    file.write('\n')
+
     file.write('#include <vulkan/vulkan.h>\n')
     file.write('\n')
 
@@ -557,6 +560,8 @@ def generate_instance_decls(
 
         file.write('\n'.join(lines))
         file.write('\n')
+
+    file.write('// clang-format on\n')
 
 
 def generate_instance_defs(
@@ -695,6 +700,9 @@ def generate_device_decls(
     file.write('#pragma once\n')
     file.write('\n')
 
+    file.write('// clang-format off\n')
+    file.write('\n')
+
     file.write('#include <vulkan/vulkan.h>\n')
     file.write('\n')
 
@@ -749,6 +757,8 @@ def generate_device_decls(
 
         file.write('\n'.join(lines))
         file.write('\n')
+
+    file.write('// clang-format on\n')
 
 
 def generate_device_defs(

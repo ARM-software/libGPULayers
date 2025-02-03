@@ -23,11 +23,11 @@
  * ----------------------------------------------------------------------------
  */
 
+#include "device.hpp"
+#include "framework/device_dispatch_table.hpp"
+
 #include <bit>
 #include <mutex>
-
-#include "device.hpp"
-#include "layer_device_functions.hpp"
 
 extern std::mutex g_vulkanLock;
 
@@ -39,62 +39,59 @@ extern std::mutex g_vulkanLock;
  *
  * @return Bitmask of supported VkImageCompressionFixedRateFlagBitsEXT bits.
  */
-static VkImageCompressionFixedRateFlagsEXT getSupportedCompressionLevels(
-    Device* layer,
-    const VkImageCreateInfo* pCreateInfo
-) {
+static VkImageCompressionFixedRateFlagsEXT getSupportedCompressionLevels(Device* layer,
+                                                                         const VkImageCreateInfo* pCreateInfo)
+{
     VkImageCompressionControlEXT compressionInfo {
         .sType = VK_STRUCTURE_TYPE_IMAGE_COMPRESSION_CONTROL_EXT,
         .pNext = nullptr,
         .flags = VK_IMAGE_COMPRESSION_FIXED_RATE_DEFAULT_EXT,
         .compressionControlPlaneCount = 0,
-        .pFixedRateFlags = 0
+        .pFixedRateFlags = 0,
     };
 
     VkImageCompressionPropertiesEXT compressionProperties {
         .sType = VK_STRUCTURE_TYPE_IMAGE_COMPRESSION_PROPERTIES_EXT,
         .pNext = nullptr,
         .imageCompressionFlags = 0,
-        .imageCompressionFixedRateFlags = 0
+        .imageCompressionFixedRateFlags = 0,
     };
 
     VkPhysicalDeviceImageFormatInfo2 formatInfo {
         .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2,
         .pNext = reinterpret_cast<const void*>(&compressionInfo),
         .format = pCreateInfo->format,
-        .type   = pCreateInfo->imageType,
+        .type = pCreateInfo->imageType,
         .tiling = pCreateInfo->tiling,
-        .usage  = pCreateInfo->usage,
-        .flags =  pCreateInfo->flags
+        .usage = pCreateInfo->usage,
+        .flags = pCreateInfo->flags,
     };
 
     VkImageFormatProperties2 formatProperties {
         .sType = VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2,
-        .pNext =  reinterpret_cast<void*>(&compressionProperties),
-        .imageFormatProperties = {}
+        .pNext = reinterpret_cast<void*>(&compressionProperties),
+        .imageFormatProperties = {},
     };
 
     auto instance = layer->instance;
     auto physicalDevice = layer->physicalDevice;
 
-    instance->driver.vkGetPhysicalDeviceImageFormatProperties2(
-        physicalDevice, &formatInfo, &formatProperties);
+    instance->driver.vkGetPhysicalDeviceImageFormatProperties2(physicalDevice, &formatInfo, &formatProperties);
 
     return compressionProperties.imageCompressionFixedRateFlags;
 }
 
 /* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateImage<user_tag>(
-    VkDevice device,
-    const VkImageCreateInfo* pCreateInfo,
-    const VkAllocationCallbacks* pAllocator,
-    VkImage* pImage
-) {
+template<>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateImage<user_tag>(VkDevice device,
+                                                             const VkImageCreateInfo* pCreateInfo,
+                                                             const VkAllocationCallbacks* pAllocator,
+                                                             VkImage* pImage)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(device);
     const auto& config = layer->instance->config;
 
@@ -127,9 +124,9 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateImage<user_tag>(
     VkImageCompressionControlEXT newCompressionControl;
     // TODO: This currently relies on const_cast to make user struct writable
     //       We should replace this with a generic clone (issue #56)
-    auto* userCompressionControl = searchNextList<VkImageCompressionControlEXT>(
-        VK_STRUCTURE_TYPE_IMAGE_COMPRESSION_CONTROL_EXT,
-        pCreateInfo->pNext);
+    auto* userCompressionControl =
+        searchNextList<VkImageCompressionControlEXT>(VK_STRUCTURE_TYPE_IMAGE_COMPRESSION_CONTROL_EXT,
+                                                     pCreateInfo->pNext);
 
     VkImageCompressionControlEXT* compressionControl = &newCompressionControl;
     if (userCompressionControl)
@@ -174,4 +171,3 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateImage<user_tag>(
 
     return layer->driver.vkCreateImage(device, &newCreateInfo, pAllocator, pImage);
 }
-

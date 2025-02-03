@@ -44,3 +44,5 @@ target_include_directories(
         ../../source_third_party/khronos/vulkan/include/)
 
 lgl_set_build_options(${LIB_BINARY})
+
+add_clang_tools()

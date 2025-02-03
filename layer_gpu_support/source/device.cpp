@@ -23,9 +23,9 @@
  * ----------------------------------------------------------------------------
  */
 
-#include "framework/utils.hpp"
-
 #include "device.hpp"
+
+#include "framework/utils.hpp"
 #include "instance.hpp"
 
 /**
@@ -36,63 +36,55 @@ static std::unordered_map<void*, std::unique_ptr<Device>> g_devices;
 /* See header for documentation. */
 const std::vector<std::string> Device::extraExtensions {
     VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME,
-    VK_EXT_IMAGE_COMPRESSION_CONTROL_EXTENSION_NAME
+    VK_EXT_IMAGE_COMPRESSION_CONTROL_EXTENSION_NAME,
 };
 
 /* See header for documentation. */
-void Device::store(
-    VkDevice handle,
-    std::unique_ptr<Device> device
-) {
+void Device::store(VkDevice handle, std::unique_ptr<Device> device)
+{
     void* key = getDispatchKey(handle);
-    g_devices.insert({ key, std::move(device) });
+    g_devices.insert({key, std::move(device)});
 }
 
 /* See header for documentation. */
-Device* Device::retrieve(
-    VkDevice handle
-) {
+Device* Device::retrieve(VkDevice handle)
+{
     void* key = getDispatchKey(handle);
     assert(isInMap(key, g_devices));
     return g_devices.at(key).get();
 }
 
 /* See header for documentation. */
-Device* Device::retrieve(
-    VkQueue handle
-) {
+Device* Device::retrieve(VkQueue handle)
+{
     void* key = getDispatchKey(handle);
     assert(isInMap(key, g_devices));
     return g_devices.at(key).get();
 }
 
 /* See header for documentation. */
-Device* Device::retrieve(
-    VkCommandBuffer handle
-) {
+Device* Device::retrieve(VkCommandBuffer handle)
+{
     void* key = getDispatchKey(handle);
     assert(isInMap(key, g_devices));
     return g_devices.at(key).get();
 }
 
 /* See header for documentation. */
-void Device::destroy(
-    Device* device
-) {
+void Device::destroy(Device* device)
+{
     g_devices.erase(getDispatchKey(device));
 }
 
 /* See header for documentation. */
-Device::Device(
-    Instance* _instance,
-    VkPhysicalDevice _physicalDevice,
-    VkDevice _device,
-    PFN_vkGetDeviceProcAddr nlayerGetProcAddress,
-    const VkDeviceCreateInfo& createInfo
-):
-    instance(_instance),
-    physicalDevice(_physicalDevice),
-    device(_device)
+Device::Device(Instance* _instance,
+               VkPhysicalDevice _physicalDevice,
+               VkDevice _device,
+               PFN_vkGetDeviceProcAddr nlayerGetProcAddress,
+               const VkDeviceCreateInfo& createInfo)
+    : instance(_instance),
+      physicalDevice(_physicalDevice),
+      device(_device)
 {
     UNUSED(createInfo);
 
@@ -102,17 +94,16 @@ Device::Device(
         .sType = VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO,
         .pNext = nullptr,
         .semaphoreType = VK_SEMAPHORE_TYPE_TIMELINE,
-        .initialValue = queueSerializationTimelineSemCount
+        .initialValue = queueSerializationTimelineSemCount,
     };
 
     VkSemaphoreCreateInfo semCreateInfo {
         .sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
         .pNext = &timelineCreateInfo,
-        .flags = 0
+        .flags = 0,
     };
 
-    auto result = driver.vkCreateSemaphore(
-        device, &semCreateInfo, nullptr, &queueSerializationTimelineSem);
+    auto result = driver.vkCreateSemaphore(device, &semCreateInfo, nullptr, &queueSerializationTimelineSem);
     if (result != VK_SUCCESS)
     {
         LAYER_ERR("Failed vkCreateSemaphore() for queue serialization");

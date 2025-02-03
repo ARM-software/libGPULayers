@@ -38,6 +38,7 @@
 #include <cassert>
 #include <string>
 #include <vector>
+
 #include <vulkan/vulkan.h>
 
 namespace Tracker
@@ -74,11 +75,10 @@ public:
      * @param storeOp   The render pass storeOp for this attachment.
      * @param resolve   Is this a resolve attachment or the main attachment?
      */
-    RenderPassAttachment(
-        RenderPassAttachName name,
-        VkAttachmentLoadOp loadOp,
-        VkAttachmentStoreOp storeOp,
-        bool resolve);
+    RenderPassAttachment(RenderPassAttachName name,
+                         VkAttachmentLoadOp loadOp,
+                         VkAttachmentStoreOp storeOp,
+                         bool resolve);
 
     /**
      * @brief Get a string form of the attachment point name.
@@ -92,21 +92,14 @@ public:
      *
      * @return @c true if loaded from memory.
      */
-    bool isLoaded() const
-    {
-        return loadOp == VK_ATTACHMENT_LOAD_OP_LOAD;
-    }
+    bool isLoaded() const { return loadOp == VK_ATTACHMENT_LOAD_OP_LOAD; }
 
     /**
      * @brief Is this attachment stored at the end of the render pass?
      *
      * @return @c true if stored to memory.
      */
-    bool isStored() const
-    {
-        return storeOp == VK_ATTACHMENT_STORE_OP_STORE;
-    }
-
+    bool isStored() const { return storeOp == VK_ATTACHMENT_STORE_OP_STORE; }
 
     /**
      * @brief Is this attachment a resolve attachment?
@@ -116,10 +109,7 @@ public:
      *
      * @return @c true if this is a resolve attachment.
      */
-    bool isResolved() const
-    {
-        return resolve;
-    }
+    bool isResolved() const { return resolve; }
 
 private:
     /**
@@ -155,9 +145,7 @@ public:
      * @param handle       The driver handle of the render pass.
      * @param createInfo   The API context creating the render pass.
      */
-    RenderPass(
-        VkRenderPass handle,
-        const VkRenderPassCreateInfo& createInfo);
+    RenderPass(VkRenderPass handle, const VkRenderPassCreateInfo& createInfo);
 
     /**
      * @brief Construct a new render pass from Vulkan 1.0-style render passes.
@@ -165,17 +153,14 @@ public:
      * @param handle       The driver handle of the render pass.
      * @param createInfo   The API context creating the render pass.
      */
-    RenderPass(
-        VkRenderPass handle,
-        const VkRenderPassCreateInfo2& createInfo);
+    RenderPass(VkRenderPass handle, const VkRenderPassCreateInfo2& createInfo);
 
     /**
      * @brief Construct a new render pass from Vulkan 1.3 dynamic rendering.
      *
      * @param createInfo   The API context starting the render pass.
      */
-    RenderPass(
-        const VkRenderingInfo& createInfo);
+    RenderPass(const VkRenderingInfo& createInfo);
 
     /**
      * @brief Get the number of subpasses in the render pass.
@@ -183,18 +168,12 @@ public:
      * @return The number of subpasses. Always returns 1 for dynamic render
      *         passes which no longer use subpasses.
      */
-    uint32_t getSubpassCount() const
-    {
-        return subpassCount;
-    };
+    uint32_t getSubpassCount() const { return subpassCount; };
 
     /**
      * @brief Get the attachment list for the render pass.
      */
-    const std::vector<RenderPassAttachment>& getAttachments() const
-    {
-        return attachments;
-    };
+    const std::vector<RenderPassAttachment>& getAttachments() const { return attachments; };
 
 private:
     /**
@@ -205,7 +184,7 @@ private:
     /**
      * @brief The render pass subpass count.
      */
-    uint32_t subpassCount { 1 };
+    uint32_t subpassCount {1};
 
     /**
      * @brief The render pass attachments in this render pass.

@@ -25,6 +25,8 @@
 
 #pragma once
 
+// clang-format off
+
 #include <vulkan/vulkan.h>
 
 #include "framework/device_functions.hpp"
@@ -1427,3 +1429,5 @@ static inline void initDriverDeviceDispatchTable(
 }
 
 #undef ENTRY
+
+// clang-format on
