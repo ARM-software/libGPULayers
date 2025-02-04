@@ -135,7 +135,7 @@ public:
      *
      * @param message   The message to send.
      */
-    void txMessage(const std::string& message) { commsWrapper->txMessage(message); }
+    void txMessage(Comms::MessageData&& message) { commsWrapper->txMessage(std::move(message)); }
 
     /**
      * @brief Get the cumulative stats for this device.

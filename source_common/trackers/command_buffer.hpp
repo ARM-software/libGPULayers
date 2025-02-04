@@ -135,7 +135,7 @@ public:
      *
      * @return Returns the tagID assigned to this workload.
      */
-    uint64_t imageTransfer(const std::string& transferType, int64_t pixelCount);
+    uint64_t imageTransfer(LCSImageTransfer::Type transferType, int64_t pixelCount);
 
     /**
      * @brief Capture a transfer where the destination is a buffer.
@@ -145,7 +145,7 @@ public:
      *
      * @return Returns the tagID assigned to this workload.
      */
-    uint64_t bufferTransfer(const std::string& transferType, int64_t byteCount);
+    uint64_t bufferTransfer(LCSBufferTransfer::Type transferType, int64_t byteCount);
 
     /**
      * @brief Begin a user debug marker range.

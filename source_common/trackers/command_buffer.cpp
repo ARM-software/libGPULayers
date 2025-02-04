@@ -161,7 +161,7 @@ uint64_t CommandBuffer::traceRays(int64_t xItems, int64_t yItems, int64_t zItems
 }
 
 /* See header for documentation. */
-uint64_t CommandBuffer::imageTransfer(const std::string& transferType, int64_t pixelCount)
+uint64_t CommandBuffer::imageTransfer(LCSImageTransfer::Type transferType, int64_t pixelCount)
 {
     uint64_t tagID = Tracker::LCSWorkload::assignTagID();
     stats.incImageTransferCount();
@@ -176,7 +176,7 @@ uint64_t CommandBuffer::imageTransfer(const std::string& transferType, int64_t p
 }
 
 /* See header for documentation. */
-uint64_t CommandBuffer::bufferTransfer(const std::string& transferType, int64_t byteCount)
+uint64_t CommandBuffer::bufferTransfer(LCSBufferTransfer::Type transferType, int64_t byteCount)
 {
     uint64_t tagID = Tracker::LCSWorkload::assignTagID();
     stats.incBufferTransferCount();

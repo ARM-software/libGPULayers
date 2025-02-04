@@ -81,7 +81,7 @@ LCSTraceRays::LCSTraceRays(uint64_t _tagID, int64_t _xItems, int64_t _yItems, in
 }
 
 /* See header for details. */
-LCSImageTransfer::LCSImageTransfer(uint64_t _tagID, const std::string& _transferType, int64_t _pixelCount)
+LCSImageTransfer::LCSImageTransfer(uint64_t _tagID, Type _transferType, int64_t _pixelCount)
     : LCSWorkload(_tagID),
       transferType(_transferType),
       pixelCount(_pixelCount)
@@ -89,11 +89,49 @@ LCSImageTransfer::LCSImageTransfer(uint64_t _tagID, const std::string& _transfer
 }
 
 /* See header for details. */
-LCSBufferTransfer::LCSBufferTransfer(uint64_t _tagID, const std::string& _transferType, int64_t _byteCount)
+std::string LCSImageTransfer::getTransferTypeStr() const
+{
+    switch (transferType)
+    {
+    case Type::unknown:
+        return "Unknown";
+    case Type::clear_image:
+        return "Clear image";
+    case Type::copy_image:
+        return "Copy image";
+    case Type::copy_buffer_to_image:
+        return "Copy buffer to image";
+    case Type::copy_image_to_buffer:
+        return "Copy image to buffer";
+    default:
+        assert(false && "Unexpected LCSImageTransfer::Type");
+        return "<invalid>";
+    }
+}
+
+/* See header for details. */
+LCSBufferTransfer::LCSBufferTransfer(uint64_t _tagID, Type _transferType, int64_t _byteCount)
     : LCSWorkload(_tagID),
       transferType(_transferType),
       byteCount(_byteCount)
 {
+}
+
+/* See header for details. */
+std::string LCSBufferTransfer::getTransferTypeStr() const
+{
+    switch (transferType)
+    {
+    case Type::unknown:
+        return "Unknown";
+    case Type::fill_buffer:
+        return "Fill buffer";
+    case Type::copy_buffer:
+        return "Copy buffer";
+    default:
+        assert(false && "Unexpected LCSBufferTransfer::Type");
+        return "<invalid>";
+    }
 }
 
 /* See header for details. */
