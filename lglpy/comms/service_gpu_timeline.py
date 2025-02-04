@@ -32,24 +32,165 @@ import struct
 from typing import Any, TypedDict
 
 from lglpy.comms.server import Message
+from lglpy.timeline.protos.layer_driver import timeline_pb2
+
+
+class RenderpassAttachmentMetadataType(TypedDict):
+    '''
+    Structured dict type for type hinting.
+    '''
+    binding: str
+    load: bool
+    store: bool
+    resolve: bool
+
+
+class RenderpassMetadataType(TypedDict):
+    '''
+    Structured dict type for type hinting.
+    '''
+    type: str
+    tid: int
+    width: int
+    height: int
+    drawCallCount: int
+    subpassCount: int
+    label: list[str]
+    attachments: list[RenderpassAttachmentMetadataType]
+
+
+class DispatchMetadataType(TypedDict):
+    '''
+    Structured dict type for type hinting.
+    '''
+    type: str
+    tid: int
+    xGroups: int
+    yGroups: int
+    zGroups: int
+    label: list[str]
+
+
+class TraceRaysMetadataType(TypedDict):
+    '''
+    Structured dict type for type hinting.
+    '''
+    type: str
+    tid: int
+    xItems: int
+    yItems: int
+    zItems: int
+    label: list[str]
+
+
+class ImageTransferMetadataType(TypedDict):
+    '''
+    Structured dict type for type hinting.
+    '''
+    type: str
+    tid: int
+    subtype: str
+    pixelCount: int
+    label: list[str]
+
+
+class BufferTransferMetadataType(TypedDict):
+    '''
+    Structured dict type for type hinting.
+    '''
+    type: str
+    tid: int
+    subtype: str
+    byteCount: int
+    label: list[str]
 
 
 class SubmitMetadataType(TypedDict):
     '''
     Structured dict type for type hinting.
     '''
+    device: int
     queue: int
     timestamp: int
-    workloads: list[Any]
+    workloads: list[RenderpassMetadataType|DispatchMetadataType|TraceRaysMetadataType|ImageTransferMetadataType|BufferTransferMetadataType]
 
 
 class FrameMetadataType(TypedDict):
     '''
     Structured dict type for type hinting.
     '''
+    device: int
     frame: int
     presentTimestamp: int
     submits: list[SubmitMetadataType]
+
+
+def expect_int(v : int|None) -> int:
+    if v is None:
+        return 0
+    assert isinstance(v, int)
+    return v
+
+
+def map_renderpass_binding(type : timeline_pb2.RenderpassAttachmentType, index : int|None) -> str:
+    '''
+    Map the PB encoded renderpass attachment type to a corresponding description string
+    '''
+    if type == timeline_pb2.RenderpassAttachmentType.undefined:
+        assert((index is None) or (index == 0))
+        return "U"
+    elif type == timeline_pb2.RenderpassAttachmentType.color:
+        assert(index is not None)
+        return f"C{index}"
+    elif type == timeline_pb2.RenderpassAttachmentType.depth:
+        assert((index is None) or (index == 0))
+        return "D"
+    elif type == timeline_pb2.RenderpassAttachmentType.stencil:
+        assert((index is None) or (index == 0))
+        return "S"
+    else:
+        assert False
+
+
+def map_image_transfer_type(type : timeline_pb2.ImageTransferType) -> str:
+    '''
+    Map the PB encoded image transfer type to some corresponding description string
+    '''
+    if type == timeline_pb2.ImageTransferType.unknown_image_transfer:
+        return "Unknown"
+    elif type == timeline_pb2.ImageTransferType.clear_image:
+        return "Clear image"
+    elif type == timeline_pb2.ImageTransferType.copy_image:
+        return "Copy image"
+    elif type == timeline_pb2.ImageTransferType.copy_buffer_to_image:
+        return "Copy buffer to image"
+    elif type == timeline_pb2.ImageTransferType.copy_image_to_buffer:
+        return "Copy image to buffer"
+    else:
+        assert False
+
+
+def map_buffer_transfer_type(type : timeline_pb2.BufferTransferType) -> str:
+    '''
+    Map the PB encoded image transfer type to some corresponding description string
+    '''
+    if type == timeline_pb2.BufferTransferType.unknown_buffer_transfer:
+        return "Unknown"
+    elif type == timeline_pb2.BufferTransferType.fill_buffer:
+        return "Fill buffer"
+    elif type == timeline_pb2.BufferTransferType.copy_buffer:
+        return "Copy buffer"
+    else:
+        assert False
+
+
+def map_debug_label(labels : list[str]|None) -> list[str]:
+    '''
+    Normalize the 'debug_label' field from the PB data
+    '''
+    if labels is None:
+        return []
+    return [str(l) for l in labels] # need to convert it to a list from a RepeatedScalarContainer
 
 
 class GPUTimelineService:
@@ -71,6 +212,7 @@ class GPUTimelineService:
         # Create a default frame record
         # End time written on queuePresent
         self.frame: FrameMetadataType = {
+            'device': 0,
             'frame': 0,
             'presentTimestamp': 0,
             'submits': []
@@ -94,16 +236,17 @@ class GPUTimelineService:
         Handle a device config packet.
 
         Args:
-            msg: The Python decode of a JSON payload.
+            msg: The Python decode of a Timeline PB payload.
         '''
         # Reset the local frame state for the next frame
-        major = msg["driverMajor"]
-        minor = msg["driverMinor"]
-        patch = msg["driverPatch"]
+        major = expect_int(msg.major_version)
+        minor = expect_int(msg.minor_version)
+        patch = expect_int(msg.patch_version)
 
         if self.verbose:
-            print(f'Device: {msg["deviceName"]}')
-            print(f'Driver: r{major}p{minor} ({patch})')
+            print(f'Device:  {msg.name} (0x{msg.id:02X})')
+            print(f'Driver:  r{major}p{minor} ({patch})')
+            print(f'Process: {msg.process_id}')
 
     def handle_frame(self, msg: Any) -> None:
         '''
@@ -113,12 +256,13 @@ class GPUTimelineService:
         reset the frame tracker ready for the next frame.
 
         Args:
-            msg: The Python decode of a JSON payload.
+            msg: The Python decode of a Timeline PB payload.
         '''
         # Update end time of the current frame
-        self.frame['presentTimestamp'] = msg['timestamp']
+        self.frame['presentTimestamp'] = expect_int(msg.timestamp)
 
         # Write frame packet to the file
+        # FIXME: No need to write the first empty frame?
         last_frame = json.dumps(self.frame).encode('utf-8')
         length = struct.pack('<I', len(last_frame))
 
@@ -126,8 +270,9 @@ class GPUTimelineService:
         self.file_handle.write(last_frame)
 
         # Reset the local frame state for the next frame
-        next_frame = msg['fid']
+        next_frame = expect_int(msg.id)
         self.frame = {
+            'device': expect_int(msg.device),
             'frame': next_frame,
             'presentTimestamp': 0,
             'submits': []
@@ -141,12 +286,13 @@ class GPUTimelineService:
         Handle a submit boundary workload.
 
         Args:
-            msg: The Python decode of a JSON payload.
+            msg: The Python decode of a Timeline PB payload.
         '''
         # Write frame packet to the file
         submit: SubmitMetadataType = {
-            'queue': msg['queue'],
-            'timestamp': msg['timestamp'],
+            'device': expect_int(msg.device),
+            'queue': expect_int(msg.queue),
+            'timestamp': expect_int(msg.timestamp),
             'workloads': []
         }
 
@@ -158,11 +304,48 @@ class GPUTimelineService:
         Handle a render pass workload.
 
         Render passes may generate multiple messages if suspended and resumed
+        when using Vulkan 1.3 dynamic render passes; this message may be
+        followed by zero or more continuation messages that will be
+        merged into this renderpass.
+
+        Args:
+            msg: The Python decode of a Timeline PB payload.
+        '''
+        submit = self.frame['submits'][-1]
+
+        # Convert the PB message into our data representation
+        renderpass: RenderpassMetadataType = {
+            'type': 'renderpass',
+            'tid': expect_int(msg.tag_id),
+            'width': expect_int(msg.width),
+            'height': expect_int(msg.height),
+            'drawCallCount': expect_int(msg.draw_call_count),
+            'subpassCount': expect_int(msg.subpass_count),
+            'label': map_debug_label(msg.debug_label),
+            'attachments': []
+        }
+
+        for pb_attachment in msg.attachments:
+            attachment: RenderpassAttachmentMetadataType = {
+                'binding': map_renderpass_binding(pb_attachment.type, pb_attachment.index),
+                'load': not bool(pb_attachment.not_loaded),
+                'store': not bool(pb_attachment.not_stored),
+                'resolve': bool(pb_attachment.resolved),
+            }
+            renderpass['attachments'].append(attachment)
+
+        submit['workloads'].append(renderpass)
+
+    def handle_render_pass_continuation(self, msg: Any) -> None:
+        '''
+        Handle a render pass workload continuation.
+
+        Render passes may generate multiple messages if suspended and resumed
         when using Vulkan 1.3 dynamic render passes, so merge those into a
         single workload.
 
         Args:
-            msg: The Python decode of a JSON payload.
+            msg: The Python decode of a Timeline PB payload.
         '''
         submit = self.frame['submits'][-1]
 
@@ -173,25 +356,94 @@ class GPUTimelineService:
             if last_workload['type'] == 'renderpass':
                 last_render_pass = last_workload
 
-        # If this is a continuation then merge records
-        if last_render_pass and (last_render_pass['tid'] == msg['tid']):
-            # Don't accumulate if tag_id is flagged as ambiguous
-            if last_render_pass['drawCallCount'] != -1:
-                last_render_pass['drawCallCount'] += msg['drawCallCount']
+        # Validate that this is a continuation of the last renderpass
+        assert last_render_pass and (last_render_pass['tid'] == expect_int(msg.tag_id))
 
-        # Otherwise this is a new record
-        else:
-            submit['workloads'].append(msg)
+        # Don't accumulate if tag_id is flagged as ambiguous
+        if last_render_pass['drawCallCount'] >= 0:
+            last_render_pass['drawCallCount'] += expect_int(msg.draw_call_count)
 
-    def handle_generic(self, msg: Any) -> None:
+    def handle_dispatch(self, msg: Any) -> None:
         '''
-        Handle a generic workload that needs no special handling.
+        Handle a dispatch workload
 
         Args:
-            msg: The Python decode of a JSON payload.
+            msg: The Python decode of a Timeline PB payload.
         '''
         submit = self.frame['submits'][-1]
-        submit['workloads'].append(msg)
+
+        # Convert the PB message into our data representation
+        dispatch: DispatchMetadataType = {
+            'type': 'dispatch',
+            'tid': expect_int(msg.tag_id),
+            'xGroups': expect_int(msg.x_groups),
+            'yGroups': expect_int(msg.y_groups),
+            'zGroups': expect_int(msg.z_groups),
+            'label': map_debug_label(msg.debug_label),
+        }
+
+        submit['workloads'].append(dispatch)
+
+    def handle_trace_rays(self, msg: Any) -> None:
+        '''
+        Handle a trace rays workload
+
+        Args:
+            msg: The Python decode of a Timeline PB payload.
+        '''
+        submit = self.frame['submits'][-1]
+
+        # Convert the PB message into our data representation
+        trace_rays: TraceRaysMetadataType = {
+            'type': 'tracerays',
+            'tid': expect_int(msg.tag_id),
+            'xItems': expect_int(msg.x_items),
+            'yItems': expect_int(msg.y_items),
+            'zItems': expect_int(msg.z_items),
+            'label': map_debug_label(msg.debug_label),
+        }
+
+        submit['workloads'].append(trace_rays)
+
+    def handle_image_transfer(self, msg: Any) -> None:
+        '''
+        Handle an image transfer workload
+
+        Args:
+            msg: The Python decode of a Timeline PB payload.
+        '''
+        submit = self.frame['submits'][-1]
+
+        # Convert the PB message into our data representation
+        image_transfer: ImageTransferMetadataType = {
+            'type': 'imagetransfer',
+            'tid': expect_int(msg.tag_id),
+            'subtype': map_image_transfer_type(msg.transfer_type),
+            'pixelCount': expect_int(msg.pixel_count),
+            'label': map_debug_label(msg.debug_label),
+        }
+
+        submit['workloads'].append(image_transfer)
+
+    def handle_buffer_transfer(self, msg: Any) -> None:
+        '''
+        Handle a buffer transfer workload
+
+        Args:
+            msg: The Python decode of a Timeline PB payload.
+        '''
+        submit = self.frame['submits'][-1]
+
+        # Convert the PB message into our data representation
+        buffer_transfer: BufferTransferMetadataType = {
+            'type': 'buffertransfer',
+            'tid': expect_int(msg.tag_id),
+            'subtype': map_buffer_transfer_type(msg.transfer_type),
+            'byteCount': expect_int(msg.byte_count),
+            'label': map_debug_label(msg.debug_label),
+        }
+
+        submit['workloads'].append(buffer_transfer)
 
     def handle_message(self, message: Message) -> None:
         '''
@@ -200,32 +452,38 @@ class GPUTimelineService:
         Note that this service only expects pushed TX or TX_ASYNC messages, so
         never provides a response.
         '''
-        encoded_payload = message.payload.decode('utf-8')
-        payload = json.loads(encoded_payload)
+        pb_record = timeline_pb2.TimelineRecord()  # pylint: disable=no-member
+        pb_record.ParseFromString(message.payload)
 
-        generic_payload_types = {
-            'dispatch',
-            'tracerays',
-            'imagetransfer',
-            'buffertransfer'
-        }
+        # Assert there is at most one member message
+        assert((int(pb_record.HasField('metadata'))
+               + int(pb_record.HasField('frame'))
+               + int(pb_record.HasField('submit'))
+               + int(pb_record.HasField('renderpass'))
+               + int(pb_record.HasField('continue_renderpass'))
+               + int(pb_record.HasField('dispatch'))
+               + int(pb_record.HasField('trace_rays'))
+               + int(pb_record.HasField('image_transfer'))
+               + int(pb_record.HasField('buffer_transfer'))) <= 1)
 
-        payload_type = payload['type']
-
-        if payload_type == 'device':
-            self.handle_device(payload)
-
-        elif payload_type == 'frame':
-            self.handle_frame(payload)
-
-        elif payload_type == 'submit':
-            self.handle_submit(payload)
-
-        elif payload_type == 'renderpass':
-            self.handle_render_pass(payload)
-
-        elif payload_type in generic_payload_types:
-            self.handle_generic(payload)
-
+        # Process the message
+        if pb_record.HasField('metadata'):
+            self.handle_device(pb_record.metadata)
+        elif pb_record.HasField('frame'):
+            self.handle_frame(pb_record.frame)
+        elif pb_record.HasField('submit'):
+            self.handle_submit(pb_record.submit)
+        elif pb_record.HasField('renderpass'):
+            self.handle_render_pass(pb_record.renderpass)
+        elif pb_record.HasField('continue_renderpass'):
+            self.handle_render_pass_continuation(pb_record.continue_renderpass)
+        elif pb_record.HasField('dispatch'):
+            self.handle_dispatch(pb_record.dispatch)
+        elif pb_record.HasField('trace_rays'):
+            self.handle_trace_rays(pb_record.trace_rays)
+        elif pb_record.HasField('image_transfer'):
+            self.handle_image_transfer(pb_record.image_transfer)
+        elif pb_record.HasField('buffer_transfer'):
+            self.handle_buffer_transfer(pb_record.buffer_transfer)
         else:
-            assert False, f'Unknown payload type {payload_type}'
+            assert False, f'Unknown payload {pb_record}'
