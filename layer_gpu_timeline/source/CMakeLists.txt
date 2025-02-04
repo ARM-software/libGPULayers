@@ -65,7 +65,8 @@ target_include_directories(
 target_include_directories(
     ${VK_LAYER} SYSTEM PRIVATE
         ../../source_third_party/
-        ../../source_third_party/khronos/vulkan/include/)
+        ../../source_third_party/khronos/vulkan/include/
+        ../../source_third_party/protopuf/include/)
 
 lgl_set_build_options(${VK_LAYER})
 
@@ -74,7 +75,8 @@ target_link_libraries(
         lib_layer_comms
         lib_layer_framework
         lib_layer_trackers
-        $<$<PLATFORM_ID:Android>:log>)
+        $<$<PLATFORM_ID:Android>:log>
+        protopuf)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Release")
     add_custom_command(

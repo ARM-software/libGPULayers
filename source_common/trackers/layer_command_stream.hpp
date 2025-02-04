@@ -322,6 +322,16 @@ private:
 class LCSImageTransfer : public LCSWorkload
 {
 public:
+    /* Enumerates possible image transfer types */
+    enum class Type
+    {
+        unknown,
+        clear_image,
+        copy_image,
+        copy_buffer_to_image,
+        copy_image_to_buffer,
+    };
+
     /**
      * @brief Create a new image transfer workload.
      *
@@ -331,10 +341,13 @@ public:
      * @param transferType   The subtype of the transfer.
      * @param pixelCount     The size of the transfer, in pixels.
      */
-    LCSImageTransfer(uint64_t tagID, const std::string& transferType, int64_t pixelCount);
+    LCSImageTransfer(uint64_t tagID, Type transferType, int64_t pixelCount);
 
     /** @return The subtype of the transfer */
-    const std::string& getTransferType() const { return transferType; }
+    Type getTransferType() const { return transferType; }
+
+    /** @return The subtype of the transfer */
+    std::string getTransferTypeStr() const;
 
     /** @return The size of the transfer, in pixels */
     int64_t getPixelCount() const { return pixelCount; }
@@ -343,7 +356,7 @@ private:
     /**
      * @brief The subtype of the transfer.
      */
-    std::string transferType;
+    Type transferType;
 
     /**
      * @brief The number of pixels transferred, or -1 if unknown.
@@ -357,6 +370,14 @@ private:
 class LCSBufferTransfer : public LCSWorkload
 {
 public:
+    /* Enumerates possible buffer transfer types */
+    enum class Type
+    {
+        unknown,
+        fill_buffer,
+        copy_buffer,
+    };
+
     /**
      * @brief Create a new buffer transfer workload.
      *
@@ -367,10 +388,13 @@ public:
      * @param transferType   The subtype of the transfer.
      * @param byteCount      The size of the transfer, in bytes.
      */
-    LCSBufferTransfer(uint64_t tagID, const std::string& transferType, int64_t byteCount);
+    LCSBufferTransfer(uint64_t tagID, Type transferType, int64_t byteCount);
 
     /** @return The subtype of the transfer */
-    const std::string& getTransferType() const { return transferType; }
+    Type getTransferType() const { return transferType; }
+
+    /** @return The subtype of the transfer */
+    std::string getTransferTypeStr() const;
 
     /** @return The size of the transfer, in bytes */
     int64_t getByteCount() const { return byteCount; }
@@ -379,7 +403,7 @@ private:
     /**
      * @brief The subtype of the transfer.
      */
-    std::string transferType;
+    Type transferType;
 
     /**
      * @brief The number of bytes transferred, -1 if unknown, -2 if whole buffer.

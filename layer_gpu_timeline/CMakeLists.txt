@@ -35,6 +35,10 @@ set(LGL_CONFIG_LOG 1)
 include(../source_common/compiler_helper.cmake)
 include(../cmake/clang-tools.cmake)
 
+# TPIP
+set(BUILD_TESTS OFF)
+add_subdirectory(../source_third_party/protopuf "source_third_party/protopuf")
+
 # Build steps
 add_subdirectory(../source_common/comms source_common/comms)
 add_subdirectory(../source_common/framework source_common/framework)

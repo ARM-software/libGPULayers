@@ -107,11 +107,10 @@ public:
      * @brief Called at the start of the submit to emit a "Submit" record, delimiting the subsequent items from any
      * later submit
      *
-     * @param vkDevice The device the submit belongs to
-     * @param vkQueue The queue that was submitted to
+     * @param queue The queue that was submitted to
      * @param timestamp The timestamp of the submission
      */
-    void emitSubmit(VkDevice vkDevice, VkQueue vkQueue, uint64_t timestamp);
+    void emitSubmit(VkQueue queue, uint64_t timestamp);
 
 private:
     Device& device;

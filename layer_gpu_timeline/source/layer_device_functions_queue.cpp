@@ -65,9 +65,9 @@ static uint64_t getClockMonotonicRaw()
  * @param queue             The queue being submitted to.
  * @param workloadVisitor   The data emit callback.
  */
-static void emitQueueMetadata(VkDevice device, VkQueue queue, WorkloadMetadataEmitterVisitor& workloadVisitor)
+static void emitQueueMetadata(VkQueue queue, WorkloadMetadataEmitterVisitor& workloadVisitor)
 {
-    workloadVisitor.emitSubmit(device, queue, getClockMonotonicRaw());
+    workloadVisitor.emitSubmit(queue, getClockMonotonicRaw());
 }
 
 /**
@@ -131,7 +131,7 @@ VKAPI_ATTR VkResult VKAPI_CALL
     WorkloadMetadataEmitterVisitor workloadVisitor {*layer};
 
     // Add queue-level metadata
-    emitQueueMetadata(layer->device, queue, workloadVisitor);
+    emitQueueMetadata(queue, workloadVisitor);
 
     // Add per-command buffer metadata
     for (uint32_t i = 0; i < submitCount; i++)
@@ -165,7 +165,7 @@ VKAPI_ATTR VkResult VKAPI_CALL
     WorkloadMetadataEmitterVisitor workloadVisitor {*layer};
 
     // Add queue-level metadata
-    emitQueueMetadata(layer->device, queue, workloadVisitor);
+    emitQueueMetadata(queue, workloadVisitor);
 
     // Add per-command buffer metadata
     for (uint32_t i = 0; i < submitCount; i++)
@@ -199,7 +199,7 @@ VKAPI_ATTR VkResult VKAPI_CALL
     WorkloadMetadataEmitterVisitor workloadVisitor {*layer};
 
     // Add queue-level metadata
-    emitQueueMetadata(layer->device, queue, workloadVisitor);
+    emitQueueMetadata(queue, workloadVisitor);
 
     // Add per-command buffer metadata
     for (uint32_t i = 0; i < submitCount; i++)

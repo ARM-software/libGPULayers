@@ -1,0 +1,218 @@
+/* Copyright (C) 2025 by Arm Limited. All rights reserved. */
+
+/*
+ * The layer driver will emit an ordered sequence of `TimelineRecord` messages.
+ * The messages are not nested in the protocol, but the ordering allows a nested structure to be recovered.
+ * `Frame` messages form the outer level structure; each `Frame` marks the boundary of one sequence of events and another; all subsequent messages that are not `Frame` messages are children of that `Frame`.
+ * `Submit` messages form the next level structure within a `Frame`; all subsequent messages that are not `Submit` or `Frame` messages are children of that `Submit`.
+ * All other messages are children of the last received `Submit`.
+ * `BeginRenderpass` and `ContinueRenderpass` are a special case; where a `ContinueRenderpass` is seen it should be merged into the last received `BeginRenderpass` within that `Submit` that has the same `tag_id` value.
+ * It is guaranteed that you will not receive a `ContinueRenderpass` unless the proceeding `BeginRenderpass` was received (though it is valid to have a sequence of `ContinueRenderpass` for the same `BeginRenderpass`).
+ *
+ * Therefore the sequence of messages like:
+ * Frame
+ * Submit
+ * BeginRenderpass
+ * BeginRenderpass
+ * Submit
+ * BeginRenderpass
+ * Dispatch
+ * BeginRenderpass
+ * Frame
+ * Submit
+ * BeginRenderpass
+ * Dispatch
+ * BeginRenderpass
+ * Submit
+ * BeginRenderpass
+ * ContinueRenderpass
+ * BeginRenderpass
+ *
+ * Will become:
+ *
+ * +-> Frame
+ * |   +-> Submit
+ * |   |   +-> Renderpass
+ * |   |   +-> Renderpass
+ * |   +-> Submit
+ * |       +-> Renderpass
+ * |       +-> Dispatch
+ * |       +-> Renderpass
+ * +-> Frame
+ *     +-> Submit
+ *     |   +-> Renderpass
+ *         +-> Dispatch
+ *     |   +-> Renderpass
+ *     +-> Submit
+ *         +-> Renderpass (BeginRenderpass+ContinueRenderpass)
+ *         +-> Renderpass
+ */
+
+syntax = "proto3";
+
+package gpulayers.timeline;
+
+option optimize_for = LITE_RUNTIME;
+
+/* The metadata packet that is sent once for a given VkDevice, before any other packet related to that Device and describes the VkDevice / VkPhysicalDevice etc */
+message DeviceMetadata {
+    /* The VkDevice handle */
+    uint64 id = 1;
+    /* The PID of the process that the layer driver was loaded into */
+    uint32 process_id = 2;
+    /* The major version that came from the VkPhysicalDeviceProperties for that VkDevice */
+    uint32 major_version = 3;
+    /* The minor version that came from the VkPhysicalDeviceProperties for that VkDevice */
+    uint32 minor_version = 4;
+    /* The patch version that came from the VkPhysicalDeviceProperties for that VkDevice */
+    uint32 patch_version = 5;
+    /* The name that came from the VkPhysicalDeviceProperties for that VkDevice */
+    string name = 6;
+}
+
+/* A frame definition message */
+message Frame {
+    /* The unique counter / identifier for this new frame */
+    uint64 id = 1;
+    /* The VkDevice that the frame belongs to */
+    uint64 device = 2;
+    /* The timestamp (in NS, CLOCK_MONOTONIC_RAW) of the point where QueuePresent was called */
+    uint64 timestamp = 3;
+}
+
+/* A submit message */
+message Submit {
+    /* The timestamp of the submission (in NS, CLOCK_MONOTONIC_RAW) */
+    uint64 timestamp = 1;
+    /* The VkDevice that the submit belongs to */
+    uint64 device = 2;
+    /* The VkQueue the frame belongs to */
+    uint64 queue = 3;
+}
+
+/* Enumerates the possible attachment types a renderpass can have */
+enum RenderpassAttachmentType {
+    undefined = 0;
+    color = 1;
+    depth = 2;
+    stencil = 3;
+}
+
+/* Describe an attachment to a renderpass */
+message RenderpassAttachment {
+    /* The attachment type */
+    RenderpassAttachmentType type = 1;
+    /* For color attachments, its index, otherwise should be zero/unspecified */
+    uint32 index = 2;
+    /* True if the attachment was *not* loaded (this is inverted since usually things are loaded, so this saves a field in the data) */
+    bool not_loaded = 3;
+    /* True if the attachment was *not* stored (this is inverted since usually things are stored, so this saves a field in the data) */
+    bool not_stored = 4;
+    /* True if the attachment was resolved (this is *not* inverted since usually things are not resolved, so this saves a field in the data) */
+    bool resolved = 5;
+}
+
+/* Start a new renderpass */
+message BeginRenderpass {
+    /* The unique identifier for this new renderpass */
+    uint64 tag_id = 1;
+    /* The dimensions of the renderpass' attachments */
+    uint32 width = 2;
+    uint32 height = 3;
+    /* The number of drawcalls in the renderpass */
+    uint32 draw_call_count = 4;
+    /* The subpass count */
+    uint32 subpass_count = 5;
+    /* Any user defined debug labels associated with the renderpass */
+    repeated string debug_label = 6;
+    /* Any attachments associated with the renderpass */
+    repeated RenderpassAttachment attachments = 7;
+}
+
+/* Continue a split renderpass */
+message ContinueRenderpass {
+    /* The unique identifier for the renderpass that is being continued */
+    uint64 tag_id = 1;
+    /* The number of drawcalls to add to the total in the renderpass */
+    uint32 draw_call_count = 2;
+    /* Any user defined debug labels to add to the renderpass */
+    repeated string debug_label = 3;
+}
+
+/* A dispatch object submission */
+message Dispatch {
+    /* The unique identifier for this operation */
+    uint64 tag_id = 1;
+    /* The dimensions of the dispatch */
+    int64 x_groups = 2;
+    int64 y_groups = 3;
+    int64 z_groups = 4;
+    /* Any user defined debug labels associated with the dispatch */
+    repeated string debug_label = 5;
+}
+
+/* A trace rays object submission */
+message TraceRays {
+    /* The unique identifier for this operation */
+    uint64 tag_id = 1;
+    /* The dimensions of the operation */
+    int64 x_items = 2;
+    int64 y_items = 3;
+    int64 z_items = 4;
+    /* Any user defined debug labels associated with the dispatch */
+    repeated string debug_label = 5;
+}
+
+/* Enumerates possible image transfer types */
+enum ImageTransferType {
+    unknown_image_transfer = 0;
+    clear_image = 1;
+    copy_image = 2;
+    copy_buffer_to_image = 3;
+    copy_image_to_buffer = 4;
+}
+
+/* An image transfer submission */
+message ImageTransfer {
+    /* The unique identifier for this operation */
+    uint64 tag_id = 1;
+    /* The number of pixels being transfered */
+    int64 pixel_count = 2;
+    /* The image type */
+    ImageTransferType transfer_type = 3;
+    /* Any user defined debug labels associated with the dispatch */
+    repeated string debug_label = 4;
+}
+
+
+/* Enumerates possible buffer transfer types */
+enum BufferTransferType {
+    unknown_buffer_transfer = 0;
+    fill_buffer = 1;
+    copy_buffer = 2;
+}
+
+/* An buffer transfer submission */
+message BufferTransfer {
+    /* The unique identifier for this operation */
+    uint64 tag_id = 1;
+    /* The number of bytes being transfered */
+    int64 byte_count = 2;
+    /* The buffer type */
+    BufferTransferType transfer_type = 3;
+    /* Any user defined debug labels associated with the dispatch */
+    repeated string debug_label = 4;
+}
+
+/* The data payload message that wraps all other messages */
+message TimelineRecord {
+    DeviceMetadata metadata = 1;
+    Frame frame = 2;
+    Submit submit = 3;
+    BeginRenderpass renderpass = 4;
+    ContinueRenderpass continue_renderpass = 5;
+    Dispatch dispatch = 6;
+    TraceRays trace_rays = 7;
+    ImageTransfer image_transfer = 8;
+    BufferTransfer buffer_transfer = 9;
+}
