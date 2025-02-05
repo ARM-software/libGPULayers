@@ -193,6 +193,30 @@ def map_debug_label(labels : list[str]|None) -> list[str]:
     return [str(l) for l in labels] # need to convert it to a list from a RepeatedScalarContainer
 
 
+class GPUDeviceState:
+    '''
+    Holds per device state.
+
+    Typically there will only be one physical device, and one corresponding VkDevice,
+    but the protocol and API are both designed to support multiple devices so abstract
+    that here.
+
+    Args:
+        device_id: The device id associated with the state object
+    '''
+    def __init__(self, device_id: int):
+        '''
+        Initialize the state for a single device
+        '''
+        # Create a default frame record
+        # End time written on queuePresent
+        self.frame: FrameMetadataType = {
+            'device': device_id,
+            'frame': 0,
+            'presentTimestamp': 0,
+            'submits': []
+        }
+
 class GPUTimelineService:
     '''
     A service for handling network comms from the layer_gpu_timeline layer.
@@ -205,22 +229,22 @@ class GPUTimelineService:
         Args:
             file_path: File to write on the filesystem
             verbose: Should this use verbose logging?
-
-        Returns:
-            The endpoint name.
         '''
-        # Create a default frame record
-        # End time written on queuePresent
-        self.frame: FrameMetadataType = {
-            'device': 0,
-            'frame': 0,
-            'presentTimestamp': 0,
-            'submits': []
-        }
-
+        self.devices : dict[int,GPUDeviceState] = dict()
+        self.last_submit : SubmitMetadataType|None = None
         # pylint: disable=consider-using-with
         self.file_handle = open(file_path, 'wb')
         self.verbose = verbose
+
+    def get_device(self, device: int) -> GPUDeviceState:
+        '''
+        Get or create a device object with the specified handle
+        '''
+        device = self.devices.get(device, None)
+        if device is None:
+            device = GPUDeviceState(device)
+            self.devices[device] = device
+        return device
 
     def get_service_name(self) -> str:
         '''
@@ -239,12 +263,18 @@ class GPUTimelineService:
             msg: The Python decode of a Timeline PB payload.
         '''
         # Reset the local frame state for the next frame
-        major = expect_int(msg.major_version)
-        minor = expect_int(msg.minor_version)
-        patch = expect_int(msg.patch_version)
+        device_id = expect_int(msg.id)
+        self.devices[device_id] = GPUDeviceState(device_id)
+
+        # This clears the last submit; expect a submit message before any new workloads
+        self.last_submit = None
+
 
         if self.verbose:
-            print(f'Device:  {msg.name} (0x{msg.id:02X})')
+            major = expect_int(msg.major_version)
+            minor = expect_int(msg.minor_version)
+            patch = expect_int(msg.patch_version)
+            print(f'Device:  {msg.name} (0x{device_id:02X})')
             print(f'Driver:  r{major}p{minor} ({patch})')
             print(f'Process: {msg.process_id}')
 
@@ -258,12 +288,19 @@ class GPUTimelineService:
         Args:
             msg: The Python decode of a Timeline PB payload.
         '''
+        # Get the device object
+        device_id = expect_int(msg.device)
+        device = self.get_device(device_id)
+
+        # This clears the last submit; expect a submit message before any new workloads
+        self.last_submit = None
+
         # Update end time of the current frame
-        self.frame['presentTimestamp'] = expect_int(msg.timestamp)
+        device.frame['presentTimestamp'] = expect_int(msg.timestamp)
 
         # Write frame packet to the file
         # FIXME: No need to write the first empty frame?
-        last_frame = json.dumps(self.frame).encode('utf-8')
+        last_frame = json.dumps(device.frame).encode('utf-8')
         length = struct.pack('<I', len(last_frame))
 
         self.file_handle.write(length)
@@ -271,15 +308,15 @@ class GPUTimelineService:
 
         # Reset the local frame state for the next frame
         next_frame = expect_int(msg.id)
-        self.frame = {
-            'device': expect_int(msg.device),
+        device.frame = {
+            'device': device_id,
             'frame': next_frame,
             'presentTimestamp': 0,
             'submits': []
         }
 
         if self.verbose and (next_frame % 100 == 0):
-            print(f'Starting frame {next_frame} ...')
+            print(f'Starting frame {next_frame} for 0x{device_id:02X} ...')
 
     def handle_submit(self, msg: Any) -> None:
         '''
@@ -288,6 +325,9 @@ class GPUTimelineService:
         Args:
             msg: The Python decode of a Timeline PB payload.
         '''
+        # Get the device object
+        device = self.get_device(expect_int(msg.device))
+
         # Write frame packet to the file
         submit: SubmitMetadataType = {
             'device': expect_int(msg.device),
@@ -297,7 +337,11 @@ class GPUTimelineService:
         }
 
         # Reset the local frame state for the next frame
-        self.frame['submits'].append(submit)
+        device.frame['submits'].append(submit)
+
+        # Track this new submit object; all subsequent workloads will attach to it
+        # up to the point of the next submit/frame/device
+        self.last_submit = submit
 
     def handle_render_pass(self, msg: Any) -> None:
         '''
@@ -311,7 +355,8 @@ class GPUTimelineService:
         Args:
             msg: The Python decode of a Timeline PB payload.
         '''
-        submit = self.frame['submits'][-1]
+        assert self.last_submit is not None
+        submit = self.last_submit
 
         # Convert the PB message into our data representation
         renderpass: RenderpassMetadataType = {
@@ -347,7 +392,8 @@ class GPUTimelineService:
         Args:
             msg: The Python decode of a Timeline PB payload.
         '''
-        submit = self.frame['submits'][-1]
+        assert self.last_submit is not None
+        submit = self.last_submit
 
         # Find the last workload
         last_render_pass = None
@@ -370,7 +416,8 @@ class GPUTimelineService:
         Args:
             msg: The Python decode of a Timeline PB payload.
         '''
-        submit = self.frame['submits'][-1]
+        assert self.last_submit is not None
+        submit = self.last_submit
 
         # Convert the PB message into our data representation
         dispatch: DispatchMetadataType = {
@@ -391,7 +438,8 @@ class GPUTimelineService:
         Args:
             msg: The Python decode of a Timeline PB payload.
         '''
-        submit = self.frame['submits'][-1]
+        assert self.last_submit is not None
+        submit = self.last_submit
 
         # Convert the PB message into our data representation
         trace_rays: TraceRaysMetadataType = {
@@ -412,7 +460,8 @@ class GPUTimelineService:
         Args:
             msg: The Python decode of a Timeline PB payload.
         '''
-        submit = self.frame['submits'][-1]
+        assert self.last_submit is not None
+        submit = self.last_submit
 
         # Convert the PB message into our data representation
         image_transfer: ImageTransferMetadataType = {
@@ -432,7 +481,8 @@ class GPUTimelineService:
         Args:
             msg: The Python decode of a Timeline PB payload.
         '''
-        submit = self.frame['submits'][-1]
+        assert self.last_submit is not None
+        submit = self.last_submit
 
         # Convert the PB message into our data representation
         buffer_transfer: BufferTransferMetadataType = {
