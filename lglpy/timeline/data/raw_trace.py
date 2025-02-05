@@ -93,7 +93,7 @@ class GPUStageID(enum.IntEnum):
         MAIN: Main phase vertex and fragment shaders from a render pass.
         IMAGE_TRANSFER: Transfers writing an image output.
         BUFFER_TRANSFER: Transfer writing a buffer output.
-        ASBUILD: Acceleration Structure Build.
+        ASBUILD: Acceleration structure build.
     '''
     COMPUTE = 0
     ADVANCED_GEOMETRY = 1
@@ -125,7 +125,7 @@ class GPUStageID(enum.IntEnum):
             cls.MAIN: 'Main',
             cls.IMAGE_TRANSFER: 'Image transfer',
             cls.BUFFER_TRANSFER: 'Buffer transfer',
-            cls.ASBUILD: 'Acceleration Structure Build',
+            cls.ASBUILD: 'Acceleration structure build',
         }
 
         return human_names[stage_id]
