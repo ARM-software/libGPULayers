@@ -93,6 +93,7 @@ class GPUStageID(enum.IntEnum):
         MAIN: Main phase vertex and fragment shaders from a render pass.
         IMAGE_TRANSFER: Transfers writing an image output.
         BUFFER_TRANSFER: Transfer writing a buffer output.
+        ASBUILD: Acceleration Structure Build.
     '''
     COMPUTE = 0
     ADVANCED_GEOMETRY = 1
@@ -102,6 +103,7 @@ class GPUStageID(enum.IntEnum):
     MAIN = 5
     IMAGE_TRANSFER = 6
     BUFFER_TRANSFER = 7
+    ASBUILD = 8
 
     @classmethod
     def get_ui_name(cls, stage_id) -> str:
@@ -122,7 +124,8 @@ class GPUStageID(enum.IntEnum):
             cls.BINNING: 'Binning',
             cls.MAIN: 'Main',
             cls.IMAGE_TRANSFER: 'Image transfer',
-            cls.BUFFER_TRANSFER: 'Buffer transfer'
+            cls.BUFFER_TRANSFER: 'Buffer transfer',
+            cls.ASBUILD: 'Acceleration Structure Build',
         }
 
         return human_names[stage_id]
@@ -559,6 +562,8 @@ class PerfettoConfig:
         "fragment": GPUStageID.FRAGMENT,
         "binning": GPUStageID.BINNING,
         "main": GPUStageID.MAIN,
+        "acceleration structure 'fast build' build": GPUStageID.ASBUILD,
+        "acceleration structure 'fast trace' build": GPUStageID.ASBUILD,
     }
 
     def __init__(self):
