@@ -77,8 +77,8 @@
 
 #include "comms/comms_interface.hpp"
 #include "comms/comms_message.hpp"
-#include "comms/comms_transmitter.hpp"
 #include "comms/comms_receiver.hpp"
+#include "comms/comms_transmitter.hpp"
 #include "utils/queue.hpp"
 
 namespace Comms
@@ -89,7 +89,7 @@ namespace Comms
  *
  * Exposes the CommsInterface to calling code.
  */
-class CommsModule: public CommsInterface
+class CommsModule : public CommsInterface
 {
 public:
     /**
@@ -101,8 +101,7 @@ public:
      *
      * @param domainAddress   The unix domain address to use.
      */
-    CommsModule(
-        const std::string& domainAddress);
+    CommsModule(const std::string& domainAddress);
 
     /**
      * @brief Construct a new instance using a TCP/IP socket.
@@ -110,9 +109,7 @@ public:
      * @param hostAddress   The host name or IP address to use.
      * @param port          The port number to use.
      */
-    CommsModule(
-        const std::string& hostAddress,
-        int port);
+    CommsModule(const std::string& hostAddress, int port);
 
     /**
      * @brief Close the host connection and stop all worker threads.
@@ -127,23 +124,16 @@ public:
     virtual bool isConnected();
 
     /** See @c comms_interface.hpp for documentation. */
-    virtual EndpointID getEndpointID(
-        const std::string& name);
+    virtual EndpointID getEndpointID(const std::string& name);
 
     /** See @c comms_interface.hpp for documentation. */
-    virtual void txAsync(
-        EndpointID endpoint,
-        std::unique_ptr<MessageData> data);
+    virtual void txAsync(EndpointID endpoint, std::unique_ptr<MessageData> data);
 
     /** See @c comms_interface.hpp for documentation. */
-    virtual void tx(
-        EndpointID endpoint,
-        std::unique_ptr<MessageData> data);
+    virtual void tx(EndpointID endpoint, std::unique_ptr<MessageData> data);
 
     /** See @c comms_interface.hpp for documentation. */
-    virtual std::unique_ptr<MessageData> txRx(
-        EndpointID endpoint,
-        std::unique_ptr<MessageData> data);
+    virtual std::unique_ptr<MessageData> txRx(EndpointID endpoint, std::unique_ptr<MessageData> data);
 
     // Allow module internal classes to access private members
     friend class Transmitter;
@@ -162,8 +152,7 @@ private:
      *
      * @param message   The message to queue.
      */
-    void enqueueMessage(
-        std::shared_ptr<Message> message);
+    void enqueueMessage(std::shared_ptr<Message> message);
 
     /**
      * @brief Get the oldest message from the outbound message task queue.
@@ -176,12 +165,12 @@ private:
     /**
      * @brief The socket for communications.
      */
-    int sockfd { -1 };
+    int sockfd {-1};
 
     /**
      * @brief The next message ID nonce to use.
      */
-    std::atomic<MessageID> nextMessageID { 1 };
+    std::atomic<MessageID> nextMessageID {1};
 
     /**
      * @brief The FIFO queue of messages to send.

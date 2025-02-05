@@ -23,20 +23,20 @@
  * ----------------------------------------------------------------------------
  */
 
+#include "device.hpp"
+#include "framework/device_dispatch_table.hpp"
+
 #include <map>
 #include <mutex>
-
-#include "device.hpp"
-#include "layer_device_functions.hpp"
 
 extern std::mutex g_vulkanLock;
 
 // Opcode IDs for interesting SPIR-V opcodes
-static const uint32_t SPIRV_OPCODE_OPDECORATE { 71 };
-static const uint32_t SPIRV_OPCODE_OPMEMBERDECORATE { 72 };
-static const uint32_t SPIRV_OPCODE_OPDECORATEID { 332 };
-static const uint32_t SPIRV_OPCODE_OPDECORATESTRING { 5632 };
-static const uint32_t SPIRV_OPCODE_OPMEMBERDECORATESTRING { 5633 };
+static const uint32_t SPIRV_OPCODE_OPDECORATE {71};
+static const uint32_t SPIRV_OPCODE_OPMEMBERDECORATE {72};
+static const uint32_t SPIRV_OPCODE_OPDECORATEID {332};
+static const uint32_t SPIRV_OPCODE_OPDECORATESTRING {5632};
+static const uint32_t SPIRV_OPCODE_OPMEMBERDECORATESTRING {5633};
 
 // Map of decorate opcodes and the word offset of the decoration ID
 static const std::map<uint32_t, size_t> SPIRV_DECORATE_OPCODES {
@@ -44,11 +44,11 @@ static const std::map<uint32_t, size_t> SPIRV_DECORATE_OPCODES {
     {SPIRV_OPCODE_OPMEMBERDECORATE, 3},
     {SPIRV_OPCODE_OPDECORATEID, 2},
     {SPIRV_OPCODE_OPDECORATESTRING, 2},
-    {SPIRV_OPCODE_OPMEMBERDECORATESTRING, 3}
+    {SPIRV_OPCODE_OPMEMBERDECORATESTRING, 3},
 };
 
 // Decoration IDs for interesting SPIR-V decorations
-static const uint32_t SPIRV_DECORATE_RELAXED_PRECISION { 0 };
+static const uint32_t SPIRV_DECORATE_RELAXED_PRECISION {0};
 
 /**
  * @brief Modify a SPIR-V module to remove all use of relaxed precision.
@@ -57,26 +57,24 @@ static const uint32_t SPIRV_DECORATE_RELAXED_PRECISION { 0 };
  *
  * @return   The modified binary.
  */
-static std::vector<uint32_t> remove_relaxed_precision(
-    const std::vector<uint32_t>& originalCode
-) {
+static std::vector<uint32_t> remove_relaxed_precision(const std::vector<uint32_t>& originalCode)
+{
     // This module assumes the input SPIR-V is valid
     std::vector<uint32_t> code;
 
     // Process SPIR-V header
-    for (size_t i = 0 ; i < 5; i++)
+    for (size_t i = 0; i < 5; i++)
     {
-       code.push_back(originalCode[i]);
-
+        code.push_back(originalCode[i]);
     }
 
     // Process SPIR-V opcode payload
-    for (size_t i = 5 ; i < originalCode.size(); /* Increment in loop. */)
+    for (size_t i = 5; i < originalCode.size(); /* Increment in loop. */)
     {
         uint32_t opWord0 = originalCode[i];
 
-        uint32_t opCode { opWord0 & 0xFFFF };
-        uint32_t opWordCount { opWord0 >> 16 };
+        uint32_t opCode {opWord0 & 0xFFFF};
+        uint32_t opWordCount {opWord0 >> 16};
 
         // This should never happen, but avoids infinite loop on bad input
         if (opWordCount == 0)
@@ -85,7 +83,7 @@ static std::vector<uint32_t> remove_relaxed_precision(
             break;
         }
 
-        bool keep { true };
+        bool keep {true};
         if (isInMap(opCode, SPIRV_DECORATE_OPCODES))
         {
             size_t offset = SPIRV_DECORATE_OPCODES.at(opCode);
@@ -118,9 +116,8 @@ static std::vector<uint32_t> remove_relaxed_precision(
  *
  * @return   The modified binary.
  */
-static std::vector<uint32_t> fuzz_spirv(
-    const std::vector<uint32_t>& originalCode
-) {
+static std::vector<uint32_t> fuzz_spirv(const std::vector<uint32_t>& originalCode)
+{
     // This module assumes the input SPIR-V is valid
     std::vector<uint32_t> code = originalCode;
 
@@ -133,16 +130,15 @@ static std::vector<uint32_t> fuzz_spirv(
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateShaderModule<user_tag>(
-    VkDevice device,
-    const VkShaderModuleCreateInfo* pCreateInfo,
-    const VkAllocationCallbacks* pAllocator,
-    VkShaderModule* pShaderModule
-) {
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateShaderModule<user_tag>(VkDevice device,
+                                                                    const VkShaderModuleCreateInfo* pCreateInfo,
+                                                                    const VkAllocationCallbacks* pAllocator,
+                                                                    VkShaderModule* pShaderModule)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(device);
 
     // Release the lock to call into the driver
@@ -171,17 +167,16 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateShaderModule<user_tag>(
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateShadersEXT<user_tag>(
-    VkDevice device,
-    uint32_t createInfoCount,
-    const VkShaderCreateInfoEXT* pCreateInfos,
-    const VkAllocationCallbacks* pAllocator,
-    VkShaderEXT* pShaders
-) {
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateShadersEXT<user_tag>(VkDevice device,
+                                                                  uint32_t createInfoCount,
+                                                                  const VkShaderCreateInfoEXT* pCreateInfos,
+                                                                  const VkAllocationCallbacks* pAllocator,
+                                                                  VkShaderEXT* pShaders)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(device);
 
     // Create copies we can modify
@@ -264,21 +259,19 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateShadersEXT<user_tag>(
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPipelineKeyKHR<user_tag>(
-    VkDevice device,
-    const VkPipelineCreateInfoKHR* pPipelineCreateInfo,
-    VkPipelineBinaryKeyKHR* pPipelineKey
-) {
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPipelineKeyKHR<user_tag>(VkDevice device,
+                                                                   const VkPipelineCreateInfoKHR* pPipelineCreateInfo,
+                                                                   VkPipelineBinaryKeyKHR* pPipelineKey)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(device);
 
     // If caching is disabled then return a scrambled global key
     if (layer->instance->config.shader_disable_cache() && !pPipelineCreateInfo)
     {
-
         for (size_t i = 0; i < VK_MAX_PIPELINE_BINARY_KEY_SIZE_KHR; i++)
         {
             pPipelineKey->key[i] = static_cast<uint8_t>(i);
@@ -295,18 +288,17 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPipelineKeyKHR<user_tag>(
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateComputePipelines<user_tag>(
-    VkDevice device,
-    VkPipelineCache pipelineCache,
-    uint32_t createInfoCount,
-    const VkComputePipelineCreateInfo* pCreateInfos,
-    const VkAllocationCallbacks* pAllocator,
-    VkPipeline* pPipelines
-) {
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateComputePipelines<user_tag>(VkDevice device,
+                                                                        VkPipelineCache pipelineCache,
+                                                                        uint32_t createInfoCount,
+                                                                        const VkComputePipelineCreateInfo* pCreateInfos,
+                                                                        const VkAllocationCallbacks* pAllocator,
+                                                                        VkPipeline* pPipelines)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(device);
 
     if (layer->instance->config.shader_disable_cache())
@@ -316,23 +308,24 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateComputePipelines<user_tag>(
 
     // Release the lock to call into the driver
     lock.unlock();
-    return layer->driver.vkCreateComputePipelines(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
+    return layer->driver
+        .vkCreateComputePipelines(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
 }
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateGraphicsPipelines<user_tag>(
-    VkDevice device,
-    VkPipelineCache pipelineCache,
-    uint32_t createInfoCount,
-    const VkGraphicsPipelineCreateInfo* pCreateInfos,
-    const VkAllocationCallbacks* pAllocator,
-    VkPipeline* pPipelines
-) {
+VKAPI_ATTR VkResult VKAPI_CALL
+    layer_vkCreateGraphicsPipelines<user_tag>(VkDevice device,
+                                              VkPipelineCache pipelineCache,
+                                              uint32_t createInfoCount,
+                                              const VkGraphicsPipelineCreateInfo* pCreateInfos,
+                                              const VkAllocationCallbacks* pAllocator,
+                                              VkPipeline* pPipelines)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(device);
 
     if (layer->instance->config.shader_disable_cache())
@@ -342,24 +335,25 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateGraphicsPipelines<user_tag>(
 
     // Release the lock to call into the driver
     lock.unlock();
-    return layer->driver.vkCreateGraphicsPipelines(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
+    return layer->driver
+        .vkCreateGraphicsPipelines(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
 }
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateRayTracingPipelinesKHR<user_tag>(
-    VkDevice device,
-    VkDeferredOperationKHR deferredOperation,
-    VkPipelineCache pipelineCache,
-    uint32_t createInfoCount,
-    const VkRayTracingPipelineCreateInfoKHR* pCreateInfos,
-    const VkAllocationCallbacks* pAllocator,
-    VkPipeline* pPipelines
-) {
+VKAPI_ATTR VkResult VKAPI_CALL
+    layer_vkCreateRayTracingPipelinesKHR<user_tag>(VkDevice device,
+                                                   VkDeferredOperationKHR deferredOperation,
+                                                   VkPipelineCache pipelineCache,
+                                                   uint32_t createInfoCount,
+                                                   const VkRayTracingPipelineCreateInfoKHR* pCreateInfos,
+                                                   const VkAllocationCallbacks* pAllocator,
+                                                   VkPipeline* pPipelines)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(device);
 
     if (layer->instance->config.shader_disable_cache())
@@ -369,5 +363,11 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateRayTracingPipelinesKHR<user_tag>(
 
     // Release the lock to call into the driver
     lock.unlock();
-    return layer->driver.vkCreateRayTracingPipelinesKHR(device, deferredOperation, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
+    return layer->driver.vkCreateRayTracingPipelinesKHR(device,
+                                                        deferredOperation,
+                                                        pipelineCache,
+                                                        createInfoCount,
+                                                        pCreateInfos,
+                                                        pAllocator,
+                                                        pPipelines);
 }

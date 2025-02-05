@@ -23,6 +23,8 @@
  * ----------------------------------------------------------------------------
  */
 
+// clang-format off
+
 #include <mutex>
 
 // Include from per-layer code
@@ -1203,3 +1205,4 @@ VKAPI_ATTR void VKAPI_CALL layer_vkSubmitDebugUtilsMessageEXT_default(
     layer->driver.vkSubmitDebugUtilsMessageEXT(instance, messageSeverity, messageTypes, pCallbackData);
 }
 
+// clang-format on

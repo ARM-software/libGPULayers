@@ -76,3 +76,4 @@ install(
     TARGETS ${TEST_BINARY}
     DESTINATION bin)
 
+add_clang_tools()

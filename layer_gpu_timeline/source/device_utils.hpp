@@ -25,11 +25,10 @@
 
 #pragma once
 
-#include <vulkan/vulkan.h>
-
+#include "device.hpp"
 #include "framework/utils.hpp"
 
-#include "device.hpp"
+#include <vulkan/vulkan.h>
 
 /**
  * @brief Emit a start tag via a driver debug utils label.
@@ -38,18 +37,15 @@
  * @param commandBuffer   The command buffer we are recording.
  * @param tagID           The tagID to emit into the label.
  */
-[[maybe_unused]] static void emitStartTag(
-    Device* layer,
-    VkCommandBuffer commandBuffer,
-    uint64_t tagID
-) {
+[[maybe_unused]] static void emitStartTag(Device* layer, VkCommandBuffer commandBuffer, uint64_t tagID)
+{
     // Emit the unique workload tag into the command stream
     std::string tagLabel = formatString("t%" PRIu64, tagID);
     VkDebugUtilsLabelEXT tagInfo {
         .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT,
         .pNext = nullptr,
         .pLabelName = tagLabel.c_str(),
-        .color = { 0.0f, 0.0f, 0.0f, 0.0f }
+        .color = {0.0f, 0.0f, 0.0f, 0.0f},
     };
 
     layer->driver.vkCmdBeginDebugUtilsLabelEXT(commandBuffer, &tagInfo);

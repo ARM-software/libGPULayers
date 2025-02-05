@@ -44,3 +44,4 @@ lgl_set_build_options(${LIB_BINARY})
 #    add_subdirectory(test)
 #endif()
 
+add_clang_tools()

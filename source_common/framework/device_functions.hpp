@@ -25,6 +25,8 @@
 
 #pragma once
 
+// clang-format off
+
 #include <vulkan/vulkan.h>
 
 /* See Vulkan API for documentation. */
@@ -7987,3 +7989,4 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkWriteMicromapsPropertiesEXT(
     return layer_vkWriteMicromapsPropertiesEXT_default(device, micromapCount, pMicromaps, queryType, dataSize, pData, stride);
 }
 
+// clang-format on

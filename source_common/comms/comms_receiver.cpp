@@ -28,24 +28,24 @@
  * The implementation of the communications module receiver worker.
  */
 
-#include <cinttypes>
-#include <iostream>
-#include <sys/socket.h>
-#include <unistd.h>
-#include <unordered_map>
-
 #include "comms/comms_receiver.hpp"
+
 #include "comms/comms_module.hpp"
 #include "framework/utils.hpp"
 #include "utils/misc.hpp"
 
+#include <cinttypes>
+#include <iostream>
+#include <unordered_map>
+
+#include <sys/socket.h>
+#include <unistd.h>
+
 namespace Comms
 {
 /* See header for documentation. */
-Receiver::Receiver(
-    CommsModule& _parent
-) :
-    parent(_parent)
+Receiver::Receiver(CommsModule& _parent)
+    : parent(_parent)
 {
     int pipe_err = pipe(stopRequestPipe);
     if (pipe_err)
@@ -87,11 +87,10 @@ void Receiver::stop()
 }
 
 /* See header for documentation. */
-void Receiver::parkMessage(
-    std::shared_ptr<Message> message
-) {
+void Receiver::parkMessage(std::shared_ptr<Message> message)
+{
     std::lock_guard<std::mutex> lock(parkingLock);
-    parkingBuffer.insert({ message->messageID, std::move(message) });
+    parkingBuffer.insert({message->messageID, std::move(message)});
 }
 
 /* See header for documentation. */
@@ -123,10 +122,8 @@ void Receiver::runReceiver()
 }
 
 /* See header for documentation. */
-void Receiver::wakeMessage(
-    MessageID messageID,
-    std::unique_ptr<MessageData> data
-) {
+void Receiver::wakeMessage(MessageID messageID, std::unique_ptr<MessageData> data)
+{
     std::lock_guard<std::mutex> lock(parkingLock);
 
     // Handle message not found ...
@@ -146,10 +143,8 @@ void Receiver::wakeMessage(
 }
 
 /* See header for documentation. */
-bool Receiver::receiveData(
-    uint8_t* data,
-    size_t dataSize
-) {
+bool Receiver::receiveData(uint8_t* data, size_t dataSize)
+{
     int sockfd = parent.sockfd;
     int pipefd = stopRequestPipe[0];
     int maxfd = std::max(sockfd, pipefd);

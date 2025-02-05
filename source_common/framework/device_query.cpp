@@ -23,28 +23,26 @@
  * ----------------------------------------------------------------------------
  */
 
-#include <vulkan/vulkan.h>
-
 #include "utils/misc.hpp"
 
+#include <vulkan/vulkan.h>
+
 /** See header for documentation. */
-bool isEnabledVkKhrTimelineSemaphore(
-    const VkDeviceCreateInfo& createInfo
-) {
+bool isEnabledVkKhrTimelineSemaphore(const VkDeviceCreateInfo& createInfo)
+{
     // Check Vulkan 1.2 core feature first
-    auto* coreFeature = searchNextList<VkPhysicalDeviceVulkan12Features>(
-        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES,
-        createInfo.pNext);
+    auto* coreFeature =
+        searchNextList<VkPhysicalDeviceVulkan12Features>(VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES,
+                                                         createInfo.pNext);
     if (coreFeature)
     {
         return coreFeature->timelineSemaphore;
     }
 
     // Check the extension second
-    bool extEnabled = isInExtensionList(
-      VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME,
-      createInfo.enabledExtensionCount,
-      createInfo.ppEnabledExtensionNames);
+    bool extEnabled = isInExtensionList(VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME,
+                                        createInfo.enabledExtensionCount,
+                                        createInfo.ppEnabledExtensionNames);
     if (!extEnabled)
     {
         return false;

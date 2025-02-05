@@ -23,19 +23,20 @@
  * ----------------------------------------------------------------------------
  */
 
-#include <array>
-#include <iostream>
-#include <fstream>
-#include <nlohmann/json.hpp>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <vector>
+#include "device.hpp"
 
 #include "comms/comms_module.hpp"
 #include "framework/utils.hpp"
-
-#include "device.hpp"
 #include "instance.hpp"
+
+#include <array>
+#include <fstream>
+#include <iostream>
+#include <vector>
+
+#include <nlohmann/json.hpp>
+#include <sys/stat.h>
+#include <unistd.h>
 
 using json = nlohmann::json;
 
@@ -45,7 +46,7 @@ using json = nlohmann::json;
 static std::unordered_map<void*, std::unique_ptr<Device>> g_devices;
 
 /* See header for documentation. */
-const std::vector<std::string> Device::extraExtensions { };
+const std::vector<std::string> Device::extraExtensions {};
 
 /* See header for documentation. */
 std::unique_ptr<Comms::CommsModule> Device::commsModule;
@@ -54,59 +55,51 @@ std::unique_ptr<Comms::CommsModule> Device::commsModule;
 std::unique_ptr<TimelineComms> Device::commsWrapper;
 
 /* See header for documentation. */
-void Device::store(
-    VkDevice handle,
-    std::unique_ptr<Device> device
-) {
+void Device::store(VkDevice handle, std::unique_ptr<Device> device)
+{
     void* key = getDispatchKey(handle);
-    g_devices.insert({ key, std::move(device) });
+    g_devices.insert({key, std::move(device)});
 }
 
 /* See header for documentation. */
-Device* Device::retrieve(
-    VkDevice handle
-) {
+Device* Device::retrieve(VkDevice handle)
+{
     void* key = getDispatchKey(handle);
     assert(isInMap(key, g_devices));
     return g_devices.at(key).get();
 }
 
 /* See header for documentation. */
-Device* Device::retrieve(
-    VkQueue handle
-) {
+Device* Device::retrieve(VkQueue handle)
+{
     void* key = getDispatchKey(handle);
     assert(isInMap(key, g_devices));
     return g_devices.at(key).get();
 }
 
 /* See header for documentation. */
-Device* Device::retrieve(
-    VkCommandBuffer handle
-) {
+Device* Device::retrieve(VkCommandBuffer handle)
+{
     void* key = getDispatchKey(handle);
     assert(isInMap(key, g_devices));
     return g_devices.at(key).get();
 }
 
 /* See header for documentation. */
-void Device::destroy(
-    Device* device
-) {
+void Device::destroy(Device* device)
+{
     g_devices.erase(getDispatchKey(device));
 }
 
 /* See header for documentation. */
-Device::Device(
-    Instance* _instance,
-    VkPhysicalDevice _physicalDevice,
-    VkDevice _device,
-    PFN_vkGetDeviceProcAddr nlayerGetProcAddress,
-    const VkDeviceCreateInfo& createInfo
-):
-    instance(_instance),
-    physicalDevice(_physicalDevice),
-    device(_device)
+Device::Device(Instance* _instance,
+               VkPhysicalDevice _physicalDevice,
+               VkDevice _device,
+               PFN_vkGetDeviceProcAddr nlayerGetProcAddress,
+               const VkDeviceCreateInfo& createInfo)
+    : instance(_instance),
+      physicalDevice(_physicalDevice),
+      device(_device)
 {
     UNUSED(createInfo);
 
@@ -123,7 +116,7 @@ Device::Device(
     VkPhysicalDeviceProperties deviceProperties;
     instance->driver.vkGetPhysicalDeviceProperties(physicalDevice, &deviceProperties);
 
-    std::string name { deviceProperties.deviceName };
+    std::string name {deviceProperties.deviceName};
 
     uint32_t driverVersion = deviceProperties.driverVersion;
     uint32_t major = VK_VERSION_MAJOR(driverVersion);
@@ -133,13 +126,13 @@ Device::Device(
     pid_t processPID = getpid();
 
     json deviceMetadata {
-        { "type", "device" },
-        { "pid", static_cast<uint32_t>(processPID) },
-        { "device", reinterpret_cast<uintptr_t>(device) },
-        { "deviceName", name },
-        { "driverMajor", major },
-        { "driverMinor", minor },
-        { "driverPatch", patch }
+        {"type", "device"},
+        {"pid", static_cast<uint32_t>(processPID)},
+        {"device", reinterpret_cast<uintptr_t>(device)},
+        {"deviceName", name},
+        {"driverMajor", major},
+        {"driverMinor", minor},
+        {"driverPatch", patch},
     };
 
     commsWrapper->txMessage(deviceMetadata.dump());

@@ -28,20 +28,18 @@
  * Defines the a config file to parameterize the layer.
  */
 
+#include "layer_config.hpp"
+
+#include "framework/utils.hpp"
+#include "version.hpp"
+
 #include <fstream>
 
 #include <vulkan/vulkan.h>
 
-#include "framework/utils.hpp"
-
-#include "layer_config.hpp"
-#include "version.hpp"
-
-
 /* See header for documentation. */
-void LayerConfig::parse_serialization_options(
-    const json& config
-) {
+void LayerConfig::parse_serialization_options(const json& config)
+{
     // Decode serialization state
     json serialize = config.at("serialize");
 
@@ -90,9 +88,8 @@ void LayerConfig::parse_serialization_options(
 }
 
 /* See header for documentation. */
-void LayerConfig::parse_shader_options(
-    const json& config
-) {
+void LayerConfig::parse_shader_options(const json& config)
+{
     // Decode serialization state
     json shader = config.at("shader");
 
@@ -113,9 +110,8 @@ void LayerConfig::parse_shader_options(
 }
 
 /* See header for documentation. */
-void LayerConfig::parse_framebuffer_options(
-    const json& config
-) {
+void LayerConfig::parse_framebuffer_options(const json& config)
+{
     // Decode serialization state
     json framebuffer = config.at("framebuffer");
 
@@ -135,7 +131,7 @@ void LayerConfig::parse_framebuffer_options(
     }
 
     // Convert fixed_rate_compression into a bit mask
-    uint32_t fixed_rate_mask { 0 };
+    uint32_t fixed_rate_mask {0};
     if (force_fixed_rate_compression > 0)
     {
         if (force_fixed_rate_compression <= 1)
@@ -202,7 +198,6 @@ LayerConfig::LayerConfig()
     std::string file_name(LGL_LAYER_CONFIG);
 #endif
 
-
     LAYER_LOG("Trying to read config: %s", file_name.c_str());
 
     std::ifstream stream(file_name);
@@ -218,7 +213,7 @@ LayerConfig::LayerConfig()
     {
         data = json::parse(stream);
     }
-    catch(const json::parse_error& e)
+    catch (const json::parse_error& e)
     {
         LAYER_ERR("Failed to load layer config, using defaults");
         LAYER_ERR("Error: %s", e.what());
@@ -229,7 +224,7 @@ LayerConfig::LayerConfig()
     {
         parse_serialization_options(data);
     }
-    catch(const json::out_of_range& e)
+    catch (const json::out_of_range& e)
     {
         LAYER_ERR("Failed to read serialization config, using defaults");
         LAYER_ERR("Error: %s", e.what());
@@ -239,7 +234,7 @@ LayerConfig::LayerConfig()
     {
         parse_shader_options(data);
     }
-    catch(const json::out_of_range& e)
+    catch (const json::out_of_range& e)
     {
         LAYER_ERR("Failed to read shader config, using defaults");
         LAYER_ERR("Error: %s", e.what());
@@ -249,7 +244,7 @@ LayerConfig::LayerConfig()
     {
         parse_framebuffer_options(data);
     }
-    catch(const json::out_of_range& e)
+    catch (const json::out_of_range& e)
     {
         LAYER_ERR("Failed to read framebuffer config, using defaults");
         LAYER_ERR("Error: %s", e.what());

@@ -23,10 +23,10 @@
  * ----------------------------------------------------------------------------
  */
 
-#include <mutex>
-
 #include "device.hpp"
-#include "layer_device_functions.hpp"
+#include "framework/device_dispatch_table.hpp"
+
+#include <mutex>
 
 extern std::mutex g_vulkanLock;
 
@@ -42,24 +42,24 @@ static std::unordered_map<VkCommandBuffer, bool> dynamic_suspend_state;
  * @param layer           The layer context for the device.
  * @param commandBuffer   The command buffer we are recording.
  */
-static void preRenderPass(
-    Device* layer,
-    VkCommandBuffer commandBuffer
-) {
+static void preRenderPass(Device* layer, VkCommandBuffer commandBuffer)
+{
     if (!layer->instance->config.serialize_cmdstream_render_pass_pre())
     {
         return;
     }
 
     // Execution dependency
-    layer->driver.vkCmdPipelineBarrier(
-        commandBuffer,
-        VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-        VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-        0,
-        0, nullptr,
-        0, nullptr,
-        0, nullptr);
+    layer->driver.vkCmdPipelineBarrier(commandBuffer,
+                                       VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+                                       VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+                                       0,
+                                       0,
+                                       nullptr,
+                                       0,
+                                       nullptr,
+                                       0,
+                                       nullptr);
 }
 
 /**
@@ -68,37 +68,36 @@ static void preRenderPass(
  * @param layer           The layer context for the device.
  * @param commandBuffer   The command buffer we are recording.
  */
-static void postRenderPass(
-    Device* layer,
-    VkCommandBuffer commandBuffer
-) {
+static void postRenderPass(Device* layer, VkCommandBuffer commandBuffer)
+{
     if (!layer->instance->config.serialize_cmdstream_render_pass_post())
     {
         return;
     }
 
     // Execution dependency
-    layer->driver.vkCmdPipelineBarrier(
-        commandBuffer,
-        VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-        VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-        0,
-        0, nullptr,
-        0, nullptr,
-        0, nullptr);
+    layer->driver.vkCmdPipelineBarrier(commandBuffer,
+                                       VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+                                       VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+                                       0,
+                                       0,
+                                       nullptr,
+                                       0,
+                                       nullptr,
+                                       0,
+                                       nullptr);
 }
 
 /* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass<user_tag>(
-    VkCommandBuffer commandBuffer,
-    const VkRenderPassBeginInfo* pRenderPassBegin,
-    VkSubpassContents contents
-) {
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass<user_tag>(VkCommandBuffer commandBuffer,
+                                                                const VkRenderPassBeginInfo* pRenderPassBegin,
+                                                                VkSubpassContents contents)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
 
     // Release the lock to call into the driver
@@ -109,16 +108,15 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass<user_tag>(
 }
 
 /* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass2<user_tag>(
-    VkCommandBuffer commandBuffer,
-    const VkRenderPassBeginInfo* pRenderPassBegin,
-    const VkSubpassBeginInfo* pSubpassBeginInfo
-) {
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass2<user_tag>(VkCommandBuffer commandBuffer,
+                                                                 const VkRenderPassBeginInfo* pRenderPassBegin,
+                                                                 const VkSubpassBeginInfo* pSubpassBeginInfo)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
 
     // Release the lock to call into the driver
@@ -129,16 +127,15 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass2<user_tag>(
 }
 
 /* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass2KHR<user_tag>(
-    VkCommandBuffer commandBuffer,
-    const VkRenderPassBeginInfo* pRenderPassBegin,
-    const VkSubpassBeginInfo* pSubpassBeginInfo
-) {
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass2KHR<user_tag>(VkCommandBuffer commandBuffer,
+                                                                    const VkRenderPassBeginInfo* pRenderPassBegin,
+                                                                    const VkSubpassBeginInfo* pSubpassBeginInfo)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
 
     // Release the lock to call into the driver
@@ -149,15 +146,14 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass2KHR<user_tag>(
 }
 
 /* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRendering<user_tag>(
-    VkCommandBuffer commandBuffer,
-    const VkRenderingInfo* pRenderingInfo
-) {
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRendering<user_tag>(VkCommandBuffer commandBuffer,
+                                                               const VkRenderingInfo* pRenderingInfo)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
 
     bool resuming = pRenderingInfo->flags & VK_RENDERING_RESUMING_BIT;
@@ -176,15 +172,14 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRendering<user_tag>(
 }
 
 /* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderingKHR<user_tag>(
-    VkCommandBuffer commandBuffer,
-    const VkRenderingInfo* pRenderingInfo
-) {
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderingKHR<user_tag>(VkCommandBuffer commandBuffer,
+                                                                  const VkRenderingInfo* pRenderingInfo)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
 
     bool resuming = pRenderingInfo->flags & VK_RENDERING_RESUMING_BIT_KHR;
@@ -203,14 +198,13 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderingKHR<user_tag>(
 }
 
 /* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderPass<user_tag>(
-    VkCommandBuffer commandBuffer
-) {
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderPass<user_tag>(VkCommandBuffer commandBuffer)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
 
     // Release the lock to call into the driver
@@ -221,14 +215,13 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderPass<user_tag>(
 }
 
 /* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL  layer_vkCmdEndRendering<user_tag>(
-    VkCommandBuffer commandBuffer
-) {
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRendering<user_tag>(VkCommandBuffer commandBuffer)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
 
     // Retrieve the begin rendering suspend state
@@ -248,14 +241,13 @@ VKAPI_ATTR void VKAPI_CALL  layer_vkCmdEndRendering<user_tag>(
 }
 
 /* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL  layer_vkCmdEndRenderingKHR<user_tag>(
-    VkCommandBuffer commandBuffer
-) {
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderingKHR<user_tag>(VkCommandBuffer commandBuffer)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
 
     // Retrieve the begin rendering suspend state

@@ -23,10 +23,10 @@
  * ----------------------------------------------------------------------------
  */
 
-#include <mutex>
-
 #include "device.hpp"
-#include "layer_device_functions.hpp"
+#include "framework/device_dispatch_table.hpp"
+
+#include <mutex>
 
 extern std::mutex g_vulkanLock;
 
@@ -36,24 +36,24 @@ extern std::mutex g_vulkanLock;
  * @param layer           The layer context for the device.
  * @param commandBuffer   The command buffer we are recording.
  */
-static void preTraceRays(
-    Device* layer,
-    VkCommandBuffer commandBuffer
-) {
+static void preTraceRays(Device* layer, VkCommandBuffer commandBuffer)
+{
     if (!layer->instance->config.serialize_cmdstream_trace_rays_pre())
     {
         return;
     }
 
     // Execution dependency
-    layer->driver.vkCmdPipelineBarrier(
-        commandBuffer,
-        VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-        VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-        0,
-        0, nullptr,
-        0, nullptr,
-        0, nullptr);
+    layer->driver.vkCmdPipelineBarrier(commandBuffer,
+                                       VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+                                       VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+                                       0,
+                                       0,
+                                       nullptr,
+                                       0,
+                                       nullptr,
+                                       0,
+                                       nullptr);
 }
 
 /**
@@ -62,36 +62,35 @@ static void preTraceRays(
  * @param layer           The layer context for the device.
  * @param commandBuffer   The command buffer we are recording.
  */
-static void postTraceRays(
-    Device* layer,
-    VkCommandBuffer commandBuffer
-) {
+static void postTraceRays(Device* layer, VkCommandBuffer commandBuffer)
+{
     if (!layer->instance->config.serialize_cmdstream_trace_rays_post())
     {
         return;
     }
 
     // Execution dependency
-    layer->driver.vkCmdPipelineBarrier(
-        commandBuffer,
-        VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-        VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-        0,
-        0, nullptr,
-        0, nullptr,
-        0, nullptr);
+    layer->driver.vkCmdPipelineBarrier(commandBuffer,
+                                       VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+                                       VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+                                       0,
+                                       0,
+                                       nullptr,
+                                       0,
+                                       nullptr,
+                                       0,
+                                       nullptr);
 }
 
 /* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdTraceRaysIndirect2KHR<user_tag>(
-    VkCommandBuffer commandBuffer,
-    VkDeviceAddress indirectDeviceAddress
-) {
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdTraceRaysIndirect2KHR<user_tag>(VkCommandBuffer commandBuffer,
+                                                                      VkDeviceAddress indirectDeviceAddress)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
 
     // Release the lock to call into the driver
@@ -103,51 +102,63 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdTraceRaysIndirect2KHR<user_tag>(
 }
 
 /* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdTraceRaysIndirectKHR<user_tag>(
-    VkCommandBuffer commandBuffer,
-    const VkStridedDeviceAddressRegionKHR* pRaygenShaderBindingTable,
-    const VkStridedDeviceAddressRegionKHR* pMissShaderBindingTable,
-    const VkStridedDeviceAddressRegionKHR* pHitShaderBindingTable,
-    const VkStridedDeviceAddressRegionKHR* pCallableShaderBindingTable,
-    VkDeviceAddress indirectDeviceAddress
-) {
+template<>
+VKAPI_ATTR void VKAPI_CALL
+    layer_vkCmdTraceRaysIndirectKHR<user_tag>(VkCommandBuffer commandBuffer,
+                                              const VkStridedDeviceAddressRegionKHR* pRaygenShaderBindingTable,
+                                              const VkStridedDeviceAddressRegionKHR* pMissShaderBindingTable,
+                                              const VkStridedDeviceAddressRegionKHR* pHitShaderBindingTable,
+                                              const VkStridedDeviceAddressRegionKHR* pCallableShaderBindingTable,
+                                              VkDeviceAddress indirectDeviceAddress)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
 
     // Release the lock to call into the driver
     lock.unlock();
 
     preTraceRays(layer, commandBuffer);
-    layer->driver.vkCmdTraceRaysIndirectKHR(commandBuffer, pRaygenShaderBindingTable, pMissShaderBindingTable, pHitShaderBindingTable, pCallableShaderBindingTable, indirectDeviceAddress);
+    layer->driver.vkCmdTraceRaysIndirectKHR(commandBuffer,
+                                            pRaygenShaderBindingTable,
+                                            pMissShaderBindingTable,
+                                            pHitShaderBindingTable,
+                                            pCallableShaderBindingTable,
+                                            indirectDeviceAddress);
     postTraceRays(layer, commandBuffer);
 }
 
 /* See Vulkan API for documentation. */
-template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdTraceRaysKHR<user_tag>(
-    VkCommandBuffer commandBuffer,
-    const VkStridedDeviceAddressRegionKHR* pRaygenShaderBindingTable,
-    const VkStridedDeviceAddressRegionKHR* pMissShaderBindingTable,
-    const VkStridedDeviceAddressRegionKHR* pHitShaderBindingTable,
-    const VkStridedDeviceAddressRegionKHR* pCallableShaderBindingTable,
-    uint32_t width,
-    uint32_t height,
-    uint32_t depth
-) {
+template<>
+VKAPI_ATTR void VKAPI_CALL
+    layer_vkCmdTraceRaysKHR<user_tag>(VkCommandBuffer commandBuffer,
+                                      const VkStridedDeviceAddressRegionKHR* pRaygenShaderBindingTable,
+                                      const VkStridedDeviceAddressRegionKHR* pMissShaderBindingTable,
+                                      const VkStridedDeviceAddressRegionKHR* pHitShaderBindingTable,
+                                      const VkStridedDeviceAddressRegionKHR* pCallableShaderBindingTable,
+                                      uint32_t width,
+                                      uint32_t height,
+                                      uint32_t depth)
+{
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
 
     // Release the lock to call into the driver
     lock.unlock();
 
     preTraceRays(layer, commandBuffer);
-    layer->driver.vkCmdTraceRaysKHR(commandBuffer, pRaygenShaderBindingTable, pMissShaderBindingTable, pHitShaderBindingTable, pCallableShaderBindingTable, width, height, depth);
+    layer->driver.vkCmdTraceRaysKHR(commandBuffer,
+                                    pRaygenShaderBindingTable,
+                                    pMissShaderBindingTable,
+                                    pHitShaderBindingTable,
+                                    pCallableShaderBindingTable,
+                                    width,
+                                    height,
+                                    depth);
     postTraceRays(layer, commandBuffer);
 }

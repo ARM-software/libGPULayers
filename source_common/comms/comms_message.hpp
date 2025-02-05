@@ -29,8 +29,8 @@
  */
 #pragma once
 
-#include "comms/comms_interface.hpp"
 #include "../utils/queue.hpp"
+#include "comms/comms_interface.hpp"
 
 namespace Comms
 {
@@ -43,7 +43,8 @@ using MessageID = uint64_t;
 /**
  * @brief A type used for message types in the protocol.
  */
-enum class MessageType: uint8_t {
+enum class MessageType : uint8_t
+{
     /** Message is an asynchronous transmit. */
     TX_ASYNC = 0,
     /** Message is a synchronous transmit. */
@@ -59,16 +60,16 @@ enum class MessageType: uint8_t {
  */
 typedef struct __attribute__((packed))
 {
-    uint8_t  messageType;  // Is this tx_async (0), tx (1), or tx_rx (2)?
-    uint8_t  endpointID;   // The endpoint service address.
-    uint64_t messageID;    // The unique message ID for a tx_rx pair.
-    uint32_t payloadSize;  // The size of the payload in bytes.
+    uint8_t messageType;  // Is this tx_async (0), tx (1), or tx_rx (2)?
+    uint8_t endpointID;   // The endpoint service address.
+    uint64_t messageID;   // The unique message ID for a tx_rx pair.
+    uint32_t payloadSize; // The size of the payload in bytes.
 } MessageHeader;
 
 /**
  * @brief Class representing a task in the protocol.
  */
-class Message: public Task
+class Message : public Task
 {
 public:
     /**
@@ -79,11 +80,10 @@ public:
      * @param messageID      The sequence ID of the message.
      * @param transmitData   The data to transmit.
      */
-    Message(
-        EndpointID endpointID,
-        MessageType messageType,
-        MessageID messageID,
-        std::unique_ptr<MessageData> transmitData);
+    Message(EndpointID endpointID,
+            MessageType messageType,
+            MessageID messageID,
+            std::unique_ptr<MessageData> transmitData);
 
     /**
      * @brief The type of the message.

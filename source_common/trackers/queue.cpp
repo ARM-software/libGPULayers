@@ -23,27 +23,23 @@
  * ----------------------------------------------------------------------------
  */
 
-#include <cassert>
-
 #include "trackers/queue.hpp"
+
+#include <cassert>
 
 namespace Tracker
 {
 /* See header for details. */
-Queue::Queue(
-    VkQueue _handle
-):
-    handle(_handle)
-{
+Queue::Queue(VkQueue _handle)
+    : handle(_handle) {
 
-};
+      };
 
 /* See header for details. */
-void Queue::runSubmitCommandStream(
-    const std::vector<LCSInstruction>& stream,
-    std::function<void(const std::string&)> callback
-) {
-    for (auto& instr: stream)
+void Queue::runSubmitCommandStream(const std::vector<LCSInstruction>& stream,
+                                   std::function<void(const std::string&)> callback)
+{
+    for (auto& instr : stream)
     {
         LCSOpcode opCode = instr.first;
         const LCSWorkload* opData = instr.second.get();
@@ -84,10 +80,8 @@ void Queue::runSubmitCommandStream(
                 }
             }
         }
-        else if ((opCode == LCSOpcode::DISPATCH) ||
-                 (opCode == LCSOpcode::TRACE_RAYS) ||
-                 (opCode == LCSOpcode::IMAGE_TRANSFER) ||
-                 (opCode == LCSOpcode::BUFFER_TRANSFER))
+        else if ((opCode == LCSOpcode::DISPATCH) || (opCode == LCSOpcode::TRACE_RAYS)
+                 || (opCode == LCSOpcode::IMAGE_TRANSFER) || (opCode == LCSOpcode::BUFFER_TRANSFER))
         {
             uint64_t tagID = opData->getTagID();
             std::string log = joinString(debugStack, "|");

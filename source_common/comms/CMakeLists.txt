@@ -40,3 +40,5 @@ lgl_set_build_options(${LIB_BINARY})
 if(${LGL_UNITTEST})
     add_subdirectory(test)
 endif()
+
+add_clang_tools()
