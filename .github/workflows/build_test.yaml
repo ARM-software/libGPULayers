@@ -55,6 +55,7 @@ jobs:
 
       - name: Build layer_example
         run: |
+          export CC=clang
           export CXX=clang++
           mkdir layer_example/build_rel
           cd layer_example/build_rel
@@ -63,6 +64,7 @@ jobs:
 
       - name: Build layer_gpu_support
         run: |
+          export CC=clang
           export CXX=clang++
           mkdir layer_gpu_support/build_rel
           cd layer_gpu_support/build_rel
@@ -71,6 +73,7 @@ jobs:
 
       - name: Build layer_gpu_timeline
         run: |
+          export CC=clang
           export CXX=clang++
           mkdir layer_gpu_timeline/build_rel
           cd layer_gpu_timeline/build_rel
@@ -79,6 +82,7 @@ jobs:
 
       - name: Build and run unit tests
         run: |
+          export CC=clang
           export CXX=clang++
           mkdir build_unittest
           cd build_unittest
@@ -97,6 +101,7 @@ jobs:
 
       - name: Build layer_example
         run: |
+          export CC=gcc
           export CXX=g++
           mkdir layer_example/build_rel
           cd layer_example/build_rel
@@ -105,6 +110,7 @@ jobs:
 
       - name: Build layer_gpu_support
         run: |
+          export CC=gcc
           export CXX=g++
           mkdir layer_gpu_support/build_rel
           cd layer_gpu_support/build_rel
@@ -113,6 +119,7 @@ jobs:
 
       - name: Build layer_gpu_timeline
         run: |
+          export CC=gcc
           export CXX=g++
           mkdir layer_gpu_timeline/build_rel
           cd layer_gpu_timeline/build_rel
