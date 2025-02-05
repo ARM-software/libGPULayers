@@ -112,7 +112,11 @@ class SubmitMetadataType(TypedDict):
     device: int
     queue: int
     timestamp: int
-    workloads: list[RenderpassMetadataType|DispatchMetadataType|TraceRaysMetadataType|ImageTransferMetadataType|BufferTransferMetadataType]
+    workloads: list[RenderpassMetadataType
+                    | DispatchMetadataType
+                    | TraceRaysMetadataType
+                    | ImageTransferMetadataType
+                    | BufferTransferMetadataType]
 
 
 class FrameMetadataType(TypedDict):
@@ -125,36 +129,38 @@ class FrameMetadataType(TypedDict):
     submits: list[SubmitMetadataType]
 
 
-def expect_int(v : int|None) -> int:
+def expect_int(v: int | None) -> int:
     if v is None:
         return 0
     assert isinstance(v, int)
     return v
 
 
-def map_renderpass_binding(type : timeline_pb2.RenderpassAttachmentType, index : int|None) -> str:
+def map_renderpass_binding(type, index: int | None) -> str:
     '''
-    Map the PB encoded renderpass attachment type to a corresponding description string
+    Map the PB encoded renderpass attachment type to a corresponding description
+    string
     '''
     if type == timeline_pb2.RenderpassAttachmentType.undefined:
-        assert((index is None) or (index == 0))
+        assert ((index is None) or (index == 0))
         return "U"
     elif type == timeline_pb2.RenderpassAttachmentType.color:
-        assert(index is not None)
+        assert (index is not None)
         return f"C{index}"
     elif type == timeline_pb2.RenderpassAttachmentType.depth:
-        assert((index is None) or (index == 0))
+        assert ((index is None) or (index == 0))
         return "D"
     elif type == timeline_pb2.RenderpassAttachmentType.stencil:
-        assert((index is None) or (index == 0))
+        assert ((index is None) or (index == 0))
         return "S"
     else:
         assert False
 
 
-def map_image_transfer_type(type : timeline_pb2.ImageTransferType) -> str:
+def map_image_transfer_type(type) -> str:
     '''
-    Map the PB encoded image transfer type to some corresponding description string
+    Map the PB encoded image transfer type to some corresponding description
+    string
     '''
     if type == timeline_pb2.ImageTransferType.unknown_image_transfer:
         return "Unknown"
@@ -170,9 +176,10 @@ def map_image_transfer_type(type : timeline_pb2.ImageTransferType) -> str:
         assert False
 
 
-def map_buffer_transfer_type(type : timeline_pb2.BufferTransferType) -> str:
+def map_buffer_transfer_type(type) -> str:
     '''
-    Map the PB encoded image transfer type to some corresponding description string
+    Map the PB encoded image transfer type to some corresponding description
+    string
     '''
     if type == timeline_pb2.BufferTransferType.unknown_buffer_transfer:
         return "Unknown"
@@ -184,26 +191,28 @@ def map_buffer_transfer_type(type : timeline_pb2.BufferTransferType) -> str:
         assert False
 
 
-def map_debug_label(labels : list[str]|None) -> list[str]:
+def map_debug_label(labels: list[str] | None) -> list[str]:
     '''
     Normalize the 'debug_label' field from the PB data
     '''
     if labels is None:
         return []
-    return [str(l) for l in labels] # need to convert it to a list from a RepeatedScalarContainer
+    # need to convert it to a list from a RepeatedScalarContainer
+    return [str(label) for label in labels]
 
 
 class GPUDeviceState:
     '''
     Holds per device state.
 
-    Typically there will only be one physical device, and one corresponding VkDevice,
-    but the protocol and API are both designed to support multiple devices so abstract
-    that here.
+    Typically there will only be one physical device, and one corresponding
+    VkDevice, but the protocol and API are both designed to support multiple
+    devices so abstract that here.
 
     Args:
         device_id: The device id associated with the state object
     '''
+
     def __init__(self, device_id: int):
         '''
         Initialize the state for a single device
@@ -216,6 +225,7 @@ class GPUDeviceState:
             'presentTimestamp': 0,
             'submits': []
         }
+
 
 class GPUTimelineService:
     '''
@@ -230,8 +240,9 @@ class GPUTimelineService:
             file_path: File to write on the filesystem
             verbose: Should this use verbose logging?
         '''
-        self.devices : dict[int,GPUDeviceState] = dict()
-        self.last_submit : SubmitMetadataType|None = None
+        self.devices: dict[int, GPUDeviceState] = dict()
+        self.last_submit: SubmitMetadataType | None = None
+        self.last_render_pass: RenderpassMetadataType | None = None
         # pylint: disable=consider-using-with
         self.file_handle = open(file_path, 'wb')
         self.verbose = verbose
@@ -239,12 +250,12 @@ class GPUTimelineService:
     def get_device(self, device: int) -> GPUDeviceState:
         '''
         Get or create a device object with the specified handle
-        '''
-        device = self.devices.get(device, None)
-        if device is None:
-            device = GPUDeviceState(device)
-            self.devices[device] = device
-        return device
+         '''
+        state = self.devices.get(device, None)
+        if state is None:
+            state = GPUDeviceState(device)
+            self.devices[device] = state
+        return state
 
     def get_service_name(self) -> str:
         '''
@@ -266,9 +277,10 @@ class GPUTimelineService:
         device_id = expect_int(msg.id)
         self.devices[device_id] = GPUDeviceState(device_id)
 
-        # This clears the last submit; expect a submit message before any new workloads
+        # This clears the last submit; expect a submit message before any new
+        # workloads
         self.last_submit = None
-
+        self.last_render_pass = None
 
         if self.verbose:
             major = expect_int(msg.major_version)
@@ -292,8 +304,10 @@ class GPUTimelineService:
         device_id = expect_int(msg.device)
         device = self.get_device(device_id)
 
-        # This clears the last submit; expect a submit message before any new workloads
+        # This clears the last submit; expect a submit message before any new
+        # workloads
         self.last_submit = None
+        self.last_render_pass = None
 
         # Update end time of the current frame
         device.frame['presentTimestamp'] = expect_int(msg.timestamp)
@@ -339,9 +353,10 @@ class GPUTimelineService:
         # Reset the local frame state for the next frame
         device.frame['submits'].append(submit)
 
-        # Track this new submit object; all subsequent workloads will attach to it
-        # up to the point of the next submit/frame/device
+        # Track this new submit object; all subsequent workloads will attach to
+        # it up to the point of the next submit/frame/device
         self.last_submit = submit
+        self.last_render_pass = None
 
     def handle_render_pass(self, msg: Any) -> None:
         '''
@@ -372,7 +387,8 @@ class GPUTimelineService:
 
         for pb_attachment in msg.attachments:
             attachment: RenderpassAttachmentMetadataType = {
-                'binding': map_renderpass_binding(pb_attachment.type, pb_attachment.index),
+                'binding': map_renderpass_binding(pb_attachment.type,
+                                                  pb_attachment.index),
                 'load': not bool(pb_attachment.not_loaded),
                 'store': not bool(pb_attachment.not_stored),
                 'resolve': bool(pb_attachment.resolved),
@@ -380,6 +396,9 @@ class GPUTimelineService:
             renderpass['attachments'].append(attachment)
 
         submit['workloads'].append(renderpass)
+
+        # Save it, for any continuations
+        self.last_render_pass = renderpass
 
     def handle_render_pass_continuation(self, msg: Any) -> None:
         '''
@@ -392,22 +411,14 @@ class GPUTimelineService:
         Args:
             msg: The Python decode of a Timeline PB payload.
         '''
-        assert self.last_submit is not None
-        submit = self.last_submit
-
-        # Find the last workload
-        last_render_pass = None
-        if submit['workloads']:
-            last_workload = submit['workloads'][-1]
-            if last_workload['type'] == 'renderpass':
-                last_render_pass = last_workload
-
         # Validate that this is a continuation of the last renderpass
-        assert last_render_pass and (last_render_pass['tid'] == expect_int(msg.tag_id))
+        assert ((self.last_render_pass is not None)
+                and (self.last_render_pass['tid'] == expect_int(msg.tag_id)))
 
         # Don't accumulate if tag_id is flagged as ambiguous
-        if last_render_pass['drawCallCount'] >= 0:
-            last_render_pass['drawCallCount'] += expect_int(msg.draw_call_count)
+        if self.last_render_pass['drawCallCount'] >= 0:
+            dcc = expect_int(msg.draw_call_count)
+            self.last_render_pass['drawCallCount'] += dcc
 
     def handle_dispatch(self, msg: Any) -> None:
         '''
@@ -416,8 +427,12 @@ class GPUTimelineService:
         Args:
             msg: The Python decode of a Timeline PB payload.
         '''
+        # Get the active submit to append to
         assert self.last_submit is not None
         submit = self.last_submit
+
+        # Clear the last renderpass
+        self.last_render_pass = None
 
         # Convert the PB message into our data representation
         dispatch: DispatchMetadataType = {
@@ -438,8 +453,12 @@ class GPUTimelineService:
         Args:
             msg: The Python decode of a Timeline PB payload.
         '''
+        # Get the active submit to append to
         assert self.last_submit is not None
         submit = self.last_submit
+
+        # Clear the last renderpass
+        self.last_render_pass = None
 
         # Convert the PB message into our data representation
         trace_rays: TraceRaysMetadataType = {
@@ -460,8 +479,12 @@ class GPUTimelineService:
         Args:
             msg: The Python decode of a Timeline PB payload.
         '''
+        # Get the active submit to append to
         assert self.last_submit is not None
         submit = self.last_submit
+
+        # Clear the last renderpass
+        self.last_render_pass = None
 
         # Convert the PB message into our data representation
         image_transfer: ImageTransferMetadataType = {
@@ -481,8 +504,12 @@ class GPUTimelineService:
         Args:
             msg: The Python decode of a Timeline PB payload.
         '''
+        # Get the active submit to append to
         assert self.last_submit is not None
         submit = self.last_submit
+
+        # Clear the last renderpass
+        self.last_render_pass = None
 
         # Convert the PB message into our data representation
         buffer_transfer: BufferTransferMetadataType = {
@@ -506,15 +533,15 @@ class GPUTimelineService:
         pb_record.ParseFromString(message.payload)
 
         # Assert there is at most one member message
-        assert((int(pb_record.HasField('metadata'))
-               + int(pb_record.HasField('frame'))
-               + int(pb_record.HasField('submit'))
-               + int(pb_record.HasField('renderpass'))
-               + int(pb_record.HasField('continue_renderpass'))
-               + int(pb_record.HasField('dispatch'))
-               + int(pb_record.HasField('trace_rays'))
-               + int(pb_record.HasField('image_transfer'))
-               + int(pb_record.HasField('buffer_transfer'))) <= 1)
+        assert ((int(pb_record.HasField('metadata'))
+                 + int(pb_record.HasField('frame'))
+                 + int(pb_record.HasField('submit'))
+                 + int(pb_record.HasField('renderpass'))
+                 + int(pb_record.HasField('continue_renderpass'))
+                 + int(pb_record.HasField('dispatch'))
+                 + int(pb_record.HasField('trace_rays'))
+                 + int(pb_record.HasField('image_transfer'))
+                 + int(pb_record.HasField('buffer_transfer'))) <= 1)
 
         # Process the message
         if pb_record.HasField('metadata'):
