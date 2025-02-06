@@ -49,7 +49,6 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
-#include <utility>
 #include <vector>
 
 #include <vulkan/vulkan.h>
@@ -136,7 +135,7 @@ public:
      *
      * @return Returns the tagID assigned to this workload.
      */
-    uint64_t imageTransfer(const std::string& transferType, int64_t pixelCount);
+    uint64_t imageTransfer(LCSImageTransfer::Type transferType, int64_t pixelCount);
 
     /**
      * @brief Capture a transfer where the destination is a buffer.
@@ -146,7 +145,7 @@ public:
      *
      * @return Returns the tagID assigned to this workload.
      */
-    uint64_t bufferTransfer(const std::string& transferType, int64_t byteCount);
+    uint64_t bufferTransfer(LCSBufferTransfer::Type transferType, int64_t byteCount);
 
     /**
      * @brief Begin a user debug marker range.
@@ -201,12 +200,7 @@ private:
     /**
      * @brief The current render pass if we are in one.
      */
-    std::shared_ptr<LCSRenderPass> currentRenderPass;
-
-    /**
-     * @brief The recorded workloads.
-     */
-    std::vector<std::shared_ptr<LCSWorkload>> workloads;
+    std::shared_ptr<LCSRenderPassBase> currentRenderPass;
 
     /**
      * @brief The recorded commands.

@@ -38,7 +38,7 @@ TimelineComms::TimelineComms(Comms::CommsInterface& _comms)
 }
 
 /* See header for documentation. */
-void TimelineComms::txMessage(const std::string& message)
+void TimelineComms::txMessage(Comms::MessageData&& message)
 {
     // Message endpoint is not available
     if (endpoint == 0)
@@ -46,6 +46,6 @@ void TimelineComms::txMessage(const std::string& message)
         return;
     }
 
-    auto data = std::make_unique<Comms::MessageData>(message.begin(), message.end());
+    auto data = std::make_unique<Comms::MessageData>(std::move(message));
     comms.txAsync(endpoint, std::move(data));
 }

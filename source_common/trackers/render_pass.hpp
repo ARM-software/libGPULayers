@@ -88,6 +88,13 @@ public:
     std::string getAttachmentStr() const;
 
     /**
+     * @brief Get the name of the attachment point.
+     *
+     * @return The attachment point name.
+     */
+    RenderPassAttachName getAttachmentName() const { return name; }
+
+    /**
      * @brief Is this attachment loaded at the start of the render pass?
      *
      * @return @c true if loaded from memory.

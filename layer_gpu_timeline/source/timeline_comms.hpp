@@ -54,7 +54,7 @@ public:
      *
      * @param message   The message to send.
      */
-    void txMessage(const std::string& message);
+    void txMessage(Comms::MessageData&& message);
 
 private:
     /**

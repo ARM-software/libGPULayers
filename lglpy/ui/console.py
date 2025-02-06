@@ -67,7 +67,7 @@ def select_from_menu(title: str, options: list[str]) -> Optional[int]:
             print(f'Select a {title}')
             chars = int(math.log10(len(options))) + 1
             for i, entry in enumerate(options):
-                print(f'    {i+1:{chars}}) {entry}')
+                print(f'    {i + 1:{chars}}) {entry}')
 
             print(f'    {0:{chars}}) Exit menu')
 
