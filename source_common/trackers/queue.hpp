@@ -41,11 +41,9 @@
 
 #pragma once
 
-#include "framework/utils.hpp"
 #include "trackers/layer_command_stream.hpp"
 
-#include <atomic>
-#include <functional>
+#include <cstdint>
 #include <string>
 #include <vector>
 
@@ -53,6 +51,99 @@
 
 namespace Tracker
 {
+/**
+ * @brief Represents the interface to some workload visitor that can be passed to Queue::runSubmitCommandStream
+ * and which will be called once per item within the submitted command stream for that queue.
+ */
+class SubmitCommandWorkloadVisitor
+{
+public:
+    /** @brief Destructor for the visitor */
+    virtual ~SubmitCommandWorkloadVisitor() noexcept = default;
+
+    /**
+     * @brief Visit a renderpass workload object
+     *
+     * @param renderpass The renderpass
+     * @param debugStack The stack of debug labels that are associated with this renderpass
+     */
+    virtual void operator()(const LCSRenderPass& renderpass, const std::vector<std::string>& debugStack) = 0;
+
+    /**
+     * @brief Visit a renderpass continuation workload object
+     *
+     * @param continuation The renderpass continuation
+     * @param debugStack The stack of debug labels that are associated with this renderpass
+     * @param renderpassTagID The renderpass tag that the continuation was associated with
+     */
+    virtual void operator()(const LCSRenderPassContinuation& continuation,
+                            const std::vector<std::string>& debugStack,
+                            uint64_t renderpassTagID) = 0;
+
+    /**
+     * @brief Visit a dispatch workload object
+     *
+     * @param dispatch The dispatch
+     * @param debugStack The stack of debug labels that are associated with this dispatch
+     */
+    virtual void operator()(const LCSDispatch& dispatch, const std::vector<std::string>& debugStack) = 0;
+
+    /**
+     * @brief Visit a trace rays workload object
+     *
+     * @param traceRays The trace rays
+     * @param debugStack The stack of debug labels that are associated with this trace rays
+     */
+    virtual void operator()(const LCSTraceRays& traceRays, const std::vector<std::string>& debugStack) = 0;
+
+    /**
+     * @brief Visit an image transfer workload object
+     *
+     * @param imageTransfer The image transfer
+     * @param debugStack The stack of debug labels that are associated with this image transfer
+     */
+    virtual void operator()(const LCSImageTransfer& imageTransfer, const std::vector<std::string>& debugStack) = 0;
+
+    /**
+     * @brief Visit a buffer transfer workload object
+     *
+     * @param bufferTransfer The buffer transfer
+     * @param debugStack The stack of debug labels that are associated with this buffer transfer
+     */
+    virtual void operator()(const LCSBufferTransfer& bufferTransfer, const std::vector<std::string>& debugStack) = 0;
+};
+
+/**
+ * Metadata tracked by the queue when it emits commands, that can be
+ * shared with the LCSInstruction visitor object during instruction processing
+ */
+struct QueueState
+{
+    /**
+     * @brief Construct the state object
+     *
+     * @param queue The queue which the state tracks
+     */
+    QueueState(VkQueue queue)
+        : handle(queue)
+    {
+    }
+
+    /**
+     * The handle of the native queue we are wrapping.
+     */
+    VkQueue handle;
+
+    /**
+     * @brief The stack of user debug labels for this queue.
+     */
+    std::vector<std::string> debugStack {};
+
+    /**
+     * @brief The last non-zero render pass tagID submitted.
+     */
+    uint64_t lastRenderPassTagID {0};
+};
 
 /**
  * @brief The state tracker for a queue.
@@ -65,27 +156,14 @@ public:
     /**
      * @brief Execute a layer command stream.
      *
-     * @param stream     The layer command stream to execute.
-     * @param callback   The callback to pass submitted workloads to.
+     * @param stream            The layer command stream to execute.
+     * @param workload_visitor  The visitor to pass submitted workloads to.
      */
     void runSubmitCommandStream(const std::vector<LCSInstruction>& stream,
-                                std::function<void(const std::string&)> callback);
+                                SubmitCommandWorkloadVisitor& workload_visitor);
 
 private:
-    /**
-     * The handle of the native queue we are wrapping.
-     */
-    VkQueue handle;
-
-    /**
-     * @brief The stack of user debug labels for this queue.
-     */
-    std::vector<std::string> debugStack;
-
-    /**
-     * @brief The last non-zero render pass tagID submitted.
-     */
-    uint64_t lastRenderPassTagID {0};
+    QueueState state;
 };
 
 }

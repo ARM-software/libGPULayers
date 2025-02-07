@@ -28,17 +28,12 @@
 #include "comms/comms_module.hpp"
 #include "framework/utils.hpp"
 #include "instance.hpp"
+#include "timeline_protobuf_encoder.hpp"
 
-#include <array>
-#include <fstream>
-#include <iostream>
 #include <vector>
 
-#include <nlohmann/json.hpp>
 #include <sys/stat.h>
 #include <unistd.h>
-
-using json = nlohmann::json;
 
 /**
  * @brief The dispatch lookup for all of the created Vulkan devices.
@@ -125,15 +120,5 @@ Device::Device(Instance* _instance,
 
     pid_t processPID = getpid();
 
-    json deviceMetadata {
-        {"type", "device"},
-        {"pid", static_cast<uint32_t>(processPID)},
-        {"device", reinterpret_cast<uintptr_t>(device)},
-        {"deviceName", name},
-        {"driverMajor", major},
-        {"driverMinor", minor},
-        {"driverPatch", patch},
-    };
-
-    commsWrapper->txMessage(deviceMetadata.dump());
+    TimelineProtobufEncoder::emitMetadata(*this, processPID, major, minor, patch, std::move(name));
 }

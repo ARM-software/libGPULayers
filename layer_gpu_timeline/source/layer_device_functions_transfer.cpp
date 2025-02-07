@@ -26,6 +26,7 @@
 #include "device.hpp"
 #include "device_utils.hpp"
 #include "framework/device_dispatch_table.hpp"
+#include "trackers/layer_command_stream.hpp"
 
 #include <memory>
 #include <mutex>
@@ -45,7 +46,7 @@ extern std::mutex g_vulkanLock;
  */
 static uint64_t registerBufferTransfer(Device* layer,
                                        VkCommandBuffer commandBuffer,
-                                       const std::string& transferType,
+                                       Tracker::LCSBufferTransfer::Type transferType,
                                        int64_t byteCount)
 {
     auto& tracker = layer->getStateTracker();
@@ -65,7 +66,7 @@ static uint64_t registerBufferTransfer(Device* layer,
  */
 static uint64_t registerImageTransfer(Device* layer,
                                       VkCommandBuffer commandBuffer,
-                                      const std::string& transferType,
+                                      Tracker::LCSImageTransfer::Type transferType,
                                       int64_t pixelCount)
 {
     auto& tracker = layer->getStateTracker();
@@ -97,7 +98,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdFillBuffer<user_tag>(VkCommandBuffer comma
         byteCount = -2;
     }
 
-    uint64_t tagID = registerBufferTransfer(layer, commandBuffer, "Fill buffer", byteCount);
+    uint64_t tagID =
+        registerBufferTransfer(layer, commandBuffer, Tracker::LCSBufferTransfer::Type::fill_buffer, byteCount);
 
     // Release the lock to call into the driver
     lock.unlock();
@@ -125,7 +127,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdClearColorImage<user_tag>(VkCommandBuffer 
     // TODO: Add image tracking so we can turn image and pRanges into pixels
     int64_t pixelCount = -1;
 
-    uint64_t tagID = registerImageTransfer(layer, commandBuffer, "Clear image", pixelCount);
+    uint64_t tagID =
+        registerImageTransfer(layer, commandBuffer, Tracker::LCSImageTransfer::Type::clear_image, pixelCount);
 
     // Release the lock to call into the driver
     lock.unlock();
@@ -153,7 +156,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdClearDepthStencilImage<user_tag>(VkCommand
     // TODO: Add image tracking so we can turn image and pRanges into pixels
     int64_t pixelCount = -1;
 
-    uint64_t tagID = registerImageTransfer(layer, commandBuffer, "Clear image", pixelCount);
+    uint64_t tagID =
+        registerImageTransfer(layer, commandBuffer, Tracker::LCSImageTransfer::Type::clear_image, pixelCount);
 
     // Release the lock to call into the driver
     lock.unlock();
@@ -183,7 +187,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBuffer<user_tag>(VkCommandBuffer comma
         byteCount += static_cast<int64_t>(pRegions[i].size);
     }
 
-    uint64_t tagID = registerBufferTransfer(layer, commandBuffer, "Copy buffer", byteCount);
+    uint64_t tagID =
+        registerBufferTransfer(layer, commandBuffer, Tracker::LCSBufferTransfer::Type::copy_buffer, byteCount);
 
     // Release the lock to call into the driver
     lock.unlock();
@@ -210,7 +215,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBuffer2<user_tag>(VkCommandBuffer comm
         byteCount += static_cast<int64_t>(pCopyBufferInfo->pRegions[i].size);
     }
 
-    uint64_t tagID = registerBufferTransfer(layer, commandBuffer, "Copy buffer", byteCount);
+    uint64_t tagID =
+        registerBufferTransfer(layer, commandBuffer, Tracker::LCSBufferTransfer::Type::copy_buffer, byteCount);
 
     // Release the lock to call into the driver
     lock.unlock();
@@ -237,7 +243,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBuffer2KHR<user_tag>(VkCommandBuffer c
         byteCount += static_cast<int64_t>(pCopyBufferInfo->pRegions[i].size);
     }
 
-    uint64_t tagID = registerBufferTransfer(layer, commandBuffer, "Copy buffer", byteCount);
+    uint64_t tagID =
+        registerBufferTransfer(layer, commandBuffer, Tracker::LCSBufferTransfer::Type::copy_buffer, byteCount);
 
     // Release the lock to call into the driver
     lock.unlock();
@@ -271,7 +278,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBufferToImage<user_tag>(VkCommandBuffe
         pixelCount += rPixelCount;
     }
 
-    uint64_t tagID = registerImageTransfer(layer, commandBuffer, "Copy buffer to image", pixelCount);
+    uint64_t tagID =
+        registerImageTransfer(layer, commandBuffer, Tracker::LCSImageTransfer::Type::copy_buffer_to_image, pixelCount);
 
     // Release the lock to call into the driver
     lock.unlock();
@@ -302,7 +310,8 @@ VKAPI_ATTR void VKAPI_CALL
         pixelCount += rPixelCount;
     }
 
-    uint64_t tagID = registerImageTransfer(layer, commandBuffer, "Copy buffer to image", pixelCount);
+    uint64_t tagID =
+        registerImageTransfer(layer, commandBuffer, Tracker::LCSImageTransfer::Type::copy_buffer_to_image, pixelCount);
 
     // Release the lock to call into the driver
     lock.unlock();
@@ -333,7 +342,8 @@ VKAPI_ATTR void VKAPI_CALL
         pixelCount += rPixelCount;
     }
 
-    uint64_t tagID = registerImageTransfer(layer, commandBuffer, "Copy buffer to image", pixelCount);
+    uint64_t tagID =
+        registerImageTransfer(layer, commandBuffer, Tracker::LCSImageTransfer::Type::copy_buffer_to_image, pixelCount);
 
     // Release the lock to call into the driver
     lock.unlock();
@@ -368,7 +378,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImage<user_tag>(VkCommandBuffer comman
         pixelCount += rPixelCount;
     }
 
-    uint64_t tagID = registerImageTransfer(layer, commandBuffer, "Copy image", pixelCount);
+    uint64_t tagID =
+        registerImageTransfer(layer, commandBuffer, Tracker::LCSImageTransfer::Type::copy_image, pixelCount);
 
     // Release the lock to call into the driver
     lock.unlock();
@@ -399,7 +410,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImage2<user_tag>(VkCommandBuffer comma
         pixelCount += rPixelCount;
     }
 
-    uint64_t tagID = registerImageTransfer(layer, commandBuffer, "Copy image", pixelCount);
+    uint64_t tagID =
+        registerImageTransfer(layer, commandBuffer, Tracker::LCSImageTransfer::Type::copy_image, pixelCount);
 
     // Release the lock to call into the driver
     lock.unlock();
@@ -429,7 +441,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImage2KHR<user_tag>(VkCommandBuffer co
         pixelCount += rPixelCount;
     }
 
-    uint64_t tagID = registerImageTransfer(layer, commandBuffer, "Copy image", pixelCount);
+    uint64_t tagID =
+        registerImageTransfer(layer, commandBuffer, Tracker::LCSImageTransfer::Type::copy_image, pixelCount);
 
     // Release the lock to call into the driver
     lock.unlock();
@@ -467,7 +480,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImageToBuffer<user_tag>(VkCommandBuffe
     // type, which means this should be a bufferTransfer reporting size in
     // bytes. Without image tracking we only have pixels, so for now we report
     // as "Copy image" and report size in pixels.
-    uint64_t tagID = registerImageTransfer(layer, commandBuffer, "Copy image to buffer", pixelCount);
+    uint64_t tagID =
+        registerImageTransfer(layer, commandBuffer, Tracker::LCSImageTransfer::Type::copy_image_to_buffer, pixelCount);
 
     // Release the lock to call into the driver
     lock.unlock();
@@ -502,7 +516,8 @@ VKAPI_ATTR void VKAPI_CALL
     // type, which means this should be a bufferTransfer reporting size in
     // bytes. Without image tracking we only have pixels, so for now we report
     // as "Copy image" and report size in pixels.
-    uint64_t tagID = registerImageTransfer(layer, commandBuffer, "Copy image to buffer", pixelCount);
+    uint64_t tagID =
+        registerImageTransfer(layer, commandBuffer, Tracker::LCSImageTransfer::Type::copy_image_to_buffer, pixelCount);
 
     // Release the lock to call into the driver
     lock.unlock();
@@ -537,7 +552,8 @@ VKAPI_ATTR void VKAPI_CALL
     // type, which means this should be a bufferTransfer reporting size in
     // bytes. Without image tracking we only have pixels, so for now we report
     // as "Copy image" and report size in pixels.
-    uint64_t tagID = registerImageTransfer(layer, commandBuffer, "Copy image to buffer", pixelCount);
+    uint64_t tagID =
+        registerImageTransfer(layer, commandBuffer, Tracker::LCSImageTransfer::Type::copy_image_to_buffer, pixelCount);
 
     // Release the lock to call into the driver
     lock.unlock();

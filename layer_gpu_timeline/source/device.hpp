@@ -131,18 +131,11 @@ public:
     ~Device() = default;
 
     /**
-     * @brief Callback for sending messages on frame boundary.
+     * @brief Callback for sending some message for the device.
      *
      * @param message   The message to send.
      */
-    void onFrame(const std::string& message) { commsWrapper->txMessage(message); }
-
-    /**
-     * @brief Callback for sending messages on workload submit to a queue.
-     *
-     * @param message   The message to send.
-     */
-    void onWorkloadSubmit(const std::string& message) { commsWrapper->txMessage(message); }
+    void txMessage(Comms::MessageData&& message) { commsWrapper->txMessage(std::move(message)); }
 
     /**
      * @brief Get the cumulative stats for this device.

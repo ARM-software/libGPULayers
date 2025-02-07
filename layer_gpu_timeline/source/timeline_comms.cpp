@@ -25,6 +25,8 @@
 
 #include "timeline_comms.hpp"
 
+#include "timeline_protobuf_encoder.hpp"
+
 #include <memory>
 
 /* See header for documentation. */
@@ -34,11 +36,13 @@ TimelineComms::TimelineComms(Comms::CommsInterface& _comms)
     if (comms.isConnected())
     {
         endpoint = comms.getEndpointID("GPUTimeline");
+
+        TimelineProtobufEncoder::emitHeaderMessage(*this);
     }
 }
 
 /* See header for documentation. */
-void TimelineComms::txMessage(const std::string& message)
+void TimelineComms::txMessage(Comms::MessageData&& message)
 {
     // Message endpoint is not available
     if (endpoint == 0)
@@ -46,6 +50,6 @@ void TimelineComms::txMessage(const std::string& message)
         return;
     }
 
-    auto data = std::make_unique<Comms::MessageData>(message.begin(), message.end());
+    auto data = std::make_unique<Comms::MessageData>(std::move(message));
     comms.txAsync(endpoint, std::move(data));
 }
