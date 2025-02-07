@@ -131,7 +131,7 @@ public:
     ~Device() = default;
 
     /**
-     * @brief Callback for sending some message for the device
+     * @brief Callback for sending some message for the device.
      *
      * @param message   The message to send.
      */

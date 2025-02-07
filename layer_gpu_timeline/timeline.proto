@@ -1,13 +1,52 @@
-/* Copyright (C) 2025 by Arm Limited. All rights reserved. */
-
 /*
+ * SPDX-License-Identifier: MIT
+ * ----------------------------------------------------------------------------
+ * Copyright (c) 2025 Arm Limited
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to
+ * deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+ * sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ * ----------------------------------------------------------------------------
+ *
+ * Layer protocol notes:
+ *
  * The layer driver will emit an ordered sequence of `TimelineRecord` messages.
- * The messages are not nested in the protocol, but the ordering allows a nested structure to be recovered.
- * `Frame` messages form the outer level structure; each `Frame` marks the boundary of one sequence of events and another; all subsequent messages that are not `Frame` messages are children of that `Frame`.
- * `Submit` messages form the next level structure within a `Frame`; all subsequent messages that are not `Submit` or `Frame` messages are children of that `Submit`.
- * All other messages are children of the last received `Submit`.
- * `BeginRenderpass` and `ContinueRenderpass` are a special case; where a `ContinueRenderpass` is seen it should be merged into the last received `BeginRenderpass` within that `Submit` that has the same `tag_id` value.
- * It is guaranteed that you will not receive a `ContinueRenderpass` unless the proceeding `BeginRenderpass` was received (though it is valid to have a sequence of `ContinueRenderpass` for the same `BeginRenderpass`).
+ * The messages are not nested in the protocol, but the ordering allows a nested
+ * structure to be recovered.
+ *
+ *  - `Header` messages are sent once as the first message and identify the
+ *    version of the layer driver protocol used.
+ *  - `DeviceMetadata` messages are sent once per VkDevice and provide
+ *    metadata such as driver version.
+ *  - `Frame` messages form the outer level structure; each `Frame` marks the
+ *    boundary of one sequence of events and another; all subsequent messages
+ *    that are not `Frame` messages are children of that `Frame`.
+ *  - `Submit` messages form the next level structure within a `Frame`; all
+ *    subsequent messages that are not `Submit` or `Frame` messages are children
+ *    of that `Submit`.
+ *  - All other messages are children of the last received `Submit`.
+ *
+ * `BeginRenderpass` and `ContinueRenderpass` are a special case; where a
+ * `ContinueRenderpass` is seen it should be merged into the last received
+ * `BeginRenderpass` within that `Submit` that has the same `tag_id` value.
+ *
+ * It is guaranteed that you will not receive a `ContinueRenderpass` unless the
+ * proceeding `BeginRenderpass` was received (though it is valid to have a
+ * sequence of `ContinueRenderpass` for the same `BeginRenderpass`).
  *
  * Therefore the sequence of messages like:
  * Frame
@@ -46,12 +85,13 @@
  *     +-> Submit
  *         +-> Renderpass (BeginRenderpass+ContinueRenderpass)
  *         +-> Renderpass
+ *
+ * !!NB!!
+ * ------
+ * This file is not used to generate the C++ bindings. Instead `protopuf`
+ * library is used. Therefore any changes must be manually reflected in the C++
+ * code. (See TimelineProtobufEncoder)
  */
-
-
-// !!NB!!: This file is not used to generate the C++ bindings. Instead `protopuf`
-// library is used. Therefore any changes must be manually reflected in the C++ 
-// code. (See TimelineProtobufEncoder)
 
 syntax = "proto3";
 
@@ -67,7 +107,7 @@ enum HeaderVersionNo {
 
 /* The connection header message sent to identify the version of the timeline protocol used. This should be sent exactly once per connection */
 message Header {
-    /* The only mandatory field of this message. This identifys the version. Any subsequent fields are versioned based on this. 
+    /* The only mandatory field of this message. This identifys the version. Any subsequent fields are versioned based on this.
      * All additional fields must be optional and additive (no removals) */
     HeaderVersionNo version_no = 1;
 }

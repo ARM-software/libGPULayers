@@ -13,3 +13,7 @@ To regenerate or update the timeline protocol files use:
         protoc -I layer_gpu_timeline/                           \
             --python_out=lglpy/timeline/protos/layer_driver/    \
             layer_gpu_timeline/timeline.proto
+
+- - -
+
+_Copyright © 2025, Arm Limited and contributors._
