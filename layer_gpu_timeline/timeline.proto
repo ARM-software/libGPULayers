@@ -48,11 +48,29 @@
  *         +-> Renderpass
  */
 
+
+// !!NB!!: This file is not used to generate the C++ bindings. Instead `protopuf`
+// library is used. Therefore any changes must be manually reflected in the C++ 
+// code. (See TimelineProtobufEncoder)
+
 syntax = "proto3";
 
 package gpulayers.timeline;
 
 option optimize_for = LITE_RUNTIME;
+
+/* Possible version numbers that can be sent by the header */
+enum HeaderVersionNo {
+    /* The only version currently defined */
+    version_1 = 0;
+}
+
+/* The connection header message sent to identify the version of the timeline protocol used. This should be sent exactly once per connection */
+message Header {
+    /* The only mandatory field of this message. This identifys the version. Any subsequent fields are versioned based on this. 
+     * All additional fields must be optional and additive (no removals) */
+    HeaderVersionNo version_no = 1;
+}
 
 /* The metadata packet that is sent once for a given VkDevice, before any other packet related to that Device and describes the VkDevice / VkPhysicalDevice etc */
 message DeviceMetadata {
@@ -206,13 +224,14 @@ message BufferTransfer {
 
 /* The data payload message that wraps all other messages */
 message TimelineRecord {
-    DeviceMetadata metadata = 1;
-    Frame frame = 2;
-    Submit submit = 3;
-    BeginRenderpass renderpass = 4;
-    ContinueRenderpass continue_renderpass = 5;
-    Dispatch dispatch = 6;
-    TraceRays trace_rays = 7;
-    ImageTransfer image_transfer = 8;
-    BufferTransfer buffer_transfer = 9;
+    Header header = 1;
+    DeviceMetadata metadata = 2;
+    Frame frame = 3;
+    Submit submit = 4;
+    BeginRenderpass renderpass = 5;
+    ContinueRenderpass continue_renderpass = 6;
+    Dispatch dispatch = 7;
+    TraceRays trace_rays = 8;
+    ImageTransfer image_transfer = 9;
+    BufferTransfer buffer_transfer = 10;
 }

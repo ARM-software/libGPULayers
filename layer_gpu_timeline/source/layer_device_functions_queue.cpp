@@ -25,8 +25,8 @@
 
 #include "device.hpp"
 #include "framework/device_dispatch_table.hpp"
+#include "timeline_protobuf_encoder.hpp"
 #include "trackers/queue.hpp"
-#include "workload_metadata_builder.hpp"
 
 #include <mutex>
 
@@ -65,7 +65,7 @@ static uint64_t getClockMonotonicRaw()
  * @param queue             The queue being submitted to.
  * @param workloadVisitor   The data emit callback.
  */
-static void emitQueueMetadata(VkQueue queue, WorkloadMetadataEmitterVisitor& workloadVisitor)
+static void emitQueueMetadata(VkQueue queue, TimelineProtobufEncoder& workloadVisitor)
 {
     workloadVisitor.emitSubmit(queue, getClockMonotonicRaw());
 }
@@ -108,7 +108,7 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueuePresentKHR<user_tag>(VkQueue queue, 
 
     // This is run with the lock held to ensure that all queue submit
     // messages are sent sequentially to the host tool
-    WorkloadMetadataEmitterVisitor::emitFrame(*layer, tracker.totalStats.getFrameCount(), getClockMonotonicRaw());
+    TimelineProtobufEncoder::emitFrame(*layer, tracker.totalStats.getFrameCount(), getClockMonotonicRaw());
 
     // Release the lock to call into the driver
     lock.unlock();
@@ -128,7 +128,7 @@ VKAPI_ATTR VkResult VKAPI_CALL
 
     // This is run with the lock held to ensure that all queue submit
     // messages are sent sequentially and contiguously to the host tool
-    WorkloadMetadataEmitterVisitor workloadVisitor {*layer};
+    TimelineProtobufEncoder workloadVisitor {*layer};
 
     // Add queue-level metadata
     emitQueueMetadata(queue, workloadVisitor);
@@ -162,7 +162,7 @@ VKAPI_ATTR VkResult VKAPI_CALL
 
     // This is run with the lock held to ensure that all queue submit
     // messages are sent sequentially and contiguously to the host tool
-    WorkloadMetadataEmitterVisitor workloadVisitor {*layer};
+    TimelineProtobufEncoder workloadVisitor {*layer};
 
     // Add queue-level metadata
     emitQueueMetadata(queue, workloadVisitor);
@@ -196,7 +196,7 @@ VKAPI_ATTR VkResult VKAPI_CALL
 
     // This is run with the lock held to ensure that all queue submit
     // messages are sent sequentially and contiguously to the host tool
-    WorkloadMetadataEmitterVisitor workloadVisitor {*layer};
+    TimelineProtobufEncoder workloadVisitor {*layer};
 
     // Add queue-level metadata
     emitQueueMetadata(queue, workloadVisitor);

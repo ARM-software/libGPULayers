@@ -246,6 +246,7 @@ class GPUTimelineService:
         # pylint: disable=consider-using-with
         self.file_handle = open(file_path, 'wb')
         self.verbose = verbose
+        self.seen_header = False
 
     def get_device(self, device: int) -> GPUDeviceState:
         '''
@@ -265,6 +266,18 @@ class GPUTimelineService:
             The endpoint name.
         '''
         return 'GPUTimeline'
+
+    def handle_header(self, msg: Any) -> None:
+        '''
+        Handle the header packet.
+
+        Args:
+            msg: The Python decode of a Timeline PB payload.
+        '''
+        assert msg.version_no == timeline_pb2.HeaderVersionNo.version_1
+        assert not self.seen_header
+
+        self.seen_header = True
 
     def handle_device(self, msg: Any) -> None:
         '''
@@ -533,7 +546,8 @@ class GPUTimelineService:
         pb_record.ParseFromString(message.payload)
 
         # Assert there is at most one member message
-        assert ((int(pb_record.HasField('metadata'))
+        assert ((int(pb_record.HasField('header'))
+                 + int(pb_record.HasField('metadata'))
                  + int(pb_record.HasField('frame'))
                  + int(pb_record.HasField('submit'))
                  + int(pb_record.HasField('renderpass'))
@@ -544,7 +558,9 @@ class GPUTimelineService:
                  + int(pb_record.HasField('buffer_transfer'))) <= 1)
 
         # Process the message
-        if pb_record.HasField('metadata'):
+        if pb_record.HasField('header'):
+            self.handle_header(pb_record.header)
+        elif pb_record.HasField('metadata'):
             self.handle_device(pb_record.metadata)
         elif pb_record.HasField('frame'):
             self.handle_frame(pb_record.frame)

@@ -38,6 +38,7 @@
 #pragma once
 
 #include "device.hpp"
+#include "timeline_comms.hpp"
 #include "trackers/layer_command_stream.hpp"
 #include "trackers/queue.hpp"
 
@@ -45,9 +46,23 @@
 
 #include <vulkan/vulkan_core.h>
 
-class WorkloadMetadataEmitterVisitor : public Tracker::SubmitCommandWorkloadVisitor
+/**
+ * Encodes various protocol messages in protobuf format for transmission to the
+ * host
+ */
+class TimelineProtobufEncoder : public Tracker::SubmitCommandWorkloadVisitor
 {
 public:
+    /**
+     * @brief Called once when the GPU timeline comms connection is first established.
+     *
+     * Outputs a header message into the stream identifying the version of the layer driver protocol
+     * used.
+     *
+     * @param comms The commons interface used to transmit the message
+     */
+    static void emitHeaderMessage(TimelineComms& comms);
+
     /**
      * @brief Called once when the layer is first created to produce the "metadata" frame for that layer device
      *
@@ -80,16 +95,16 @@ public:
      * @param _device The device object that the payloads are produced for, and to which they are passed for
      * transmission
      */
-    WorkloadMetadataEmitterVisitor(Device& _device)
+    TimelineProtobufEncoder(Device& _device)
         : device(_device)
     {
     }
 
     // visitor should not be copied or moved from
-    WorkloadMetadataEmitterVisitor(const WorkloadMetadataEmitterVisitor&) = delete;
-    WorkloadMetadataEmitterVisitor(WorkloadMetadataEmitterVisitor&&) noexcept = delete;
-    WorkloadMetadataEmitterVisitor& operator=(const WorkloadMetadataEmitterVisitor&) = delete;
-    WorkloadMetadataEmitterVisitor& operator=(WorkloadMetadataEmitterVisitor&&) noexcept = delete;
+    TimelineProtobufEncoder(const TimelineProtobufEncoder&) = delete;
+    TimelineProtobufEncoder(TimelineProtobufEncoder&&) noexcept = delete;
+    TimelineProtobufEncoder& operator=(const TimelineProtobufEncoder&) = delete;
+    TimelineProtobufEncoder& operator=(TimelineProtobufEncoder&&) noexcept = delete;
 
     // methods from the visitor interface
     void operator()(const Tracker::LCSRenderPass& renderpass, const std::vector<std::string>& debugStack) override;

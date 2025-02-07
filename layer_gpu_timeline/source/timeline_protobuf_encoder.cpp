@@ -23,7 +23,7 @@
  * ----------------------------------------------------------------------------
  */
 
-#include "workload_metadata_builder.hpp"
+#include "timeline_protobuf_encoder.hpp"
 
 #include "comms/comms_interface.hpp"
 #include "trackers/layer_command_stream.hpp"
@@ -37,6 +37,20 @@
 #include <protopuf/field.h>
 #include <protopuf/message.h>
 #include <protopuf/skip.h>
+
+/* Possible version numbers that can be sent by the header */
+enum class HeaderVersionNo
+{
+    /* The only version currently defined */
+    version_1 = 0,
+};
+
+/* The connection header message sent to identify the version of the timeline protocol used. This should be sent exactly
+ * once per connection */
+using Header = pp::message<
+    /* The only mandatory field of this message. This identifys the version. Any subsequent fields are
+     * versioned based on this. All additional fields must be optional and additive (no removals) */
+    pp::enum_field<"version_no", 1, HeaderVersionNo>>;
 
 /* The metadata packet that is sent once for a given VkDevice, before any other
  * packet related to that Device and describes the VkDevice / VkPhysicalDevice
@@ -186,15 +200,16 @@ using BufferTransfer = pp::message<
     pp::string_field<"debug_label", 4, pp::repeated>>;
 
 /* The data payload message that wraps all other messages */
-using TimelineRecord = pp::message<pp::message_field<"metadata", 1, DeviceMetadata>,
-                                   pp::message_field<"frame", 2, Frame>,
-                                   pp::message_field<"submit", 3, Submit>,
-                                   pp::message_field<"renderpass", 4, BeginRenderpass>,
-                                   pp::message_field<"continue_renderpass", 5, ContinueRenderpass>,
-                                   pp::message_field<"dispatch", 6, Dispatch>,
-                                   pp::message_field<"trace_rays", 7, TraceRays>,
-                                   pp::message_field<"image_transfer", 8, ImageTransfer>,
-                                   pp::message_field<"buffer_transfer", 9, BufferTransfer>>;
+using TimelineRecord = pp::message<pp::message_field<"header", 1, Header>,
+                                   pp::message_field<"metadata", 2, DeviceMetadata>,
+                                   pp::message_field<"frame", 3, Frame>,
+                                   pp::message_field<"submit", 4, Submit>,
+                                   pp::message_field<"renderpass", 5, BeginRenderpass>,
+                                   pp::message_field<"continue_renderpass", 6, ContinueRenderpass>,
+                                   pp::message_field<"dispatch", 7, Dispatch>,
+                                   pp::message_field<"trace_rays", 8, TraceRays>,
+                                   pp::message_field<"image_transfer", 9, ImageTransfer>,
+                                   pp::message_field<"buffer_transfer", 10, BufferTransfer>>;
 
 namespace
 {
@@ -471,12 +486,22 @@ Comms::MessageData serialize(const Tracker::LCSBufferTransfer& bufferTransfer,
 }
 }
 
-void WorkloadMetadataEmitterVisitor::emitMetadata(Device& device,
-                                                  uint32_t pid,
-                                                  uint32_t major,
-                                                  uint32_t minor,
-                                                  uint32_t patch,
-                                                  std::string name)
+void TimelineProtobufEncoder::emitHeaderMessage(TimelineComms& comms)
+{
+    using namespace pp;
+
+    comms.txMessage(packBuffer("header"_f,
+                               Header {
+                                   HeaderVersionNo::version_1,
+                               }));
+}
+
+void TimelineProtobufEncoder::emitMetadata(Device& device,
+                                           uint32_t pid,
+                                           uint32_t major,
+                                           uint32_t minor,
+                                           uint32_t patch,
+                                           std::string name)
 {
     using namespace pp;
 
@@ -491,7 +516,7 @@ void WorkloadMetadataEmitterVisitor::emitMetadata(Device& device,
                                 }));
 }
 
-void WorkloadMetadataEmitterVisitor::emitFrame(Device& device, uint64_t frameNumber, uint64_t timestamp)
+void TimelineProtobufEncoder::emitFrame(Device& device, uint64_t frameNumber, uint64_t timestamp)
 {
     using namespace pp;
 
@@ -503,7 +528,7 @@ void WorkloadMetadataEmitterVisitor::emitFrame(Device& device, uint64_t frameNum
                                 }));
 }
 
-void WorkloadMetadataEmitterVisitor::emitSubmit(VkQueue queue, uint64_t timestamp)
+void TimelineProtobufEncoder::emitSubmit(VkQueue queue, uint64_t timestamp)
 {
     using namespace pp;
 
@@ -515,41 +540,41 @@ void WorkloadMetadataEmitterVisitor::emitSubmit(VkQueue queue, uint64_t timestam
                                 }));
 }
 
-void WorkloadMetadataEmitterVisitor::operator()(const Tracker::LCSRenderPass& renderpass,
-                                                const std::vector<std::string>& debugStack)
+void TimelineProtobufEncoder::operator()(const Tracker::LCSRenderPass& renderpass,
+                                         const std::vector<std::string>& debugStack)
 {
     device.txMessage(serialize(renderpass, debugStack));
 }
 
-void WorkloadMetadataEmitterVisitor::operator()(const Tracker::LCSRenderPassContinuation& continuation,
-                                                const std::vector<std::string>& debugStack,
-                                                uint64_t renderpassTagID)
+void TimelineProtobufEncoder::operator()(const Tracker::LCSRenderPassContinuation& continuation,
+                                         const std::vector<std::string>& debugStack,
+                                         uint64_t renderpassTagID)
 {
     UNUSED(debugStack);
 
     device.txMessage(serialize(continuation, renderpassTagID));
 }
 
-void WorkloadMetadataEmitterVisitor::operator()(const Tracker::LCSDispatch& dispatch,
-                                                const std::vector<std::string>& debugStack)
+void TimelineProtobufEncoder::operator()(const Tracker::LCSDispatch& dispatch,
+                                         const std::vector<std::string>& debugStack)
 {
     device.txMessage(serialize(dispatch, debugStack));
 }
 
-void WorkloadMetadataEmitterVisitor::operator()(const Tracker::LCSTraceRays& traceRays,
-                                                const std::vector<std::string>& debugStack)
+void TimelineProtobufEncoder::operator()(const Tracker::LCSTraceRays& traceRays,
+                                         const std::vector<std::string>& debugStack)
 {
     device.txMessage(serialize(traceRays, debugStack));
 }
 
-void WorkloadMetadataEmitterVisitor::operator()(const Tracker::LCSImageTransfer& imageTransfer,
-                                                const std::vector<std::string>& debugStack)
+void TimelineProtobufEncoder::operator()(const Tracker::LCSImageTransfer& imageTransfer,
+                                         const std::vector<std::string>& debugStack)
 {
     device.txMessage(serialize(imageTransfer, debugStack));
 }
 
-void WorkloadMetadataEmitterVisitor::operator()(const Tracker::LCSBufferTransfer& bufferTransfer,
-                                                const std::vector<std::string>& debugStack)
+void TimelineProtobufEncoder::operator()(const Tracker::LCSBufferTransfer& bufferTransfer,
+                                         const std::vector<std::string>& debugStack)
 {
     device.txMessage(serialize(bufferTransfer, debugStack));
 }

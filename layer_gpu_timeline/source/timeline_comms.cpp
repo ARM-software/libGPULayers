@@ -25,6 +25,8 @@
 
 #include "timeline_comms.hpp"
 
+#include "timeline_protobuf_encoder.hpp"
+
 #include <memory>
 
 /* See header for documentation. */
@@ -34,6 +36,8 @@ TimelineComms::TimelineComms(Comms::CommsInterface& _comms)
     if (comms.isConnected())
     {
         endpoint = comms.getEndpointID("GPUTimeline");
+
+        TimelineProtobufEncoder::emitHeaderMessage(*this);
     }
 }
 

@@ -28,7 +28,7 @@
 #include "comms/comms_module.hpp"
 #include "framework/utils.hpp"
 #include "instance.hpp"
-#include "workload_metadata_builder.hpp"
+#include "timeline_protobuf_encoder.hpp"
 
 #include <vector>
 
@@ -120,5 +120,5 @@ Device::Device(Instance* _instance,
 
     pid_t processPID = getpid();
 
-    WorkloadMetadataEmitterVisitor::emitMetadata(*this, processPID, major, minor, patch, std::move(name));
+    TimelineProtobufEncoder::emitMetadata(*this, processPID, major, minor, patch, std::move(name));
 }
