@@ -88,6 +88,7 @@ static const struct InstanceInterceptTableEntry instanceIntercepts[] = {
     ENTRY(vkGetDisplayPlaneCapabilities2KHR),
     ENTRY(vkGetDisplayPlaneCapabilitiesKHR),
     ENTRY(vkGetDisplayPlaneSupportedDisplaysKHR),
+    ENTRY(vkGetInstanceProcAddr),
     ENTRY(vkGetPhysicalDeviceCalibrateableTimeDomainsEXT),
     ENTRY(vkGetPhysicalDeviceCalibrateableTimeDomainsKHR),
     ENTRY(vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR),

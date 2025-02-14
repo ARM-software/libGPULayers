@@ -407,6 +407,7 @@ static const struct DeviceInterceptTableEntry deviceIntercepts[] = {
     ENTRY(vkGetDeviceMemoryOpaqueCaptureAddress),
     ENTRY(vkGetDeviceMemoryOpaqueCaptureAddressKHR),
     ENTRY(vkGetDeviceMicromapCompatibilityEXT),
+    ENTRY(vkGetDeviceProcAddr),
     ENTRY(vkGetDeviceQueue),
     ENTRY(vkGetDeviceQueue2),
     ENTRY(vkGetEventStatus),

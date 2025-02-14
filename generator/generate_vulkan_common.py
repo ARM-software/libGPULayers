@@ -39,19 +39,14 @@ EXCLUDED_FUNCTIONS = {
     'vkEnumerateInstanceVersion',
 }
 
-# These functions are excluded from generated intercept and dispatch tables
-NO_INTERCEPT_OR_DISPATCH_FUNCTIONS = {
-    # Functions resolved by the loader not the implementation
-    'vkGetDeviceProcAddr',
-    'vkGetInstanceProcAddr',
-}
-
 # These functions are excluded from generated dispatch tables
 NO_DISPATCH_FUNCTIONS = {
     # Functions resolved by the loader not the implementation
     'vkCreateDevice',
     'vkCreateInstance',
     'vkEnumerateInstanceExtensionProperties',
+    'vkGetDeviceProcAddr',
+    'vkGetInstanceProcAddr',
 }
 
 # These functions are excluded from generated declarations
@@ -60,13 +55,13 @@ CUSTOM_FUNCTIONS = {
     'vkCreateInstance',
     'vkDestroyDevice',
     'vkDestroyInstance',
-    'vkGetDeviceProcAddr',
-    'vkGetInstanceProcAddr',
     'vkEnumerateDeviceExtensionProperties',
     'vkEnumerateDeviceLayerProperties',
     'vkEnumerateInstanceExtensionProperties',
     'vkEnumerateInstanceLayerProperties',
     'vkGetDeviceImageMemoryRequirementsKHR',
+    'vkGetDeviceProcAddr',
+    'vkGetInstanceProcAddr',
 }
 
 # Filter out extensions from these vendors by default
@@ -425,17 +420,14 @@ def generate_instance_dispatch_table(
             continue
 
         assert command.name
-        if command.name in NO_INTERCEPT_OR_DISPATCH_FUNCTIONS:
-            continue
-
         plat_define = mapping.get_platform_define(command.name)
-
         ttype = f'PFN_{command.name}'
 
         if plat_define:
             itable_members.append(f'#if defined({plat_define})')
 
         itable_members.append(f'    ENTRY({command.name}),')
+
         if plat_define:
             itable_members.append('#endif')
 
@@ -643,25 +635,28 @@ def generate_device_dispatch_table(
             continue
 
         assert command.name
-        if command.name in NO_INTERCEPT_OR_DISPATCH_FUNCTIONS:
-            continue
-
         plat_define = mapping.get_platform_define(command.name)
         ttype = f'PFN_{command.name}'
 
         if plat_define:
             itable_members.append(f'#if defined({plat_define})')
-            dispatch_table_members.append(f'#if defined({plat_define})')
-            dispatch_table_inits.append(f'#if defined({plat_define})')
 
         itable_members.append(f'    ENTRY({command.name}),')
-        dispatch_table_members.append(f'    {ttype} {command.name};')
-        dispatch_table_inits.append(f'    ENTRY({command.name});')
 
         if plat_define:
             itable_members.append('#endif')
-            dispatch_table_members.append('#endif')
-            dispatch_table_inits.append('#endif')
+
+        if command.name not in NO_DISPATCH_FUNCTIONS:
+            if plat_define:
+                dispatch_table_members.append(f'#if defined({plat_define})')
+                dispatch_table_inits.append(f'#if defined({plat_define})')
+
+            dispatch_table_members.append(f'    {ttype} {command.name};')
+            dispatch_table_inits.append(f'    ENTRY({command.name});')
+
+            if plat_define:
+                dispatch_table_members.append('#endif')
+                dispatch_table_inits.append('#endif')
 
     data = data.replace('{ITABLE_MEMBERS}', '\n'.join(itable_members))
     data = data.replace('{DTABLE_MEMBERS}', '\n'.join(dispatch_table_members))

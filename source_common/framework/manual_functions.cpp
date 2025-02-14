@@ -111,24 +111,6 @@ VkLayerDeviceCreateInfo* getChainInfo(const VkDeviceCreateInfo* pCreateInfo)
 }
 
 /* See header for documentation. */
-PFN_vkVoidFunction getFixedInstanceLayerFunction(const char* name)
-{
-    static const DispatchTableEntry layerFunctions[] = {
-        VK_TABLE_ENTRY(vkGetInstanceProcAddr)
-    };
-
-    for (auto& function : layerFunctions)
-    {
-        if (!strcmp(function.name, name))
-        {
-            return function.function;
-        }
-    }
-
-    return nullptr;
-}
-
-/* See header for documentation. */
 PFN_vkVoidFunction getInstanceLayerFunction(const char* name)
 {
     for (auto& function : instanceIntercepts)
@@ -145,19 +127,6 @@ PFN_vkVoidFunction getInstanceLayerFunction(const char* name)
 /* See header for documentation. */
 PFN_vkVoidFunction getDeviceLayerFunction(const char* name)
 {
-    static const DispatchTableEntry layerFunctions[] = {
-        VK_TABLE_ENTRY(vkGetDeviceProcAddr),
-
-    };
-
-    for (auto& function : layerFunctions)
-    {
-        if (!strcmp(function.name, name))
-        {
-            return function.function;
-        }
-    }
-
     for (auto& function : deviceIntercepts)
     {
         if (!strcmp(function.name, name))
@@ -557,16 +526,9 @@ static void enableDeviceVkExtImageCompressionControl(VkDeviceCreateInfo& createI
 /** See Vulkan API for documentation. */
 PFN_vkVoidFunction layer_vkGetInstanceProcAddr_default(VkInstance instance, const char* pName)
 {
-    // Always expose these functions ...
-    PFN_vkVoidFunction layerFunction = getFixedInstanceLayerFunction(pName);
-    if (layerFunction)
-    {
-        return layerFunction;
-    }
-
-    // Otherwise, only expose functions that the driver exposes to avoid
-    // changing queryable interface behavior seen by the application
-    layerFunction = getInstanceLayerFunction(pName);
+    // Only expose functions that the driver exposes to avoid changing
+    // queryable interface behavior seen by the application
+    auto layerFunction = getInstanceLayerFunction(pName);
     if (instance)
     {
         std::unique_lock<std::mutex> lock {g_vulkanLock};
