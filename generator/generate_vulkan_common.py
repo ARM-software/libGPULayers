@@ -41,7 +41,7 @@ EXCLUDED_FUNCTIONS = {
 
 # These functions are excluded from generated intercept and dispatch tables
 NO_INTERCEPT_OR_DISPATCH_FUNCTIONS = {
-    # Functions resolved by the loaded not the implementation
+    # Functions resolved by the loader not the implementation
     'vkGetDeviceProcAddr',
     'vkGetInstanceProcAddr',
 }
