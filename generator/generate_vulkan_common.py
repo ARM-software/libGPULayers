@@ -46,15 +46,6 @@ NO_INTERCEPT_OR_DISPATCH_FUNCTIONS = {
     'vkGetInstanceProcAddr',
 }
 
-# These functions are excluded from generated intercept tables
-NO_INTERCEPT_FUNCTIONS = {
-    # Functions exported as shared object symbols and resolved by loader
-    'vkEnumerateDeviceExtensionProperties',
-    'vkEnumerateDeviceLayerProperties',
-    'vkEnumerateInstanceExtensionProperties',
-    'vkEnumerateInstanceLayerProperties',
-}
-
 # These functions are excluded from generated dispatch tables
 NO_DISPATCH_FUNCTIONS = {
     # Functions resolved by the loader not the implementation
@@ -434,7 +425,6 @@ def generate_instance_dispatch_table(
             continue
 
         assert command.name
-
         if command.name in NO_INTERCEPT_OR_DISPATCH_FUNCTIONS:
             continue
 
@@ -442,13 +432,12 @@ def generate_instance_dispatch_table(
 
         ttype = f'PFN_{command.name}'
 
-        if command.name not in NO_INTERCEPT_FUNCTIONS:
-            if plat_define:
-                itable_members.append(f'#if defined({plat_define})')
+        if plat_define:
+            itable_members.append(f'#if defined({plat_define})')
 
-            itable_members.append(f'    ENTRY({command.name}),')
-            if plat_define:
-                itable_members.append('#endif')
+        itable_members.append(f'    ENTRY({command.name}),')
+        if plat_define:
+            itable_members.append('#endif')
 
         if command.name not in NO_DISPATCH_FUNCTIONS:
             if plat_define:
@@ -586,9 +575,6 @@ def generate_instance_defs(
             continue
 
         assert command.name
-        if command.name in NO_INTERCEPT_FUNCTIONS:
-            continue
-
         if command.name in CUSTOM_FUNCTIONS:
             continue
 

@@ -67,17 +67,9 @@ struct DispatchTableEntry
 /**
  * @brief Utility macro to define a lookup for a core function.
  */
-#define VK_TABLE_ENTRY(func)                                                                                           \
-    {                                                                                                                  \
-        STR(func), reinterpret_cast<PFN_vkVoidFunction>(func)                                                          \
-    }
-
-/**
- * @brief Utility macro to define a lookup for a layer-dispatch-only function.
- */
-#define VK_TABLE_ENTRYL(func)                                                                                          \
-    {                                                                                                                  \
-        STR(func), reinterpret_cast<PFN_vkVoidFunction>(layer_##func)                                                  \
+#define VK_TABLE_ENTRY(func)                                                     \
+    {                                                                            \
+        STR(func), reinterpret_cast<PFN_vkVoidFunction>(layer_##func<user_tag>)  \
     }
 
 /* See header for documentation. */
@@ -122,11 +114,7 @@ VkLayerDeviceCreateInfo* getChainInfo(const VkDeviceCreateInfo* pCreateInfo)
 PFN_vkVoidFunction getFixedInstanceLayerFunction(const char* name)
 {
     static const DispatchTableEntry layerFunctions[] = {
-        VK_TABLE_ENTRY(vkGetInstanceProcAddr),
-        VK_TABLE_ENTRY(vkEnumerateDeviceLayerProperties),
-        VK_TABLE_ENTRY(vkEnumerateDeviceExtensionProperties),
-        VK_TABLE_ENTRY(vkEnumerateInstanceLayerProperties),
-        VK_TABLE_ENTRY(vkEnumerateInstanceExtensionProperties),
+        VK_TABLE_ENTRY(vkGetInstanceProcAddr)
     };
 
     for (auto& function : layerFunctions)
@@ -159,8 +147,7 @@ PFN_vkVoidFunction getDeviceLayerFunction(const char* name)
 {
     static const DispatchTableEntry layerFunctions[] = {
         VK_TABLE_ENTRY(vkGetDeviceProcAddr),
-        VK_TABLE_ENTRY(vkEnumerateDeviceExtensionProperties),
-        VK_TABLE_ENTRY(vkEnumerateDeviceLayerProperties),
+
     };
 
     for (auto& function : layerFunctions)
@@ -667,6 +654,7 @@ VkResult layer_vkEnumerateDeviceExtensionProperties_default(VkPhysicalDevice gpu
 
     // For other cases forward to the driver to handle it
     assert(!pLayerName);
+    assert(gpu);
 
     // Hold the lock to access layer-wide global store
     std::unique_lock<std::mutex> lock {g_vulkanLock};
