@@ -56,7 +56,8 @@ def load_template(path: str) -> str:
 def get_layer_api_name(vendor: str, layer: str) -> str:
     '''
     Generate the layer string name for the new layer used by the loader.
-    Names are of the form "VK_LAYER_<VENDOR>_<LAYER>" in upper case.
+    Names are of the form "VK_LAYER_<VENDOR>_<layer>_<name>" where vendor
+    is in upper case, and the layer name is in lower case.
 
     Args:
         vendor: The layer vendor tag.
@@ -69,7 +70,25 @@ def get_layer_api_name(vendor: str, layer: str) -> str:
     match = pattern.match(layer)
     assert match
 
-    name_parts = ('VK_LAYER', vendor.upper(), match.group(1).upper())
+    name = match.group(1)
+    parts = []
+    part = None
+
+    for char in name:
+        is_uc = char.isupper()
+        is_last_uc = False if not part else part[-1].isupper()
+
+        if (is_uc and not is_last_uc) or not part:
+            if part:
+                parts.append(part.lower())
+            part = char
+        else:
+            part += char
+
+    if part:
+        parts.append(part.lower())
+
+    name_parts = ('VK_LAYER', vendor.upper(), *parts)
     return '_'.join(name_parts)
 
 
@@ -228,7 +247,7 @@ def main() -> int:
     with open(outfile, 'w', encoding='utf-8', newline='\n') as handle:
         generate_source_cmake(handle, args.vendor_name, args.layer_name)
 
-    outfile = os.path.join(outdir, 'android_install.json')
+    outfile = os.path.join(outdir, 'manifest.json')
     with open(outfile, 'w', encoding='utf-8', newline='\n') as handle:
         generate_install_manifest(handle, args.vendor_name, args.layer_name)
 
