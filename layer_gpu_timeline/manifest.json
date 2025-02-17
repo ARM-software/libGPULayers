@@ -1,7 +1,7 @@
 {
   "file_format_version": "1.0.0",
   "layer": {
-      "name": "VK_LAYER_LGL_GPUTIMELINE",
+      "name": "VK_LAYER_LGL_gpu_timeline",
       "type": "INSTANCE",
       "library_path": "libVkLayerGPUTimeline.so",
       "api_version": "1.0.0",

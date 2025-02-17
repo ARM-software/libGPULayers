@@ -1,5 +1,5 @@
 {
-    "layer": "VK_LAYER_LGL_GPUSUPPORT",
+    "layer": "VK_LAYER_LGL_gpu_support",
     "serialize": {
         "all": false,
         "none": false,

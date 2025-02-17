@@ -30,7 +30,7 @@ else()
 endif()
 
 # Set strings used by configure
-set(LGL_LAYER_NAME_STR "VK_LAYER_LGL_EXAMPLE")
+set(LGL_LAYER_NAME_STR "VK_LAYER_LGL_example")
 set(LGL_LAYER_DESC_STR "VkLayerExample by LGL")
 
 # Vulkan layer library

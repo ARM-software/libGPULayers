@@ -146,7 +146,7 @@ class LayerMeta:
 
     Attributes:
         layer_dir: The directory name of the layer in the project.
-        name: The Vulkan name of the layer, e.g. VK_LAYER_LGL_EXAMPLE.
+        name: The Vulkan name of the layer, e.g. VK_LAYER_LGL_example.
         host_path: The file path of the layer library on the host filesystem.
         device_file: The file name to use on the device. May be different to
             the host_path file name.
@@ -162,7 +162,7 @@ class LayerMeta:
 
         Args:
             layer_dir: The directory name of the layer in the project.
-            name: The Vulkan name of the layer, e.g. VK_LAYER_LGL_EXAMPLE.
+            name: The Vulkan name of the layer, e.g. VK_LAYER_LGL_example.
             host_path: The full file path on the host filesystem.
             device_file: The file name to use on the device.
             has_config: Does this layer need a configuration file?
