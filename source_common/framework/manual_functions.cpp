@@ -67,17 +67,9 @@ struct DispatchTableEntry
 /**
  * @brief Utility macro to define a lookup for a core function.
  */
-#define VK_TABLE_ENTRY(func)                                                                                           \
-    {                                                                                                                  \
-        STR(func), reinterpret_cast<PFN_vkVoidFunction>(func)                                                          \
-    }
-
-/**
- * @brief Utility macro to define a lookup for a layer-dispatch-only function.
- */
-#define VK_TABLE_ENTRYL(func)                                                                                          \
-    {                                                                                                                  \
-        STR(func), reinterpret_cast<PFN_vkVoidFunction>(layer_##func)                                                  \
+#define VK_TABLE_ENTRY(func)                                                     \
+    {                                                                            \
+        STR(func), reinterpret_cast<PFN_vkVoidFunction>(layer_##func<user_tag>)  \
     }
 
 /* See header for documentation. */
@@ -119,28 +111,6 @@ VkLayerDeviceCreateInfo* getChainInfo(const VkDeviceCreateInfo* pCreateInfo)
 }
 
 /* See header for documentation. */
-PFN_vkVoidFunction getFixedInstanceLayerFunction(const char* name)
-{
-    static const DispatchTableEntry layerFunctions[] = {
-        VK_TABLE_ENTRY(vkGetInstanceProcAddr),
-        VK_TABLE_ENTRY(vkEnumerateDeviceLayerProperties),
-        VK_TABLE_ENTRY(vkEnumerateDeviceExtensionProperties),
-        VK_TABLE_ENTRY(vkEnumerateInstanceLayerProperties),
-        VK_TABLE_ENTRY(vkEnumerateInstanceExtensionProperties),
-    };
-
-    for (auto& function : layerFunctions)
-    {
-        if (!strcmp(function.name, name))
-        {
-            return function.function;
-        }
-    }
-
-    return nullptr;
-}
-
-/* See header for documentation. */
 PFN_vkVoidFunction getInstanceLayerFunction(const char* name)
 {
     for (auto& function : instanceIntercepts)
@@ -157,20 +127,6 @@ PFN_vkVoidFunction getInstanceLayerFunction(const char* name)
 /* See header for documentation. */
 PFN_vkVoidFunction getDeviceLayerFunction(const char* name)
 {
-    static const DispatchTableEntry layerFunctions[] = {
-        VK_TABLE_ENTRY(vkGetDeviceProcAddr),
-        VK_TABLE_ENTRY(vkEnumerateDeviceExtensionProperties),
-        VK_TABLE_ENTRY(vkEnumerateDeviceLayerProperties),
-    };
-
-    for (auto& function : layerFunctions)
-    {
-        if (!strcmp(function.name, name))
-        {
-            return function.function;
-        }
-    }
-
     for (auto& function : deviceIntercepts)
     {
         if (!strcmp(function.name, name))
@@ -570,16 +526,9 @@ static void enableDeviceVkExtImageCompressionControl(VkDeviceCreateInfo& createI
 /** See Vulkan API for documentation. */
 PFN_vkVoidFunction layer_vkGetInstanceProcAddr_default(VkInstance instance, const char* pName)
 {
-    // Always expose these functions ...
-    PFN_vkVoidFunction layerFunction = getFixedInstanceLayerFunction(pName);
-    if (layerFunction)
-    {
-        return layerFunction;
-    }
-
-    // Otherwise, only expose functions that the driver exposes to avoid
-    // changing queryable interface behavior seen by the application
-    layerFunction = getInstanceLayerFunction(pName);
+    // Only expose functions that the driver exposes to avoid changing
+    // queryable interface behavior seen by the application
+    auto layerFunction = getInstanceLayerFunction(pName);
     if (instance)
     {
         std::unique_lock<std::mutex> lock {g_vulkanLock};
@@ -667,6 +616,7 @@ VkResult layer_vkEnumerateDeviceExtensionProperties_default(VkPhysicalDevice gpu
 
     // For other cases forward to the driver to handle it
     assert(!pLayerName);
+    assert(gpu);
 
     // Hold the lock to access layer-wide global store
     std::unique_lock<std::mutex> lock {g_vulkanLock};
