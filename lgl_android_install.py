@@ -63,7 +63,7 @@ Layers will be loaded by the Vulkan loader in the order that they are specified
 on the command line, with the first layer specified being the top of the stack
 closest to the application.
 
-An android_install.json file in the layer directory informs the script of the
+The manifest.json file in the layer directory informs the script of the
 layer string identifier and shared object library name. Layers without this
 file cannot be installed using this script.
 
@@ -91,9 +91,8 @@ Layer configuration
 ===================
 
 Some layers use JSON configuration files to parameterize their behavior. If
-the android_install.json configuration file for a layer specifies that it
-requires a configuration file, this script will default to using the built-in
-layer_config.json found in the layer directory.
+a layer_config.json is found in the layer directory, the script will use this
+file by default.
 
 Users can override this, providing a custom configuration using the --config
 command line option to specify an alternative.
@@ -103,7 +102,7 @@ Khronos validation layers
 
 This installer can be used to install the Khronos validation layers. A dummy
 layer directory, layer_khronos_validation, is provided for this purpose with a
-pre-populated android_install.json config file.
+pre-populated manifest.json config file.
 
 Download the latest Khronos validation layer binaries from GitHub, and copy the
 required Arm binaries into the appropriate build directory as described in the
@@ -331,20 +330,22 @@ def get_layer_metadata(
 
     for layer_dir in layer_dirs:
         # Parse the JSON metadata file
-        metadata_path = os.path.join(layer_dir, 'android_install.json')
+        metadata_path = os.path.join(layer_dir, 'manifest.json')
+        config_path = os.path.join(layer_dir, 'layer_config.json')
+
         if not os.path.isfile(metadata_path):
-            print(f'ERROR: {layer_dir} has no android_install.json')
+            print(f'ERROR: {layer_dir} has no manifest.json')
             return None
 
         with open(metadata_path, 'r', encoding='utf-8') as handle:
             config = json.load(handle)
 
         try:
-            layer_name = config['layer_name']
-            layer_binary = config['layer_binary']
-            has_config = config.get('has_config', False)
+            layer_name = config['layer']['name']
+            layer_binary = config['layer']['library_path']
+            has_config = os.path.isfile(config_path)
         except KeyError:
-            print(f'ERROR: {layer_dir} has invalid android_install.json')
+            print(f'ERROR: {layer_dir} has invalid manifest.json')
             return None
 
         # Check that the binary exists

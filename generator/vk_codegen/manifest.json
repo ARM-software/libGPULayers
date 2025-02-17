@@ -1,0 +1,11 @@
+{
+  "file_format_version": "1.0.0",
+  "layer": {
+      "name": "{LGL_LAYER_NAME}",
+      "type": "INSTANCE",
+      "library_path": "lib{LAYER_NAME}.so",
+      "api_version": "1.0.0",
+      "implementation_version": "1",
+      "description": "Layer for ..."
+  }
+}

@@ -125,16 +125,16 @@ def generate_source_cmake(file: TextIO, vendor: str, layer: str) -> None:
     file.write(data)
 
 
-def generate_install_helper(file: TextIO, vendor: str, layer: str) -> None:
+def generate_install_manifest(file: TextIO, vendor: str, layer: str) -> None:
     '''
-    Generate the Android installer helper with placeholders replaced.
+    Generate the layer manifest with placeholders replaced.
 
     Args:
         file: The file handle to write to.
         vendor: The layer vendor tag.
         layer: The name of the layer.
     '''
-    data = load_template('android_install.json')
+    data = load_template('manifest.json')
     data = data.replace('{LAYER_NAME}', layer)
 
     name = get_layer_api_name(vendor, layer)
@@ -230,7 +230,7 @@ def main() -> int:
 
     outfile = os.path.join(outdir, 'android_install.json')
     with open(outfile, 'w', encoding='utf-8', newline='\n') as handle:
-        generate_install_helper(handle, args.vendor_name, args.layer_name)
+        generate_install_manifest(handle, args.vendor_name, args.layer_name)
 
     return 0
 
