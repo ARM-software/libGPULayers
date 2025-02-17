@@ -1,0 +1,7 @@
+# VK_LOADER_DEBUG=all \
+
+env \
+    VK_LAYER_PATH=$VK_LAYER_PATH:${PWD} \
+    LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${PWD} \
+    VK_INSTANCE_LAYERS=VK_LAYER_LGL_gpu_support \
+    vkmark

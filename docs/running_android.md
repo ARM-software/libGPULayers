@@ -87,7 +87,7 @@ For users with existing configuration flows, Vulkan layers can be manually
 configured using `adb` to copy the files and set the system properties.
 
 For layers with configuration files, the configuration file must be named
-after the layer (e.g. `VK_LAYER_LGL_GPUSUPPORT.json`) and then pushed to
+after the layer (e.g. `VK_LAYER_LGL_gpu_support.json`) and then pushed to
 the `/data/local/tmp` directory with global (`0666`) access permissions.
 
 **Note:** Android will fail to start an application if it has a layer enabled,

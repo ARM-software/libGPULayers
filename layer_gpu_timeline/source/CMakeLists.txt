@@ -30,7 +30,7 @@ else()
 endif()
 
 # Set strings used by configure
-set(LGL_LAYER_NAME_STR "VK_LAYER_LGL_GPUTIMELINE")
+set(LGL_LAYER_NAME_STR "VK_LAYER_LGL_gpu_timeline")
 set(LGL_LAYER_DESC_STR "VkLayerGPUTimeline by LGL")
 
 # Vulkan layer library

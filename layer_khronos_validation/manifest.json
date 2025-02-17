@@ -1,0 +1,11 @@
+{
+  "file_format_version": "1.0.0",
+  "layer": {
+      "name": "VK_LAYER_KHRONOS_validation",
+      "type": "INSTANCE",
+      "library_path": "libVkLayer_khronos_validation.so",
+      "api_version": "1.0.0",
+      "implementation_version": "1",
+      "description": "Layer for Vulkan API validation"
+  }
+}
