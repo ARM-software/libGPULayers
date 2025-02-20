@@ -218,16 +218,18 @@ using AccelerationStructureTransfer = pp::message<
     pp::string_field<"debug_label", 3, pp::repeated>>;
 
 /* The data payload message that wraps all other messages */
-using TimelineRecord = pp::message<pp::message_field<"header", 1, Header>,
-                                   pp::message_field<"metadata", 2, DeviceMetadata>,
-                                   pp::message_field<"frame", 3, Frame>,
-                                   pp::message_field<"submit", 4, Submit>,
-                                   pp::message_field<"renderpass", 5, BeginRenderpass>,
-                                   pp::message_field<"continue_renderpass", 6, ContinueRenderpass>,
-                                   pp::message_field<"dispatch", 7, Dispatch>,
-                                   pp::message_field<"trace_rays", 8, TraceRays>,
-                                   pp::message_field<"image_transfer", 9, ImageTransfer>,
-                                   pp::message_field<"buffer_transfer", 10, BufferTransfer>>;
+using TimelineRecord =
+    pp::message<pp::message_field<"header", 1, Header>,
+                pp::message_field<"metadata", 2, DeviceMetadata>,
+                pp::message_field<"frame", 3, Frame>,
+                pp::message_field<"submit", 4, Submit>,
+                pp::message_field<"renderpass", 5, BeginRenderpass>,
+                pp::message_field<"continue_renderpass", 6, ContinueRenderpass>,
+                pp::message_field<"dispatch", 7, Dispatch>,
+                pp::message_field<"trace_rays", 8, TraceRays>,
+                pp::message_field<"image_transfer", 9, ImageTransfer>,
+                pp::message_field<"buffer_transfer", 10, BufferTransfer>,
+                pp::message_field<"acceleration_structure_transfer", 11, AccelerationStructureTransfer>>;
 
 namespace
 {
