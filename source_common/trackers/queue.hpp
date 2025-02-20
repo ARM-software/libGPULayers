@@ -113,10 +113,10 @@ public:
     virtual void operator()(const LCSBufferTransfer& bufferTransfer, const std::vector<std::string>& debugStack) = 0;
 
     /**
-     * @brief Visit a buffer transfer workload object
+     * @brief Visit an acceleration structure transfer workload object
      *
      * @param asTransfer The acceleration structure transfer
-     * @param debugStack The stack of debug labels that are associated with this buffer transfer
+     * @param debugStack The stack of debug labels that are associated with this acceleration structure transfer
      */
     virtual void operator()(const LCSAccelerationStructureTransfer& asTransfer,
                             const std::vector<std::string>& debugStack) = 0;
