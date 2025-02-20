@@ -148,6 +148,15 @@ public:
     uint64_t bufferTransfer(LCSBufferTransfer::Type transferType, int64_t byteCount);
 
     /**
+     * @brief Capture a transfer where the destination is an acceleration structure.
+     *
+     * @param transferType   The type of the transfer.
+     *
+     * @return Returns the tagID assigned to this workload.
+     */
+    uint64_t accelerationStructureTransfer(LCSAccelerationStructureTransfer::Type transferType);
+
+    /**
      * @brief Begin a user debug marker range.
      *
      * @param marker   The marker label.

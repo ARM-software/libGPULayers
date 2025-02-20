@@ -412,6 +412,42 @@ private:
 };
 
 /**
+ * @brief Class representing an acceleration structure transfer workload in the command stream.
+ */
+class LCSAccelerationStructureTransfer : public LCSWorkload
+{
+public:
+    /* Enumerates possible acceleration structure transfer types */
+    enum class Type
+    {
+        unknown,
+        struct_to_struct,
+        struct_to_mem,
+        mem_to_struct,
+    };
+
+    /**
+     * @brief Create a new acceleration structure transfer workload.
+     *
+     * @param tagID          The assigned tagID.
+     * @param transferType   The subtype of the transfer.
+     */
+    LCSAccelerationStructureTransfer(uint64_t tagID, Type transferType);
+
+    /** @return The subtype of the transfer */
+    Type getTransferType() const { return transferType; }
+
+    /** @return The subtype of the transfer */
+    std::string getTransferTypeStr() const;
+
+private:
+    /**
+     * @brief The subtype of the transfer.
+     */
+    Type transferType;
+};
+
+/**
  * @brief Class representing a marker instruction in the command stream that represents a debug label push operation.
  */
 class LCSInstructionMarkerPush
@@ -503,6 +539,7 @@ using LCSInstruction = std::variant<
     // the instruction represents an image transfer workload operation
     LCSInstructionWorkload<LCSImageTransfer>,
     // the instruction represents a buffer transfer workload operation
-    LCSInstructionWorkload<LCSBufferTransfer>>;
-
+    LCSInstructionWorkload<LCSBufferTransfer>,
+    // the instruction represents an acceleration structure transfer workload operation
+    LCSInstructionWorkload<LCSAccelerationStructureTransfer>>;
 }
