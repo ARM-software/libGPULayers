@@ -189,20 +189,11 @@ render pass. When the layer detects suspended render pass in a multi-submit
 command buffer, it will still capture and report the workload, but with an
 unknown draw call count.
 
-## Command stream modelling
+## Developer documentation
 
-Most properties we track are a property of the command buffer recording in
-isolation. However, the user debug label stack is a property of the queue and
-persists across submits. We can therefore only determine the debug label
-associated with a workload in the command stream at submit time, and must
-resolve it per workload inside the command buffer.
-
-To support this we implement a software command stream that contains simple
-bytecode actions that represent the sequence of debug label and workload
-commands inside each command buffer. This "command stream" can be played to
-update the the queue state at submit time, triggering metadata submission
-for each workload that can snapshot the current state of the user debug label
-stack at that point in the command stream.
+This page covers using the layer as a tool for application development. For
+documentation about developing the layer itself, please refer to the
+[developer documentation](./docs/developer-docs.md).
 
 - - -
 

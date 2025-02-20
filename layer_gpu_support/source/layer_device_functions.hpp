@@ -262,6 +262,18 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImageToBuffer<user_tag>(VkCommandBuffe
 /* See Vulkan API for documentation. */
 template<>
 VKAPI_ATTR void VKAPI_CALL
+    layer_vkCmdCopyImageToBuffer2<user_tag>(VkCommandBuffer commandBuffer,
+                                            const VkCopyImageToBufferInfo2* pCopyImageToBufferInfo);
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL
+    layer_vkCmdCopyImageToBuffer2KHR<user_tag>(VkCommandBuffer commandBuffer,
+                                               const VkCopyImageToBufferInfo2* pCopyImageToBufferInfo);
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL
     layer_vkCmdCopyAccelerationStructureKHR<user_tag>(VkCommandBuffer commandBuffer,
                                                       const VkCopyAccelerationStructureInfoKHR* pInfo);
 
@@ -276,18 +288,6 @@ template<>
 VKAPI_ATTR void VKAPI_CALL
     layer_vkCmdCopyMemoryToAccelerationStructureKHR<user_tag>(VkCommandBuffer commandBuffer,
                                                               const VkCopyMemoryToAccelerationStructureInfoKHR* pInfo);
-
-/* See Vulkan API for documentation. */
-template<>
-VKAPI_ATTR void VKAPI_CALL
-    layer_vkCmdCopyImageToBuffer2<user_tag>(VkCommandBuffer commandBuffer,
-                                            const VkCopyImageToBufferInfo2* pCopyImageToBufferInfo);
-
-/* See Vulkan API for documentation. */
-template<>
-VKAPI_ATTR void VKAPI_CALL
-    layer_vkCmdCopyImageToBuffer2KHR<user_tag>(VkCommandBuffer commandBuffer,
-                                               const VkCopyImageToBufferInfo2* pCopyImageToBufferInfo);
 
 // Functions for queues
 

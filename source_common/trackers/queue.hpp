@@ -111,6 +111,24 @@ public:
      * @param debugStack The stack of debug labels that are associated with this buffer transfer
      */
     virtual void operator()(const LCSBufferTransfer& bufferTransfer, const std::vector<std::string>& debugStack) = 0;
+
+    /**
+     * @brief Visit an acceleration structure build workload object
+     *
+     * @param asBuild The acceleration structure build
+     * @param debugStack The stack of debug labels that are associated with this acceleration structure build
+     */
+    virtual void operator()(const LCSAccelerationStructureBuild& asBuild,
+                            const std::vector<std::string>& debugStack) = 0;
+
+    /**
+     * @brief Visit an acceleration structure transfer workload object
+     *
+     * @param asTransfer The acceleration structure transfer
+     * @param debugStack The stack of debug labels that are associated with this acceleration structure transfer
+     */
+    virtual void operator()(const LCSAccelerationStructureTransfer& asTransfer,
+                            const std::vector<std::string>& debugStack) = 0;
 };
 
 /**

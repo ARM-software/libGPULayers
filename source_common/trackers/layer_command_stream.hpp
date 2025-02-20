@@ -412,6 +412,96 @@ private:
 };
 
 /**
+ * @brief Class representing an acceleration structure build workload in the command stream.
+ */
+class LCSAccelerationStructureBuild : public LCSWorkload
+{
+public:
+    /* Enumerates possible acceleration structure build types */
+    enum class Type
+    {
+        unknown,
+        fast_build,
+        fast_trace
+    };
+
+    /**
+     * @brief Create a new acceleration structure build workload.
+     *
+     * Workloads of unknown dimension should use @c primitiveCount of -1.
+     *
+     * @param tagID            The assigned tagID.
+     * @param buildType        The subtype of the build.
+     * @param primitiveCount   The size of the build, in primitives.
+     */
+    LCSAccelerationStructureBuild(uint64_t tagID, Type buildType, int64_t primitiveCount);
+
+    /** @return The subtype of the build */
+    Type getBuildType() const { return buildType; }
+
+    /** @return The subtype of the build */
+    std::string getBuildTypeStr() const;
+
+    /** @return The size of the build, in primitives */
+    int64_t getPrimitiveCount() const { return primitiveCount; }
+
+private:
+    /**
+     * @brief The subtype of the build.
+     */
+    Type buildType;
+
+    /**
+     * @brief The number of primitives in the build, or -1 if unknown.
+     */
+    int64_t primitiveCount;
+};
+
+/**
+ * @brief Class representing an acceleration structure transfer workload in the command stream.
+ */
+class LCSAccelerationStructureTransfer : public LCSWorkload
+{
+public:
+    /* Enumerates possible acceleration structure transfer types */
+    enum class Type
+    {
+        unknown,
+        struct_to_struct,
+        struct_to_mem,
+        mem_to_struct,
+    };
+
+    /**
+     * @brief Create a new acceleration structure transfer workload.
+     *
+     * @param tagID          The assigned tagID.
+     * @param transferType   The subtype of the transfer.
+     */
+    LCSAccelerationStructureTransfer(uint64_t tagID, Type transferType, int64_t byteCount);
+
+    /** @return The subtype of the transfer */
+    Type getTransferType() const { return transferType; }
+
+    /** @return The subtype of the transfer */
+    std::string getTransferTypeStr() const;
+
+    /** @return The size of the transfer, in bytes */
+    int64_t getByteCount() const { return byteCount; }
+
+private:
+    /**
+     * @brief The subtype of the transfer.
+     */
+    Type transferType;
+
+    /**
+     * @brief The number of bytes transferred, -1 if unknown.
+     */
+    int64_t byteCount;
+};
+
+/**
  * @brief Class representing a marker instruction in the command stream that represents a debug label push operation.
  */
 class LCSInstructionMarkerPush
@@ -488,21 +578,24 @@ private:
  * @brief Instructions are a variant representing the operation.
  */
 using LCSInstruction = std::variant<
-    // the instruction is a debug-label push operation
+    // The instruction is a debug-label push operation
     LCSInstructionMarkerPush,
-    // the instruction is a debug-label pop operation
+    // The instruction is a debug-label pop operation
     LCSInstructionMarkerPop,
-    // the instruction represents a renderpass workload operation
+    // The instruction represents a render pass workload operation
     LCSInstructionWorkload<LCSRenderPass>,
-    // the instruction represents a continuation of a renderpass workload operation
+    // The instruction represents a continuation of a render pass workload operation
     LCSInstructionWorkload<LCSRenderPassContinuation>,
-    // the instruction represents a dispatch workload operation
+    // The instruction represents a dispatch workload operation
     LCSInstructionWorkload<LCSDispatch>,
-    // the instruction represents a trace rays workload operation
+    // The instruction represents a trace rays workload operation
     LCSInstructionWorkload<LCSTraceRays>,
-    // the instruction represents an image transfer workload operation
+    // The instruction represents an image transfer workload operation
     LCSInstructionWorkload<LCSImageTransfer>,
-    // the instruction represents a buffer transfer workload operation
-    LCSInstructionWorkload<LCSBufferTransfer>>;
-
+    // The instruction represents a buffer transfer workload operation
+    LCSInstructionWorkload<LCSBufferTransfer>,
+    // The instruction represents an acceleration structure buildworkload operation
+    LCSInstructionWorkload<LCSAccelerationStructureBuild>,
+    // The instruction represents an acceleration structure transfer workload operation
+    LCSInstructionWorkload<LCSAccelerationStructureTransfer>>;
 }

@@ -135,6 +135,60 @@ std::string LCSBufferTransfer::getTransferTypeStr() const
 }
 
 /* See header for details. */
+LCSAccelerationStructureBuild::LCSAccelerationStructureBuild(uint64_t _tagID, Type _buildType, int64_t _primitiveCount)
+    : LCSWorkload(_tagID),
+      buildType(_buildType),
+      primitiveCount(_primitiveCount)
+{
+}
+
+/* See header for details. */
+std::string LCSAccelerationStructureBuild::getBuildTypeStr() const
+{
+    switch (buildType)
+    {
+    case Type::unknown:
+        return "Unknown";
+    case Type::fast_build:
+        return "Fast build";
+    case Type::fast_trace:
+        return "Fast trace";
+    default:
+        assert(false && "Unexpected LCSAccelerationStructureBuild::Type");
+        return "<invalid>";
+    }
+}
+
+/* See header for details. */
+LCSAccelerationStructureTransfer::LCSAccelerationStructureTransfer(uint64_t _tagID,
+                                                                   Type _transferType,
+                                                                   int64_t _byteCount)
+    : LCSWorkload(_tagID),
+      transferType(_transferType),
+      byteCount(_byteCount)
+{
+}
+
+/* See header for details. */
+std::string LCSAccelerationStructureTransfer::getTransferTypeStr() const
+{
+    switch (transferType)
+    {
+    case Type::unknown:
+        return "Unknown";
+    case Type::struct_to_struct:
+        return "Copy acceleration structure";
+    case Type::struct_to_mem:
+        return "Copy acceleration structure to memory";
+    case Type::mem_to_struct:
+        return "Copy memory to acceleration structure";
+    default:
+        assert(false && "Unexpected LCSAccelerationStructureTransfer::Type");
+        return "<invalid>";
+    }
+}
+
+/* See header for details. */
 LCSInstructionMarkerPush::LCSInstructionMarkerPush(const std::string& _label)
     : label(std::make_shared<std::string>(_label))
 {
