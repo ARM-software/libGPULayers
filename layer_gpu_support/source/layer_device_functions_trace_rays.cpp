@@ -82,6 +82,58 @@ static void postTraceRays(Device* layer, VkCommandBuffer commandBuffer)
                                        nullptr);
 }
 
+/**
+ * @brief Pre-build-acceleration-structure code injection point.
+ *
+ * @param layer           The layer context for the device.
+ * @param commandBuffer   The command buffer we are recording.
+ */
+static void preAccelerationStructureBuild(Device* layer, VkCommandBuffer commandBuffer)
+{
+    if (!layer->instance->config.serialize_cmdstream_as_build_pre())
+    {
+        return;
+    }
+
+    // Execution dependency
+    layer->driver.vkCmdPipelineBarrier(commandBuffer,
+                                       VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+                                       VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+                                       0,
+                                       0,
+                                       nullptr,
+                                       0,
+                                       nullptr,
+                                       0,
+                                       nullptr);
+}
+
+/**
+ * @brief Post-build-acceleration-structure code injection point.
+ *
+ * @param layer           The layer context for the device.
+ * @param commandBuffer   The command buffer we are recording.
+ */
+static void postAccelerationStructureBuild(Device* layer, VkCommandBuffer commandBuffer)
+{
+    if (!layer->instance->config.serialize_cmdstream_as_build_post())
+    {
+        return;
+    }
+
+    // Execution dependency
+    layer->driver.vkCmdPipelineBarrier(commandBuffer,
+                                       VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+                                       VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+                                       0,
+                                       0,
+                                       nullptr,
+                                       0,
+                                       nullptr,
+                                       0,
+                                       nullptr);
+}
+
 /* See Vulkan API for documentation. */
 template<>
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdTraceRaysIndirect2KHR<user_tag>(VkCommandBuffer commandBuffer,
@@ -161,4 +213,53 @@ VKAPI_ATTR void VKAPI_CALL
                                     height,
                                     depth);
     postTraceRays(layer, commandBuffer);
+}
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBuildAccelerationStructuresIndirectKHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    uint32_t infoCount,
+    const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,
+    const VkDeviceAddress* pIndirectDeviceAddresses,
+    const uint32_t* pIndirectStrides,
+    const uint32_t* const* ppMaxPrimitiveCounts)
+{
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
+    auto* layer = Device::retrieve(commandBuffer);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    preAccelerationStructureBuild(layer, commandBuffer);
+    layer->driver.vkCmdBuildAccelerationStructuresIndirectKHR(commandBuffer,
+                                                              infoCount,
+                                                              pInfos,
+                                                              pIndirectDeviceAddresses,
+                                                              pIndirectStrides,
+                                                              ppMaxPrimitiveCounts);
+    postAccelerationStructureBuild(layer, commandBuffer);
+}
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBuildAccelerationStructuresKHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    uint32_t infoCount,
+    const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,
+    const VkAccelerationStructureBuildRangeInfoKHR* const* ppBuildRangeInfos)
+{
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
+    auto* layer = Device::retrieve(commandBuffer);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    preAccelerationStructureBuild(layer, commandBuffer);
+    layer->driver.vkCmdBuildAccelerationStructuresKHR(commandBuffer, infoCount, pInfos, ppBuildRangeInfos);
+    postAccelerationStructureBuild(layer, commandBuffer);
 }

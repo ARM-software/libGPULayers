@@ -103,6 +103,10 @@ irrespective of other settings.
             "pre": false,   // Insert full barrier before render passes
             "post": false   // Insert full barrier after render passes
         },
+        "asbuild": {
+            "pre": false,   // Insert full barrier before acceleration structure builds
+            "post": false   // Insert full barrier after acceleration structure builds
+        },
         "tracerays": {
             "pre": false,   // Insert full barrier before trace rays
             "post": false   // Insert full barrier after trace rays

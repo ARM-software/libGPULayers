@@ -57,6 +57,9 @@ void LayerConfig::parse_serialization_options(const json& config)
     bool s_stream_rp_pre = s_stream.at("renderpass").at("pre");
     bool s_stream_rp_post = s_stream.at("renderpass").at("post");
 
+    bool s_stream_asb_pre = s_stream.at("asbuild").at("pre");
+    bool s_stream_asb_post = s_stream.at("asbuild").at("post");
+
     bool s_stream_rt_pre = s_stream.at("tracerays").at("pre");
     bool s_stream_rt_post = s_stream.at("tracerays").at("post");
 
@@ -65,12 +68,19 @@ void LayerConfig::parse_serialization_options(const json& config)
 
     // Write after all options read from JSON so we know it parsed correctly
     conf_serialize_queues = (!s_none) && (s_all || s_queue);
+
     conf_serialize_dispatch_pre = (!s_none) && (s_all || s_stream_c_pre);
     conf_serialize_dispatch_post = (!s_none) && (s_all || s_stream_c_post);
+
     conf_serialize_render_pass_pre = (!s_none) && (s_all || s_stream_rp_pre);
     conf_serialize_render_pass_post = (!s_none) && (s_all || s_stream_rp_post);
+
+    conf_serialize_as_build_pre = (!s_none) && (s_all || s_stream_asb_pre);
+    conf_serialize_as_build_post = (!s_none) && (s_all || s_stream_asb_post);
+
     conf_serialize_trace_rays_pre = (!s_none) && (s_all || s_stream_rt_pre);
     conf_serialize_trace_rays_post = (!s_none) && (s_all || s_stream_rt_post);
+
     conf_serialize_transfer_pre = (!s_none) && (s_all || s_stream_tx_pre);
     conf_serialize_transfer_post = (!s_none) && (s_all || s_stream_tx_post);
 
@@ -81,6 +91,8 @@ void LayerConfig::parse_serialization_options(const json& config)
     LAYER_LOG(" - Serialize compute post: %d", conf_serialize_dispatch_post);
     LAYER_LOG(" - Serialize render pass pre: %d", conf_serialize_render_pass_pre);
     LAYER_LOG(" - Serialize render pass post: %d", conf_serialize_render_pass_post);
+    LAYER_LOG(" - Serialize acceleration structure build pre: %d", conf_serialize_as_build_pre);
+    LAYER_LOG(" - Serialize acceleration structure build post: %d", conf_serialize_as_build_post);
     LAYER_LOG(" - Serialize trace rays pre: %d", conf_serialize_trace_rays_pre);
     LAYER_LOG(" - Serialize trace rays post: %d", conf_serialize_trace_rays_post);
     LAYER_LOG(" - Serialize transfer pre: %d", conf_serialize_transfer_pre);
@@ -279,6 +291,18 @@ bool LayerConfig::serialize_cmdstream_render_pass_pre() const
 bool LayerConfig::serialize_cmdstream_render_pass_post() const
 {
     return conf_serialize_render_pass_post;
+}
+
+/* See header for documentation. */
+bool LayerConfig::serialize_cmdstream_as_build_pre() const
+{
+    return conf_serialize_as_build_pre;
+}
+
+/* See header for documentation. */
+bool LayerConfig::serialize_cmdstream_as_build_post() const
+{
+    return conf_serialize_as_build_post;
 }
 
 /* See header for documentation. */

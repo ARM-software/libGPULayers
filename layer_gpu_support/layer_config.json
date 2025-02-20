@@ -12,6 +12,10 @@
                 "pre": false,
                 "post": false
             },
+            "asbuild": {
+                "pre": false,
+                "post": false
+            },
             "tracerays": {
                 "pre": false,
                 "post": false
