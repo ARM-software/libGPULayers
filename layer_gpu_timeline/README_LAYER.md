@@ -193,7 +193,7 @@ unknown draw call count.
 
 This page covers using the layer as a tool for application development. For
 documentation about developing the layer itself, please refer to the
-[developer documentation](./docs/developer-docs.md)
+[developer documentation](./docs/developer-docs.md).
 
 - - -
 
