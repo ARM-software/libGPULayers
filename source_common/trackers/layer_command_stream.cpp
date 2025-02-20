@@ -135,6 +135,32 @@ std::string LCSBufferTransfer::getTransferTypeStr() const
 }
 
 /* See header for details. */
+LCSAccelerationStructureTransfer::LCSAccelerationStructureTransfer(uint64_t _tagID, Type _transferType)
+    : LCSWorkload(_tagID),
+      transferType(_transferType)
+{
+}
+
+/* See header for details. */
+std::string LCSAccelerationStructureTransfer::getTransferTypeStr() const
+{
+    switch (transferType)
+    {
+    case Type::unknown:
+        return "Unknown";
+    case Type::struct_to_struct:
+        return "Copy acceleration structure";
+    case Type::struct_to_mem:
+        return "Copy acceleration structure to memory";
+    case Type::mem_to_struct:
+        return "Copy memory to acceleration structure";
+    default:
+        assert(false && "Unexpected LCSAccelerationStructureTransfer::Type");
+        return "<invalid>";
+    }
+}
+
+/* See header for details. */
 LCSInstructionMarkerPush::LCSInstructionMarkerPush(const std::string& _label)
     : label(std::make_shared<std::string>(_label))
 {
