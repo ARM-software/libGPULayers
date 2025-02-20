@@ -96,6 +96,16 @@ public:
      */
     bool serialize_cmdstream_transfer_post() const;
 
+    /**
+     * @brief True if config wants to serialize before acceleration structure build workloads.
+     */
+    bool serialize_cmdstream_as_build_pre() const;
+
+    /**
+     * @brief True if config wants to serialize after acceleration structure build workloads.
+     */
+    bool serialize_cmdstream_as_build_post() const;
+
     // Config queries for shaders
 
     /**
@@ -201,6 +211,16 @@ private:
      * @brief True if we force serialize after trace rays workloads.
      */
     bool conf_serialize_trace_rays_post {false};
+
+    /**
+     * @brief True if we force serialize before acceleration structure build workloads.
+     */
+    bool conf_serialize_as_build_pre {false};
+
+    /**
+     * @brief True if we force serialize after acceleration structure build workloads.
+     */
+    bool conf_serialize_as_build_post {false};
 
     /**
      * @brief True if we force serialize before transfer workloads.
