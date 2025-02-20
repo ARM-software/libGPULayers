@@ -168,8 +168,12 @@ class ADBConnect:
         commands = self.get_base_command(args)
         packed_commands = self.pack_commands(commands, shell, quote)
 
+        # Force UTF-8 for text output
+        encoding = 'utf-8' if text else None
+
         # Invoke the command
-        rep = sp.run(packed_commands, check=check, shell=shell, text=text,
+        rep = sp.run(packed_commands, check=check, shell=shell,
+                     text=text, encoding=encoding,
                      stdin=sp.DEVNULL, stdout=sp.PIPE, stderr=sp.PIPE)
 
         # Return the output
@@ -219,11 +223,14 @@ class ADBConnect:
         commands = self.get_base_command(args)
         packed_commands = self.pack_commands(commands, shell, quote)
 
+        # Force UTF-8 for text output
+        encoding = 'utf-8' if text else None
+
         # Sink inputs to DEVNULL to stop the child process stealing keyboard
         # Sink outputs to DEVNULL to stop full output buffers blocking child
         # pylint: disable=consider-using-with
         process = sp.Popen(packed_commands,
-                           text=text, shell=shell,
+                           text=text, encoding=encoding, shell=shell,
                            stdin=sp.DEVNULL, stdout=output, stderr=sp.DEVNULL)
 
         # Return the output process a user can use to wait, if needed.
@@ -258,9 +265,12 @@ class ADBConnect:
         commands.extend(args)
         packed_commands = self.pack_commands(commands, shell, quote)
 
+        # Force UTF-8 for text output
+        encoding = 'utf-8' if text else None
+
         # Invoke the command
         rep = sp.run(packed_commands,
-                     check=check, shell=shell, text=text,
+                     check=check, shell=shell, text=text, encoding=encoding,
                      stdin=sp.DEVNULL, stdout=sp.PIPE, stderr=sp.PIPE)
 
         # Return the output
@@ -298,9 +308,12 @@ class ADBConnect:
         commands.extend(args)
         packed_commands = self.pack_commands(commands, shell, quote)
 
+        # Force UTF-8 for text output
+        encoding = 'utf-8' if text else None
+
         # Invoke the command
         rep = sp.run(packed_commands,
-                     check=check, shell=shell, text=text,
+                     check=check, shell=shell, text=text, encoding=encoding,
                      stdin=sp.DEVNULL, stdout=sp.PIPE, stderr=sp.PIPE)
 
         # Return the output
