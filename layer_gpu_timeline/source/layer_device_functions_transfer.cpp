@@ -594,6 +594,12 @@ VKAPI_ATTR void VKAPI_CALL
     std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
 
+    // TODO: We ideally want to track sizes of the transfers, but this requires
+    // dispatching vkCmdWriteAccelerationStructuresPropertiesKHR() queries and
+    // capturing the result "later" which we don't support yet.
+    // We can approximate the size using vkGetAccelerationStructureBuildSizesKHR(),
+    // but this returns the build size which may be larger than the size of the
+    // AS itself which can be smaller (especially if later compacted).
     uint64_t tagID =
         registerAccelerationStructureTransfer(layer,
                                               commandBuffer,
@@ -619,6 +625,12 @@ VKAPI_ATTR void VKAPI_CALL
     std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
 
+    // TODO: We ideally want to track sizes of the transfers, but this requires
+    // dispatching vkCmdWriteAccelerationStructuresPropertiesKHR() queries and
+    // capturing the result "later" which we don't support yet.
+    // We can approximate the size using vkGetAccelerationStructureBuildSizesKHR(),
+    // but this returns the build size which may be larger than the size of the
+    // AS itself which can be smaller (especially if later compacted).
     uint64_t tagID =
         registerAccelerationStructureTransfer(layer,
                                               commandBuffer,
@@ -644,6 +656,12 @@ VKAPI_ATTR void VKAPI_CALL
     std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
 
+    // TODO: We ideally want to track sizes of the transfers, but this requires
+    // dispatching vkCmdWriteAccelerationStructuresPropertiesKHR() queries and
+    // capturing the result "later" which we don't support yet.
+    // We can approximate the size using vkGetAccelerationStructureBuildSizesKHR(),
+    // but this returns the build size which may be larger than the size of the
+    // AS itself which can be smaller (especially if later compacted).
     uint64_t tagID =
         registerAccelerationStructureTransfer(layer,
                                               commandBuffer,

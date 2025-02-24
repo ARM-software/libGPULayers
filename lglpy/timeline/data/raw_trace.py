@@ -427,12 +427,7 @@ class MetadataImageTransfer(MetadataWorkload):
         super().__init__(submit, metadata)
 
         self.subtype = str(metadata['subtype'])
-
-        if 'pixelCount' in metadata:
-            self.pixel_count = int(metadata['pixelCount'])
-        # Remove this when we re-record our test traces
-        else:
-            self.pixel_count = int(metadata['pixels'])
+        self.pixel_count = int(metadata['pixelCount'])
 
 
 class MetadataBufferTransfer(MetadataWorkload):
@@ -455,12 +450,55 @@ class MetadataBufferTransfer(MetadataWorkload):
         super().__init__(submit, metadata)
 
         self.subtype = str(metadata['subtype'])
+        self.byte_count = int(metadata['byteCount'])
 
-        if 'byteCount' in metadata:
-            self.byte_count = int(metadata['byteCount'])
-        # Remove this when we re-record our test traces
-        else:
-            self.byte_count = int(metadata['bytes'])
+
+class MetadataASBuild(MetadataWorkload):
+    '''
+    Parsed GPU Timeline layer payload for an acceleration structure build.
+
+    Attributes:
+        subtype: Specific type of the transfer.
+        primitive_count: Number of bytes written, or -1 if unknown.
+    '''
+
+    def __init__(self, submit: MetadataSubmit, metadata: JSONType):
+        '''
+        Parsed GPU Timeline layer payload for a single AS build.
+
+        Args:
+            submit: The submit information.
+            metadata: JSON payload from the layer.
+        '''
+        super().__init__(submit, metadata)
+
+        self.subtype = str(metadata['subtype'])
+        self.primitive_count = int(metadata['primitiveCount'])
+
+
+class MetadataASTransfer(MetadataWorkload):
+    '''
+    Parsed GPU Timeline layer payload for a transfer that writes an
+    acceleration structure.
+
+    Attributes:
+        subtype: Specific type of the transfer.
+        byte_count: Number of bytes written, or -1 if unknown.
+    '''
+
+    def __init__(self, submit: MetadataSubmit, metadata: JSONType):
+        '''
+        Parsed GPU Timeline layer payload for a single acceleration structure
+        transfer.
+
+        Args:
+            submit: The submit information.
+            metadata: JSON payload from the layer.
+        '''
+        super().__init__(submit, metadata)
+
+        self.subtype = str(metadata['subtype'])
+        self.byte_count = int(metadata['byteCount'])
 
 
 class RenderstageEvent:
@@ -518,7 +556,9 @@ MetadataWork = Union[
     MetadataDispatch,
     MetadataTraceRays,
     MetadataImageTransfer,
-    MetadataBufferTransfer
+    MetadataBufferTransfer,
+    MetadataASBuild,
+    MetadataASTransfer
 ]
 
 
@@ -761,6 +801,12 @@ class RawTrace:
 
                         elif workload['type'] == 'buffertransfer':
                             meta = MetadataBufferTransfer(submeta, workload)
+
+                        elif workload['type'] == 'asbuild':
+                            meta = MetadataASBuild(submeta, workload)
+
+                        elif workload['type'] == 'astransfer':
+                            meta = MetadataASTransfer(submeta, workload)
 
                         else:
                             assert False, f'Unknown workload {workload["type"]}'
