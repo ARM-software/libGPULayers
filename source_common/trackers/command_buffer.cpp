@@ -136,7 +136,7 @@ uint64_t CommandBuffer::dispatch(int64_t xGroups, int64_t yGroups, int64_t zGrou
     uint64_t tagID = Tracker::LCSWorkload::assignTagID();
     stats.incDispatchCount();
 
-    // Add a workload to the render pass
+    // Add a workload to the command stream
     auto workload = std::make_shared<LCSDispatch>(tagID, xGroups, yGroups, zGroups);
 
     // Add a command to the layer-side command stream
@@ -151,7 +151,7 @@ uint64_t CommandBuffer::traceRays(int64_t xItems, int64_t yItems, int64_t zItems
     uint64_t tagID = Tracker::LCSWorkload::assignTagID();
     stats.incTraceRaysCount();
 
-    // Add a workload to the render pass
+    // Add a workload to the command stream
     auto workload = std::make_shared<LCSTraceRays>(tagID, xItems, yItems, zItems);
 
     // Add a command to the layer-side command stream
@@ -166,7 +166,7 @@ uint64_t CommandBuffer::imageTransfer(LCSImageTransfer::Type transferType, int64
     uint64_t tagID = Tracker::LCSWorkload::assignTagID();
     stats.incImageTransferCount();
 
-    // Add a workload to the render pass
+    // Add a workload to the command stream
     auto workload = std::make_shared<LCSImageTransfer>(tagID, transferType, pixelCount);
 
     // Add a command to the layer-side command stream
@@ -181,8 +181,38 @@ uint64_t CommandBuffer::bufferTransfer(LCSBufferTransfer::Type transferType, int
     uint64_t tagID = Tracker::LCSWorkload::assignTagID();
     stats.incBufferTransferCount();
 
-    // Add a workload to the render pass
+    // Add a workload to the command stream
     auto workload = std::make_shared<LCSBufferTransfer>(tagID, transferType, byteCount);
+
+    // Add a command to the layer-side command stream
+    workloadCommandStream.emplace_back(LCSInstructionWorkload(workload));
+
+    return tagID;
+}
+
+/* See header for documentation. */
+uint64_t CommandBuffer::accelerationStructureBuild(LCSAccelerationStructureBuild::Type buildType,
+                                                   int64_t primitiveCount)
+{
+    uint64_t tagID = Tracker::LCSWorkload::assignTagID();
+
+    // Add a workload to the command stream
+    auto workload = std::make_shared<LCSAccelerationStructureBuild>(tagID, buildType, primitiveCount);
+
+    // Add a command to the layer-side command stream
+    workloadCommandStream.emplace_back(LCSInstructionWorkload(workload));
+
+    return tagID;
+}
+
+/* See header for documentation. */
+uint64_t CommandBuffer::accelerationStructureTransfer(LCSAccelerationStructureTransfer::Type transferType,
+                                                      int64_t byteCount)
+{
+    uint64_t tagID = Tracker::LCSWorkload::assignTagID();
+
+    // Add a workload to the command stream
+    auto workload = std::make_shared<LCSAccelerationStructureTransfer>(tagID, transferType, byteCount);
 
     // Add a command to the layer-side command stream
     workloadCommandStream.emplace_back(LCSInstructionWorkload(workload));

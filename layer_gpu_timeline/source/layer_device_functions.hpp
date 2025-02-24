@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024 Arm Limited
+ * Copyright (c) 2024-2025 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -298,6 +298,26 @@ VKAPI_ATTR void VKAPI_CALL
                                       uint32_t height,
                                       uint32_t depth);
 
+// Commands for acceleration structure builds
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBuildAccelerationStructuresIndirectKHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    uint32_t infoCount,
+    const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,
+    const VkDeviceAddress* pIndirectDeviceAddresses,
+    const uint32_t* pIndirectStrides,
+    const uint32_t* const* ppMaxPrimitiveCounts);
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBuildAccelerationStructuresKHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    uint32_t infoCount,
+    const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,
+    const VkAccelerationStructureBuildRangeInfoKHR* const* ppBuildRangeInfos);
+
 // Commands for transfers
 
 /* See Vulkan API for documentation. */
@@ -405,6 +425,24 @@ template<>
 VKAPI_ATTR void VKAPI_CALL
     layer_vkCmdCopyImageToBuffer2KHR<user_tag>(VkCommandBuffer commandBuffer,
                                                const VkCopyImageToBufferInfo2* pCopyImageToBufferInfo);
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL
+    layer_vkCmdCopyAccelerationStructureKHR<user_tag>(VkCommandBuffer commandBuffer,
+                                                      const VkCopyAccelerationStructureInfoKHR* pInfo);
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL
+    layer_vkCmdCopyAccelerationStructureToMemoryKHR<user_tag>(VkCommandBuffer commandBuffer,
+                                                              const VkCopyAccelerationStructureToMemoryInfoKHR* pInfo);
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL
+    layer_vkCmdCopyMemoryToAccelerationStructureKHR<user_tag>(VkCommandBuffer commandBuffer,
+                                                              const VkCopyMemoryToAccelerationStructureInfoKHR* pInfo);
 
 // Functions for debug
 

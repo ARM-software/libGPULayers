@@ -31,7 +31,8 @@ from typing import Optional, Union
 
 from .raw_trace import RawTrace, RenderstageEvent, MetadataWork, \
     MetadataRenderPass, MetadataDispatch, MetadataTraceRays, \
-    MetadataBufferTransfer, MetadataImageTransfer, GPUStreamID, GPUStageID
+    MetadataBufferTransfer, MetadataImageTransfer, MetadataASBuild, \
+    MetadataASTransfer, GPUStreamID, GPUStageID
 
 LABEL_HEURISTICS = True
 LABEL_MAX_LEN = 60
@@ -582,6 +583,112 @@ class GPUBufferTransfer(GPUWorkload):
         return self.transfer_type
 
 
+class GPUASBuild(GPUWorkload):
+    '''
+    Workload class representing an acceleration structure build.
+    '''
+
+    def __init__(
+            self, event: RenderstageEvent, metadata: MetadataASBuild):
+        '''
+        Buffer transfer workload in a trace.
+
+        Args:
+            event: Parsed render stage event.
+            metadata: Parsed metadata annotation.
+        '''
+        # Populate common data
+        super().__init__(event, metadata)
+
+        # We must have metadata so no need to check
+        self.build_type = metadata.subtype
+        self.primitive_count = metadata.primitive_count
+
+    def get_long_label(self) -> str:
+        '''
+        Get the long form label for this workload.
+
+        Returns:
+            Returns the label for use in the UI.
+        '''
+        lines = []
+
+        if label_name := self.get_label_name():
+            lines.append(label_name)
+
+        # If indirect then show a placeholder
+        if self.primitive_count == -1:
+            line = f'{self.build_type} (? primitives)'
+        else:
+            s = 's' if self.primitive_count != 1 else ''
+            line = f'{self.build_type} ({self.primitive_count} primitive{s})'
+        lines.append(line)
+
+        return '\n'.join(lines)
+
+    def get_short_label(self) -> str:
+        '''
+        Get the short form label for this workload.
+
+        Returns:
+            Returns the label for use in the UI.
+        '''
+        return self.build_type
+
+
+class GPUASTransfer(GPUWorkload):
+    '''
+    Workload class representing an acceleration structure transfer.
+    '''
+
+    def __init__(
+            self, event: RenderstageEvent, metadata: MetadataASTransfer):
+        '''
+        Acceleration structure transfer workload in a trace.
+
+        Args:
+            event: Parsed render stage event.
+            metadata: Parsed metadata annotation.
+        '''
+        # Populate common data
+        super().__init__(event, metadata)
+
+        # We must have metadata so no need to check
+        self.transfer_type = metadata.subtype
+        self.byte_count = metadata.byte_count
+
+    def get_long_label(self) -> str:
+        '''
+        Get the long form label for this workload.
+
+        Returns:
+            Returns the label for use in the UI.
+        '''
+        lines = []
+
+        if label_name := self.get_label_name():
+            lines.append(label_name)
+
+        # If indirect then show a placeholder
+        if self.byte_count == -1:
+            line = f'{self.transfer_type} (? bytes)'
+        else:
+            s = 's' if self.byte_count != 1 else ''
+            line = f'{self.transfer_type} ({self.byte_count} byte{s})'
+        lines.append(line)
+
+        return '\n'.join(lines)
+
+    def get_short_label(self) -> str:
+        '''
+        Get the short form label for this workload.
+
+        Returns:
+            Returns the label for use in the UI.
+        '''
+        return self.transfer_type
+
+
 # Helper for typing all workload subclasses of MetadataWorkload
 GPUWork = Union[
     # Generic workload if no metadata
@@ -592,7 +699,9 @@ GPUWork = Union[
     GPUDispatch,
     GPUTraceRays,
     GPUImageTransfer,
-    GPUBufferTransfer
+    GPUBufferTransfer,
+    GPUASBuild,
+    GPUASTransfer,
 ]
 
 
@@ -638,6 +747,12 @@ class GPUTrace:
 
             elif isinstance(event_meta, MetadataBufferTransfer):
                 workload = GPUBufferTransfer(event, event_meta)
+
+            elif isinstance(event_meta, MetadataASBuild):
+                workload = GPUASBuild(event, event_meta)
+
+            elif isinstance(event_meta, MetadataASTransfer):
+                workload = GPUASTransfer(event, event_meta)
 
             else:
                 assert False, 'Unknown metadata type'

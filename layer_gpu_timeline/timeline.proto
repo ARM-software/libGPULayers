@@ -148,7 +148,7 @@ message Submit {
     uint64 queue = 3;
 }
 
-/* Enumerates the possible attachment types a renderpass can have */
+/* Enumerates the possible attachment types a render pass can have */
 enum RenderpassAttachmentType {
     undefined = 0;
     color = 1;
@@ -156,7 +156,7 @@ enum RenderpassAttachmentType {
     stencil = 3;
 }
 
-/* Describe an attachment to a renderpass */
+/* Describe an attachment to a render pass */
 message RenderpassAttachment {
     /* The attachment type */
     RenderpassAttachmentType type = 1;
@@ -250,14 +250,55 @@ enum BufferTransferType {
     copy_buffer = 2;
 }
 
-/* An buffer transfer submission */
+/* A buffer transfer submission */
 message BufferTransfer {
     /* The unique identifier for this operation */
     uint64 tag_id = 1;
-    /* The number of bytes being transfered */
+    /* The number of bytes being transferred */
     int64 byte_count = 2;
     /* The buffer type */
     BufferTransferType transfer_type = 3;
+    /* Any user defined debug labels associated with the dispatch */
+    repeated string debug_label = 4;
+}
+
+/* Enumerates possible acceleration structure build types */
+enum AccelerationStructureBuildType
+{
+    unknown_as_build = 0;
+    fast_build = 1;
+    fast_trace = 2;
+}
+
+/* An acceleration structure build submission */
+message AccelerationStructureBuild {
+    /* The unique identifier for this operation */
+    uint64 tag_id = 1;
+    /* The number of primitives in the build */
+    int64 primitive_count = 2;
+    /* The build type */
+    AccelerationStructureBuildType build_type = 3;
+    /* Any user defined debug labels associated with the dispatch */
+    repeated string debug_label = 4;
+}
+
+/* Enumerates possible acceleration structure transfer types */
+enum AccelerationStructureTransferType
+{
+    unknown_as_transfer = 0;
+    struct_to_struct = 1;
+    struct_to_mem = 2;
+    mem_to_struct = 3;
+}
+
+/* An acceleration structure transfer submission */
+message AccelerationStructureTransfer {
+    /* The unique identifier for this operation */
+    uint64 tag_id = 1;
+    /* The number of bytes being transferred */
+    int64 byte_count = 2;
+    /* The transfer type */
+    AccelerationStructureTransferType transfer_type = 3;
     /* Any user defined debug labels associated with the dispatch */
     repeated string debug_label = 4;
 }
@@ -274,4 +315,6 @@ message TimelineRecord {
     TraceRays trace_rays = 8;
     ImageTransfer image_transfer = 9;
     BufferTransfer buffer_transfer = 10;
+    AccelerationStructureBuild acceleration_structure_build = 11;
+    AccelerationStructureTransfer acceleration_structure_transfer = 12;
 }

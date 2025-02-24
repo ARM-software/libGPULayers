@@ -74,6 +74,26 @@ static uint64_t registerImageTransfer(Device* layer,
     return cb.imageTransfer(transferType, pixelCount);
 }
 
+/**
+ * @brief Register a transfer to an image with the tracker.
+ *
+ * @param layer           The layer context for the device.
+ * @param commandBuffer   The command buffer we are recording.
+ * @param transferType    The type of transfer being performed.
+ * @param byteCount       The number of bytes transferred.
+ *
+ * @return The assigned tagID for the workload.
+ */
+static uint64_t registerAccelerationStructureTransfer(Device* layer,
+                                                      VkCommandBuffer commandBuffer,
+                                                      Tracker::LCSAccelerationStructureTransfer::Type transferType,
+                                                      int64_t byteCount)
+{
+    auto& tracker = layer->getStateTracker();
+    auto& cb = tracker.getCommandBuffer(commandBuffer);
+    return cb.accelerationStructureTransfer(transferType, byteCount);
+}
+
 // Commands for transfers
 
 /* See Vulkan API for documentation. */
@@ -559,5 +579,98 @@ VKAPI_ATTR void VKAPI_CALL
     lock.unlock();
     emitStartTag(layer, commandBuffer, tagID);
     layer->driver.vkCmdCopyImageToBuffer2KHR(commandBuffer, pCopyImageToBufferInfo);
+    layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
+}
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL
+    layer_vkCmdCopyAccelerationStructureKHR<user_tag>(VkCommandBuffer commandBuffer,
+                                                      const VkCopyAccelerationStructureInfoKHR* pInfo)
+{
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
+    auto* layer = Device::retrieve(commandBuffer);
+
+    // TODO: We ideally want to track sizes of the transfers, but this requires
+    // dispatching vkCmdWriteAccelerationStructuresPropertiesKHR() queries and
+    // capturing the result "later" which we don't support yet.
+    // We can approximate the size using vkGetAccelerationStructureBuildSizesKHR(),
+    // but this returns the build size which may be larger than the size of the
+    // AS itself which can be smaller (especially if later compacted).
+    uint64_t tagID =
+        registerAccelerationStructureTransfer(layer,
+                                              commandBuffer,
+                                              Tracker::LCSAccelerationStructureTransfer::Type::struct_to_struct,
+                                              -1);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    emitStartTag(layer, commandBuffer, tagID);
+    layer->driver.vkCmdCopyAccelerationStructureKHR(commandBuffer, pInfo);
+    layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
+}
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL
+    layer_vkCmdCopyAccelerationStructureToMemoryKHR<user_tag>(VkCommandBuffer commandBuffer,
+                                                              const VkCopyAccelerationStructureToMemoryInfoKHR* pInfo)
+{
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
+    auto* layer = Device::retrieve(commandBuffer);
+
+    // TODO: We ideally want to track sizes of the transfers, but this requires
+    // dispatching vkCmdWriteAccelerationStructuresPropertiesKHR() queries and
+    // capturing the result "later" which we don't support yet.
+    // We can approximate the size using vkGetAccelerationStructureBuildSizesKHR(),
+    // but this returns the build size which may be larger than the size of the
+    // AS itself which can be smaller (especially if later compacted).
+    uint64_t tagID =
+        registerAccelerationStructureTransfer(layer,
+                                              commandBuffer,
+                                              Tracker::LCSAccelerationStructureTransfer::Type::struct_to_mem,
+                                              -1);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    emitStartTag(layer, commandBuffer, tagID);
+    layer->driver.vkCmdCopyAccelerationStructureToMemoryKHR(commandBuffer, pInfo);
+    layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
+}
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL
+    layer_vkCmdCopyMemoryToAccelerationStructureKHR<user_tag>(VkCommandBuffer commandBuffer,
+                                                              const VkCopyMemoryToAccelerationStructureInfoKHR* pInfo)
+{
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
+    auto* layer = Device::retrieve(commandBuffer);
+
+    // TODO: We ideally want to track sizes of the transfers, but this requires
+    // dispatching vkCmdWriteAccelerationStructuresPropertiesKHR() queries and
+    // capturing the result "later" which we don't support yet.
+    // We can approximate the size using vkGetAccelerationStructureBuildSizesKHR(),
+    // but this returns the build size which may be larger than the size of the
+    // AS itself which can be smaller (especially if later compacted).
+    uint64_t tagID =
+        registerAccelerationStructureTransfer(layer,
+                                              commandBuffer,
+                                              Tracker::LCSAccelerationStructureTransfer::Type::mem_to_struct,
+                                              -1);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    emitStartTag(layer, commandBuffer, tagID);
+    layer->driver.vkCmdCopyMemoryToAccelerationStructureKHR(commandBuffer, pInfo);
     layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
 }

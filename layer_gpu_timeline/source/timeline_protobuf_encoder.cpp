@@ -173,7 +173,7 @@ enum class ImageTransferType
 using ImageTransfer = pp::message<
     /* The unique identifier for this operation */
     pp::uint64_field<"tag_id", 1>,
-    /* The number of pixels being transfered */
+    /* The number of pixels being transferred */
     pp::int64_field<"pixel_count", 2>,
     /* The image type */
     pp::enum_field<"transfer_type", 3, ImageTransferType>,
@@ -192,24 +192,66 @@ enum class BufferTransferType
 using BufferTransfer = pp::message<
     /* The unique identifier for this operation */
     pp::uint64_field<"tag_id", 1>,
-    /* The number of bytes being transfered */
+    /* The number of bytes being transferred */
     pp::int64_field<"byte_count", 2>,
     /* The buffer type */
     pp::enum_field<"transfer_type", 3, BufferTransferType>,
     /* Any user defined debug labels associated with the dispatch */
     pp::string_field<"debug_label", 4, pp::repeated>>;
 
+/* Enumerates possible acceleration structure build types */
+enum class AccelerationStructureBuildType
+{
+    unknown_as_build = 0,
+    fast_build = 1,
+    fast_trace = 2,
+};
+
+/* An acceleration structure transfer submission */
+using AccelerationStructureBuild = pp::message<
+    /* The unique identifier for this operation */
+    pp::uint64_field<"tag_id", 1>,
+    /* The number of primitives in the build */
+    pp::int64_field<"primitive_count", 2>,
+    /* The build type */
+    pp::enum_field<"build_type", 3, AccelerationStructureBuildType>,
+    /* Any user defined debug labels associated with the build */
+    pp::string_field<"debug_label", 4, pp::repeated>>;
+
+/* Enumerates possible acceleration structure transfer types */
+enum class AccelerationStructureTransferType
+{
+    unknown_as_transfer = 0,
+    struct_to_struct = 1,
+    struct_to_mem = 2,
+    mem_to_struct = 3,
+};
+
+/* An acceleration structure transfer submission */
+using AccelerationStructureTransfer = pp::message<
+    /* The unique identifier for this operation */
+    pp::uint64_field<"tag_id", 1>,
+    /* The number of bytes being transferred */
+    pp::int64_field<"byte_count", 2>,
+    /* The transfer type */
+    pp::enum_field<"transfer_type", 3, AccelerationStructureTransferType>,
+    /* Any user defined debug labels associated with the transfer */
+    pp::string_field<"debug_label", 4, pp::repeated>>;
+
 /* The data payload message that wraps all other messages */
-using TimelineRecord = pp::message<pp::message_field<"header", 1, Header>,
-                                   pp::message_field<"metadata", 2, DeviceMetadata>,
-                                   pp::message_field<"frame", 3, Frame>,
-                                   pp::message_field<"submit", 4, Submit>,
-                                   pp::message_field<"renderpass", 5, BeginRenderpass>,
-                                   pp::message_field<"continue_renderpass", 6, ContinueRenderpass>,
-                                   pp::message_field<"dispatch", 7, Dispatch>,
-                                   pp::message_field<"trace_rays", 8, TraceRays>,
-                                   pp::message_field<"image_transfer", 9, ImageTransfer>,
-                                   pp::message_field<"buffer_transfer", 10, BufferTransfer>>;
+using TimelineRecord =
+    pp::message<pp::message_field<"header", 1, Header>,
+                pp::message_field<"metadata", 2, DeviceMetadata>,
+                pp::message_field<"frame", 3, Frame>,
+                pp::message_field<"submit", 4, Submit>,
+                pp::message_field<"renderpass", 5, BeginRenderpass>,
+                pp::message_field<"continue_renderpass", 6, ContinueRenderpass>,
+                pp::message_field<"dispatch", 7, Dispatch>,
+                pp::message_field<"trace_rays", 8, TraceRays>,
+                pp::message_field<"image_transfer", 9, ImageTransfer>,
+                pp::message_field<"buffer_transfer", 10, BufferTransfer>,
+                pp::message_field<"acceleration_structure_build", 11, AccelerationStructureBuild>,
+                pp::message_field<"acceleration_structure_transfer", 12, AccelerationStructureTransfer>>;
 
 namespace
 {
@@ -245,10 +287,11 @@ Comms::MessageData packBuffer(pp::constant<F> c, T&& f)
 }
 
 /**
- * @brief Map the state-tracker enum value that describes the renderpass attachment name to some pair of
+ * @brief Map the state-tracker enum value that describes the render pass attachment name to some pair of
  * protocol values, being the attachment type, and optional attachment index.
  *
- * @param name The name value to map to the pair of type and index
+ * @param name   The name value to map to the pair of type and index
+ *
  * @return A pair, where the first value is the corresponding attachment type, and the second value is
  * the corresponding attachment index (or nullopt in the case the index is not relevant).
  */
@@ -284,13 +327,41 @@ constexpr std::pair<RenderpassAttachmentType, std::optional<uint32_t>> mapRender
 }
 
 /**
+ * @brief Map the enum value that describes the acceleration structure build into the protocol encoded value
+ *
+ * NB: Whilst we are currently just replicating one enum value into another (which the compiler should be smart enough
+ * to fix), we do it this way to ensure we decouple the state-tracker from the protobuf encoding, since we don't want to
+ * accidentally change some enum wire-value in the future.
+ *
+ * @param type   The type enum to convert
+ *
+ * @return The wire value enum to store in the protobuf message
+ */
+constexpr AccelerationStructureBuildType mapASBuildType(Tracker::LCSAccelerationStructureBuild::Type type)
+{
+    switch (type)
+    {
+    case Tracker::LCSAccelerationStructureBuild::Type::unknown:
+        return AccelerationStructureBuildType::unknown_as_build;
+    case Tracker::LCSAccelerationStructureBuild::Type::fast_build:
+        return AccelerationStructureBuildType::fast_build;
+    case Tracker::LCSAccelerationStructureBuild::Type::fast_trace:
+        return AccelerationStructureBuildType::fast_trace;
+    default:
+        assert(false && "Unexpected LCSAccelerationStructureBuild::Type");
+        return AccelerationStructureBuildType::unknown_as_build;
+    }
+}
+
+/**
  * @brief Map the state-tracker enum value that describes the buffer transfer type into the protocol encoded value
  *
  * NB: Whilst we are currently just replicating one enum value into another (which the compiler should be smart enough
  * to fix), we do it this way to ensure we decouple the state-tracker from the protobuf encoding, since we don't want to
  * accidentally change some enum wire-value in the future.
  *
- * @param type The type enum to convert
+ * @param type   The type enum to convert
+ *
  * @return The wire value enum to store in the protobuf message
  */
 constexpr BufferTransferType mapBufferTransferType(Tracker::LCSBufferTransfer::Type type)
@@ -316,7 +387,8 @@ constexpr BufferTransferType mapBufferTransferType(Tracker::LCSBufferTransfer::T
  * to fix), we do it this way to ensure we decouple the state-tracker from the protobuf encoding, since we don't want to
  * accidentally change some enum wire-value in the future.
  *
- * @param type The type enum to convert
+ * @param type   The type enum to convert
+ *
  * @return The wire value enum to store in the protobuf message
  */
 constexpr ImageTransferType mapImageTransferType(Tracker::LCSImageTransfer::Type type)
@@ -340,10 +412,39 @@ constexpr ImageTransferType mapImageTransferType(Tracker::LCSImageTransfer::Type
 }
 
 /**
+ * @brief Map the state-tracker enum value that describes the buffer transfer type into the protocol encoded value
+ *
+ * NB: Whilst we are currently just replicating one enum value into another (which the compiler should be smart enough
+ * to fix), we do it this way to ensure we decouple the state-tracker from the protobuf encoding, since we don't want to
+ * accidentally change some enum wire-value in the future.
+ *
+ * @param type   The type enum to convert
+ *
+ * @return The wire value enum to store in the protobuf message
+ */
+constexpr AccelerationStructureTransferType mapASTransferType(Tracker::LCSAccelerationStructureTransfer::Type type)
+{
+    switch (type)
+    {
+    case Tracker::LCSAccelerationStructureTransfer::Type::unknown:
+        return AccelerationStructureTransferType::unknown_as_transfer;
+    case Tracker::LCSAccelerationStructureTransfer::Type::struct_to_struct:
+        return AccelerationStructureTransferType::struct_to_struct;
+    case Tracker::LCSAccelerationStructureTransfer::Type::struct_to_mem:
+        return AccelerationStructureTransferType::struct_to_mem;
+    case Tracker::LCSAccelerationStructureTransfer::Type::mem_to_struct:
+        return AccelerationStructureTransferType::mem_to_struct;
+    default:
+        assert(false && "Unexpected LCSBufferTransfer::Type");
+        return AccelerationStructureTransferType::unknown_as_transfer;
+    }
+}
+
+/**
  * @brief Serialize the metadata for this render pass workload.
  *
- * @param renderpass The renderpass to serialize
- * @param debugLabel The debug label stack of the VkQueue at submit time.
+ * @param renderpass   The render pass to serialize
+ * @param debugLabel   The debug label stack of the VkQueue at submit time.
  */
 Comms::MessageData serialize(const Tracker::LCSRenderPass& renderpass, const std::vector<std::string>& debugLabel)
 {
@@ -357,7 +458,7 @@ Comms::MessageData serialize(const Tracker::LCSRenderPass& renderpass, const std
                                 ? -1
                                 : static_cast<int64_t>(renderpass.getDrawCallCount()));
 
-    // make the attachements array
+    // Make the attachments array
     const auto& attachments = renderpass.getAttachments();
     std::vector<RenderpassAttachment> attachmentsMsg {};
     attachmentsMsg.reserve(attachments.size());
@@ -372,7 +473,7 @@ Comms::MessageData serialize(const Tracker::LCSRenderPass& renderpass, const std
                                     // "not_loaded" / "not_stored" since that is the uncommon case
                                     (attachment.isLoaded() ? std::nullopt : std::make_optional(false)),
                                     (attachment.isStored() ? std::nullopt : std::make_optional(false)),
-                                    // resolved is not inverted since that is the incommon case
+                                    // resolved is not inverted since that is the uncommon case
                                     (attachment.isResolved() ? std::make_optional(true) : std::nullopt));
     }
 
@@ -391,8 +492,8 @@ Comms::MessageData serialize(const Tracker::LCSRenderPass& renderpass, const std
 /**
  * @brief Serialize the metadata for this render pass continuation workload.
  *
- * @param continuation The renderpass continuation to serialize
- * @param tagIDContinuation The ID of the workload if this is a continuation of it.
+ * @param continuation        The renderpass continuation to serialize
+ * @param tagIDContinuation   The ID of the workload if this is a continuation of it.
  */
 Comms::MessageData serialize(const Tracker::LCSRenderPassContinuation& continuation, uint64_t tagIDContinuation)
 {
@@ -409,8 +510,8 @@ Comms::MessageData serialize(const Tracker::LCSRenderPassContinuation& continuat
 /**
  * @brief Get the metadata for this workload
  *
- * @param dispatch The dispatch to serialize
- * @param debugLabel The debug label stack for the VkQueue at submit time.
+ * @param dispatch     The dispatch to serialize
+ * @param debugLabel   The debug label stack for the VkQueue at submit time.
  */
 Comms::MessageData serialize(const Tracker::LCSDispatch& dispatch, const std::vector<std::string>& debugLabel)
 {
@@ -429,8 +530,8 @@ Comms::MessageData serialize(const Tracker::LCSDispatch& dispatch, const std::ve
 /**
  * @brief Get the metadata for this workload
  *
- * @param traceRays The trace rays to serialize
- * @param debugLabel The debug label stack for the VkQueue at submit time.
+ * @param traceRays    The trace rays to serialize
+ * @param debugLabel   The debug label stack for the VkQueue at submit time.
  */
 Comms::MessageData serialize(const Tracker::LCSTraceRays& traceRays, const std::vector<std::string>& debugLabel)
 {
@@ -449,8 +550,8 @@ Comms::MessageData serialize(const Tracker::LCSTraceRays& traceRays, const std::
 /**
  * @brief Get the metadata for this workload
  *
- * @param imageTransfer The image transfer to serialize
- * @param debugLabel The debug label stack for the VkQueue at submit time.
+ * @param imageTransfer   The image transfer to serialize
+ * @param debugLabel      The debug label stack for the VkQueue at submit time.
  */
 Comms::MessageData serialize(const Tracker::LCSImageTransfer& imageTransfer, const std::vector<std::string>& debugLabel)
 {
@@ -468,8 +569,8 @@ Comms::MessageData serialize(const Tracker::LCSImageTransfer& imageTransfer, con
 /**
  * @brief Get the metadata for this workload
  *
- * @param bufferTransfer The buffer transfer to serialize
- * @param debugLabel The debug label stack for the VkQueue at submit time.
+ * @param bufferTransfer   The buffer transfer to serialize
+ * @param debugLabel       The debug label stack for the VkQueue at submit time.
  */
 Comms::MessageData serialize(const Tracker::LCSBufferTransfer& bufferTransfer,
                              const std::vector<std::string>& debugLabel)
@@ -481,6 +582,46 @@ Comms::MessageData serialize(const Tracker::LCSBufferTransfer& bufferTransfer,
                           bufferTransfer.getTagID(),
                           bufferTransfer.getByteCount(),
                           mapBufferTransferType(bufferTransfer.getTransferType()),
+                          debugLabel,
+                      });
+}
+
+/**
+ * @brief Get the metadata for this workload
+ *
+ * @param asBuild      The acceleration structure build to serialize
+ * @param debugLabel   The debug label stack for the VkQueue at submit time.
+ */
+Comms::MessageData serialize(const Tracker::LCSAccelerationStructureBuild& asBuild,
+                             const std::vector<std::string>& debugLabel)
+{
+    using namespace pp;
+
+    return packBuffer("acceleration_structure_build"_f,
+                      AccelerationStructureBuild {
+                          asBuild.getTagID(),
+                          asBuild.getPrimitiveCount(),
+                          mapASBuildType(asBuild.getBuildType()),
+                          debugLabel,
+                      });
+}
+
+/**
+ * @brief Get the metadata for this workload
+ *
+ * @param asTransfer   The acceleration structure transfer to serialize
+ * @param debugLabel   The debug label stack for the VkQueue at submit time.
+ */
+Comms::MessageData serialize(const Tracker::LCSAccelerationStructureTransfer& asTransfer,
+                             const std::vector<std::string>& debugLabel)
+{
+    using namespace pp;
+
+    return packBuffer("acceleration_structure_transfer"_f,
+                      AccelerationStructureTransfer {
+                          asTransfer.getTagID(),
+                          asTransfer.getByteCount(),
+                          mapASTransferType(asTransfer.getTransferType()),
                           debugLabel,
                       });
 }
@@ -577,4 +718,16 @@ void TimelineProtobufEncoder::operator()(const Tracker::LCSBufferTransfer& buffe
                                          const std::vector<std::string>& debugStack)
 {
     device.txMessage(serialize(bufferTransfer, debugStack));
+}
+
+void TimelineProtobufEncoder::operator()(const Tracker::LCSAccelerationStructureBuild& asBuild,
+                                         const std::vector<std::string>& debugStack)
+{
+    device.txMessage(serialize(asBuild, debugStack));
+}
+
+void TimelineProtobufEncoder::operator()(const Tracker::LCSAccelerationStructureTransfer& asTransfer,
+                                         const std::vector<std::string>& debugStack)
+{
+    device.txMessage(serialize(asTransfer, debugStack));
 }

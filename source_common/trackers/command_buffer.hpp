@@ -141,11 +141,31 @@ public:
      * @brief Capture a transfer where the destination is a buffer.
      *
      * @param transferType   The type of the transfer.
-     * @param byteCount      The number of pixels written.
+     * @param byteCount      The number of bytes written.
      *
      * @return Returns the tagID assigned to this workload.
      */
     uint64_t bufferTransfer(LCSBufferTransfer::Type transferType, int64_t byteCount);
+
+    /**
+     * @brief Capture an acceleration structure build.
+     *
+     * @param buildType        The type of the build.
+     * @param primitiveCount   The number of primitives in the build.
+     *
+     * @return Returns the tagID assigned to this workload.
+     */
+    uint64_t accelerationStructureBuild(LCSAccelerationStructureBuild::Type buildType, int64_t primitiveCount);
+
+    /**
+     * @brief Capture a transfer where the destination is an acceleration structure.
+     *
+     * @param transferType   The type of the transfer.
+     * @param byteCount      The number of bytes written.
+     *
+     * @return Returns the tagID assigned to this workload.
+     */
+    uint64_t accelerationStructureTransfer(LCSAccelerationStructureTransfer::Type transferType, int64_t byteCount);
 
     /**
      * @brief Begin a user debug marker range.

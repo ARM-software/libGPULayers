@@ -122,13 +122,15 @@ namespace
         }
 
         /**
-         * @brief Visit a dispatch/trace rays/image transfer/buffer transfer workload instruction
+         * @brief Visit a dispatch/trace rays/any transfer workload instruction
          *
          * @param instruction The workload instruction
          */
         template<typename WorkloadType>
         requires(std::is_same_v<WorkloadType, LCSDispatch> || std::is_same_v<WorkloadType, LCSTraceRays>
-                 || std::is_same_v<WorkloadType, LCSImageTransfer> || std::is_same_v<WorkloadType, LCSBufferTransfer>)
+                 || std::is_same_v<WorkloadType, LCSImageTransfer> || std::is_same_v<WorkloadType, LCSBufferTransfer>
+                 || std::is_same_v<WorkloadType, LCSAccelerationStructureBuild>
+                 || std::is_same_v<WorkloadType, LCSAccelerationStructureTransfer>)
         void operator()(const LCSInstructionWorkload<WorkloadType>& instruction)
         {
             const auto& workload = instruction.getWorkload();
