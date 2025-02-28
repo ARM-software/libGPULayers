@@ -105,6 +105,28 @@ class BufferTransferMetadataType(TypedDict):
     label: list[str]
 
 
+class ASTransferMetadataType(TypedDict):
+    '''
+    Structured dict type for type hinting.
+    '''
+    type: str
+    tid: int
+    subtype: str
+    byteCount: int
+    label: list[str]
+
+
+class ASBuildMetadataType(TypedDict):
+    '''
+    Structured dict type for type hinting.
+    '''
+    type: str
+    tid: int
+    subtype: str
+    primitiveCount: int
+    label: list[str]
+
+
 class SubmitMetadataType(TypedDict):
     '''
     Structured dict type for type hinting.
@@ -116,7 +138,9 @@ class SubmitMetadataType(TypedDict):
                     | DispatchMetadataType
                     | TraceRaysMetadataType
                     | ImageTransferMetadataType
-                    | BufferTransferMetadataType]
+                    | BufferTransferMetadataType
+                    | ASBuildMetadataType
+                    | ASTransferMetadataType]
 
 
 class FrameMetadataType(TypedDict):
@@ -138,8 +162,7 @@ def expect_int(v: int | None) -> int:
 
 def map_renderpass_binding(type, index: int | None) -> str:
     '''
-    Map the PB encoded renderpass attachment type to a corresponding description
-    string
+    Map the PB encoded render pass attachment type to a description.
     '''
     if type == timeline_pb2.RenderpassAttachmentType.undefined:
         assert ((index is None) or (index == 0))
@@ -159,8 +182,7 @@ def map_renderpass_binding(type, index: int | None) -> str:
 
 def map_image_transfer_type(type) -> str:
     '''
-    Map the PB encoded image transfer type to some corresponding description
-    string
+    Map the PB encoded image transfer type to a description.
     '''
     if type == timeline_pb2.ImageTransferType.unknown_image_transfer:
         return "Unknown"
@@ -178,8 +200,7 @@ def map_image_transfer_type(type) -> str:
 
 def map_buffer_transfer_type(type) -> str:
     '''
-    Map the PB encoded image transfer type to some corresponding description
-    string
+    Map the PB encoded image transfer type to a description.
     '''
     if type == timeline_pb2.BufferTransferType.unknown_buffer_transfer:
         return "Unknown"
@@ -187,6 +208,37 @@ def map_buffer_transfer_type(type) -> str:
         return "Fill buffer"
     elif type == timeline_pb2.BufferTransferType.copy_buffer:
         return "Copy buffer"
+    else:
+        assert False
+
+
+def map_as_build_type(type) -> str:
+    '''
+    Map the PB encoded acceleration structure build to a description.
+    '''
+    if type == timeline_pb2.AccelerationStructureBuildType.unknown_as_build:
+        return "Unknown"
+    elif type == timeline_pb2.AccelerationStructureTransferType.fast_build:
+        return "Fast build"
+    elif type == timeline_pb2.AccelerationStructureTransferType.fast_trace:
+        return "Fast trace"
+    else:
+        assert False
+
+
+def map_as_transfer_type(type) -> str:
+    '''
+    Map the PB encoded acceleration structure transfer to a description.
+    '''
+    base_type = timeline_pb2.AccelerationStructureTransferType
+    if type == base_type.unknown_as_transfer:
+        return "Unknown"
+    elif type == base_type.struct_to_struct:
+        return "Copy acceleration structure"
+    elif type == base_type.struct_to_mem:
+        return "Copy acceleration structure to mem"
+    elif type == base_type.mem_to_struct:
+        return "Copy mem to acceleration structure"
     else:
         assert False
 
@@ -444,7 +496,7 @@ class GPUTimelineService:
         assert self.last_submit is not None
         submit = self.last_submit
 
-        # Clear the last renderpass
+        # Clear the last render pass
         self.last_render_pass = None
 
         # Convert the PB message into our data representation
@@ -470,7 +522,7 @@ class GPUTimelineService:
         assert self.last_submit is not None
         submit = self.last_submit
 
-        # Clear the last renderpass
+        # Clear the last render pass
         self.last_render_pass = None
 
         # Convert the PB message into our data representation
@@ -496,7 +548,7 @@ class GPUTimelineService:
         assert self.last_submit is not None
         submit = self.last_submit
 
-        # Clear the last renderpass
+        # Clear the last render pass
         self.last_render_pass = None
 
         # Convert the PB message into our data representation
@@ -521,7 +573,7 @@ class GPUTimelineService:
         assert self.last_submit is not None
         submit = self.last_submit
 
-        # Clear the last renderpass
+        # Clear the last render pass
         self.last_render_pass = None
 
         # Convert the PB message into our data representation
@@ -534,6 +586,56 @@ class GPUTimelineService:
         }
 
         submit['workloads'].append(buffer_transfer)
+
+    def handle_as_build(self, msg: Any) -> None:
+        '''
+        Handle an acceleration structure build workload
+
+        Args:
+            msg: The Python decode of a Timeline PB payload.
+        '''
+        # Get the active submit to append to
+        assert self.last_submit is not None
+        submit = self.last_submit
+
+        # Clear the last render pass
+        self.last_render_pass = None
+
+        # Convert the PB message into our data representation
+        as_build: ASBuildMetadataType = {
+            'type': 'asbuild',
+            'tid': expect_int(msg.tag_id),
+            'subtype': map_as_build_type(msg.build_type),
+            'primitiveCount': expect_int(msg.primitive_count),
+            'label': map_debug_label(msg.debug_label),
+        }
+
+        submit['workloads'].append(as_build)
+
+    def handle_as_transfer(self, msg: Any) -> None:
+        '''
+        Handle an acceleration structure transfer workload
+
+        Args:
+            msg: The Python decode of a Timeline PB payload.
+        '''
+        # Get the active submit to append to
+        assert self.last_submit is not None
+        submit = self.last_submit
+
+        # Clear the last render pass
+        self.last_render_pass = None
+
+        # Convert the PB message into our data representation
+        as_transfer: ASTransferMetadataType = {
+            'type': 'astransfer',
+            'tid': expect_int(msg.tag_id),
+            'subtype': map_as_transfer_type(msg.transfer_type),
+            'byteCount': expect_int(msg.byte_count),
+            'label': map_debug_label(msg.debug_label),
+        }
+
+        submit['workloads'].append(as_transfer)
 
     def handle_message(self, message: Message) -> None:
         '''
@@ -555,7 +657,10 @@ class GPUTimelineService:
                  + int(pb_record.HasField('dispatch'))
                  + int(pb_record.HasField('trace_rays'))
                  + int(pb_record.HasField('image_transfer'))
-                 + int(pb_record.HasField('buffer_transfer'))) <= 1)
+                 + int(pb_record.HasField('buffer_transfer'))
+                 + int(pb_record.HasField('acceleration_structure_build'))
+                 + int(pb_record.HasField('acceleration_structure_transfer')))
+                 <= 1)
 
         # Process the message
         if pb_record.HasField('header'):
@@ -578,5 +683,9 @@ class GPUTimelineService:
             self.handle_image_transfer(pb_record.image_transfer)
         elif pb_record.HasField('buffer_transfer'):
             self.handle_buffer_transfer(pb_record.buffer_transfer)
+        elif pb_record.HasField('acceleration_structure_build'):
+            self.handle_as_build(pb_record.acceleration_structure_build)
+        elif pb_record.HasField('acceleration_structure_transfer'):
+            self.handle_as_transfer(pb_record.acceleration_structure_transfer)
         else:
             assert False, f'Unknown payload {pb_record}'

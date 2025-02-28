@@ -34,6 +34,26 @@
 extern std::mutex g_vulkanLock;
 
 /**
+ * @brief Register an acceleration structure build with the tracker.
+ *
+ * @param layer            The layer context for the device.
+ * @param commandBuffer    The command buffer we are recording.
+ * @param buildType        The build type.
+ * @param primitiveCount   The number of primitives in the build.
+ *
+ * @return The assigned tagID for the workload.
+ */
+static uint64_t registerAccelerationStructureBuild(Device* layer,
+                                                   VkCommandBuffer commandBuffer,
+                                                   Tracker::LCSAccelerationStructureBuild::Type buildType,
+                                                   int64_t primitiveCount)
+{
+    auto& tracker = layer->getStateTracker();
+    auto& cb = tracker.getCommandBuffer(commandBuffer);
+    return cb.accelerationStructureBuild(buildType, primitiveCount);
+}
+
+/**
  * @brief Register a trace rays dispatch with the tracker.
  *
  * @param layer           The layer context for the device.
@@ -53,6 +73,65 @@ static uint64_t registerTraceRays(Device* layer,
     auto& tracker = layer->getStateTracker();
     auto& cb = tracker.getCommandBuffer(commandBuffer);
     return cb.traceRays(itemsX, itemsY, itemsZ);
+}
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBuildAccelerationStructuresIndirectKHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    uint32_t infoCount,
+    const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,
+    const VkDeviceAddress* pIndirectDeviceAddresses,
+    const uint32_t* pIndirectStrides,
+    const uint32_t* const* ppMaxPrimitiveCounts)
+{
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
+    auto* layer = Device::retrieve(commandBuffer);
+
+    uint64_t tagID = registerAccelerationStructureBuild(layer,
+                                                        commandBuffer,
+                                                        Tracker::LCSAccelerationStructureBuild::Type::unknown,
+                                                        -1);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    emitStartTag(layer, commandBuffer, tagID);
+    layer->driver.vkCmdBuildAccelerationStructuresIndirectKHR(commandBuffer,
+                                                              infoCount,
+                                                              pInfos,
+                                                              pIndirectDeviceAddresses,
+                                                              pIndirectStrides,
+                                                              ppMaxPrimitiveCounts);
+    layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
+}
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBuildAccelerationStructuresKHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    uint32_t infoCount,
+    const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,
+    const VkAccelerationStructureBuildRangeInfoKHR* const* ppBuildRangeInfos)
+{
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
+    auto* layer = Device::retrieve(commandBuffer);
+
+    uint64_t tagID = registerAccelerationStructureBuild(layer,
+                                                        commandBuffer,
+                                                        Tracker::LCSAccelerationStructureBuild::Type::unknown,
+                                                        -1);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    emitStartTag(layer, commandBuffer, tagID);
+    layer->driver.vkCmdBuildAccelerationStructuresKHR(commandBuffer, infoCount, pInfos, ppBuildRangeInfos);
+    layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
 }
 
 /* See Vulkan API for documentation. */

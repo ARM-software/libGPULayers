@@ -117,6 +117,10 @@ public:
                     const std::vector<std::string>& debugStack) override;
     void operator()(const Tracker::LCSBufferTransfer& bufferTransfer,
                     const std::vector<std::string>& debugStack) override;
+    void operator()(const Tracker::LCSAccelerationStructureBuild& asBuild,
+                    const std::vector<std::string>& debugStack) override;
+    void operator()(const Tracker::LCSAccelerationStructureTransfer& asTransfer,
+                    const std::vector<std::string>& debugStack) override;
 
     /**
      * @brief Called at the start of the submit to emit a "Submit" record, delimiting the subsequent items from any

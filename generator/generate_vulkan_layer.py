@@ -76,7 +76,10 @@ def get_layer_api_name(vendor: str, layer: str) -> str:
 
     for char in name:
         is_uc = char.isupper()
-        is_last_uc = False if not part else part[-1].isupper()
+        if part is None:
+            is_last_uc = False
+        else:
+            is_last_uc = part[-1].isupper()
 
         if (is_uc and not is_last_uc) or not part:
             if part:
