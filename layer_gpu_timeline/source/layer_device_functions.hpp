@@ -145,7 +145,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderPass<user_tag>(VkCommandBuffer co
 template<>
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderPass2<user_tag>(VkCommandBuffer commandBuffer,
                                                                const VkSubpassEndInfo* pSubpassEndInfo);
-/* See Vulkan API for documentation. */
+
+                                                               /* See Vulkan API for documentation. */
 template<>
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderPass2KHR<user_tag>(VkCommandBuffer commandBuffer,
                                                                   const VkSubpassEndInfo* pSubpassEndInfo);
