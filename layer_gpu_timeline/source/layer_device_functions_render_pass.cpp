@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024 Arm Limited
+ * Copyright (c) 2024-2025 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -309,6 +309,40 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderPass<user_tag>(VkCommandBuffer co
     // Release the lock to call into the driver
     lock.unlock();
     layer->driver.vkCmdEndRenderPass(commandBuffer);
+    layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
+}
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderPass2<user_tag>(VkCommandBuffer commandBuffer,
+                                                               const VkSubpassEndInfo* pSubpassEndInfo)
+{
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
+    auto* layer = Device::retrieve(commandBuffer);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    layer->driver.vkCmdEndRenderPass2(commandBuffer, pSubpassEndInfo);
+    layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
+}
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderPass2KHR<user_tag>(VkCommandBuffer commandBuffer,
+                                                                  const VkSubpassEndInfo* pSubpassEndInfo)
+{
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
+    auto* layer = Device::retrieve(commandBuffer);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    layer->driver.vkCmdEndRenderPass2KHR(commandBuffer, pSubpassEndInfo);
     layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
 }
 
