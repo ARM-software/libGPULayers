@@ -42,10 +42,17 @@ Tooling setup steps
   environment variable.
 * Install the Android NDK and set the `ANDROID_NDK_HOME` environment variable
   to its installation path.
+* The viewer uses Python 3.10 or newer, which can be downloaded from the
+  official Python website: https://www.python.org.
 * The viewer uses PyGTK, and requires the native GTK3 libraries and PyGTK to be
   installed. GTK installation instructions can be found on the official GTK
-  website:
-  https://www.gtk.org/docs/installations/
+  website: https://www.gtk.org/docs/installations.
+* The Python viewer uses Google Protocol Buffers, which can be installed using
+  the Python 3 `pip` package installer.
+
+```
+python3 -m pip install protobuf
+```
 
 ### Layer build
 
