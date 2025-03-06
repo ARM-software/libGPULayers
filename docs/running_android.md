@@ -28,6 +28,28 @@ when this has been done. You can now perform your development work. When you
 are finished, return to the script and press a key to notify it that it can
 clean up the device and remove the layers.
 
+### Package launch and configuration
+
+By default, the installer will configure the layer but will not launch the
+Android package. You must manually restart the package after the layers are
+installed to ensure that they get loaded.
+
+If you specify `--auto-start`, the installer will automatically start the
+application after the layers are configured and stop the application when you
+finish profiling.
+
+Auto-start will default to using the main launchable activity for the package,
+but you can override this using `--package-activity` to specify the name of another activity to launch.
+
+You can additional pass in additional activity command line arguments by
+using the `--package-arguments` option to specify the argument string to pass
+to `am start`. This string will often contain spaces, so ensure that is
+quoted correctly on the host shell. For example:
+
+```sh
+... --package-arguments "-e cmd 'R.InternalRenderScaling 0.5'"
+```
+
 ### Layer configuration
 
 Some layers require a configuration file to control their behavior. Most
@@ -69,17 +91,6 @@ During development it is often useful to capture the Android log, using
 If you specify the `--logcat <file>` option the script will automatically clear
 the logcat log after installing the layers, and start recording logcat to the
 specified file. Logcat recording will end during device clean up.
-
-### Capturing Android Perfetto traces
-
-The Timeline layer is designed to provide semantic metadata that can be used
-to annotate an Android Perfetto render stages trace. This provides profiling
-tools with API information that Perfetto alone cannot provide, making it a
-much more data-rich visualization .
-
-If you specify the `--perfetto <file>` option the script will automatically
-configure Perfetto to capture render stages information for the target
-application and save it to the specified file.
 
 ## Manual configuration
 
