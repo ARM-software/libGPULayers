@@ -126,6 +126,7 @@ import json
 import os
 import subprocess as sp
 import sys
+import time
 import threading
 from typing import Optional
 
@@ -748,12 +749,16 @@ def parse_cli() -> Optional[argparse.Namespace]:
         help='target package arguments (optional, default=None)')
 
     parser.add_argument(
-        '--layer', '-L', action='append', required=True,
-        help='layer directory of a layer to install (required, repeatable)')
-
-    parser.add_argument(
         '--auto-start', '-A', action='store_true', default=False,
         help='auto-start and stop the package (default=false)')
+
+    parser.add_argument(
+        '--timed-capture', type=int, default=0,
+        help='capture for N seconds (default=interactive wait)')
+
+    parser.add_argument(
+        '--layer', '-L', action='append', required=True,
+        help='layer directory of a layer to install (required, repeatable)')
 
     parser.add_argument(
         '--config', '-C', action='append', default=[],
@@ -796,6 +801,10 @@ def parse_cli() -> Optional[argparse.Namespace]:
 
     if args.package_arguments and not args.auto_start:
         print('ERROR: Cannot use --package-arguments without --auto-start')
+        return None
+
+    if args.timed_capture < 0:
+        print('ERROR: Timed capture delay must be greater than 0')
         return None
 
     # Canonicalize variant arguments for later users
@@ -897,7 +906,21 @@ def main() -> int:
     if args.auto_start:
         AndroidUtils.start_package(conn, activity, args.package_arguments)
 
-    input('Press any key when finished to uninstall all layers')
+    if args.timed_capture > 0:
+        max_len = len(f'Waiting {args.timed_capture} seconds ...')
+
+        for i in range(0, args.timed_capture):
+            message = f'Waiting {args.timed_capture - i} seconds ...'
+            print(f'{message:<{max_len}}', end='\r', flush=True)
+            time.sleep(1.0)
+
+        message = 'Wait time elapsed'
+        print(f'{message:<{max_len}}')
+
+    else:
+        input('Press any key when finished to uninstall all layers')
+
+    print('\nUninstalling all layers')
 
     # Kill the package if requested
     if args.auto_start:
