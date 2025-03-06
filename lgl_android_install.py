@@ -920,7 +920,6 @@ def main() -> int:
     else:
         input('Press any key when finished to uninstall all layers')
 
-
     print('\nUninstalling all layers')
 
     # Kill the package if requested
