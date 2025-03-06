@@ -39,12 +39,13 @@ application after the layers are configured and stop the application when you
 finish profiling.
 
 Auto-start will default to using the main launchable activity for the package,
-but you can override this using `--package-activity` to specify the name of another activity to launch.
+but you can override this using `--package-activity` to specify the name of
+another activity to launch.
 
-You can additional pass in additional activity command line arguments by
-using the `--package-arguments` option to specify the argument string to pass
-to `am start`. This string will often contain spaces, so ensure that is
-quoted correctly on the host shell. For example:
+You can pass in additional activity command line arguments by using the
+`--package-arguments` option to specify the argument string to pass to
+`am start`. This string will often contain spaces, so ensure that is quoted
+correctly on the host shell. For example:
 
 ```sh
 ... --package-arguments "-e cmd 'R.InternalRenderScaling 0.5'"
