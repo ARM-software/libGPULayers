@@ -722,12 +722,12 @@ def cleanup_perfetto(
         print('ERROR: Cannot disable Perfetto recording')
 
 
-def parse_cli() -> argparse.Namespace:
+def parse_cli() -> Optional[argparse.Namespace]:
     '''
     Parse the command line.
 
     Returns:
-        An argparse results object.
+        An argparse results object, or None on error.
     '''
     parser = argparse.ArgumentParser()
 
