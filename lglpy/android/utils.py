@@ -339,10 +339,14 @@ class AndroidUtils:
         try:
             target = f'{conn.package}/{activity}'
             if args is None:
-                conn.adb_run('am', 'start', '-n', target, quote=True)
+                conn.adb_run('am', 'start', '-W',
+                             '-n', target,
+                             quote=True)
             else:
                 sargs = shlex.split(args)
-                conn.adb_run('am', 'start', '-n', target, *sargs, quote=True)
+                conn.adb_run('am', 'start', '-W',
+                             '-n', target, *sargs,
+                             quote=True)
         except sp.CalledProcessError:
             return False
 
