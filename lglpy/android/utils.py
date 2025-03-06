@@ -38,7 +38,7 @@ from .adb import ADBConnect
 
 
 @contextlib.contextmanager
-def NamedTempFile(suffix=None):  # pylint: disable=invalid-name
+def NamedTempFile(suffix: Optional[str] = None):  # pylint: disable=invalid-name
     '''
     Creates a context managed temporary file that can be used with external
     subprocess.
@@ -320,13 +320,15 @@ class AndroidUtils:
             return None
 
     @staticmethod
-    def start_package(conn: ADBConnect, activity: str) -> bool:
+    def start_package(conn: ADBConnect, activity: str,
+                      args: Optional[str] = None) -> bool:
         '''
         Start the package for this connection.
 
         Args:
             conn: The adb connection.
             activity: The name of the activity.
+            args: The optional command line arguments to pass
 
         Returns:
             True on success, False otherwise.
@@ -336,7 +338,11 @@ class AndroidUtils:
 
         try:
             target = f'{conn.package}/{activity}'
-            conn.adb_run('am', 'start', '-n', target, quote=True)
+            if args is None:
+                conn.adb_run('am', 'start', '-n', target, quote=True)
+            else:
+                sargs = shlex.split(args)
+                conn.adb_run('am', 'start', '-n', target, *sargs, quote=True)
         except sp.CalledProcessError:
             return False
 

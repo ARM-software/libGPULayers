@@ -722,12 +722,12 @@ def cleanup_perfetto(
         print('ERROR: Cannot disable Perfetto recording')
 
 
-def parse_cli() -> argparse.Namespace:
+def parse_cli() -> Optional[argparse.Namespace]:
     '''
     Parse the command line.
 
     Returns:
-        An argparse results object.
+        An argparse results object, or None on error.
     '''
     parser = argparse.ArgumentParser()
 
@@ -738,6 +738,14 @@ def parse_cli() -> argparse.Namespace:
     parser.add_argument(
         '--package', '-P', default=None,
         help='target package name or regex pattern (default=auto-detected)')
+
+    parser.add_argument(
+        '--package-activity', default=None,
+        help='target package activity (optional, default=auto-detected)')
+
+    parser.add_argument(
+        '--package-arguments', default=None,
+        help='target package arguments (optional, default=None)')
 
     parser.add_argument(
         '--layer', '-L', action='append', required=True,
@@ -757,17 +765,45 @@ def parse_cli() -> argparse.Namespace:
 
     parser.add_argument(
         '--logcat', type=str, default=None,
-        help='save logcat to this file during the run')
+        help='save logcat to this file')
+
+    parser.add_argument(
+        '--timeline', type=str, default=None,
+        help='save Timeline traces to files with this base name')
 
     parser.add_argument(
         '--timeline-metadata', type=str, default=None,
-        help='save Timeline metadata trace to this file during the run')
+        help='save Timeline metadata trace to this file')
 
     parser.add_argument(
         '--timeline-perfetto', type=str, default=None,
-        help='save Timeline Perfetto trace to this file during the run')
+        help='save Timeline Perfetto trace to this file')
 
-    return parser.parse_args()
+    args = parser.parse_args()
+
+    # Validate arguments
+    if args.timeline and args.timeline_metadata:
+        print('ERROR: Cannot use --timeline with --timeline-metadata')
+        return None
+
+    if args.timeline and args.timeline_perfetto:
+        print('ERROR: Cannot use --timeline with --timeline-perfetto')
+        return None
+
+    if args.package_activity and not args.auto_start:
+        print('ERROR: Cannot use --package-activity without --auto-start')
+        return None
+
+    if args.package_arguments and not args.auto_start:
+        print('ERROR: Cannot use --package-arguments without --auto-start')
+        return None
+
+    # Canonicalize variant arguments for later users
+    if args.timeline:
+        args.timeline_perfetto = f'{args.timeline}.perfetto'
+        args.timeline_metadata = f'{args.timeline}.metadata'
+
+    return args
 
 
 def main() -> int:
@@ -778,6 +814,8 @@ def main() -> int:
         The process exit code.
     '''
     args = parse_cli()
+    if not args:
+        return 11
 
     conn = ADBConnect()
 
@@ -801,11 +839,13 @@ def main() -> int:
 
     conn.set_package(package)
 
-    # Determine package main activity to launch
-    activity = AndroidUtils.get_package_main_activity(conn)
+    # Determine package main activity to launch, if user didn't specify one
+    activity = args.package_activity
     if not activity:
-        print('ERROR: Package has no identifiable main activity')
-        return 4
+        activity = AndroidUtils.get_package_main_activity(conn)
+        if not activity:
+            print('ERROR: Package has no identifiable main activity')
+            return 4
 
     # Select layers to install and their configs
     need_32bit = AndroidUtils.is_package_32bit(conn, package)
@@ -855,7 +895,7 @@ def main() -> int:
 
     # Restart the package if requested
     if args.auto_start:
-        AndroidUtils.start_package(conn, activity)
+        AndroidUtils.start_package(conn, activity, args.package_arguments)
 
     input('Press any key when finished to uninstall all layers')
 

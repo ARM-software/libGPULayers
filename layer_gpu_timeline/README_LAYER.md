@@ -66,12 +66,17 @@ directory. Run the following script to install the layer and auto-start
 the application under test:
 
 ```sh
-python3 lgl_android_install.py --layer layer_gpu_timeline --timeline-perfetto <out.perfetto> --timeline-metadata <out.metadata> --auto-start
+python3 lgl_android_install.py --layer layer_gpu_timeline --timeline <out> --auto-start
 ```
 
 When the test has finished, press any key in the terminal to prompt the script
 to remove the layer from the device and save the data files to the specified
 host paths.
+
+The timeline data files will be saved as `<out>.perfetto` and `<out>.metadata`.
+If you want to use different file names for each, you can alternatively specify
+a full file path for each file using `--timeline-perfetto` and
+`--timeline-metadata`.
 
 ## Timeline visualization
 
