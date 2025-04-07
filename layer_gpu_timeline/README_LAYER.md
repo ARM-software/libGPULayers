@@ -122,8 +122,13 @@ Selecting active events:
   * Left click to select/deselect
   * Shift + Left click to add to selection
   * Left click and drag to select multiple selection
-* Select by group:
+* Select events by group:
   * Right click on an event, and use context menu
+  * Group options available include:
+    * By frame
+    * By Vulkan queue submit
+    * By Vulkan command
+    * By Vulkan queue
 * Clear selection:
   * Right click on a blank space on the canvas, and use context menu
 

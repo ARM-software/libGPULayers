@@ -81,12 +81,12 @@ class TimelineWidget(TimelineWidgetBase):
                 'activate', self.on_select_events_by_frame, clicked)
             menu.append(menui)
 
-            menui = Gtk.MenuItem('Select by submit')
+            menui = Gtk.MenuItem('Select by queue submit')
             menui.connect_object(
                 'activate', self.on_select_events_by_submit, clicked)
             menu.append(menui)
 
-            menui = Gtk.MenuItem('Select by workload')
+            menui = Gtk.MenuItem('Select by command')
             menui.connect_object(
                 'activate', self.on_select_events_by_workload, clicked)
             menu.append(menui)
