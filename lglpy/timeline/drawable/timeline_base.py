@@ -196,23 +196,35 @@ class TimelineWidgetBase:
         Args:
             new_object: the object to add.
         '''
+        # If this object is already active then do nothing
+        if new_object in self.active_objects:
+            return
+
         # If this is the first selection then fade all the 'other' objects
         if not self.active_objects:
             for drawable in self.drawable_trace.each_object():
                 style_set = drawable.style.style_set
                 drawable.style = style_set.get_style('fade')
 
-        # Update the style if this is a new user data
-        user_data = [x.user_data for x in self.active_objects if x.user_data]
-
-        if new_object.user_data and (new_object.user_data not in user_data):
-            for drawable in self.drawable_trace.each_object():
-                if drawable.user_data == new_object.user_data:
-                    style_set = drawable.style.style_set
-                    drawable.style = style_set.get_style('highlight')
-        else:
+        # If no user data then highlight by raw object
+        if not new_object.user_data:
             style_set = new_object.style.style_set
             new_object.style = style_set.get_style('highlight')
+
+        # If new user data then highlight all events with matching user data
+        else:
+            user_data = {
+                x.user_data for x in self.active_objects if x.user_data
+            }
+
+            if new_object.user_data not in user_data:
+                def obj_filter(x):
+                    return x.user_data == new_object.user_data
+
+                for drawable in self.drawable_trace.each_object(
+                        obj_filter=obj_filter):
+                    style_set = drawable.style.style_set
+                    drawable.style = style_set.get_style('highlight')
 
         self.active_objects.add(new_object)
 
@@ -223,61 +235,67 @@ class TimelineWidgetBase:
         Args:
             new_objects: sequence of objects to add.
         '''
+        # If no new objects then do nothing
+        if not new_objects:
+            return
+
         # If this is the first selection then fade all the 'other' objects
         if not self.active_objects:
             for drawable in self.drawable_trace.each_object():
                 style_set = drawable.style.style_set
                 drawable.style = style_set.get_style('fade')
 
+        # Add object to the active objects if we don't have it already
+        added_user_data = set()
         for new_object in new_objects:
+            if new_object in self.active_objects:
+                continue
+
             self.active_objects.add(new_object)
+
+            # If no user data then highlight by raw object
             if not new_object.user_data:
                 style_set = new_object.style.style_set
                 new_object.style = style_set.get_style('highlight')
+            # Else track user data so we can use it later
+            else:
+                added_user_data.add(new_object.user_data)
 
-        # TODO: What's the point in this?
-        user_data = {x.user_data for x in self.active_objects if x.user_data}
-        for drawable in self.drawable_trace.each_object():
-            if drawable.user_data in user_data:
-                style_set = drawable.style.style_set
-                drawable.style = style_set.get_style('highlight')
+        # If new user data then highlight all events with matching it
+        def obj_filter(x):
+            return x.user_data in added_user_data
+
+        for drawable in self.drawable_trace.each_object(obj_filter=obj_filter):
+            style_set = drawable.style.style_set
+            drawable.style = style_set.get_style('highlight')
 
     def remove_from_active_objects(self, old_object):
         '''
         Remove an object from the set of active objects.
 
         Args:
-            old_object: WorldDrawable`
-                The object to remove.
+            old_object: the object to remove.
         '''
-        removed_objects = set()
-        user_data = old_object.user_data
+        self.remove_multiple_from_active_objects(set([old_object]))
 
-        if user_data:
-            for drawable in self.active_objects:
-                if drawable.user_data == user_data:
-                    removed_objects.add(drawable)
-            for drawable in removed_objects:
-                self.active_objects.remove(drawable)
-        else:
-            self.active_objects.remove(old_object)
-            removed_objects.add(old_object)
+    def remove_multiple_from_active_objects(self, old_objects):
+        '''
+        Remove an sequence of objects from the set of active objects.
+
+        Args:
+            old_objects: the sequence of objects to remove.
+        '''
+        removed_objects = {x for x in old_objects}
+        new_active_objects = self.active_objects - removed_objects
 
         # If nothing left then reset the active state
-        if not self.active_objects:
+        if not new_active_objects:
             self.clear_active_objects()
             return
 
-        # Update the style if this is a new user data
-        user_data = {x.user_data for x in self.active_objects if x.user_data}
-
-        # Update the style
-        if old_object.user_data and (old_object.user_data not in user_data):
-            for drawable in self.drawable_trace.each_object():
-                if drawable.user_data == old_object.user_data:
-                    drawable.style = drawable.style.style_set.get_style('fade')
-        else:
-            old_object.style = old_object.style.style_set.get_style('fade')
+        # Else rebuild with the remaining active_objects
+        self.active_objects.clear()
+        self.add_multiple_to_active_objects(new_active_objects)
 
     def clear_active_objects(self):
         '''
@@ -495,6 +513,7 @@ class TimelineWidgetBase:
 
         # Find the clicked objects
         dt = self.drawable_trace
+
         clicked_objects = dt.get_boxed_objects(min_x, min_y, max_x, max_y)
         if not clicked_objects:
             # Force a redraw if we were dragging, even if the click itself
@@ -504,20 +523,15 @@ class TimelineWidgetBase:
         # If no modifier then create selection from highlighted region
         if drag.mod == '':
             self.active_objects.clear()
-            for clicked_object in clicked_objects:
-                self.add_to_active_objects(clicked_object)
+            self.add_multiple_to_active_objects(clicked_objects)
 
         # If 'c' modifier then append selection to highlighted region
         elif drag.mod == 'c':
-            for clicked_object in clicked_objects:
-                if clicked_object not in self.active_objects:
-                    self.add_to_active_objects(clicked_object)
+            self.add_multiple_to_active_objects(clicked_objects)
 
-        # If 's' modifier then append selection to highlighted region
+        # If 's' modifier then subtract selection to highlighted region
         elif drag.mod == 's':
-            for clicked_object in clicked_objects:
-                if clicked_object in self.active_objects:
-                    self.remove_from_active_objects(clicked_object)
+            self.remove_multiple_from_active_objects(clicked_objects)
 
         return True
 
@@ -554,19 +568,20 @@ class TimelineWidgetBase:
         clicked_object = self.drawable_trace.get_clicked_object(ws_x, ws_y)
 
         if (button == 'left') and clicked_object:
+            # If no modifier then create selection from highlighted region
             if mod == '':
-                if clicked_object in self.active_objects:
-                    self.remove_from_active_objects(clicked_object)
-                else:
-                    self.active_objects.clear()
-                    self.add_to_active_objects(clicked_object)
+                self.active_objects.clear()
+                self.add_to_active_objects(clicked_object)
                 return True
 
-            if mod == 'c':
-                if clicked_object in self.active_objects:
-                    self.remove_from_active_objects(clicked_object)
-                else:
-                    self.add_to_active_objects(clicked_object)
+            # If 'c' modifier then append selection to highlighted region
+            elif mod == 'c':
+                self.add_to_active_objects(clicked_object)
+                return True
+
+            # If 's' modifier then subtract selection to highlighted region
+            elif mod == 's':
+                self.remove_from_active_objects(clicked_object)
                 return True
 
         return False
