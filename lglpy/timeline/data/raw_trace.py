@@ -113,7 +113,6 @@ class GPUStageID(enum.IntEnum):
     AS_BUILD_FAST_TRACE = 11
     AS_BUILD_UPDATE = 12
 
-
     @classmethod
     def get_ui_name(cls, stage_id) -> str:
         '''
