@@ -91,9 +91,13 @@ class GPUStageID(enum.IntEnum):
         FRAGMENT: Fragment shaders from a render pass.
         BINNING: Binning subset of vertex shaders from a render pass.
         MAIN: Main phase vertex and fragment shaders from a render pass.
-        IMAGE_TRANSFER: Transfers writing an image output.
+        TRACE_RAYS: Ray tracing pipeline dispatch.
+        AS_TRANSFER: Transfer writing to/from an acceleration structure.
         BUFFER_TRANSFER: Transfer writing a buffer output.
-        ASBUILD: Acceleration structure build.
+        IMAGE_TRANSFER: Transfers writing an image output.
+        AS_BUILD_FAST_BUILD: Acceleration structure build with fast_build.
+        AS_BUILD_FAST_TRACE: Acceleration structure build with fast_trace.
+        AS_BUILD_UPDATE: Acceleration structure build with update.
     '''
     COMPUTE = 0
     ADVANCED_GEOMETRY = 1
@@ -101,9 +105,13 @@ class GPUStageID(enum.IntEnum):
     FRAGMENT = 3
     BINNING = 4
     MAIN = 5
-    IMAGE_TRANSFER = 6
-    BUFFER_TRANSFER = 7
-    ASBUILD = 8
+    TRACE_RAYS = 6
+    AS_TRANSFER = 7
+    BUFFER_TRANSFER = 8
+    IMAGE_TRANSFER = 9
+    AS_BUILD_FAST_BUILD = 10
+    AS_BUILD_FAST_TRACE = 11
+    AS_BUILD_UPDATE = 12
 
     @classmethod
     def get_ui_name(cls, stage_id) -> str:
@@ -123,9 +131,13 @@ class GPUStageID(enum.IntEnum):
             cls.FRAGMENT: 'Fragment',
             cls.BINNING: 'Binning',
             cls.MAIN: 'Main',
-            cls.IMAGE_TRANSFER: 'Image transfer',
+            cls.TRACE_RAYS: 'Trace rays',
+            cls.AS_TRANSFER: 'AS transfer',
             cls.BUFFER_TRANSFER: 'Buffer transfer',
-            cls.ASBUILD: 'Acceleration structure build',
+            cls.IMAGE_TRANSFER: 'Image transfer',
+            cls.AS_BUILD_FAST_BUILD: 'AS build (fast build)',
+            cls.AS_BUILD_FAST_TRACE: 'AS build (fast trace)',
+            cls.AS_BUILD_UPDATE: 'AS build (update)'
         }
 
         return human_names[stage_id]
@@ -580,30 +592,39 @@ class PerfettoConfig:
     '''
     # Known Perfetto streams and their remapped names
     STREAM_REMAP = {
-        "compute": GPUStreamID.COMPUTE,
-        "non-fragment": GPUStreamID.NONFRAGMENT,
-        "fragment": GPUStreamID.FRAGMENT,
-        "binning": GPUStreamID.BINNING,
-        "main": GPUStreamID.MAIN,
-        "transfer": GPUStreamID.TRANSFER
+        'compute': GPUStreamID.COMPUTE,
+        'vertex': GPUStreamID.NONFRAGMENT,
+        'non-fragment': GPUStreamID.NONFRAGMENT,
+        'fragment': GPUStreamID.FRAGMENT,
+        'binning': GPUStreamID.BINNING,
+        'main': GPUStreamID.MAIN,
+        'transfer': GPUStreamID.TRANSFER
     }
 
     # Known Perfetto render stages and their remapped names
     STAGE_REMAP = {
-        "clear image": GPUStageID.IMAGE_TRANSFER,
-        "copy image": GPUStageID.IMAGE_TRANSFER,
-        "blit image": GPUStageID.IMAGE_TRANSFER,
-        "generate mipmap": GPUStageID.IMAGE_TRANSFER,
-        "copy buffer": GPUStageID.BUFFER_TRANSFER,
-        "fill buffer": GPUStageID.BUFFER_TRANSFER,
-        "compute": GPUStageID.COMPUTE,
-        "advanced geometry": GPUStageID.ADVANCED_GEOMETRY,
-        "vertex": GPUStageID.VERTEX,
-        "fragment": GPUStageID.FRAGMENT,
-        "binning": GPUStageID.BINNING,
-        "main": GPUStageID.MAIN,
-        "acceleration structure 'fast build' build": GPUStageID.ASBUILD,
-        "acceleration structure 'fast trace' build": GPUStageID.ASBUILD,
+        'clear image': GPUStageID.IMAGE_TRANSFER,
+        'copy image': GPUStageID.IMAGE_TRANSFER,
+        'blit image': GPUStageID.IMAGE_TRANSFER,
+        'resolve image': GPUStageID.IMAGE_TRANSFER,
+        'generate mipmap': GPUStageID.IMAGE_TRANSFER,
+        'copy buffer': GPUStageID.BUFFER_TRANSFER,
+        'fill buffer': GPUStageID.BUFFER_TRANSFER,
+        'copy query': GPUStageID.BUFFER_TRANSFER,
+        'compute': GPUStageID.COMPUTE,
+        'trace_rays': GPUStageID.TRACE_RAYS,
+        'advanced geometry': GPUStageID.ADVANCED_GEOMETRY,
+        'vertex': GPUStageID.VERTEX,
+        'fragment': GPUStageID.FRAGMENT,
+        'binning': GPUStageID.BINNING,
+        'main': GPUStageID.MAIN,
+        "acceleration structure 'fast build' build":
+            GPUStageID.AS_BUILD_FAST_BUILD,
+        "acceleration structure 'fast trace' build":
+            GPUStageID.AS_BUILD_FAST_TRACE,
+        'acceleration structure copy to memory': GPUStageID.AS_TRANSFER,
+        'acceleration structure copy from memory': GPUStageID.AS_TRANSFER,
+        'acceleration structure update': GPUStageID.BUFFER_TRANSFER
     }
 
     def __init__(self):
@@ -731,7 +752,7 @@ class PerfettoConfig:
 
         # Interned ID does not exist
         else:
-            assert False, "Stage IID not found"
+            assert False, 'ERROR: Unknown stage interned data ID'
 
 
 class RawTrace:
@@ -863,7 +884,7 @@ class RawTrace:
         for event in trace_events:
             event.start_time -= start_time
 
-            # Also ensure that "queued time" does not show as running
+            # Also ensure that queued time does not show as running
             if event.stream not in streams:
                 streams[event.stream] = [event]
                 continue
