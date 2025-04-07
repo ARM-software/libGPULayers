@@ -28,7 +28,7 @@ timeline visualization.
 
 from collections import defaultdict
 
-from ...data.raw_trace import GPUStreamID
+from ...data.raw_trace import GPUStreamID, GPUStageID
 from ...data.processed_trace import GPUWorkload
 from ...drawable.text_pane_widget import TextPaneWidget
 
@@ -251,12 +251,70 @@ class TimelineInfoWidget(TextPaneWidget):
 
         return self.cached_range_info
 
-    def compute_active_event_stats_multi(self, active):
+    def compute_active_event_stats_single(self, event):
         '''
-        Get the metrics for the active time range.
+        Get the metrics for the active event.
 
         This function uses a cached lookup to avoid re-calculating every
         redraw, as the stats computation can be quite slow.
+
+        Args:
+            event: The active event.
+
+        Returns:
+            List of lines to be printed.
+        '''
+        # Skip non-workload types
+        if not isinstance(event, GPUWorkload):
+            return []
+
+        stream_name = GPUStreamID.get_ui_name(event.stream)
+        stage_name = GPUStageID.get_ui_name(event.stage)
+
+        metrics = ['']
+
+        # Report total runtime of the selected workloads
+        other_names = [
+            'API workloads:',
+            'Hardware workloads:'
+        ]
+
+        metrics.append('Active workload runtime:')
+        label_len = len(stream_name) + len(' stream:')
+        label_len = max(max(len(x) for x in other_names), label_len)
+
+        label = other_names[0]
+        metrics.append(f'  {label:{label_len}} {1:>5}')
+
+        label = other_names[1]
+        metrics.append(f'  {label:{label_len}} {1:>5}')
+
+        label = f'{stream_name} stream:'
+        duration = float(event.duration) / 1000000.0
+        metrics.append(f'  {label:{label_len}} {duration:>5.2f} ms')
+
+        # Report total N workloads
+        metrics.append('')
+        metrics.append('Workload properties:')
+
+        label = event.get_workload_name()
+        metrics.append(f'  Name: {label}')
+        metrics.append(f'  Stream: {stream_name}')
+        metrics.append(f'  Stage: {stage_name}')
+        metrics.append(f'  Start: {event.start_time / 1000000.0:0.2f} ms')
+        metrics.append(f'  Duration: {event.duration / 1000000.0:0.2f} ms')
+        metrics.append('')
+        return metrics
+
+    def compute_active_event_stats_multi(self, active):
+        '''
+        Get the metrics for the active events.
+
+        This function uses a cached lookup to avoid re-calculating every
+        redraw, as the stats computation can be quite slow.
+
+        Args:
+            active: List of active events.
 
         Returns:
             List of lines to be printed.
@@ -367,6 +425,9 @@ class TimelineInfoWidget(TextPaneWidget):
 
         if len(active) == 0:
             info = None
+
+        elif len(active) == 1:
+            info = self.compute_active_event_stats_single(active[0])
 
         else:
             info = self.compute_active_event_stats_multi(active)
