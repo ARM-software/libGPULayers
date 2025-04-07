@@ -116,14 +116,14 @@ Navigation uses the mouse:
 * Zoom: Mouse wheel.
 * Pan: Middle mouse button, hold and drag.
 
-Selecting active events:
+Selecting a set of active events:
 
-* Select event:
-  * Left click to select/deselect
-  * Shift + Left click to add to selection
-  * Left click and drag to select multiple selection
+* Select events:
+  * Left click/drag to create a new selection
+  * <kbd>Ctrl</kbd> + Left click/drag to add to existing selection
+  * <kbd>Shift</kbd> + Left click/drag to remove from existing selection
 * Select events by group:
-  * Right click on an event, and use context menu
+  * Right click on an event, and use context menu to create a new selection
   * Group options available include:
     * By frame
     * By Vulkan queue submit
