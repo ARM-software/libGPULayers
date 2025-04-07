@@ -271,7 +271,7 @@ class TimelineInfoWidget(TextPaneWidget):
         stream_name = GPUStreamID.get_ui_name(event.stream)
         stage_name = GPUStageID.get_ui_name(event.stage)
 
-        metrics = ['']
+        metrics = []
 
         # Report total runtime of the selected workloads
         other_names = [
@@ -349,7 +349,7 @@ class TimelineInfoWidget(TextPaneWidget):
 
             tag_stream_time[event.tag_id][event.stream] += event.duration
 
-        metrics = ['']
+        metrics = []
         # Report total runtime of the selected workloads
         other_names = [
             'API workloads:',
