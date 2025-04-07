@@ -878,19 +878,22 @@ class RawTrace:
         # Sort events into time order
         trace_events.sort(key=lambda x: x.start_time)
 
-        # Replace time so first event starts at time = 0
+        # Replace time so first event starts at time = 0 and that queued time
+        # waiting for earlier work does not show as running
         streams = {}
         start_time = trace_events[0].start_time
         for event in trace_events:
             event.start_time -= start_time
 
-            # Also ensure that queued time does not show as running
+            # First job in stream so just add to stream
             if event.stream not in streams:
                 streams[event.stream] = [event]
                 continue
 
+            # Later job in stream so remove any overlap with job N-1
             last_event = streams[event.stream][-1]
             last_event_end = last_event.start_time + last_event.duration
+            streams[event.stream].append(event)
 
             # Remove overlap if queued while last event still running
             if event.start_time <= last_event_end:
