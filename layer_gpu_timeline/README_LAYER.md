@@ -47,36 +47,39 @@ Tooling setup steps
 * The viewer uses PyGTK, and requires the native GTK3 libraries and PyGTK to be
   installed. GTK installation instructions can be found on the official GTK
   website: https://www.gtk.org/docs/installations.
-* The Python viewer uses Google Protocol Buffers, which can be installed using
-  the Python 3 `pip` package installer.
+* Python dependencies can be installed using the Python 3 `pip` package
+  manager.
 
 ```
-python3 -m pip install protobuf
+python3 -m pip install protobuf pygobject
 ```
 
 ### Layer build
 
 Build the Timeline layer for Android using the provided build script, or using
-equivalent manual commands, from the `layer_gpu_timeline` directory.
+equivalent manual commands, from the `layer_gpu_timeline` directory. For full
+instructions see the _Build an Android layer_ section in the
+[Build documentation](../docs/building.md).
 
 ### Layer run
 
-Capture a Timeline capture using the Android helper utility from the root
-directory. Run the following script to install the layer and auto-start
-the application under test:
+You can record a timeline by using the Android helper utility found in the root
+directory to configure the layer and manage the capture process. You must
+enable the timeline layer, and the base name of the output files that will
+contain the final timeline data.
 
 ```sh
-python3 lgl_android_install.py --layer layer_gpu_timeline --timeline <out> --auto-start
+python3 lgl_android_install.py --layer layer_gpu_timeline --timeline <out>
 ```
-
-When the test has finished, press any key in the terminal to prompt the script
-to remove the layer from the device and save the data files to the specified
-host paths.
 
 The timeline data files will be saved as `<out>.perfetto` and `<out>.metadata`.
 If you want to use different file names for each, you can alternatively specify
 a full file path for each file using `--timeline-perfetto` and
 `--timeline-metadata`.
+
+The Android helper utility contains many other options for configuring the
+application under test and the capture process. For full instructions see the
+[Running on Android documentation](../docs/running_android.md).
 
 ## Timeline visualization
 

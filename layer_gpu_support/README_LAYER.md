@@ -37,32 +37,31 @@ Tooling setup steps
 ### Layer build
 
 Build the Support layer for Android using the provided build script, or using
-equivalent manual commands, from the `layer_gpu_support` directory.
+equivalent manual commands, from the `layer_gpu_support` directory. For full
+instructions see the _Build an Android layer_ and _Build a Linux layer_
+sections in the [Build documentation](../docs/building.md).
 
 ### Running using the layer
 
-This layer requires you to provide a configuration file that specifies the
-overrides to apply. Details of the configuration options in each override
-group are document in the Behavior overrides section below.
-
-The [`layer_config.json`](layer_config.json) file in this directory is a
-complete template configuration file you can start from. However, note that it
-does not enable any overrides by default, so running the layer with this
-configuration used "as is" will not do anything useful. Take a copy and
-modify it to enable the options you want to try.
-
-For Android you can run this layer with the following command line:
+You can perform support experiments by using the Android helper utility found
+in the root directory to configure the layer and manage the application. You
+must enable the support layer, and provide a configuration file to parameterize
+it.
 
 ```sh
 python3 lgl_android_install.py --layer layer_gpu_support --config <your.json>
 ```
 
-You can then start your application to observe the impact of the layer
-overrides.
+The [`layer_config.json`](layer_config.json) file in this directory is a
+template configuration file you can start from. It does not enable any
+overrides by default, so running the layer using this configuration "as is"
+will not do anything useful. Take a copy and modify it to enable the options
+you want to try. Details of the configuration options in each override group
+are document in the _Behavior overrides_ section below.
 
-When the test has finished, press any key in the terminal to prompt the script
-to remove the layer from the device and save the data files to the specified
-host paths.
+The Android helper utility contains many other options for configuring the
+application under test and the capture process. For full instructions see the
+[Running on Android documentation](../docs/running_android.md).
 
 ## Behavior overrides
 
@@ -84,9 +83,9 @@ The configuration file allows control over specific options, as well as
 convenience options to force disable or enable all serialization.
 
 * If the `none` option is `true` then no serialization is applied, irrespective
-of other settings.
+  of other settings.
 * Else, if the `all` option is `true` then all serialization is applied,
-irrespective of other settings.
+  irrespective of other settings.
 * Else, the individual options are applied as specified.
 
 ```jsonc
