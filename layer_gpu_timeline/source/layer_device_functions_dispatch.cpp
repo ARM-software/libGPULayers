@@ -76,7 +76,7 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatch<user_tag>(VkCommandBuffer command
     lock.unlock();
     emitStartTag(layer, commandBuffer, tagID);
     layer->driver.vkCmdDispatch(commandBuffer, groupCountX, groupCountY, groupCountZ);
-    layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
+    emitEndTag(layer, commandBuffer);
 }
 
 /* See Vulkan API for documentation. */
@@ -106,7 +106,7 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchBase<user_tag>(VkCommandBuffer com
     emitStartTag(layer, commandBuffer, tagID);
     layer->driver
         .vkCmdDispatchBase(commandBuffer, baseGroupX, baseGroupY, baseGroupZ, groupCountX, groupCountY, groupCountZ);
-    layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
+    emitEndTag(layer, commandBuffer);
 }
 
 /* See Vulkan API for documentation. */
@@ -136,7 +136,7 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchBaseKHR<user_tag>(VkCommandBuffer 
     emitStartTag(layer, commandBuffer, tagID);
     layer->driver
         .vkCmdDispatchBaseKHR(commandBuffer, baseGroupX, baseGroupY, baseGroupZ, groupCountX, groupCountY, groupCountZ);
-    layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
+    emitEndTag(layer, commandBuffer);
 }
 
 /* See Vulkan API for documentation. */
@@ -157,5 +157,5 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchIndirect<user_tag>(VkCommandBuffer
     lock.unlock();
     emitStartTag(layer, commandBuffer, tagID);
     layer->driver.vkCmdDispatchIndirect(commandBuffer, buffer, offset);
-    layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
+    emitEndTag(layer, commandBuffer);
 }

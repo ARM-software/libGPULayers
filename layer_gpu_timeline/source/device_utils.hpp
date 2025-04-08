@@ -48,5 +48,24 @@
         .color = {0.0f, 0.0f, 0.0f, 0.0f},
     };
 
-    layer->driver.vkCmdBeginDebugUtilsLabelEXT(commandBuffer, &tagInfo);
+    // Function pointer may be null if driver does not expose the extension
+    if (layer->driver.vkCmdBeginDebugUtilsLabelEXT)
+    {
+        layer->driver.vkCmdBeginDebugUtilsLabelEXT(commandBuffer, &tagInfo);
+    }
 }
+
+/**
+ * @brief End a tag via a driver debug utils label.
+ *
+ * @param layer           The layer context for the device.
+ * @param commandBuffer   The command buffer we are recording.
+ */
+ [[maybe_unused]] static void emitEndTag(Device* layer, VkCommandBuffer commandBuffer)
+ {
+    // Function pointer may be null if driver does not expose the extension
+    if (layer->driver.vkCmdEndDebugUtilsLabelEXT)
+    {
+        layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
+    }
+ }
