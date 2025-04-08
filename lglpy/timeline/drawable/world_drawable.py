@@ -110,6 +110,10 @@ class WorldDrawableRect(WorldDrawable):
         # Round based on final WS position not on WS width
         max_x, max_y = vp.transform_ws_to_cs(self.ws.max_x, self.ws.max_y, 2)
 
+        # Clamp extents to viewport size
+        x = max(x, vp.cs.min_x)
+        max_x = min(max_x, vp.cs.max_x)
+
         # Calculate canvas-space width and height
         w = max_x - x + 1
         h = max_y - y + 1
