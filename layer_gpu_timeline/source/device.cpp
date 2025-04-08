@@ -100,6 +100,17 @@ Device::Device(Instance* _instance,
 
     initDriverDeviceDispatchTable(device, nlayerGetProcAddress, driver);
 
+    // Emit a log if debug utils entry points did not load. In this scenario
+    // the layer will still be loaded and send metadata packets to the server
+    // socket, but the Perfetto data will not contain any tag labels. We will
+    // therefore be unable to cross-reference the two data streams to produce a
+    // usable visualization.
+    if (!driver.vkCmdBeginDebugUtilsLabelEXT)
+    {
+        LAYER_LOG("  - ERROR: Device does not expose VK_EXT_debug_utils");
+        LAYER_LOG("           Perfetto data will not contain cross-ref tags");
+    }
+
     // Init the shared comms module for the first device built
     if (!commsModule)
     {
