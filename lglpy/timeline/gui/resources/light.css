@@ -1,7 +1,7 @@
 /* Centralized settings. */
 mtv-core {
 	fill-color: #e5e5e5;
-	font-size: 11;
+	font-size: 14;
 }
 
 /* ------------------------------------------------------------------------- */
@@ -9,7 +9,7 @@ mtv-core {
 
 [mtv-core] homev-core {
 	font-color: #404040;
-	font-size: 13;
+	font-size: 14;
 }
 
 /* ------------------------------------------------------------------------- */

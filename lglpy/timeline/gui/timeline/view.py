@@ -74,7 +74,7 @@ class TLSpec:
     same screen space.
     '''
     CHANNEL_START_Y = 55
-    CHANNEL_BOX_Y = 40
+    CHANNEL_BOX_Y = 50
     CHANNEL_GAP_Y = 30
 
     specMap = {}  # type: dict[str, TLSpec]
