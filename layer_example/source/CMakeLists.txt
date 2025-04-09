@@ -66,7 +66,6 @@ target_link_libraries(
 if (CMAKE_BUILD_TYPE STREQUAL "Release")
     add_custom_command(
         TARGET "${VK_LAYER}" POST_BUILD
-        DEPENDS "${VK_LAYER}"
         COMMAND ${CMAKE_STRIP}
         ARGS --strip-all -o ${VK_LAYER_STRIP} $<TARGET_FILE:${VK_LAYER}>
         COMMENT "Stripped lib${VK_LAYER}.so to ${VK_LAYER_STRIP}")
