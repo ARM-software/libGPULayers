@@ -125,7 +125,7 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdFillBuffer<user_tag>(VkCommandBuffer comma
     lock.unlock();
     emitStartTag(layer, commandBuffer, tagID);
     layer->driver.vkCmdFillBuffer(commandBuffer, dstBuffer, dstOffset, size, data);
-    layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
+    emitEndTag(layer, commandBuffer);
 }
 
 /* See Vulkan API for documentation. */
@@ -154,7 +154,7 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdClearColorImage<user_tag>(VkCommandBuffer 
     lock.unlock();
     emitStartTag(layer, commandBuffer, tagID);
     layer->driver.vkCmdClearColorImage(commandBuffer, image, imageLayout, pColor, rangeCount, pRanges);
-    layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
+    emitEndTag(layer, commandBuffer);
 }
 
 /* See Vulkan API for documentation. */
@@ -183,7 +183,7 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdClearDepthStencilImage<user_tag>(VkCommand
     lock.unlock();
     emitStartTag(layer, commandBuffer, tagID);
     layer->driver.vkCmdClearDepthStencilImage(commandBuffer, image, imageLayout, pDepthStencil, rangeCount, pRanges);
-    layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
+    emitEndTag(layer, commandBuffer);
 }
 
 /* See Vulkan API for documentation. */
@@ -214,7 +214,7 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBuffer<user_tag>(VkCommandBuffer comma
     lock.unlock();
     emitStartTag(layer, commandBuffer, tagID);
     layer->driver.vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, regionCount, pRegions);
-    layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
+    emitEndTag(layer, commandBuffer);
 }
 
 /* See Vulkan API for documentation. */
@@ -242,7 +242,7 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBuffer2<user_tag>(VkCommandBuffer comm
     lock.unlock();
     emitStartTag(layer, commandBuffer, tagID);
     layer->driver.vkCmdCopyBuffer2(commandBuffer, pCopyBufferInfo);
-    layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
+    emitEndTag(layer, commandBuffer);
 }
 
 /* See Vulkan API for documentation. */
@@ -270,7 +270,7 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBuffer2KHR<user_tag>(VkCommandBuffer c
     lock.unlock();
     emitStartTag(layer, commandBuffer, tagID);
     layer->driver.vkCmdCopyBuffer2KHR(commandBuffer, pCopyBufferInfo);
-    layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
+    emitEndTag(layer, commandBuffer);
 }
 
 /* See Vulkan API for documentation. */
@@ -305,7 +305,7 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBufferToImage<user_tag>(VkCommandBuffe
     lock.unlock();
     emitStartTag(layer, commandBuffer, tagID);
     layer->driver.vkCmdCopyBufferToImage(commandBuffer, srcBuffer, dstImage, dstImageLayout, regionCount, pRegions);
-    layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
+    emitEndTag(layer, commandBuffer);
 }
 
 /* See Vulkan API for documentation. */
@@ -337,7 +337,7 @@ VKAPI_ATTR void VKAPI_CALL
     lock.unlock();
     emitStartTag(layer, commandBuffer, tagID);
     layer->driver.vkCmdCopyBufferToImage2(commandBuffer, pCopyBufferToImageInfo);
-    layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
+    emitEndTag(layer, commandBuffer);
 }
 
 /* See Vulkan API for documentation. */
@@ -369,7 +369,7 @@ VKAPI_ATTR void VKAPI_CALL
     lock.unlock();
     emitStartTag(layer, commandBuffer, tagID);
     layer->driver.vkCmdCopyBufferToImage2KHR(commandBuffer, pCopyBufferToImageInfo);
-    layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
+    emitEndTag(layer, commandBuffer);
 }
 
 /* See Vulkan API for documentation. */
@@ -406,7 +406,7 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImage<user_tag>(VkCommandBuffer comman
     emitStartTag(layer, commandBuffer, tagID);
     layer->driver
         .vkCmdCopyImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
-    layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
+    emitEndTag(layer, commandBuffer);
 }
 
 /* See Vulkan API for documentation. */
@@ -437,7 +437,7 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImage2<user_tag>(VkCommandBuffer comma
     lock.unlock();
     emitStartTag(layer, commandBuffer, tagID);
     layer->driver.vkCmdCopyImage2(commandBuffer, pCopyImageInfo);
-    layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
+    emitEndTag(layer, commandBuffer);
 }
 
 /* See Vulkan API for documentation. */
@@ -468,7 +468,7 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImage2KHR<user_tag>(VkCommandBuffer co
     lock.unlock();
     emitStartTag(layer, commandBuffer, tagID);
     layer->driver.vkCmdCopyImage2KHR(commandBuffer, pCopyImageInfo);
-    layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
+    emitEndTag(layer, commandBuffer);
 }
 
 /* See Vulkan API for documentation. */
@@ -507,7 +507,7 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImageToBuffer<user_tag>(VkCommandBuffe
     lock.unlock();
     emitStartTag(layer, commandBuffer, tagID);
     layer->driver.vkCmdCopyImageToBuffer(commandBuffer, srcImage, srcImageLayout, dstBuffer, regionCount, pRegions);
-    layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
+    emitEndTag(layer, commandBuffer);
 }
 
 /* See Vulkan API for documentation. */
@@ -543,7 +543,7 @@ VKAPI_ATTR void VKAPI_CALL
     lock.unlock();
     emitStartTag(layer, commandBuffer, tagID);
     layer->driver.vkCmdCopyImageToBuffer2(commandBuffer, pCopyImageToBufferInfo);
-    layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
+    emitEndTag(layer, commandBuffer);
 }
 
 /* See Vulkan API for documentation. */
@@ -579,7 +579,7 @@ VKAPI_ATTR void VKAPI_CALL
     lock.unlock();
     emitStartTag(layer, commandBuffer, tagID);
     layer->driver.vkCmdCopyImageToBuffer2KHR(commandBuffer, pCopyImageToBufferInfo);
-    layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
+    emitEndTag(layer, commandBuffer);
 }
 
 /* See Vulkan API for documentation. */
@@ -610,7 +610,7 @@ VKAPI_ATTR void VKAPI_CALL
     lock.unlock();
     emitStartTag(layer, commandBuffer, tagID);
     layer->driver.vkCmdCopyAccelerationStructureKHR(commandBuffer, pInfo);
-    layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
+    emitEndTag(layer, commandBuffer);
 }
 
 /* See Vulkan API for documentation. */
@@ -641,7 +641,7 @@ VKAPI_ATTR void VKAPI_CALL
     lock.unlock();
     emitStartTag(layer, commandBuffer, tagID);
     layer->driver.vkCmdCopyAccelerationStructureToMemoryKHR(commandBuffer, pInfo);
-    layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
+    emitEndTag(layer, commandBuffer);
 }
 
 /* See Vulkan API for documentation. */
@@ -672,5 +672,5 @@ VKAPI_ATTR void VKAPI_CALL
     lock.unlock();
     emitStartTag(layer, commandBuffer, tagID);
     layer->driver.vkCmdCopyMemoryToAccelerationStructureKHR(commandBuffer, pInfo);
-    layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
+    emitEndTag(layer, commandBuffer);
 }

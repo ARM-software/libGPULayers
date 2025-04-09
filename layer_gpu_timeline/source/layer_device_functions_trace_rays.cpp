@@ -105,7 +105,7 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBuildAccelerationStructuresIndirectKHR<use
                                                               pIndirectDeviceAddresses,
                                                               pIndirectStrides,
                                                               ppMaxPrimitiveCounts);
-    layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
+    emitEndTag(layer, commandBuffer);
 }
 
 /* See Vulkan API for documentation. */
@@ -131,7 +131,7 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBuildAccelerationStructuresKHR<user_tag>(
     lock.unlock();
     emitStartTag(layer, commandBuffer, tagID);
     layer->driver.vkCmdBuildAccelerationStructuresKHR(commandBuffer, infoCount, pInfos, ppBuildRangeInfos);
-    layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
+    emitEndTag(layer, commandBuffer);
 }
 
 /* See Vulkan API for documentation. */
@@ -151,7 +151,7 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdTraceRaysIndirect2KHR<user_tag>(VkCommandB
     lock.unlock();
     emitStartTag(layer, commandBuffer, tagID);
     layer->driver.vkCmdTraceRaysIndirect2KHR(commandBuffer, indirectDeviceAddress);
-    layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
+    emitEndTag(layer, commandBuffer);
 }
 
 /* See Vulkan API for documentation. */
@@ -181,7 +181,7 @@ VKAPI_ATTR void VKAPI_CALL
                                             pHitShaderBindingTable,
                                             pCallableShaderBindingTable,
                                             indirectDeviceAddress);
-    layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
+    emitEndTag(layer, commandBuffer);
 }
 
 /* See Vulkan API for documentation. */
@@ -215,5 +215,5 @@ VKAPI_ATTR void VKAPI_CALL
                                     width,
                                     height,
                                     depth);
-    layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
+    emitEndTag(layer, commandBuffer);
 }

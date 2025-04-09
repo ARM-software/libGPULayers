@@ -309,7 +309,7 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderPass<user_tag>(VkCommandBuffer co
     // Release the lock to call into the driver
     lock.unlock();
     layer->driver.vkCmdEndRenderPass(commandBuffer);
-    layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
+    emitEndTag(layer, commandBuffer);
 }
 
 /* See Vulkan API for documentation. */
@@ -326,7 +326,7 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderPass2<user_tag>(VkCommandBuffer c
     // Release the lock to call into the driver
     lock.unlock();
     layer->driver.vkCmdEndRenderPass2(commandBuffer, pSubpassEndInfo);
-    layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
+    emitEndTag(layer, commandBuffer);
 }
 
 /* See Vulkan API for documentation. */
@@ -343,7 +343,7 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderPass2KHR<user_tag>(VkCommandBuffe
     // Release the lock to call into the driver
     lock.unlock();
     layer->driver.vkCmdEndRenderPass2KHR(commandBuffer, pSubpassEndInfo);
-    layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
+    emitEndTag(layer, commandBuffer);
 }
 
 /* See Vulkan API for documentation. */
@@ -366,7 +366,7 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRendering<user_tag>(VkCommandBuffer com
     layer->driver.vkCmdEndRendering(commandBuffer);
     if (!suspending)
     {
-        layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
+        emitEndTag(layer, commandBuffer);
     }
 }
 
@@ -390,6 +390,6 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderingKHR<user_tag>(VkCommandBuffer 
     layer->driver.vkCmdEndRenderingKHR(commandBuffer);
     if (!suspending)
     {
-        layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
+        emitEndTag(layer, commandBuffer);
     }
 }
