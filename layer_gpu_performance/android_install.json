@@ -1,0 +1,4 @@
+{
+    "layer_name": "VK_LAYER_LGL_GPUPERFORMANCE",
+    "layer_binary": "libVkLayerGPUPerformance.so"
+}
