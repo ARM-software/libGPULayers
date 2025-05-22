@@ -99,6 +99,11 @@ VKAPI_ATTR VkResult VKAPI_CALL
         layer->driver.vkQueueSubmit(queue, 1, &submitInfoPost, VK_NULL_HANDLE);
     }
 
+    if (layer->instance->config.serialize_queue_wait_idle())
+    {
+        layer->driver.vkDeviceWaitIdle(layer->device);
+    }
+
     return result;
 }
 
@@ -178,6 +183,11 @@ VKAPI_ATTR VkResult VKAPI_CALL
         layer->driver.vkQueueSubmit2(queue, 1, &submitInfoPost, VK_NULL_HANDLE);
     }
 
+    if (layer->instance->config.serialize_queue_wait_idle())
+    {
+        layer->driver.vkDeviceWaitIdle(layer->device);
+    }
+
     return result;
 }
 
@@ -255,6 +265,11 @@ VKAPI_ATTR VkResult VKAPI_CALL
     if (layer->instance->config.serialize_queue())
     {
         layer->driver.vkQueueSubmit2KHR(queue, 1, &submitInfoPost, VK_NULL_HANDLE);
+    }
+
+    if (layer->instance->config.serialize_queue_wait_idle())
+    {
+        layer->driver.vkDeviceWaitIdle(layer->device);
     }
 
     return result;

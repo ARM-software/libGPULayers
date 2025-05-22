@@ -85,14 +85,16 @@ convenience options to force disable or enable all serialization.
 * If the `none` option is `true` then no serialization is applied, irrespective
   of other settings.
 * Else, if the `all` option is `true` then all serialization is applied,
-  irrespective of other settings.
+  irrespective of other settings, with the exception of `queue_wait_idle` which
+  must be enabled individually due to its extreme performance overhead.
 * Else, the individual options are applied as specified.
 
 ```jsonc
 "serialize": {
-    "none": false,          // Enable no serialization options
-    "all": false,           // Enable all serialization options
-    "queue": false,         // Enable cross-queue serialization of submits
+    "none": false,            // Enable no serialization options
+    "all": false,             // Enable all serialization options except queue_wait_idle
+    "queue": false,           // Force cross-queue serialization of submits
+    "queue_wait_idle": false, // Insert vkDeviceWaitIdle after submits
     "commandstream": {
         "compute": {
             "pre": false,   // Insert full barrier before dispatches

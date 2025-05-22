@@ -46,7 +46,8 @@ void LayerConfig::parse_serialization_options(const json& config)
     // Decode top level options
     bool s_all = serialize.at("all");
     bool s_none = serialize.at("none");
-    bool s_queue = serialize.at("queue");
+    bool s_queue_to_queue = serialize.at("queue");
+    bool s_queue_to_cpu = serialize.at("queue_wait_idle");
 
     // Decode command stream options
     json s_stream = serialize.at("commandstream");
@@ -67,7 +68,11 @@ void LayerConfig::parse_serialization_options(const json& config)
     bool s_stream_tx_post = s_stream.at("transfer").at("post");
 
     // Write after all options read from JSON so we know it parsed correctly
-    conf_serialize_queues = (!s_none) && (s_all || s_queue);
+    conf_serialize_queues = (!s_none) && (s_all || s_queue_to_queue);
+
+    // This is not enabled by "all" and is a special case because it has a
+    // exceptionally high performance penalty compared to the other options
+    conf_serialize_queue_wait_idle = (!s_none) && s_queue_to_cpu;
 
     conf_serialize_dispatch_pre = (!s_none) && (s_all || s_stream_c_pre);
     conf_serialize_dispatch_post = (!s_none) && (s_all || s_stream_c_post);
@@ -86,7 +91,8 @@ void LayerConfig::parse_serialization_options(const json& config)
 
     LAYER_LOG("Layer serialization configuration");
     LAYER_LOG("=================================");
-    LAYER_LOG(" - Serialize queues: %d", conf_serialize_queues);
+    LAYER_LOG(" - Serialize queue submit: %d", conf_serialize_queues);
+    LAYER_LOG(" - Wait idle after queue submit: %d", conf_serialize_queue_wait_idle);
     LAYER_LOG(" - Serialize compute pre: %d", conf_serialize_dispatch_pre);
     LAYER_LOG(" - Serialize compute post: %d", conf_serialize_dispatch_post);
     LAYER_LOG(" - Serialize render pass pre: %d", conf_serialize_render_pass_pre);
@@ -268,6 +274,13 @@ bool LayerConfig::serialize_queue() const
 {
     return conf_serialize_queues;
 }
+
+/* See header for documentation. */
+bool LayerConfig::serialize_queue_wait_idle() const
+{
+    return conf_serialize_queue_wait_idle;
+}
+
 
 /* See header for documentation. */
 bool LayerConfig::serialize_cmdstream_compute_dispatch_pre() const
