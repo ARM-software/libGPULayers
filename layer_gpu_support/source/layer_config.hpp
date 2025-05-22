@@ -52,9 +52,14 @@ public:
     // Config queries for serializer
 
     /**
-     * @brief True if config wants to serialize before compute workloads.
+     * @brief True if config wants to serialize across queue submits.
      */
     bool serialize_queue() const;
+
+    /**
+     * @brief True if config wants to serialize queue submits with the CPU.
+     */
+    bool serialize_queue_wait_idle() const;
 
     /**
      * @brief True if config wants to serialize before compute workloads.
@@ -178,9 +183,14 @@ private:
 
 private:
     /**
-     * @brief True if we force serialize across queues.
+     * @brief True if we force serialize all queue submits.
      */
     bool conf_serialize_queues {false};
+
+    /**
+     * @brief True if we force device idle after each queue submit.
+     */
+    bool conf_serialize_queue_wait_idle {false};
 
     /**
      * @brief True if we force serialize before compute dispatches.

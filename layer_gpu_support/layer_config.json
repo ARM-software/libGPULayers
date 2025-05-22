@@ -25,7 +25,8 @@
                 "post": false
             }
         },
-        "queue": false
+        "queue": false,
+        "queue_wait_idle": false
     },
     "shader": {
         "disable_cache": false,
