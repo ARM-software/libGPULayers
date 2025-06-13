@@ -878,6 +878,13 @@ class RawTrace:
         # Sort events into time order
         trace_events.sort(key=lambda x: x.start_time)
 
+        # Replace all interned data cross-references to assign real stream
+        # names before trying to use streams because we may get more than one
+        # interned ID for the same physical stream and this will dedupe them
+        for event in trace_events:
+            config.replace_interned_stream(event)
+            config.replace_interned_stage(event)
+
         # Replace time so first event starts at time = 0 and that queued time
         # waiting for earlier work does not show as running
         streams = {}
@@ -893,7 +900,6 @@ class RawTrace:
             # Later job in stream so remove any overlap with job N-1
             last_event = streams[event.stream][-1]
             last_event_end = last_event.start_time + last_event.duration
-            streams[event.stream].append(event)
 
             # Remove overlap if queued while last event still running
             if event.start_time <= last_event_end:
@@ -901,10 +907,12 @@ class RawTrace:
                 event.start_time += time_diff
                 event.duration -= time_diff
 
-        # Replace all interned data cross-references
-        for event in trace_events:
-            config.replace_interned_stream(event)
-            config.replace_interned_stage(event)
+                # Ensure we don't have negative duration events
+                if event.duration <= 0:
+                    event.duration = 1
+
+            # Add event to the stream after patching it
+            streams[event.stream].append(event)
 
         return (trace_events, start_time)
 
