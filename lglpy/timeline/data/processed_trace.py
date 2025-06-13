@@ -77,7 +77,7 @@ class GPUWorkload:
         # Common data we get from the layer metadata
         self.submit = None
         self.label_stack = None
-        self.parsed_label_name = None
+        self.parsed_label_name: Optional[str] = None
 
         if metadata:
             self.submit = metadata.submit
