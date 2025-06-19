@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2022-2024 Arm Limited
+ * Copyright (c) 2022-2025 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -35,8 +35,7 @@ namespace Tracker
 /* See header for documentation. */
 CommandBuffer::CommandBuffer(VkCommandBuffer _handle)
     : handle(_handle) {
-
-      };
+}
 
 /* See header for documentation. */
 void CommandBuffer::reset()
@@ -233,8 +232,7 @@ void CommandBuffer::executeCommands(CommandBuffer& secondary)
 /* See header for documentation. */
 CommandPool::CommandPool(VkCommandPool _handle)
     : handle(_handle) {
-
-      };
+}
 
 /* See header for documentation. */
 CommandBuffer& CommandPool::allocateCommandBuffer(VkCommandBuffer commandBuffer)

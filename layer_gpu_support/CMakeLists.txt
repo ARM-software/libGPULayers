@@ -24,6 +24,7 @@
 cmake_minimum_required(VERSION 3.19)
 
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRES ON)
 
 project(VkLayerGPUSupport VERSION 1.0.0)
 
