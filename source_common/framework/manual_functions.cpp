@@ -29,9 +29,10 @@
  * implemented as library code which can be swapped for alternative
  * implementations on a per-layer basis if needed.
  */
+#include <vulkan/utility/vk_safe_struct.hpp>
+#include <vulkan/utility/vk_struct_helper.hpp>
 
 #include "framework/manual_functions.hpp"
-
 #include "utils/misc.hpp"
 
 /**
@@ -381,13 +382,11 @@ static void enableInstanceVkExtDebugUtils(const std::vector<std::string>& suppor
  *
  * @param createInfo    The createInfo we can search to find user config.
  * @param supported     The list of supported extensions.
- * @param active        The list of active extensions.
  * @param newFeatures   Pre-allocated struct we can use if we need to add it.
  */
-static void enableDeviceVkKhrTimelineSemaphore(VkDeviceCreateInfo& createInfo,
+static void enableDeviceVkKhrTimelineSemaphore(vku::safe_VkDeviceCreateInfo& createInfo,
                                                std::vector<std::string>& supported,
-                                               std::vector<const char*>& active,
-                                               VkPhysicalDeviceTimelineSemaphoreFeatures newFeatures)
+                                               VkPhysicalDeviceTimelineSemaphoreFeatures& newFeatures)
 {
     static const std::string target {VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME};
 
@@ -398,16 +397,13 @@ static void enableDeviceVkKhrTimelineSemaphore(VkDeviceCreateInfo& createInfo,
         return;
     }
 
-    // If it is not already enabled then add to the list
-    if (!isIn(target, active))
+    // Enable the extension - this will skip adding if already enabled
+    if (vku::AddExtension(createInfo, target.c_str()))
     {
         LAYER_LOG("Device extension added: %s", target.c_str());
-        active.push_back(target.c_str());
     }
 
     // Check if user provided a VkPhysicalDeviceTimelineSemaphoreFeatures
-    // TODO: This currently relies on const_cast to make user struct writable
-    //       We should replace this with a generic clone (issue #56)
     auto* config1 = searchNextList<VkPhysicalDeviceTimelineSemaphoreFeatures>(
         VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES,
         createInfo.pNext);
@@ -426,11 +422,9 @@ static void enableDeviceVkKhrTimelineSemaphore(VkDeviceCreateInfo& createInfo,
     }
 
     // Check if user provided a VkPhysicalDeviceVulkan12Features
-    // TODO: This currently relies on const_cast to make user struct writable
-    //       We should replace this with a generic clone (issue #56)
-    auto* config2 =
-        searchNextList<VkPhysicalDeviceVulkan12Features>(VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES,
-                                                         createInfo.pNext);
+    auto* config2 = searchNextList<VkPhysicalDeviceVulkan12Features>(
+        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES,
+        createInfo.pNext);
 
     if (config2)
     {
@@ -448,10 +442,8 @@ static void enableDeviceVkKhrTimelineSemaphore(VkDeviceCreateInfo& createInfo,
     // Add a config if not configured by the application
     if (!config1 && !config2)
     {
-        newFeatures.pNext = const_cast<void*>(createInfo.pNext);
-        newFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES;
         newFeatures.timelineSemaphore = true;
-        createInfo.pNext = reinterpret_cast<const void*>(&newFeatures);
+        vku::AddToPnext(createInfo, newFeatures);
         LAYER_LOG("Device extension config added: %s", target.c_str());
     }
 }
@@ -467,13 +459,11 @@ static void enableDeviceVkKhrTimelineSemaphore(VkDeviceCreateInfo& createInfo,
  *
  * @param createInfo    The createInfo we can search to find user config.
  * @param supported     The list of supported extensions.
- * @param active        The list of active extensions.
  * @param newFeatures   Pre-allocated struct we can use if we need to add it.
  */
-static void enableDeviceVkExtImageCompressionControl(VkDeviceCreateInfo& createInfo,
+static void enableDeviceVkExtImageCompressionControl(vku::safe_VkDeviceCreateInfo& createInfo,
                                                      std::vector<std::string>& supported,
-                                                     std::vector<const char*>& active,
-                                                     VkPhysicalDeviceImageCompressionControlFeaturesEXT newFeatures)
+                                                     VkPhysicalDeviceImageCompressionControlFeaturesEXT& newFeatures)
 {
     static const std::string target {VK_EXT_IMAGE_COMPRESSION_CONTROL_EXTENSION_NAME};
 
@@ -484,16 +474,13 @@ static void enableDeviceVkExtImageCompressionControl(VkDeviceCreateInfo& createI
         return;
     }
 
-    // If it is not already enabled then add to the list
-    if (!isIn(target, active))
+    // Enable the extension - this will skip adding if already enabled
+    if (vku::AddExtension(createInfo, target.c_str()))
     {
         LAYER_LOG("Device extension added: %s", target.c_str());
-        active.push_back(target.c_str());
     }
 
     // Check if user provided a VkPhysicalDeviceImageCompressionControlFeaturesEXT
-    // TODO: This currently relies on const_cast to make user struct writable
-    //       We should replace this with a generic clone (issue #56)
     auto* config = searchNextList<VkPhysicalDeviceImageCompressionControlFeaturesEXT>(
         VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_COMPRESSION_CONTROL_FEATURES_EXT,
         createInfo.pNext);
@@ -514,11 +501,8 @@ static void enableDeviceVkExtImageCompressionControl(VkDeviceCreateInfo& createI
     // Add a config if not already configured by the application
     if (!config)
     {
-        newFeatures.pNext = const_cast<void*>(createInfo.pNext);
-        newFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_COMPRESSION_CONTROL_FEATURES_EXT;
         newFeatures.imageCompressionControl = true;
-
-        createInfo.pNext = reinterpret_cast<const void*>(&newFeatures);
+        vku::AddToPnext(createInfo, newFeatures);
         LAYER_LOG("Device extension config added: %s", target.c_str());
     }
 }
@@ -818,34 +802,30 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDevice_default(VkPhysicalDevice phy
 
     // Log this for support purposes ...
     APIVersion apiVersion = getDeviceAPIVersion(fpGetInstanceProcAddr, layer->instance, physicalDevice);
-
     LAYER_LOG("Device API version %u.%u", apiVersion.first, apiVersion.second);
 
-    // Create structure copies we can modify
-    VkDeviceCreateInfo newCreateInfo = *pCreateInfo;
+    // Create a modifiable structure we can patch
+    vku::safe_VkDeviceCreateInfo newCreateInfoSafe(pCreateInfo);
+    auto* newCreateInfo = reinterpret_cast<VkDeviceCreateInfo*>(&newCreateInfoSafe);
 
-    // Create structures we allocate here, but populated elsewhere
-    VkPhysicalDeviceTimelineSemaphoreFeatures newTimelineFeatures;
-    VkPhysicalDeviceImageCompressionControlFeaturesEXT newCompressionControlFeatures;
-
-    // Create a copy of the extension list we can patch
-    std::vector<const char*> newExtensions;
-    const auto start = pCreateInfo->ppEnabledExtensionNames;
-    const auto end = pCreateInfo->ppEnabledExtensionNames + pCreateInfo->enabledExtensionCount;
-    newExtensions.insert(newExtensions.end(), start, end);
+    // Create structures we allocate here, but populate elsewhere
+    VkPhysicalDeviceTimelineSemaphoreFeatures newTimelineFeatures = vku::InitStructHelper();
+    VkPhysicalDeviceImageCompressionControlFeaturesEXT newCompressionControlFeatures = vku::InitStructHelper();
 
     // Enable extra extensions
     for (const auto& newExt : Device::extraExtensions)
     {
         if (newExt == VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME)
         {
-            enableDeviceVkKhrTimelineSemaphore(newCreateInfo, supportedExtensions, newExtensions, newTimelineFeatures);
+
+            enableDeviceVkKhrTimelineSemaphore(newCreateInfoSafe,
+                                               supportedExtensions,
+                                               newTimelineFeatures);
         }
         else if (newExt == VK_EXT_IMAGE_COMPRESSION_CONTROL_EXTENSION_NAME)
         {
-            enableDeviceVkExtImageCompressionControl(newCreateInfo,
+            enableDeviceVkExtImageCompressionControl(newCreateInfoSafe,
                                                      supportedExtensions,
-                                                     newExtensions,
                                                      newCompressionControlFeatures);
         }
         else
@@ -854,16 +834,10 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDevice_default(VkPhysicalDevice phy
         }
     }
 
-    // Patch extension pointer and size after extending it
-    newCreateInfo.enabledExtensionCount = newExtensions.size();
-    newCreateInfo.ppEnabledExtensionNames = newExtensions.data();
-
-    // Log it for debug purposes
-    unsigned int i = 0;
-    for (auto ext : newExtensions)
+    // Log extensions for debug purposes
+    for (uint32_t i = 0; i < newCreateInfo->enabledExtensionCount; i++)
     {
-        LAYER_LOG("Requested device extension list: [%u] = %s", i, ext);
-        i++;
+        LAYER_LOG("Requested device extension list: [%u] = %s", i, newCreateInfo->ppEnabledExtensionNames[i]);
     }
 
     auto fpCreateDeviceRaw = fpGetInstanceProcAddr(layer->instance, "vkCreateDevice");
@@ -875,13 +849,13 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDevice_default(VkPhysicalDevice phy
 
     // Advance the link info for the next element on the chain
     chainInfo->u.pLayerInfo = chainInfo->u.pLayerInfo->pNext;
-    auto res = fpCreateDevice(physicalDevice, &newCreateInfo, pAllocator, pDevice);
+    auto res = fpCreateDevice(physicalDevice, newCreateInfo, pAllocator, pDevice);
     if (res != VK_SUCCESS)
     {
         return res;
     }
 
-    auto device = std::make_unique<Device>(layer, physicalDevice, *pDevice, fpGetDeviceProcAddr, newCreateInfo);
+    auto device = std::make_unique<Device>(layer, physicalDevice, *pDevice, fpGetDeviceProcAddr, *newCreateInfo);
 
     // Retake the lock to access layer-wide global store
     lock.lock();
