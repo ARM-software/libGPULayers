@@ -260,6 +260,23 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkBindImageMemory2KHR(
 
 /* See Vulkan API for documentation. */
 /* Default common code pass-through implementation. */
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkBindTensorMemoryARM_default(
+    VkDevice device,
+    uint32_t bindInfoCount,
+    const VkBindTensorMemoryInfoARM* pBindInfos);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkBindTensorMemoryARM(
+    VkDevice device,
+    uint32_t bindInfoCount,
+    const VkBindTensorMemoryInfoARM* pBindInfos
+) {
+    return layer_vkBindTensorMemoryARM_default(device, bindInfoCount, pBindInfos);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkBuildAccelerationStructuresKHR_default(
     VkDevice device,
     VkDeferredOperationKHR deferredOperation,
@@ -550,15 +567,30 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindDescriptorSets(
 
 /* See Vulkan API for documentation. */
 /* Default common code pass-through implementation. */
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindDescriptorSets2_default(
+    VkCommandBuffer commandBuffer,
+    const VkBindDescriptorSetsInfo* pBindDescriptorSetsInfo);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindDescriptorSets2(
+    VkCommandBuffer commandBuffer,
+    const VkBindDescriptorSetsInfo* pBindDescriptorSetsInfo
+) {
+    layer_vkCmdBindDescriptorSets2_default(commandBuffer, pBindDescriptorSetsInfo);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindDescriptorSets2KHR_default(
     VkCommandBuffer commandBuffer,
-    const VkBindDescriptorSetsInfoKHR* pBindDescriptorSetsInfo);
+    const VkBindDescriptorSetsInfo* pBindDescriptorSetsInfo);
 
 /* Match-all template to use default implementation. */
 template <typename T>
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindDescriptorSets2KHR(
     VkCommandBuffer commandBuffer,
-    const VkBindDescriptorSetsInfoKHR* pBindDescriptorSetsInfo
+    const VkBindDescriptorSetsInfo* pBindDescriptorSetsInfo
 ) {
     layer_vkCmdBindDescriptorSets2KHR_default(commandBuffer, pBindDescriptorSetsInfo);
 }
@@ -580,6 +612,27 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindIndexBuffer(
     VkIndexType indexType
 ) {
     layer_vkCmdBindIndexBuffer_default(commandBuffer, buffer, offset, indexType);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindIndexBuffer2_default(
+    VkCommandBuffer commandBuffer,
+    VkBuffer buffer,
+    VkDeviceSize offset,
+    VkDeviceSize size,
+    VkIndexType indexType);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindIndexBuffer2(
+    VkCommandBuffer commandBuffer,
+    VkBuffer buffer,
+    VkDeviceSize offset,
+    VkDeviceSize size,
+    VkIndexType indexType
+) {
+    layer_vkCmdBindIndexBuffer2_default(commandBuffer, buffer, offset, size, indexType);
 }
 
 /* See Vulkan API for documentation. */
@@ -1247,6 +1300,21 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyQueryPoolResults(
 
 /* See Vulkan API for documentation. */
 /* Default common code pass-through implementation. */
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyTensorARM_default(
+    VkCommandBuffer commandBuffer,
+    const VkCopyTensorInfoARM* pCopyTensorInfo);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyTensorARM(
+    VkCommandBuffer commandBuffer,
+    const VkCopyTensorInfoARM* pCopyTensorInfo
+) {
+    layer_vkCmdCopyTensorARM_default(commandBuffer, pCopyTensorInfo);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdDebugMarkerBeginEXT_default(
     VkCommandBuffer commandBuffer,
     const VkDebugMarkerMarkerInfoEXT* pMarkerInfo);
@@ -1818,6 +1886,21 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRendering(
 
 /* See Vulkan API for documentation. */
 /* Default common code pass-through implementation. */
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRendering2EXT_default(
+    VkCommandBuffer commandBuffer,
+    const VkRenderingEndInfoEXT* pRenderingEndInfo);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRendering2EXT(
+    VkCommandBuffer commandBuffer,
+    const VkRenderingEndInfoEXT* pRenderingEndInfo
+) {
+    layer_vkCmdEndRendering2EXT_default(commandBuffer, pRenderingEndInfo);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderingKHR_default(
     VkCommandBuffer commandBuffer);
 
@@ -1865,6 +1948,23 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdExecuteCommands(
     const VkCommandBuffer* pCommandBuffers
 ) {
     layer_vkCmdExecuteCommands_default(commandBuffer, commandBufferCount, pCommandBuffers);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdExecuteGeneratedCommandsEXT_default(
+    VkCommandBuffer commandBuffer,
+    VkBool32 isPreprocessed,
+    const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdExecuteGeneratedCommandsEXT(
+    VkCommandBuffer commandBuffer,
+    VkBool32 isPreprocessed,
+    const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo
+) {
+    layer_vkCmdExecuteGeneratedCommandsEXT_default(commandBuffer, isPreprocessed, pGeneratedCommandsInfo);
 }
 
 /* See Vulkan API for documentation. */
@@ -2015,6 +2115,23 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdPipelineBarrier2KHR(
 
 /* See Vulkan API for documentation. */
 /* Default common code pass-through implementation. */
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdPreprocessGeneratedCommandsEXT_default(
+    VkCommandBuffer commandBuffer,
+    const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo,
+    VkCommandBuffer stateCommandBuffer);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdPreprocessGeneratedCommandsEXT(
+    VkCommandBuffer commandBuffer,
+    const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo,
+    VkCommandBuffer stateCommandBuffer
+) {
+    layer_vkCmdPreprocessGeneratedCommandsEXT_default(commandBuffer, pGeneratedCommandsInfo, stateCommandBuffer);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushConstants_default(
     VkCommandBuffer commandBuffer,
     VkPipelineLayout layout,
@@ -2038,30 +2155,83 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushConstants(
 
 /* See Vulkan API for documentation. */
 /* Default common code pass-through implementation. */
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushConstants2_default(
+    VkCommandBuffer commandBuffer,
+    const VkPushConstantsInfo* pPushConstantsInfo);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushConstants2(
+    VkCommandBuffer commandBuffer,
+    const VkPushConstantsInfo* pPushConstantsInfo
+) {
+    layer_vkCmdPushConstants2_default(commandBuffer, pPushConstantsInfo);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushConstants2KHR_default(
     VkCommandBuffer commandBuffer,
-    const VkPushConstantsInfoKHR* pPushConstantsInfo);
+    const VkPushConstantsInfo* pPushConstantsInfo);
 
 /* Match-all template to use default implementation. */
 template <typename T>
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushConstants2KHR(
     VkCommandBuffer commandBuffer,
-    const VkPushConstantsInfoKHR* pPushConstantsInfo
+    const VkPushConstantsInfo* pPushConstantsInfo
 ) {
     layer_vkCmdPushConstants2KHR_default(commandBuffer, pPushConstantsInfo);
 }
 
 /* See Vulkan API for documentation. */
 /* Default common code pass-through implementation. */
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushDescriptorSet_default(
+    VkCommandBuffer commandBuffer,
+    VkPipelineBindPoint pipelineBindPoint,
+    VkPipelineLayout layout,
+    uint32_t set,
+    uint32_t descriptorWriteCount,
+    const VkWriteDescriptorSet* pDescriptorWrites);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushDescriptorSet(
+    VkCommandBuffer commandBuffer,
+    VkPipelineBindPoint pipelineBindPoint,
+    VkPipelineLayout layout,
+    uint32_t set,
+    uint32_t descriptorWriteCount,
+    const VkWriteDescriptorSet* pDescriptorWrites
+) {
+    layer_vkCmdPushDescriptorSet_default(commandBuffer, pipelineBindPoint, layout, set, descriptorWriteCount, pDescriptorWrites);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushDescriptorSet2_default(
+    VkCommandBuffer commandBuffer,
+    const VkPushDescriptorSetInfo* pPushDescriptorSetInfo);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushDescriptorSet2(
+    VkCommandBuffer commandBuffer,
+    const VkPushDescriptorSetInfo* pPushDescriptorSetInfo
+) {
+    layer_vkCmdPushDescriptorSet2_default(commandBuffer, pPushDescriptorSetInfo);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushDescriptorSet2KHR_default(
     VkCommandBuffer commandBuffer,
-    const VkPushDescriptorSetInfoKHR* pPushDescriptorSetInfo);
+    const VkPushDescriptorSetInfo* pPushDescriptorSetInfo);
 
 /* Match-all template to use default implementation. */
 template <typename T>
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushDescriptorSet2KHR(
     VkCommandBuffer commandBuffer,
-    const VkPushDescriptorSetInfoKHR* pPushDescriptorSetInfo
+    const VkPushDescriptorSetInfo* pPushDescriptorSetInfo
 ) {
     layer_vkCmdPushDescriptorSet2KHR_default(commandBuffer, pPushDescriptorSetInfo);
 }
@@ -2091,15 +2261,51 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushDescriptorSetKHR(
 
 /* See Vulkan API for documentation. */
 /* Default common code pass-through implementation. */
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushDescriptorSetWithTemplate_default(
+    VkCommandBuffer commandBuffer,
+    VkDescriptorUpdateTemplate descriptorUpdateTemplate,
+    VkPipelineLayout layout,
+    uint32_t set,
+    const void* pData);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushDescriptorSetWithTemplate(
+    VkCommandBuffer commandBuffer,
+    VkDescriptorUpdateTemplate descriptorUpdateTemplate,
+    VkPipelineLayout layout,
+    uint32_t set,
+    const void* pData
+) {
+    layer_vkCmdPushDescriptorSetWithTemplate_default(commandBuffer, descriptorUpdateTemplate, layout, set, pData);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushDescriptorSetWithTemplate2_default(
+    VkCommandBuffer commandBuffer,
+    const VkPushDescriptorSetWithTemplateInfo* pPushDescriptorSetWithTemplateInfo);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushDescriptorSetWithTemplate2(
+    VkCommandBuffer commandBuffer,
+    const VkPushDescriptorSetWithTemplateInfo* pPushDescriptorSetWithTemplateInfo
+) {
+    layer_vkCmdPushDescriptorSetWithTemplate2_default(commandBuffer, pPushDescriptorSetWithTemplateInfo);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushDescriptorSetWithTemplate2KHR_default(
     VkCommandBuffer commandBuffer,
-    const VkPushDescriptorSetWithTemplateInfoKHR* pPushDescriptorSetWithTemplateInfo);
+    const VkPushDescriptorSetWithTemplateInfo* pPushDescriptorSetWithTemplateInfo);
 
 /* Match-all template to use default implementation. */
 template <typename T>
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushDescriptorSetWithTemplate2KHR(
     VkCommandBuffer commandBuffer,
-    const VkPushDescriptorSetWithTemplateInfoKHR* pPushDescriptorSetWithTemplateInfo
+    const VkPushDescriptorSetWithTemplateInfo* pPushDescriptorSetWithTemplateInfo
 ) {
     layer_vkCmdPushDescriptorSetWithTemplate2KHR_default(commandBuffer, pPushDescriptorSetWithTemplateInfo);
 }
@@ -2668,6 +2874,23 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthClampEnableEXT(
 
 /* See Vulkan API for documentation. */
 /* Default common code pass-through implementation. */
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthClampRangeEXT_default(
+    VkCommandBuffer commandBuffer,
+    VkDepthClampModeEXT depthClampMode,
+    const VkDepthClampRangeEXT* pDepthClampRange);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthClampRangeEXT(
+    VkCommandBuffer commandBuffer,
+    VkDepthClampModeEXT depthClampMode,
+    const VkDepthClampRangeEXT* pDepthClampRange
+) {
+    layer_vkCmdSetDepthClampRangeEXT_default(commandBuffer, depthClampMode, pDepthClampRange);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthClipEnableEXT_default(
     VkCommandBuffer commandBuffer,
     VkBool32 depthClipEnable);
@@ -3035,6 +3258,23 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetLineRasterizationModeEXT(
 
 /* See Vulkan API for documentation. */
 /* Default common code pass-through implementation. */
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetLineStipple_default(
+    VkCommandBuffer commandBuffer,
+    uint32_t lineStippleFactor,
+    uint16_t lineStipplePattern);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetLineStipple(
+    VkCommandBuffer commandBuffer,
+    uint32_t lineStippleFactor,
+    uint16_t lineStipplePattern
+) {
+    layer_vkCmdSetLineStipple_default(commandBuffer, lineStippleFactor, lineStipplePattern);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetLineStippleEXT_default(
     VkCommandBuffer commandBuffer,
     uint32_t lineStippleFactor,
@@ -3309,30 +3549,60 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetRayTracingPipelineStackSizeKHR(
 
 /* See Vulkan API for documentation. */
 /* Default common code pass-through implementation. */
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetRenderingAttachmentLocations_default(
+    VkCommandBuffer commandBuffer,
+    const VkRenderingAttachmentLocationInfo* pLocationInfo);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetRenderingAttachmentLocations(
+    VkCommandBuffer commandBuffer,
+    const VkRenderingAttachmentLocationInfo* pLocationInfo
+) {
+    layer_vkCmdSetRenderingAttachmentLocations_default(commandBuffer, pLocationInfo);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetRenderingAttachmentLocationsKHR_default(
     VkCommandBuffer commandBuffer,
-    const VkRenderingAttachmentLocationInfoKHR* pLocationInfo);
+    const VkRenderingAttachmentLocationInfo* pLocationInfo);
 
 /* Match-all template to use default implementation. */
 template <typename T>
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetRenderingAttachmentLocationsKHR(
     VkCommandBuffer commandBuffer,
-    const VkRenderingAttachmentLocationInfoKHR* pLocationInfo
+    const VkRenderingAttachmentLocationInfo* pLocationInfo
 ) {
     layer_vkCmdSetRenderingAttachmentLocationsKHR_default(commandBuffer, pLocationInfo);
 }
 
 /* See Vulkan API for documentation. */
 /* Default common code pass-through implementation. */
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetRenderingInputAttachmentIndices_default(
+    VkCommandBuffer commandBuffer,
+    const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetRenderingInputAttachmentIndices(
+    VkCommandBuffer commandBuffer,
+    const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo
+) {
+    layer_vkCmdSetRenderingInputAttachmentIndices_default(commandBuffer, pInputAttachmentIndexInfo);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetRenderingInputAttachmentIndicesKHR_default(
     VkCommandBuffer commandBuffer,
-    const VkRenderingInputAttachmentIndexInfoKHR* pInputAttachmentIndexInfo);
+    const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo);
 
 /* Match-all template to use default implementation. */
 template <typename T>
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetRenderingInputAttachmentIndicesKHR(
     VkCommandBuffer commandBuffer,
-    const VkRenderingInputAttachmentIndexInfoKHR* pInputAttachmentIndexInfo
+    const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo
 ) {
     layer_vkCmdSetRenderingInputAttachmentIndicesKHR_default(commandBuffer, pInputAttachmentIndexInfo);
 }
@@ -3899,27 +4169,6 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdWriteAccelerationStructuresPropertiesKHR(
 
 /* See Vulkan API for documentation. */
 /* Default common code pass-through implementation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdWriteBufferMarker2AMD_default(
-    VkCommandBuffer commandBuffer,
-    VkPipelineStageFlags2 stage,
-    VkBuffer dstBuffer,
-    VkDeviceSize dstOffset,
-    uint32_t marker);
-
-/* Match-all template to use default implementation. */
-template <typename T>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdWriteBufferMarker2AMD(
-    VkCommandBuffer commandBuffer,
-    VkPipelineStageFlags2 stage,
-    VkBuffer dstBuffer,
-    VkDeviceSize dstOffset,
-    uint32_t marker
-) {
-    layer_vkCmdWriteBufferMarker2AMD_default(commandBuffer, stage, dstBuffer, dstOffset, marker);
-}
-
-/* See Vulkan API for documentation. */
-/* Default common code pass-through implementation. */
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdWriteMicromapsPropertiesEXT_default(
     VkCommandBuffer commandBuffer,
     uint32_t micromapCount,
@@ -4034,30 +4283,60 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyAccelerationStructureToMemoryKHR(
 
 /* See Vulkan API for documentation. */
 /* Default common code pass-through implementation. */
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyImageToImage_default(
+    VkDevice device,
+    const VkCopyImageToImageInfo* pCopyImageToImageInfo);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyImageToImage(
+    VkDevice device,
+    const VkCopyImageToImageInfo* pCopyImageToImageInfo
+) {
+    return layer_vkCopyImageToImage_default(device, pCopyImageToImageInfo);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyImageToImageEXT_default(
     VkDevice device,
-    const VkCopyImageToImageInfoEXT* pCopyImageToImageInfo);
+    const VkCopyImageToImageInfo* pCopyImageToImageInfo);
 
 /* Match-all template to use default implementation. */
 template <typename T>
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyImageToImageEXT(
     VkDevice device,
-    const VkCopyImageToImageInfoEXT* pCopyImageToImageInfo
+    const VkCopyImageToImageInfo* pCopyImageToImageInfo
 ) {
     return layer_vkCopyImageToImageEXT_default(device, pCopyImageToImageInfo);
 }
 
 /* See Vulkan API for documentation. */
 /* Default common code pass-through implementation. */
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyImageToMemory_default(
+    VkDevice device,
+    const VkCopyImageToMemoryInfo* pCopyImageToMemoryInfo);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyImageToMemory(
+    VkDevice device,
+    const VkCopyImageToMemoryInfo* pCopyImageToMemoryInfo
+) {
+    return layer_vkCopyImageToMemory_default(device, pCopyImageToMemoryInfo);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyImageToMemoryEXT_default(
     VkDevice device,
-    const VkCopyImageToMemoryInfoEXT* pCopyImageToMemoryInfo);
+    const VkCopyImageToMemoryInfo* pCopyImageToMemoryInfo);
 
 /* Match-all template to use default implementation. */
 template <typename T>
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyImageToMemoryEXT(
     VkDevice device,
-    const VkCopyImageToMemoryInfoEXT* pCopyImageToMemoryInfo
+    const VkCopyImageToMemoryInfo* pCopyImageToMemoryInfo
 ) {
     return layer_vkCopyImageToMemoryEXT_default(device, pCopyImageToMemoryInfo);
 }
@@ -4081,15 +4360,30 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyMemoryToAccelerationStructureKHR(
 
 /* See Vulkan API for documentation. */
 /* Default common code pass-through implementation. */
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyMemoryToImage_default(
+    VkDevice device,
+    const VkCopyMemoryToImageInfo* pCopyMemoryToImageInfo);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyMemoryToImage(
+    VkDevice device,
+    const VkCopyMemoryToImageInfo* pCopyMemoryToImageInfo
+) {
+    return layer_vkCopyMemoryToImage_default(device, pCopyMemoryToImageInfo);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyMemoryToImageEXT_default(
     VkDevice device,
-    const VkCopyMemoryToImageInfoEXT* pCopyMemoryToImageInfo);
+    const VkCopyMemoryToImageInfo* pCopyMemoryToImageInfo);
 
 /* Match-all template to use default implementation. */
 template <typename T>
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyMemoryToImageEXT(
     VkDevice device,
-    const VkCopyMemoryToImageInfoEXT* pCopyMemoryToImageInfo
+    const VkCopyMemoryToImageInfo* pCopyMemoryToImageInfo
 ) {
     return layer_vkCopyMemoryToImageEXT_default(device, pCopyMemoryToImageInfo);
 }
@@ -4453,6 +4747,44 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateImageView(
     VkImageView* pView
 ) {
     return layer_vkCreateImageView_default(device, pCreateInfo, pAllocator, pView);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateIndirectCommandsLayoutEXT_default(
+    VkDevice device,
+    const VkIndirectCommandsLayoutCreateInfoEXT* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkIndirectCommandsLayoutEXT* pIndirectCommandsLayout);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateIndirectCommandsLayoutEXT(
+    VkDevice device,
+    const VkIndirectCommandsLayoutCreateInfoEXT* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkIndirectCommandsLayoutEXT* pIndirectCommandsLayout
+) {
+    return layer_vkCreateIndirectCommandsLayoutEXT_default(device, pCreateInfo, pAllocator, pIndirectCommandsLayout);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateIndirectExecutionSetEXT_default(
+    VkDevice device,
+    const VkIndirectExecutionSetCreateInfoEXT* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkIndirectExecutionSetEXT* pIndirectExecutionSet);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateIndirectExecutionSetEXT(
+    VkDevice device,
+    const VkIndirectExecutionSetCreateInfoEXT* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkIndirectExecutionSetEXT* pIndirectExecutionSet
+) {
+    return layer_vkCreateIndirectExecutionSetEXT_default(device, pCreateInfo, pAllocator, pIndirectExecutionSet);
 }
 
 /* See Vulkan API for documentation. */
@@ -4828,6 +5160,44 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateSwapchainKHR(
 
 /* See Vulkan API for documentation. */
 /* Default common code pass-through implementation. */
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateTensorARM_default(
+    VkDevice device,
+    const VkTensorCreateInfoARM* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkTensorARM* pTensor);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateTensorARM(
+    VkDevice device,
+    const VkTensorCreateInfoARM* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkTensorARM* pTensor
+) {
+    return layer_vkCreateTensorARM_default(device, pCreateInfo, pAllocator, pTensor);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateTensorViewARM_default(
+    VkDevice device,
+    const VkTensorViewCreateInfoARM* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkTensorViewARM* pView);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateTensorViewARM(
+    VkDevice device,
+    const VkTensorViewCreateInfoARM* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkTensorViewARM* pView
+) {
+    return layer_vkCreateTensorViewARM_default(device, pCreateInfo, pAllocator, pView);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateValidationCacheEXT_default(
     VkDevice device,
     const VkValidationCacheCreateInfoEXT* pCreateInfo,
@@ -5145,6 +5515,40 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyImageView(
 
 /* See Vulkan API for documentation. */
 /* Default common code pass-through implementation. */
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyIndirectCommandsLayoutEXT_default(
+    VkDevice device,
+    VkIndirectCommandsLayoutEXT indirectCommandsLayout,
+    const VkAllocationCallbacks* pAllocator);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyIndirectCommandsLayoutEXT(
+    VkDevice device,
+    VkIndirectCommandsLayoutEXT indirectCommandsLayout,
+    const VkAllocationCallbacks* pAllocator
+) {
+    layer_vkDestroyIndirectCommandsLayoutEXT_default(device, indirectCommandsLayout, pAllocator);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyIndirectExecutionSetEXT_default(
+    VkDevice device,
+    VkIndirectExecutionSetEXT indirectExecutionSet,
+    const VkAllocationCallbacks* pAllocator);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyIndirectExecutionSetEXT(
+    VkDevice device,
+    VkIndirectExecutionSetEXT indirectExecutionSet,
+    const VkAllocationCallbacks* pAllocator
+) {
+    layer_vkDestroyIndirectExecutionSetEXT_default(device, indirectExecutionSet, pAllocator);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
 VKAPI_ATTR void VKAPI_CALL layer_vkDestroyMicromapEXT_default(
     VkDevice device,
     VkMicromapEXT micromap,
@@ -5413,6 +5817,40 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroySwapchainKHR(
     const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkDestroySwapchainKHR_default(device, swapchain, pAllocator);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyTensorARM_default(
+    VkDevice device,
+    VkTensorARM tensor,
+    const VkAllocationCallbacks* pAllocator);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyTensorARM(
+    VkDevice device,
+    VkTensorARM tensor,
+    const VkAllocationCallbacks* pAllocator
+) {
+    layer_vkDestroyTensorARM_default(device, tensor, pAllocator);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyTensorViewARM_default(
+    VkDevice device,
+    VkTensorViewARM tensorView,
+    const VkAllocationCallbacks* pAllocator);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyTensorViewARM(
+    VkDevice device,
+    VkTensorViewARM tensorView,
+    const VkAllocationCallbacks* pAllocator
+) {
+    layer_vkDestroyTensorViewARM_default(device, tensorView, pAllocator);
 }
 
 /* See Vulkan API for documentation. */
@@ -6120,17 +6558,34 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceImageSparseMemoryRequirementsKHR(
 
 /* See Vulkan API for documentation. */
 /* Default common code pass-through implementation. */
+VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceImageSubresourceLayout_default(
+    VkDevice device,
+    const VkDeviceImageSubresourceInfo* pInfo,
+    VkSubresourceLayout2* pLayout);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceImageSubresourceLayout(
+    VkDevice device,
+    const VkDeviceImageSubresourceInfo* pInfo,
+    VkSubresourceLayout2* pLayout
+) {
+    layer_vkGetDeviceImageSubresourceLayout_default(device, pInfo, pLayout);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
 VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceImageSubresourceLayoutKHR_default(
     VkDevice device,
-    const VkDeviceImageSubresourceInfoKHR* pInfo,
-    VkSubresourceLayout2KHR* pLayout);
+    const VkDeviceImageSubresourceInfo* pInfo,
+    VkSubresourceLayout2* pLayout);
 
 /* Match-all template to use default implementation. */
 template <typename T>
 VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceImageSubresourceLayoutKHR(
     VkDevice device,
-    const VkDeviceImageSubresourceInfoKHR* pInfo,
-    VkSubresourceLayout2KHR* pLayout
+    const VkDeviceImageSubresourceInfo* pInfo,
+    VkSubresourceLayout2* pLayout
 ) {
     layer_vkGetDeviceImageSubresourceLayoutKHR_default(device, pInfo, pLayout);
 }
@@ -6252,6 +6707,23 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceQueue2(
 
 /* See Vulkan API for documentation. */
 /* Default common code pass-through implementation. */
+VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceTensorMemoryRequirementsARM_default(
+    VkDevice device,
+    const VkDeviceTensorMemoryRequirementsARM* pInfo,
+    VkMemoryRequirements2* pMemoryRequirements);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceTensorMemoryRequirementsARM(
+    VkDevice device,
+    const VkDeviceTensorMemoryRequirementsARM* pInfo,
+    VkMemoryRequirements2* pMemoryRequirements
+) {
+    layer_vkGetDeviceTensorMemoryRequirementsARM_default(device, pInfo, pMemoryRequirements);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetEventStatus_default(
     VkDevice device,
     VkEvent event);
@@ -6295,6 +6767,23 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetFenceStatus(
     VkFence fence
 ) {
     return layer_vkGetFenceStatus_default(device, fence);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
+VKAPI_ATTR void VKAPI_CALL layer_vkGetGeneratedCommandsMemoryRequirementsEXT_default(
+    VkDevice device,
+    const VkGeneratedCommandsMemoryRequirementsInfoEXT* pInfo,
+    VkMemoryRequirements2* pMemoryRequirements);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetGeneratedCommandsMemoryRequirementsEXT(
+    VkDevice device,
+    const VkGeneratedCommandsMemoryRequirementsInfoEXT* pInfo,
+    VkMemoryRequirements2* pMemoryRequirements
+) {
+    layer_vkGetGeneratedCommandsMemoryRequirementsEXT_default(device, pInfo, pMemoryRequirements);
 }
 
 /* See Vulkan API for documentation. */
@@ -6460,19 +6949,38 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetImageSubresourceLayout(
 
 /* See Vulkan API for documentation. */
 /* Default common code pass-through implementation. */
+VKAPI_ATTR void VKAPI_CALL layer_vkGetImageSubresourceLayout2_default(
+    VkDevice device,
+    VkImage image,
+    const VkImageSubresource2* pSubresource,
+    VkSubresourceLayout2* pLayout);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetImageSubresourceLayout2(
+    VkDevice device,
+    VkImage image,
+    const VkImageSubresource2* pSubresource,
+    VkSubresourceLayout2* pLayout
+) {
+    layer_vkGetImageSubresourceLayout2_default(device, image, pSubresource, pLayout);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
 VKAPI_ATTR void VKAPI_CALL layer_vkGetImageSubresourceLayout2EXT_default(
     VkDevice device,
     VkImage image,
-    const VkImageSubresource2KHR* pSubresource,
-    VkSubresourceLayout2KHR* pLayout);
+    const VkImageSubresource2* pSubresource,
+    VkSubresourceLayout2* pLayout);
 
 /* Match-all template to use default implementation. */
 template <typename T>
 VKAPI_ATTR void VKAPI_CALL layer_vkGetImageSubresourceLayout2EXT(
     VkDevice device,
     VkImage image,
-    const VkImageSubresource2KHR* pSubresource,
-    VkSubresourceLayout2KHR* pLayout
+    const VkImageSubresource2* pSubresource,
+    VkSubresourceLayout2* pLayout
 ) {
     layer_vkGetImageSubresourceLayout2EXT_default(device, image, pSubresource, pLayout);
 }
@@ -6482,16 +6990,16 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetImageSubresourceLayout2EXT(
 VKAPI_ATTR void VKAPI_CALL layer_vkGetImageSubresourceLayout2KHR_default(
     VkDevice device,
     VkImage image,
-    const VkImageSubresource2KHR* pSubresource,
-    VkSubresourceLayout2KHR* pLayout);
+    const VkImageSubresource2* pSubresource,
+    VkSubresourceLayout2* pLayout);
 
 /* Match-all template to use default implementation. */
 template <typename T>
 VKAPI_ATTR void VKAPI_CALL layer_vkGetImageSubresourceLayout2KHR(
     VkDevice device,
     VkImage image,
-    const VkImageSubresource2KHR* pSubresource,
-    VkSubresourceLayout2KHR* pLayout
+    const VkImageSubresource2* pSubresource,
+    VkSubresourceLayout2* pLayout
 ) {
     layer_vkGetImageSubresourceLayout2KHR_default(device, image, pSubresource, pLayout);
 }
@@ -6789,23 +7297,6 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetQueryPoolResults(
 
 /* See Vulkan API for documentation. */
 /* Default common code pass-through implementation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetQueueCheckpointData2NV_default(
-    VkQueue queue,
-    uint32_t* pCheckpointDataCount,
-    VkCheckpointData2NV* pCheckpointData);
-
-/* Match-all template to use default implementation. */
-template <typename T>
-VKAPI_ATTR void VKAPI_CALL layer_vkGetQueueCheckpointData2NV(
-    VkQueue queue,
-    uint32_t* pCheckpointDataCount,
-    VkCheckpointData2NV* pCheckpointData
-) {
-    layer_vkGetQueueCheckpointData2NV_default(queue, pCheckpointDataCount, pCheckpointData);
-}
-
-/* See Vulkan API for documentation. */
-/* Default common code pass-through implementation. */
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetRayTracingCaptureReplayShaderGroupHandlesKHR_default(
     VkDevice device,
     VkPipeline pipeline,
@@ -6888,16 +7379,33 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetRenderAreaGranularity(
 
 /* See Vulkan API for documentation. */
 /* Default common code pass-through implementation. */
+VKAPI_ATTR void VKAPI_CALL layer_vkGetRenderingAreaGranularity_default(
+    VkDevice device,
+    const VkRenderingAreaInfo* pRenderingAreaInfo,
+    VkExtent2D* pGranularity);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetRenderingAreaGranularity(
+    VkDevice device,
+    const VkRenderingAreaInfo* pRenderingAreaInfo,
+    VkExtent2D* pGranularity
+) {
+    layer_vkGetRenderingAreaGranularity_default(device, pRenderingAreaInfo, pGranularity);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
 VKAPI_ATTR void VKAPI_CALL layer_vkGetRenderingAreaGranularityKHR_default(
     VkDevice device,
-    const VkRenderingAreaInfoKHR* pRenderingAreaInfo,
+    const VkRenderingAreaInfo* pRenderingAreaInfo,
     VkExtent2D* pGranularity);
 
 /* Match-all template to use default implementation. */
 template <typename T>
 VKAPI_ATTR void VKAPI_CALL layer_vkGetRenderingAreaGranularityKHR(
     VkDevice device,
-    const VkRenderingAreaInfoKHR* pRenderingAreaInfo,
+    const VkRenderingAreaInfo* pRenderingAreaInfo,
     VkExtent2D* pGranularity
 ) {
     layer_vkGetRenderingAreaGranularityKHR_default(device, pRenderingAreaInfo, pGranularity);
@@ -7079,6 +7587,57 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetSwapchainStatusKHR(
 
 /* See Vulkan API for documentation. */
 /* Default common code pass-through implementation. */
+VKAPI_ATTR void VKAPI_CALL layer_vkGetTensorMemoryRequirementsARM_default(
+    VkDevice device,
+    const VkTensorMemoryRequirementsInfoARM* pInfo,
+    VkMemoryRequirements2* pMemoryRequirements);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetTensorMemoryRequirementsARM(
+    VkDevice device,
+    const VkTensorMemoryRequirementsInfoARM* pInfo,
+    VkMemoryRequirements2* pMemoryRequirements
+) {
+    layer_vkGetTensorMemoryRequirementsARM_default(device, pInfo, pMemoryRequirements);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetTensorOpaqueCaptureDescriptorDataARM_default(
+    VkDevice device,
+    const VkTensorCaptureDescriptorDataInfoARM* pInfo,
+    void* pData);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetTensorOpaqueCaptureDescriptorDataARM(
+    VkDevice device,
+    const VkTensorCaptureDescriptorDataInfoARM* pInfo,
+    void* pData
+) {
+    return layer_vkGetTensorOpaqueCaptureDescriptorDataARM_default(device, pInfo, pData);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetTensorViewOpaqueCaptureDescriptorDataARM_default(
+    VkDevice device,
+    const VkTensorViewCaptureDescriptorDataInfoARM* pInfo,
+    void* pData);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetTensorViewOpaqueCaptureDescriptorDataARM(
+    VkDevice device,
+    const VkTensorViewCaptureDescriptorDataInfoARM* pInfo,
+    void* pData
+) {
+    return layer_vkGetTensorViewOpaqueCaptureDescriptorDataARM_default(device, pInfo, pData);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetValidationCacheDataEXT_default(
     VkDevice device,
     VkValidationCacheEXT validationCache,
@@ -7168,16 +7727,33 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkMapMemory(
 
 /* See Vulkan API for documentation. */
 /* Default common code pass-through implementation. */
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkMapMemory2_default(
+    VkDevice device,
+    const VkMemoryMapInfo* pMemoryMapInfo,
+    void** ppData);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkMapMemory2(
+    VkDevice device,
+    const VkMemoryMapInfo* pMemoryMapInfo,
+    void** ppData
+) {
+    return layer_vkMapMemory2_default(device, pMemoryMapInfo, ppData);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkMapMemory2KHR_default(
     VkDevice device,
-    const VkMemoryMapInfoKHR* pMemoryMapInfo,
+    const VkMemoryMapInfo* pMemoryMapInfo,
     void** ppData);
 
 /* Match-all template to use default implementation. */
 template <typename T>
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkMapMemory2KHR(
     VkDevice device,
-    const VkMemoryMapInfoKHR* pMemoryMapInfo,
+    const VkMemoryMapInfo* pMemoryMapInfo,
     void** ppData
 ) {
     return layer_vkMapMemory2KHR_default(device, pMemoryMapInfo, ppData);
@@ -7727,17 +8303,34 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkSignalSemaphoreKHR(
 
 /* See Vulkan API for documentation. */
 /* Default common code pass-through implementation. */
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkTransitionImageLayout_default(
+    VkDevice device,
+    uint32_t transitionCount,
+    const VkHostImageLayoutTransitionInfo* pTransitions);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkTransitionImageLayout(
+    VkDevice device,
+    uint32_t transitionCount,
+    const VkHostImageLayoutTransitionInfo* pTransitions
+) {
+    return layer_vkTransitionImageLayout_default(device, transitionCount, pTransitions);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkTransitionImageLayoutEXT_default(
     VkDevice device,
     uint32_t transitionCount,
-    const VkHostImageLayoutTransitionInfoEXT* pTransitions);
+    const VkHostImageLayoutTransitionInfo* pTransitions);
 
 /* Match-all template to use default implementation. */
 template <typename T>
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkTransitionImageLayoutEXT(
     VkDevice device,
     uint32_t transitionCount,
-    const VkHostImageLayoutTransitionInfoEXT* pTransitions
+    const VkHostImageLayoutTransitionInfo* pTransitions
 ) {
     return layer_vkTransitionImageLayoutEXT_default(device, transitionCount, pTransitions);
 }
@@ -7793,15 +8386,30 @@ VKAPI_ATTR void VKAPI_CALL layer_vkUnmapMemory(
 
 /* See Vulkan API for documentation. */
 /* Default common code pass-through implementation. */
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkUnmapMemory2_default(
+    VkDevice device,
+    const VkMemoryUnmapInfo* pMemoryUnmapInfo);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkUnmapMemory2(
+    VkDevice device,
+    const VkMemoryUnmapInfo* pMemoryUnmapInfo
+) {
+    return layer_vkUnmapMemory2_default(device, pMemoryUnmapInfo);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkUnmapMemory2KHR_default(
     VkDevice device,
-    const VkMemoryUnmapInfoKHR* pMemoryUnmapInfo);
+    const VkMemoryUnmapInfo* pMemoryUnmapInfo);
 
 /* Match-all template to use default implementation. */
 template <typename T>
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkUnmapMemory2KHR(
     VkDevice device,
-    const VkMemoryUnmapInfoKHR* pMemoryUnmapInfo
+    const VkMemoryUnmapInfo* pMemoryUnmapInfo
 ) {
     return layer_vkUnmapMemory2KHR_default(device, pMemoryUnmapInfo);
 }
@@ -7867,6 +8475,44 @@ VKAPI_ATTR void VKAPI_CALL layer_vkUpdateDescriptorSets(
 
 /* See Vulkan API for documentation. */
 /* Default common code pass-through implementation. */
+VKAPI_ATTR void VKAPI_CALL layer_vkUpdateIndirectExecutionSetPipelineEXT_default(
+    VkDevice device,
+    VkIndirectExecutionSetEXT indirectExecutionSet,
+    uint32_t executionSetWriteCount,
+    const VkWriteIndirectExecutionSetPipelineEXT* pExecutionSetWrites);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkUpdateIndirectExecutionSetPipelineEXT(
+    VkDevice device,
+    VkIndirectExecutionSetEXT indirectExecutionSet,
+    uint32_t executionSetWriteCount,
+    const VkWriteIndirectExecutionSetPipelineEXT* pExecutionSetWrites
+) {
+    layer_vkUpdateIndirectExecutionSetPipelineEXT_default(device, indirectExecutionSet, executionSetWriteCount, pExecutionSetWrites);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
+VKAPI_ATTR void VKAPI_CALL layer_vkUpdateIndirectExecutionSetShaderEXT_default(
+    VkDevice device,
+    VkIndirectExecutionSetEXT indirectExecutionSet,
+    uint32_t executionSetWriteCount,
+    const VkWriteIndirectExecutionSetShaderEXT* pExecutionSetWrites);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkUpdateIndirectExecutionSetShaderEXT(
+    VkDevice device,
+    VkIndirectExecutionSetEXT indirectExecutionSet,
+    uint32_t executionSetWriteCount,
+    const VkWriteIndirectExecutionSetShaderEXT* pExecutionSetWrites
+) {
+    layer_vkUpdateIndirectExecutionSetShaderEXT_default(device, indirectExecutionSet, executionSetWriteCount, pExecutionSetWrites);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkWaitForFences_default(
     VkDevice device,
     uint32_t fenceCount,
@@ -7884,6 +8530,23 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkWaitForFences(
     uint64_t timeout
 ) {
     return layer_vkWaitForFences_default(device, fenceCount, pFences, waitAll, timeout);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkWaitForPresent2KHR_default(
+    VkDevice device,
+    VkSwapchainKHR swapchain,
+    const VkPresentWait2InfoKHR* pPresentWait2Info);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkWaitForPresent2KHR(
+    VkDevice device,
+    VkSwapchainKHR swapchain,
+    const VkPresentWait2InfoKHR* pPresentWait2Info
+) {
+    return layer_vkWaitForPresent2KHR_default(device, swapchain, pPresentWait2Info);
 }
 
 /* See Vulkan API for documentation. */

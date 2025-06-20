@@ -730,6 +730,23 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceExternalSemaphorePropertiesK
 
 /* See Vulkan API for documentation. */
 /* Default common code pass-through implementation. */
+VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceExternalTensorPropertiesARM_default(
+    VkPhysicalDevice physicalDevice,
+    const VkPhysicalDeviceExternalTensorInfoARM* pExternalTensorInfo,
+    VkExternalTensorPropertiesARM* pExternalTensorProperties);
+
+/* Match-all template to use default implementation. */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceExternalTensorPropertiesARM(
+    VkPhysicalDevice physicalDevice,
+    const VkPhysicalDeviceExternalTensorInfoARM* pExternalTensorInfo,
+    VkExternalTensorPropertiesARM* pExternalTensorProperties
+) {
+    layer_vkGetPhysicalDeviceExternalTensorPropertiesARM_default(physicalDevice, pExternalTensorInfo, pExternalTensorProperties);
+}
+
+/* See Vulkan API for documentation. */
+/* Default common code pass-through implementation. */
 VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceFeatures_default(
     VkPhysicalDevice physicalDevice,
     VkPhysicalDeviceFeatures* pFeatures);

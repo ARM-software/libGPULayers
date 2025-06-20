@@ -587,6 +587,23 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceExternalSemaphorePropertiesK
 }
 
 /* See Vulkan API for documentation. */
+VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceExternalTensorPropertiesARM_default(
+    VkPhysicalDevice physicalDevice,
+    const VkPhysicalDeviceExternalTensorInfoARM* pExternalTensorInfo,
+    VkExternalTensorPropertiesARM* pExternalTensorProperties
+) {
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    auto* layer = Instance::retrieve(physicalDevice);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    layer->driver.vkGetPhysicalDeviceExternalTensorPropertiesARM(physicalDevice, pExternalTensorInfo, pExternalTensorProperties);
+}
+
+/* See Vulkan API for documentation. */
 VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceFeatures_default(
     VkPhysicalDevice physicalDevice,
     VkPhysicalDeviceFeatures* pFeatures
