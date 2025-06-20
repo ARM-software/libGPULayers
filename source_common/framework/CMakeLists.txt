@@ -28,7 +28,13 @@ add_library(
         device_functions.cpp
         device_query.cpp
         instance_functions.cpp
-        manual_functions.cpp)
+        manual_functions.cpp
+        ../../source_third_party/khronos/vulkan-utilities/src/vulkan/vk_safe_struct_core.cpp
+        ../../source_third_party/khronos/vulkan-utilities/src/vulkan/vk_safe_struct_ext.cpp
+        ../../source_third_party/khronos/vulkan-utilities/src/vulkan/vk_safe_struct_khr.cpp
+        ../../source_third_party/khronos/vulkan-utilities/src/vulkan/vk_safe_struct_manual.cpp
+        ../../source_third_party/khronos/vulkan-utilities/src/vulkan/vk_safe_struct_utils.cpp
+        ../../source_third_party/khronos/vulkan-utilities/src/vulkan/vk_safe_struct_vendor.cpp)
 
 target_include_directories(
     ${LIB_BINARY} PRIVATE
@@ -41,7 +47,8 @@ target_include_directories(
     ${LIB_BINARY} SYSTEM PRIVATE
         ../
         ../../source_third_party/
-        ../../source_third_party/khronos/vulkan/include/)
+        ../../source_third_party/khronos/vulkan/include/
+        ../../source_third_party/khronos/vulkan-utilities/include/)
 
 lgl_set_build_options(${LIB_BINARY})
 
