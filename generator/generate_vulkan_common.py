@@ -141,11 +141,18 @@ class VersionInfo(dict):
             api_version = feature.get('number')
 
             # Get the commands added in this API version
-            commands = feature.findall('.//command')
-            for command in commands:
-                fname = command.get('name')
-                assert fname not in self, fname
-                self[fname] = [(api_version, None)]
+            parents = feature.findall(".//command/..")
+            for parent in parents:
+                # Skip functions in deprecated blocks
+                if parent.tag == 'deprecate':
+                    continue
+
+                # Include all of the other blocks
+                commands = parent.findall("command")
+                for command in commands:
+                    fname = command.get('name')
+                    assert fname not in self, fname
+                    self[fname] = [(api_version, None)]
 
     def load_api_extensions(self, root: ET.Element):
         '''
