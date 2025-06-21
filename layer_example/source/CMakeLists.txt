@@ -54,7 +54,8 @@ target_include_directories(
 
 target_include_directories(
     ${VK_LAYER} SYSTEM PRIVATE
-        ../../source_third_party/khronos/vulkan/include/)
+        ../../source_third_party/khronos/vulkan/include/
+        ../../source_third_party/khronos/vulkan-utilities/include/)
 
 lgl_set_build_options(${VK_LAYER})
 

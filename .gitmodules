@@ -1,15 +1,12 @@
 [submodule "khronos/vulkan"]
 	path = source_third_party/khronos/vulkan
 	url = https://github.com/KhronosGroup/Vulkan-Headers
-[submodule "khronos/opengles"]
-	path = source_third_party/khronos/opengles
-	url = https://github.com/KhronosGroup/OpenGL-Registry
-[submodule "khronos/egl"]
-	path = source_third_party/khronos/egl
-	url = https://github.com/KhronosGroup/EGL-Registry
 [submodule "source_third_party/gtest"]
 	path = source_third_party/gtest
 	url = https://github.com/google/googletest
 [submodule "source_third_party/protopuf"]
 	path = source_third_party/protopuf
 	url = https://github.com/PragmaTwice/protopuf.git
+[submodule "source_third_party/khronos/vulkan-utilities"]
+	path = source_third_party/khronos/vulkan-utilities
+	url = https://github.com/KhronosGroup/Vulkan-Utility-Libraries/
