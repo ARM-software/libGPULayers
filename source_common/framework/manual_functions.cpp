@@ -343,10 +343,11 @@ std::vector<const char*> cloneExtensionList(uint32_t extensionCount, const char*
  *
  * Enabling this requires passing the extension string to vkCreateInstance().
  *
- * @param supported   The list of supported extension, or empty if unknown.
- * @param active      The list of active extensions.
+ * @param createInfo   The createInfo we can search to find user config.
+ * @param supported    The list of supported extension, or empty if unknown.
  */
-static void enableInstanceVkExtDebugUtils(const std::vector<std::string>& supported, std::vector<const char*>& active)
+static void enableInstanceVkExtDebugUtils(vku::safe_VkInstanceCreateInfo& createInfo,
+                                          const std::vector<std::string>& supported)
 {
     static const std::string target {VK_EXT_DEBUG_UTILS_EXTENSION_NAME};
 
@@ -358,16 +359,15 @@ static void enableInstanceVkExtDebugUtils(const std::vector<std::string>& suppor
         return;
     }
 
-    // If it is already enabled then do nothing
-    if (isIn(target, active))
+    // Enable the extension - this will skip adding if already enabled
+    if (vku::AddExtension(createInfo, target.c_str()))
+    {
+        LAYER_LOG("Instance extension added: %s", target.c_str());
+    }
+    else
     {
         LAYER_LOG("Instance extension already enabled: %s", target.c_str());
-        return;
     }
-
-    // Else add it to the list of enable extensions
-    LAYER_LOG("Instance extension added: %s", target.c_str());
-    active.push_back(target.c_str());
 }
 
 /**
@@ -385,7 +385,7 @@ static void enableInstanceVkExtDebugUtils(const std::vector<std::string>& suppor
  * @param newFeatures   Pre-allocated struct we can use if we need to add it.
  */
 static void enableDeviceVkKhrTimelineSemaphore(vku::safe_VkDeviceCreateInfo& createInfo,
-                                               std::vector<std::string>& supported,
+                                               const std::vector<std::string>& supported,
                                                VkPhysicalDeviceTimelineSemaphoreFeatures& newFeatures)
 {
     static const std::string target {VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME};
@@ -702,26 +702,19 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateInstance_default(const VkInstanceCr
         return VK_ERROR_INITIALIZATION_FAILED;
     }
 
-    // Create structure copies we can modify
-    VkInstanceCreateInfo newCreateInfo = *pCreateInfo;
-    VkApplicationInfo newAppInfo = *pCreateInfo->pApplicationInfo;
+    // Create modifiable structures we can patch
+    vku::safe_VkInstanceCreateInfo newCreateInfoSafe(pCreateInfo);
+    auto* newCreateInfo = reinterpret_cast<VkInstanceCreateInfo*>(&newCreateInfoSafe);
 
-    // Write the new application info
-    newAppInfo.apiVersion = VK_MAKE_API_VERSION(0, newVersion.first, newVersion.second, 0);
-    newCreateInfo.pApplicationInfo = &newAppInfo;
-
-    // Create a copy of the extension list we can patch
-    std::vector<const char*> newExtensions;
-    const auto start = pCreateInfo->ppEnabledExtensionNames;
-    const auto end = pCreateInfo->ppEnabledExtensionNames + pCreateInfo->enabledExtensionCount;
-    newExtensions.insert(newExtensions.end(), start, end);
+    // Patch updated application info
+    newCreateInfoSafe.pApplicationInfo->apiVersion = VK_MAKE_API_VERSION(0, newVersion.first, newVersion.second, 0);
 
     // Enable extra extensions
     for (const auto& newExt : Instance::extraExtensions)
     {
         if (newExt == VK_EXT_DEBUG_UTILS_EXTENSION_NAME)
         {
-            enableInstanceVkExtDebugUtils(supportedExtensions, newExtensions);
+            enableInstanceVkExtDebugUtils(newCreateInfoSafe, supportedExtensions);
         }
         else
         {
@@ -729,20 +722,14 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateInstance_default(const VkInstanceCr
         }
     }
 
-    // Patch extension pointer and size after extending it
-    newCreateInfo.enabledExtensionCount = newExtensions.size();
-    newCreateInfo.ppEnabledExtensionNames = newExtensions.data();
-
-    // Log it for debug purposes
-    unsigned int i = 0;
-    for (auto ext : newExtensions)
+    // Log extensions for debug purposes
+    for (uint32_t i = 0; i < newCreateInfo->enabledExtensionCount; i++)
     {
-        LAYER_LOG("Requested instance extension list: [%u] = %s", i, ext);
-        i++;
+        LAYER_LOG("Requested instance extension list: [%u] = %s", i, newCreateInfo->ppEnabledExtensionNames[i]);
     }
 
     chainInfo->u.pLayerInfo = chainInfo->u.pLayerInfo->pNext;
-    auto result = fpCreateInstance(&newCreateInfo, pAllocator, pInstance);
+    auto result = fpCreateInstance(newCreateInfo, pAllocator, pInstance);
     if (result != VK_SUCCESS)
     {
         return result;
