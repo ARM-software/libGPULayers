@@ -175,29 +175,6 @@ static inline bool isInExtensionList(
 }
 
 /**
- * @brief Helper to search a Vulkan "pNext" list for a matching structure.
- */
-template <typename T>
-T* searchNextList(
-    VkStructureType sType,
-    const void* pNext
-) {
-    const auto* pStruct = reinterpret_cast<const T*>(pNext);
-    while(pStruct)
-    {
-        if (pStruct->sType == sType)
-        {
-            break;
-        }
-        pStruct = reinterpret_cast<const T*>(pStruct->pNext);
-    }
-
-    // Const cast is not ideal here but we don't have functionality to
-    // clone a writable copy of the entire pNext chain yet ...
-    return const_cast<T*>(pStruct);
-}
-
-/**
  * @brief Get a displayable pointer.
  *
  * On 64-bit Arm systems this strips the MTE tag in the top byte, which means
