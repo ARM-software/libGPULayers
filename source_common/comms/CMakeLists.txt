@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: MIT
 # -----------------------------------------------------------------------------
-# Copyright (c) 2024 Arm Limited
+# Copyright (c) 2024-2025 Arm Limited
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to
@@ -33,7 +33,8 @@ add_library(
 target_include_directories(
     ${LIB_BINARY} PRIVATE
         ../
-        ../../source_third_party/khronos/vulkan/include/)
+        ../../source_third_party/khronos/vulkan/include/
+        ../../source_third_party/khronos/vulkan-utilities/include/)
 
 lgl_set_build_options(${LIB_BINARY})
 

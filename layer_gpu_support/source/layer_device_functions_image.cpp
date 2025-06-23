@@ -22,6 +22,8 @@
  * IN THE SOFTWARE.
  * ----------------------------------------------------------------------------
  */
+#include <vulkan/utility/vk_safe_struct.hpp>
+#include <vulkan/utility/vk_struct_helper.hpp>
 
 #include "device.hpp"
 #include "framework/device_dispatch_table.hpp"
@@ -119,16 +121,17 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateImage<user_tag>(VkDevice device,
         }
     }
 
-    VkImageCreateInfo newCreateInfo = *pCreateInfo;
+    // Create modifiable structures we can patch
+    vku::safe_VkImageCreateInfo newCreateInfoSafe(pCreateInfo);
+    auto* newCreateInfo = reinterpret_cast<VkImageCreateInfo*>(&newCreateInfoSafe);
+    // We know we can const-cast here because this is a safe-struct clone
+    void* pNextBase = const_cast<void*>(newCreateInfoSafe.pNext);
 
-    VkImageCompressionControlEXT newCompressionControl;
-    // TODO: This currently relies on const_cast to make user struct writable
-    //       We should replace this with a generic clone (issue #56)
-    auto* userCompressionControl =
-        searchNextList<VkImageCompressionControlEXT>(VK_STRUCTURE_TYPE_IMAGE_COMPRESSION_CONTROL_EXT,
-                                                     pCreateInfo->pNext);
-
+    // Create extra structures we can patch in
+    VkImageCompressionControlEXT newCompressionControl = vku::InitStructHelper();
     VkImageCompressionControlEXT* compressionControl = &newCompressionControl;
+
+    auto* userCompressionControl = vku::FindStructInPNextChain<VkImageCompressionControlEXT>(pNextBase);
     if (userCompressionControl)
     {
         compressionControl = userCompressionControl;
@@ -138,21 +141,18 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateImage<user_tag>(VkDevice device,
 
     if (forceDisable)
     {
-        compressionControl->sType = VK_STRUCTURE_TYPE_IMAGE_COMPRESSION_CONTROL_EXT;
         compressionControl->flags = VK_IMAGE_COMPRESSION_DISABLED_EXT;
         compressionControl->compressionControlPlaneCount = 0;
         compressionControl->pFixedRateFlags = nullptr;
     }
     else if (forceDefault)
     {
-        compressionControl->sType = VK_STRUCTURE_TYPE_IMAGE_COMPRESSION_CONTROL_EXT;
         compressionControl->flags = VK_IMAGE_COMPRESSION_DEFAULT_EXT;
         compressionControl->compressionControlPlaneCount = 0;
         compressionControl->pFixedRateFlags = nullptr;
     }
     else if (selectedLevel)
     {
-        compressionControl->sType = VK_STRUCTURE_TYPE_IMAGE_COMPRESSION_CONTROL_EXT;
         compressionControl->flags = VK_IMAGE_COMPRESSION_FIXED_RATE_EXPLICIT_EXT;
         compressionControl->compressionControlPlaneCount = 1;
         compressionControl->pFixedRateFlags = reinterpret_cast<VkImageCompressionFixedRateFlagsEXT*>(&selectedLevel);
@@ -162,12 +162,11 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateImage<user_tag>(VkDevice device,
         patchNeeded = false;
     }
 
-    // If this is new, patch it in to the pNext chain
+    // Add a config if not already configured by the application
     if (patchNeeded)
     {
-        compressionControl->pNext = newCreateInfo.pNext;
-        newCreateInfo.pNext = reinterpret_cast<const void*>(compressionControl);
+        vku::AddToPnext(newCreateInfoSafe, *compressionControl);
     }
 
-    return layer->driver.vkCreateImage(device, &newCreateInfo, pAllocator, pImage);
+    return layer->driver.vkCreateImage(device, newCreateInfo, pAllocator, pImage);
 }
