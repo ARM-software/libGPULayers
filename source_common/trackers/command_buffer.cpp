@@ -75,7 +75,7 @@ uint64_t CommandBuffer::renderPassBegin(const RenderPass& renderPass,
     assert(!currentRenderPass);
 
     // Record the current draw call count so that the delta can be computed at
-    // the end of the renderpass; this gives the number of draw calls in that pass
+    // the end of the render pass; this gives the number of draw calls in that pass
     renderPassStartDrawCount = stats.getDrawCallCount();
 
     // Create the workload object and populate with config information
@@ -85,11 +85,11 @@ uint64_t CommandBuffer::renderPassBegin(const RenderPass& renderPass,
         const auto tagID = Tracker::LCSWorkload::assignTagID();
         stats.incRenderPassCount();
 
-        // Create a new renderpass object
+        // Create a new render pass object
         const auto workload =
             std::make_shared<LCSRenderPass>(tagID, renderPass, width, height, suspending, oneTimeSubmit);
 
-        // Track the workload as it will be modified at the end of the renderpass
+        // Track the workload as it will be modified at the end of the render pass
         currentRenderPass = workload;
 
         // Add a command to the layer-side command stream
@@ -99,10 +99,10 @@ uint64_t CommandBuffer::renderPassBegin(const RenderPass& renderPass,
     }
     else
     {
-        // Create a renderpass continuation object
+        // Create a render pass continuation object
         const auto workload = std::make_shared<LCSRenderPassContinuation>(suspending);
 
-        // Track the workload as it will be modified at the end of the renderpass
+        // Track the workload as it will be modified at the end of the render pass
         currentRenderPass = workload;
 
         // Add a command to the layer-side command stream
