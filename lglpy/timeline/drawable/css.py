@@ -38,7 +38,7 @@ The style fields and defaults currently supported are:
   - line-width: 1.5;       (Default 1.0)
   - line-dash: 2,4;        (Default none)
   - font-color: #01234567; (Default none)
-  - font-face: name;       (Default Consolas,sans)
+  - font-face: name;       (Default Consolas,monospace)
   - font-size: 11;         (Default 10)
 
 Colors can be RGB or RGBA, but note that transparent colors are much more
@@ -180,6 +180,17 @@ class CSSStylesheet(dict):
         re.VERBOSE
     )
 
+    re_str_decl = re.compile(
+        r'''
+          ^\s*                    # Start a new line ignore whitespace
+          (font-face):\s*         # Mandatory name
+          "(.*?)"                 # Double-quoted string
+          ;\s*                    # Closing ; immediately afterwards
+          $
+        ''',
+        re.VERBOSE
+    )
+
     def __init__(
             self, css_file: Optional[str] = None,
             css_string: Optional[str] = None):
@@ -279,6 +290,13 @@ class CSSStylesheet(dict):
                         node[key] = dash_value
                     continue
 
+                # Handle node field declarations for strings
+                if match := self.re_str_decl.match(line):
+                    key = match.group(1)
+                    for node in current_nodes:
+                        node[key] = CSSFont(match.group(2))
+                    continue
+
                 # If we get here this line is an unknown so raise an error
                 raise ValueError()
 
@@ -370,7 +388,7 @@ class CSSFont(tuple):
     tuples. Created instances will not be instances of CSSFont.
     '''
 
-    def __new__(cls, face: str = 'sans'):
+    def __new__(cls, face: str):
         '''
         Create a new CSSFont tuple.
 
@@ -422,7 +440,7 @@ class CSSNode(dict):
     if os.name == 'nt':
         DEFAULT_FONT = 'Consolas'
     else:
-        DEFAULT_FONT = 'sans'
+        DEFAULT_FONT = 'monospace'
 
     DEFAULT_STYLES = {
         'fill-color': CSSColor('none'),
