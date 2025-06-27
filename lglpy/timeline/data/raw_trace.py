@@ -613,10 +613,11 @@ class PerfettoConfig:
         'copy query': GPUStageID.BUFFER_TRANSFER,
         'compute': GPUStageID.COMPUTE,
         'trace_rays': GPUStageID.TRACE_RAYS,
+        'non-fragment': GPUStageID.VERTEX,
         'advanced geometry': GPUStageID.ADVANCED_GEOMETRY,
         'vertex': GPUStageID.VERTEX,
-        'fragment': GPUStageID.FRAGMENT,
         'binning': GPUStageID.BINNING,
+        'fragment': GPUStageID.FRAGMENT,
         'main': GPUStageID.MAIN,
         "acceleration structure 'fast build' build":
             GPUStageID.AS_BUILD_FAST_BUILD,
