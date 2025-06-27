@@ -23,8 +23,10 @@
  * ----------------------------------------------------------------------------
  */
 
-#include "device.hpp"
+#include <vulkan/utility/vk_struct_helper.hpp>
 
+#include "device.hpp"
+#include "framework/manual_functions.hpp"
 #include "framework/utils.hpp"
 #include "instance.hpp"
 
@@ -34,9 +36,9 @@
 static std::unordered_map<void*, std::unique_ptr<Device>> g_devices;
 
 /* See header for documentation. */
-const std::vector<std::string> Device::extraExtensions {
-    VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME,
-    VK_EXT_IMAGE_COMPRESSION_CONTROL_EXTENSION_NAME,
+const std::vector<DeviceCreatePatchPtr> Device::createInfoPatches {
+    enableDeviceVkKhrTimelineSemaphore,
+    enableDeviceVkExtImageCompressionControl
 };
 
 /* See header for documentation. */

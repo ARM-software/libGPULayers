@@ -52,10 +52,23 @@
 
 #pragma once
 
+#include <string>
+#include <vector>
+#include <vulkan/utility/vk_safe_struct.hpp>
+#include <vulkan/vk_layer.h>
+
 #include "framework/device_dispatch_table.hpp"
 #include "instance.hpp"
 
-#include <vulkan/vk_layer.h>
+
+
+/**
+ * @brief Function pointer type for patching VkDeviceCreateInfo.
+ */
+using DeviceCreatePatchPtr = void (*)(Instance& instance,
+                                      VkPhysicalDevice physicalDevice,
+                                      vku::safe_VkDeviceCreateInfo& createInfo,
+                                      std::vector<std::string>& supported);
 
 /**
  * @brief This class implements the layer state tracker for a single device.
@@ -149,9 +162,9 @@ public:
     DeviceDispatchTable driver {};
 
     /**
-     * @brief The minimum set of device extensions needed by this layer.
+     * @brief The set of VkCreateDeviceInfo patches needed by this layer.
      */
-    static const std::vector<std::string> extraExtensions;
+    static const std::vector<DeviceCreatePatchPtr> createInfoPatches;
 
     /**
      * @brief The timeline sem use for queue serialization.

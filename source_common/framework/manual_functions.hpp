@@ -29,7 +29,9 @@
  * implemented as library code which can be swapped for alternative
  * implementations on a per-layer basis if needed.
  */
-#include "device.hpp"
+#include <vulkan/utility/vk_safe_struct.hpp>
+
+ #include "device.hpp"
 #include "framework/device_dispatch_table.hpp"
 #include "framework/device_functions.hpp"
 #include "framework/instance_functions.hpp"
@@ -181,3 +183,42 @@ std::vector<std::string> getDeviceExtensionList(VkInstance instance,
  * @return the cloned list.
  */
 std::vector<const char*> cloneExtensionList(uint32_t extensionCount, const char* const* extensionList);
+
+/**
+ * Enable VK_KHR_timeline_semaphore if not enabled.
+ *
+ * Enabling this requires passing the extension string to vkCreateDevice(),
+ * and passing either VkPhysicalDeviceTimelineSemaphoreFeatures or
+ * VkPhysicalDeviceVulkan12Features with the feature enabled.
+ *
+ * If the user has the extension enabled but the feature disabled we patch
+ * their existing structures to enable it.
+ *
+ * @param instance         The layer instance we are running within.
+ * @param physicalDevice   The physical device we are creating a device for.
+ * @param createInfo       The createInfo we can search to find user config.
+ * @param supported        The list of supported extensions.
+ */
+void enableDeviceVkKhrTimelineSemaphore(Instance& instance,
+                                        VkPhysicalDevice physicalDevice,
+                                        vku::safe_VkDeviceCreateInfo& createInfo,
+                                        std::vector<std::string>& supported);
+
+/**
+ * Enable VK_EXT_image_compression_control if not enabled.
+ *
+ * Enabling this requires passing the extension string to vkCreateDevice(),
+ * and passing VkPhysicalDeviceImageCompressionControlFeaturesEXT.
+ *
+ * If the user has the extension enabled but the feature disabled we patch
+ * their existing structures to enable it.
+ *
+ * @param instance         The layer instance we are running within.
+ * @param physicalDevice   The physical device we are creating a device for.
+ * @param createInfo       The createInfo we can search to find user config.
+ * @param supported        The list of supported extensions.
+ */
+void enableDeviceVkExtImageCompressionControl(Instance& instance,
+                                              VkPhysicalDevice physicalDevice,
+                                              vku::safe_VkDeviceCreateInfo& createInfo,
+                                              std::vector<std::string>& supported);
