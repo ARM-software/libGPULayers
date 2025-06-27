@@ -22,18 +22,15 @@
  * IN THE SOFTWARE.
  * ----------------------------------------------------------------------------
  */
-
-#include "device.hpp"
+#include <vector>
+#include <sys/stat.h>
+#include <unistd.h>
 
 #include "comms/comms_module.hpp"
+#include "device.hpp"
 #include "framework/utils.hpp"
 #include "instance.hpp"
 #include "timeline_protobuf_encoder.hpp"
-
-#include <vector>
-
-#include <sys/stat.h>
-#include <unistd.h>
 
 /**
  * @brief The dispatch lookup for all of the created Vulkan devices.
@@ -41,7 +38,7 @@
 static std::unordered_map<void*, std::unique_ptr<Device>> g_devices;
 
 /* See header for documentation. */
-const std::vector<std::string> Device::extraExtensions {};
+const std::vector<DeviceCreatePatchPtr> Device::createInfoPatches {};
 
 /* See header for documentation. */
 std::unique_ptr<Comms::CommsModule> Device::commsModule;

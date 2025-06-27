@@ -29,7 +29,6 @@
  * implemented as library code which can be swapped for alternative
  * implementations on a per-layer basis if needed.
  */
-#include <vulkan/utility/vk_safe_struct.hpp>
 #include <vulkan/utility/vk_struct_helper.hpp>
 
 #include "framework/manual_functions.hpp"
@@ -370,22 +369,15 @@ static void enableInstanceVkExtDebugUtils(vku::safe_VkInstanceCreateInfo& create
     }
 }
 
-/**
- * Enable VK_KHR_timeline_semaphore if not enabled.
- *
- * Enabling this requires passing the extension string to vkCreateDevice(),
- * and passing either VkPhysicalDeviceTimelineSemaphoreFeatures or
- * VkPhysicalDeviceVulkan12Features with the feature enabled.
- *
- * If the user has the extension enabled but the feature disabled we patch
- * their existing structures to enable it.
- *
- * @param createInfo   The createInfo we can search to find user config.
- * @param supported    The list of supported extensions.
- */
-static void enableDeviceVkKhrTimelineSemaphore(vku::safe_VkDeviceCreateInfo& createInfo,
-                                               const std::vector<std::string>& supported)
+/* See header for documentation. */
+void enableDeviceVkKhrTimelineSemaphore(Instance& instance,
+                                        VkPhysicalDevice physicalDevice,
+                                        vku::safe_VkDeviceCreateInfo& createInfo,
+                                        std::vector<std::string>& supported)
 {
+    UNUSED(instance);
+    UNUSED(physicalDevice);
+
     static const std::string target {VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME};
 
     // We know we can const-cast here because createInfo is a safe-struct clone
@@ -445,21 +437,15 @@ static void enableDeviceVkKhrTimelineSemaphore(vku::safe_VkDeviceCreateInfo& cre
     }
 }
 
-/**
- * Enable VK_EXT_image_compression_control if not enabled.
- *
- * Enabling this requires passing the extension string to vkCreateDevice(),
- * and passing VkPhysicalDeviceImageCompressionControlFeaturesEXT.
- *
- * If the user has the extension enabled but the feature disabled we patch
- * their existing structures to enable it.
- *
- * @param createInfo   The createInfo we can search to find user config.
- * @param supported    The list of supported extensions.
- */
-static void enableDeviceVkExtImageCompressionControl(vku::safe_VkDeviceCreateInfo& createInfo,
-                                                     std::vector<std::string>& supported)
+/* See header for documentation. */
+void enableDeviceVkExtImageCompressionControl(Instance& instance,
+                                              VkPhysicalDevice physicalDevice,
+                                              vku::safe_VkDeviceCreateInfo& createInfo,
+                                              std::vector<std::string>& supported)
 {
+    UNUSED(instance);
+    UNUSED(physicalDevice);
+
     static const std::string target {VK_EXT_IMAGE_COMPRESSION_CONTROL_EXTENSION_NAME};
 
     // We know we can const-cast here because createInfo is a safe-struct clone
@@ -792,32 +778,19 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDevice_default(VkPhysicalDevice phy
     vku::safe_VkDeviceCreateInfo newCreateInfoSafe(pCreateInfo);
     auto* newCreateInfo = reinterpret_cast<VkDeviceCreateInfo*>(&newCreateInfoSafe);
 
-    // Enable extra extensions
-    for (const auto& newExt : Device::extraExtensions)
+    // Apply all required patches to the VkDeviceCreateInfo
+    for (const auto patch : Device::createInfoPatches)
     {
-        if (newExt == VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME)
-        {
-
-            enableDeviceVkKhrTimelineSemaphore(newCreateInfoSafe,
-                                               supportedExtensions);
-        }
-        else if (newExt == VK_EXT_IMAGE_COMPRESSION_CONTROL_EXTENSION_NAME)
-        {
-            enableDeviceVkExtImageCompressionControl(newCreateInfoSafe,
-                                                     supportedExtensions);
-        }
-        else
-        {
-            LAYER_ERR("Unknown instance extension: %s", newExt.c_str());
-        }
+        patch(*layer, physicalDevice, newCreateInfoSafe, supportedExtensions);
     }
 
-    // Log extensions for debug purposes
+    // Log extensions after patching for debug purposes
     for (uint32_t i = 0; i < newCreateInfo->enabledExtensionCount; i++)
     {
         LAYER_LOG("Requested device extension list: [%u] = %s", i, newCreateInfo->ppEnabledExtensionNames[i]);
     }
 
+    // TODO: Issue #123: Why can't we just use layer.driver.vkGetInstanceProcAddr?
     auto fpCreateDeviceRaw = fpGetInstanceProcAddr(layer->instance, "vkCreateDevice");
     auto fpCreateDevice = reinterpret_cast<PFN_vkCreateDevice>(fpCreateDeviceRaw);
     if (!fpCreateDevice)
