@@ -67,8 +67,33 @@ application under test and the capture process. For full instructions see the
 
 The current override groups are supported:
 
+* **Feature:** control use of optional Vulkan features that can impact
+  correctness and performance.
 * **Serialization:** control serialization of GPU workload scheduling to
   diagnose issues caused by missing queue or command stream synchronization.
+* **Shaders and Pipelines:** control shader pipeline compilation to diagnose
+  issues caused by shader precision issues.
+* **Framebuffers:** control use of lossy and lossless image compression for
+  uncompressed images that may be used as framebuffer attachments.
+
+### Features
+
+The feature overrides allow forceful enable or disable of optional features
+in the API.
+
+#### Configuration options
+
+The configuration file allows optional features to be force-enabled or
+force-disabled. If no forced setting is enabled, application behavior is
+left unmodified. Only a single force setting per feature should be set to
+avoid ambiguous settings.
+
+```jsonc
+"feature": {
+    "robustBufferAccess_enable": false, // Force enable robustBufferAccess
+    "robustBufferAccess_disable": false // Force disable robustBufferAccess
+},
+```
 
 ### Serialization
 
