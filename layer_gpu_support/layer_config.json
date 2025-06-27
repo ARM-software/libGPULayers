@@ -1,5 +1,9 @@
 {
     "layer": "VK_LAYER_LGL_gpu_support",
+    "feature": {
+        "robustBufferAccess_enable": false,
+        "robustBufferAccess_disable": false
+    },
     "serialize": {
         "all": false,
         "none": false,

@@ -49,6 +49,18 @@ public:
      */
     LayerConfig();
 
+    // Config queries for features
+
+    /**
+     * @brief True if config wants to serialize across queue submits.
+     */
+    bool feature_enable_robustBufferAccess() const;
+
+    /**
+     * @brief True if config wants to serialize queue submits with the CPU.
+     */
+    bool feature_disable_robustBufferAccess() const;
+
     // Config queries for serializer
 
     /**
@@ -155,6 +167,15 @@ public:
 
 private:
     /**
+     * @brief Parse the configuration options for the feature module.
+     *
+     * @param config   The JSON configuration.
+     *
+     * @throws json::out_of_bounds if required fields are missing.
+     */
+    void parse_feature_options(const json& config);
+
+    /**
      * @brief Parse the configuration options for the serializer.
      *
      * @param config   The JSON configuration.
@@ -182,6 +203,16 @@ private:
     void parse_framebuffer_options(const json& config);
 
 private:
+    /**
+     * @brief True if we force enable robustBufferAccess.
+     */
+    bool conf_feat_robustBufferAccess_enable {false};
+
+    /**
+     * @brief True if we force disable robustBufferAccess.
+     */
+    bool conf_feat_robustBufferAccess_disable {false};
+
     /**
      * @brief True if we force serialize all queue submits.
      */

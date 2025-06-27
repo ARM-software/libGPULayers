@@ -38,6 +38,37 @@
 #include <vulkan/vulkan.h>
 
 /* See header for documentation. */
+void LayerConfig::parse_feature_options(const json& config)
+{
+    // Decode serialization state
+    json feature = config.at("feature");
+
+    bool enable_rba = feature.at("robustBufferAccess_enable");
+    bool disable_rba = feature.at("robustBufferAccess_disable");
+
+    const char* rba_state = "default";
+    if (enable_rba)
+    {
+        rba_state = "enabled";
+        // Ensure we only set one option
+        disable_rba = false;
+    }
+    else if (disable_rba)
+    {
+        rba_state = "disabled";
+    }
+
+    // Write after all options read from JSON so we know it parsed correctly
+    conf_feat_robustBufferAccess_enable = enable_rba;
+    conf_feat_robustBufferAccess_disable = disable_rba;
+
+    LAYER_LOG("Layer feature configuration");
+    LAYER_LOG("===========================");
+    LAYER_LOG(" - Robust buffer access: %s", rba_state);
+}
+
+
+/* See header for documentation. */
 void LayerConfig::parse_serialization_options(const json& config)
 {
     // Decode serialization state
@@ -240,6 +271,17 @@ LayerConfig::LayerConfig()
 
     try
     {
+        parse_feature_options(data);
+    }
+    catch (const json::out_of_range& e)
+    {
+        LAYER_ERR("Failed to read feature config, using defaults");
+        LAYER_ERR("Error: %s", e.what());
+    }
+
+
+    try
+    {
         parse_serialization_options(data);
     }
     catch (const json::out_of_range& e)
@@ -267,6 +309,18 @@ LayerConfig::LayerConfig()
         LAYER_ERR("Failed to read framebuffer config, using defaults");
         LAYER_ERR("Error: %s", e.what());
     }
+}
+
+/* See header for documentation. */
+bool LayerConfig::feature_enable_robustBufferAccess() const
+{
+    return conf_feat_robustBufferAccess_enable;
+}
+
+/* See header for documentation. */
+bool LayerConfig::feature_disable_robustBufferAccess() const
+{
+    return conf_feat_robustBufferAccess_disable;
 }
 
 /* See header for documentation. */

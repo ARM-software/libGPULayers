@@ -35,10 +35,17 @@
  */
 static std::unordered_map<void*, std::unique_ptr<Device>> g_devices;
 
+/* Predeclare custom DeviceCreatePatch functions */
+static void modifyDeviceRobustBufferAccess(Instance& instance,
+                                           VkPhysicalDevice physicalDevice,
+                                           vku::safe_VkDeviceCreateInfo& createInfo,
+                                           std::vector<std::string>& supported);
+
 /* See header for documentation. */
 const std::vector<DeviceCreatePatchPtr> Device::createInfoPatches {
     enableDeviceVkKhrTimelineSemaphore,
-    enableDeviceVkExtImageCompressionControl
+    enableDeviceVkExtImageCompressionControl,
+    modifyDeviceRobustBufferAccess
 };
 
 /* See header for documentation. */
@@ -110,5 +117,97 @@ Device::Device(Instance* _instance,
     {
         LAYER_ERR("Failed vkCreateSemaphore() for queue serialization");
         queueSerializationTimelineSem = nullptr;
+    }
+}
+
+/**
+ * Allow a force enable/disable of robustBufferAccess feature.
+ *
+ * @param instance         The layer instance we are running within.
+ * @param physicalDevice   The physical device we are creating a device for.
+ * @param createInfo       The createInfo we can search to find user config.
+ * @param supported        The list of supported extensions.
+ */
+static void modifyDeviceRobustBufferAccess(Instance& instance,
+                                           VkPhysicalDevice physicalDevice,
+                                           vku::safe_VkDeviceCreateInfo& createInfo,
+                                           std::vector<std::string>& supported)
+{
+    UNUSED(supported);
+
+    // Only one of these can be set as an override
+    // If neither are set then don't change the app settings
+    bool enableRobustness = instance.config.feature_enable_robustBufferAccess();
+    bool disableRobustness = instance.config.feature_disable_robustBufferAccess();
+
+    // No patch to apply
+    if (!enableRobustness && !disableRobustness)
+    {
+        return;
+    }
+
+    // Query if robustness is supported if we need to force enable
+    VkPhysicalDeviceFeatures supportedFeatures;
+    instance.driver.vkGetPhysicalDeviceFeatures(physicalDevice, &supportedFeatures);
+    if (enableRobustness && !supportedFeatures.robustBufferAccess)
+    {
+        LAYER_LOG("Device feature not available: robustBufferAccess");
+        return;
+    }
+
+    // We know we can const_cast here because createInfo is a safe-struct clone
+    // Option1 = legacy-style enable
+    auto* config = const_cast<VkPhysicalDeviceFeatures*>(createInfo.pEnabledFeatures);
+
+    // Option2 = modern-style enable
+    void* pNextBase = const_cast<void*>(createInfo.pNext);
+    auto* configNext = vku::FindStructInPNextChain<VkPhysicalDeviceFeatures2>(pNextBase);
+
+    // Pick the feature struct from either of the valid options
+    if (!config && configNext)
+    {
+        config = &configNext->features;
+    }
+
+    // User provided feature enable struct, so just change that directly
+    if (config)
+    {
+        if (enableRobustness)
+        {
+            if(config->robustBufferAccess)
+            {
+                LAYER_LOG("Device feature already enabled: robustBufferAccess");
+            }
+            else
+            {
+                LAYER_LOG("Device feature enabled: robustBufferAccess");
+                config->robustBufferAccess = VK_TRUE;
+            }
+        }
+        if (disableRobustness)
+        {
+            if(!config->robustBufferAccess)
+            {
+                LAYER_LOG("Device feature already disabled: robustBufferAccess");
+            }
+
+            LAYER_LOG("Device feature disabled: robustBufferAccess");
+            config->robustBufferAccess = VK_FALSE;
+        }
+    }
+    // User provided no feature enables, so provide our own structure
+    else if (enableRobustness)
+    {
+        LAYER_LOG("Device feature enabled: robustBufferAccess");
+
+        // Create a dynamic copy and transfer ownership to the safe-struct
+        auto* newFeatures = new VkPhysicalDeviceFeatures;
+        memset(newFeatures, 0, sizeof(VkPhysicalDeviceFeatures));
+        createInfo.pEnabledFeatures = newFeatures;
+    }
+    // User provided no feature enables, but we don't need one
+    else if (disableRobustness)
+    {
+        LAYER_LOG("Device feature already disabled: robustBufferAccess");
     }
 }
