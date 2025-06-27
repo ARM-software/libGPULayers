@@ -54,13 +54,12 @@
 
 #include <string>
 #include <vector>
+
 #include <vulkan/utility/vk_safe_struct.hpp>
 #include <vulkan/vk_layer.h>
 
 #include "framework/device_dispatch_table.hpp"
 #include "instance.hpp"
-
-
 
 /**
  * @brief Function pointer type for patching VkDeviceCreateInfo.
