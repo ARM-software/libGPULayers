@@ -50,7 +50,7 @@ if sys.platform == 'win32':
     FONT = ('Consolas', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
     ''' Constant code for Windows font style'''
 else:
-    FONT = ('sans', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
+    FONT = ('monospace', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
     ''' Constant code for Linux font style'''
 
 
