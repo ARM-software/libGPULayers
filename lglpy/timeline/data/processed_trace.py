@@ -35,7 +35,12 @@ from .raw_trace import RawTrace, RenderstageEvent, MetadataWork, \
     MetadataASTransfer, GPUStreamID, GPUStageID
 
 LABEL_HEURISTICS = True
-LABEL_MAX_LEN = 60
+LABEL_MAX_LEN = 42
+# Where to add ellipsis if label is too long
+#  - left = ...X
+#  - center = X...X
+#  - right = X...
+LABEL_SPLIT = 'left'
 
 
 class GPUWorkload:
@@ -78,30 +83,30 @@ class GPUWorkload:
         self.submit = None
         self.label_stack = None
         self.parsed_label_name: Optional[str] = None
+        self.parsed_label_name_full: Optional[str] = None
 
         if metadata:
             self.submit = metadata.submit
             self.label_stack = metadata.label_stack
 
-    def get_label_name(self) -> Optional[str]:
+    def get_label_name_full(self) -> Optional[str]:
         '''
-        Get a cleaned up label name for a workload.
-
-        Warning: The heuristics here are not robust.
+        Get a cleaned up label name for a workload with no shortening.
 
         Returns:
-            A modified label for use in the UI.
+            A label for use in the UI.
         '''
+        # Cached label already parsed
+        if self.parsed_label_name_full is not None:
+            return self.parsed_label_name_full
+
         # No label to parse
         if not self.label_stack:
             return None
 
-        # Cached label already parsed
-        if self.parsed_label_name is not None:
-            return self.parsed_label_name
-
         if not LABEL_HEURISTICS:
-            return self.label_stack[-1]
+            self.parsed_label_name_full = self.label_stack[-1]
+            return self.parsed_label_name_full
 
         # Create a copy we can edit ...
         labels = list(self.label_stack)
@@ -141,7 +146,36 @@ class GPUWorkload:
         else:
             label = '.'.join(labels)
 
-        if len(label) > LABEL_MAX_LEN:
+        self.parsed_label_name_full = label
+        return self.parsed_label_name_full
+
+    def get_label_name(self) -> Optional[str]:
+        '''
+        Get a cleaned up label name for a workload.
+
+        Warning: The heuristics here are not robust.
+
+        Returns:
+            A modified label for use in the UI.
+        '''
+        # Cached label already parsed
+        if self.parsed_label_name is not None:
+            return self.parsed_label_name
+
+        label = self.get_label_name_full()
+
+        # No label to parse
+        if not label:
+            return None
+
+        # Apply ellipsis shortening
+        if LABEL_SPLIT == 'left' and len(label) > LABEL_MAX_LEN:
+            label = f'...{label[-LABEL_MAX_LEN:]}'
+
+        elif LABEL_SPLIT == 'right' and len(label) > LABEL_MAX_LEN:
+            label = f'{label[0:LABEL_MAX_LEN]}...'
+
+        elif LABEL_SPLIT == 'center' and len(label) > LABEL_MAX_LEN:
             half_max = LABEL_MAX_LEN // 2
             prefix = label[0:half_max]
             postfix = label[-half_max:]
@@ -169,6 +203,26 @@ class GPUWorkload:
         label = None
         if self.label_stack:
             label = self.get_label_name()
+
+        # Default label if no label or get_label_name heuristics stripped it
+        if not label:
+            return self.get_workload_type_name()
+
+        return label
+
+    def get_workload_name_full(self) -> str:
+        '''
+        Get a name for the workload.
+
+        This is based on the application debug label if there is one, but
+        with some heuristics to try and clean is up ...
+
+        Returns:
+            Returns the label for use in the UI.
+        '''
+        label = None
+        if self.label_stack:
+            label = self.get_label_name_full()
 
         # Default label if no label or get_label_name heuristics stripped it
         if not label:

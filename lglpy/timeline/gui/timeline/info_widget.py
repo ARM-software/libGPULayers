@@ -29,7 +29,7 @@ timeline visualization.
 from collections import defaultdict
 
 from ...data.raw_trace import GPUStreamID, GPUStageID
-from ...data.processed_trace import GPUWorkload
+from ...data.processed_trace import GPUWorkload, LABEL_MAX_LEN
 from ...drawable.text_pane_widget import TextPaneWidget
 
 
@@ -39,6 +39,7 @@ class TimelineInfoWidget(TextPaneWidget):
     time ranges in the main timeline.
     '''
 
+    FULL_LABEL = True
     MAX_EVENTS = 5
     VALIDSORTS = ['flush', 'runtime']
 
@@ -296,8 +297,27 @@ class TimelineInfoWidget(TextPaneWidget):
         metrics.append('')
         metrics.append('Workload properties:')
 
-        label = event.get_workload_name()
-        metrics.append(f'  Name: {label}')
+        if self.FULL_LABEL:
+            label = event.get_workload_name_full()
+        else:
+            label = event.get_workload_name()
+
+        # Chunk a long label into line-width sections
+        chunk_size = LABEL_MAX_LEN + 3
+        next_chunk_size = chunk_size + 4
+        chunks = []
+        while label:
+            part = label[0: chunk_size]
+            chunks.append(part)
+
+            label = label[chunk_size:]
+            chunk_size = next_chunk_size
+
+        # Print a label in chunks
+        metrics.append(f'  Name: {chunks[0]}')
+        for part in chunks[1:]:
+            metrics.append(f'    {part}')
+
         metrics.append(f'  Stream: {stream_name}')
         metrics.append(f'  Stage: {stage_name}')
         metrics.append(f'  Duration: {event.duration / 1000000.0:0.2f} ms')
