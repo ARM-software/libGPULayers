@@ -150,6 +150,12 @@ class GPUWorkload:
         self.parsed_label_name = label
         return self.parsed_label_name
 
+    def get_workload_type_name(self) -> str:
+        '''
+        Get the type of this workload.
+        '''
+        return 'Unknown type'
+
     def get_workload_name(self) -> str:
         '''
         Get a name for the workload.
@@ -166,7 +172,7 @@ class GPUWorkload:
 
         # Default label if no label or get_label_name heuristics stripped it
         if not label:
-            return GPUStageID.get_ui_name(self.stage)
+            return self.get_workload_type_name()
 
         return label
 
@@ -191,6 +197,16 @@ class GPUWorkload:
         # Subclass will override this if metadata exists
         # Submit ID isn't useful, but traces back to Perfetto data for debug
         return f'Submit: {self.submit_id}'
+
+    def get_key_value_properties(self) -> dict[str, str]:
+        '''
+        Get an ordered list of key-value pairs for this workload.
+
+        Returns:
+            Returns the label for use in the UI.
+        '''
+        # Subclass will override this if key-value metadata exists
+        return {}
 
     def get_frame(self):
         '''
@@ -251,6 +267,81 @@ class GPURenderPass(GPUWorkload):
         self.draw_call_count = metadata.draw_call_count
         self.attachments = list(metadata.attachments.attachments)
 
+    def get_workload_type_name(self) -> str:
+        '''
+        Get the type of this workload.
+        '''
+        return 'Render pass'
+
+    def get_key_value_properties(self) -> dict[str, str]:
+        '''
+        Get an ordered list of key-value pairs for this workload.
+
+        Returns:
+            Returns the label for use in the UI.
+        '''
+        return {
+            'resolution': self.get_resolution_str(),
+            'draw count': self.get_draw_count_str(),
+            'attachments': self.get_attachment_present_str(),
+            'attachments loaded': self.get_attachment_loadop_str(),
+            'attachments stored': self.get_attachment_storeop_str()
+        }
+
+    def get_resolution_str(self) -> str:
+        '''
+        Get the resolution string.
+
+        Returns:
+            Returns the label for use in the UI.
+        '''
+        return f'{self.width}x{self.height}'
+
+    def get_draw_count_str(self) -> str:
+        '''
+        Get the draw call count string.
+
+        Returns:
+            Returns the label for use in the UI.
+        '''
+        if self.draw_call_count < 0:
+            return 'Unknown draws'
+
+        if self.draw_call_count == 1:
+            return '1 draw'
+
+        return f'{self.draw_call_count} draws'
+
+    def get_attachment_present_str(self) -> str:
+        '''
+        Get the attachment present string.
+
+        Returns:
+            Returns the label for use in the UI.
+        '''
+        bindings = [x.binding for x in self.attachments]
+        return self.get_compact_string(bindings)
+
+    def get_attachment_loadop_str(self) -> str:
+        '''
+        Get the attachment loadop string.
+
+        Returns:
+            Returns the label for use in the UI.
+        '''
+        bindings = [x.binding for x in self.attachments if x.is_loaded]
+        return self.get_compact_string(bindings)
+
+    def get_attachment_storeop_str(self) -> str:
+        '''
+        Get the attachment loadop string.
+
+        Returns:
+            Returns the label for use in the UI.
+        '''
+        bindings = [x.binding for x in self.attachments if x.is_stored]
+        return self.get_compact_string(bindings)
+
     @classmethod
     def get_compact_string(cls, bindings: list[str]) -> str:
         '''
@@ -272,14 +363,9 @@ class GPURenderPass(GPUWorkload):
         Returns:
             A string showing loadOp, attachment, storeOp.
         '''
-        bindings = [x.binding for x in self.attachments]
-        present = self.get_compact_string(bindings)
-
-        bindings = [x.binding for x in self.attachments if x.is_loaded]
-        loaded = self.get_compact_string(bindings)
-
-        bindings = [x.binding for x in self.attachments if x.is_stored]
-        stored = self.get_compact_string(bindings)
+        present = self.get_attachment_present_str()
+        loaded = self.get_attachment_loadop_str()
+        stored = self.get_attachment_storeop_str()
 
         if loaded:
             loaded = f'load({loaded}) > '
@@ -296,9 +382,8 @@ class GPURenderPass(GPUWorkload):
         Returns:
             A string showing attachments without load/storeOp usage.
         '''
-        bindings = [x.binding for x in self.attachments]
-        present = f'[{self.get_compact_string(bindings)}]'
-        return present
+        present = self.get_attachment_present_str()
+        return f'[{present}]'
 
     def get_long_label(self) -> str:
         '''
@@ -312,14 +397,7 @@ class GPURenderPass(GPUWorkload):
         if label_name := self.get_label_name():
             lines.append(label_name)
 
-        if self.draw_call_count < 0:
-            draw_str = 'Unknown draws'
-        elif self.draw_call_count == 1:
-            draw_str = '1 draw'
-        else:
-            draw_str = f'{self.draw_call_count} draws'
-
-        line = f'{self.width}x{self.height} ({draw_str})'
+        line = f'{self.get_resolution_str()} ({self.get_draw_count_str()})'
         lines.append(line)
 
         line = self.get_attachment_long_label()
@@ -336,7 +414,7 @@ class GPURenderPass(GPUWorkload):
         '''
         lines = []
 
-        line = f'{self.width}x{self.height}'
+        line = self.get_resolution_str()
         lines.append(line)
 
         line = self.get_attachment_short_label()
@@ -366,6 +444,43 @@ class GPUDispatch(GPUWorkload):
         self.groups_y = metadata.groups_y
         self.groups_z = metadata.groups_z
 
+    def get_workload_type_name(self) -> str:
+        '''
+        Get the type of this workload.
+        '''
+        return 'Compute dispatch'
+
+    def get_key_value_properties(self) -> dict[str, str]:
+        '''
+        Get an ordered list of key-value pairs for this workload.
+
+        Returns:
+            Returns the label for use in the UI.
+        '''
+        return {
+            'resolution': self.get_resolution_str()
+        }
+
+    def get_resolution_str(self) -> str:
+        '''
+        Get the resolution string
+
+        Returns:
+            Returns the label for use in the UI.
+        '''
+        # If indirect then show a placeholder
+        if self.groups_x == -1:
+            return "?x?x? groups"
+
+        # Else show the actual dimension
+        dims = [self.groups_x, self.groups_y]
+
+        # Hide Z dimension unless greater than 1
+        if self.groups_z > 1:
+            dims.append(self.groups_z)
+
+        return f'{"x".join([str(dim) for dim in dims])} groups'
+
     def get_long_label(self) -> str:
         '''
         Get the long form label for this workload.
@@ -389,21 +504,7 @@ class GPUDispatch(GPUWorkload):
             Returns the label for use in the UI.
         '''
         lines = []
-
-        # If indirect then show a placeholder
-        if self.groups_x == -1:
-            line = "?x?x? groups"
-
-        # Else show the actual dimension
-        else:
-            dims = [self.groups_x, self.groups_y]
-
-            # Hide Z dimension unless greater than 1
-            if self.groups_z > 1:
-                dims.append(self.groups_z)
-
-            line = f'{"x".join([str(dim) for dim in dims])} groups'
-
+        line = self.get_resolution_str()
         lines.append(line)
         return '\n'.join(lines)
 
@@ -429,6 +530,43 @@ class GPUTraceRays(GPUWorkload):
         self.items_y = metadata.items_y
         self.items_z = metadata.items_z
 
+    def get_workload_type_name(self) -> str:
+        '''
+        Get the type of this workload.
+        '''
+        return 'Trace rays dispatch'
+
+    def get_key_value_properties(self) -> dict[str, str]:
+        '''
+        Get an ordered list of key-value pairs for this workload.
+
+        Returns:
+            Returns the label for use in the UI.
+        '''
+        return {
+            'resolution': self.get_resolution_str()
+        }
+
+    def get_resolution_str(self) -> str:
+        '''
+        Get the resolution string.
+
+        Returns:
+            Returns the label for use in the UI.
+        '''
+        # If indirect then show a placeholder
+        if self.items_x == -1:
+            return "?x?x? items"
+
+        # Else show the actual dimension
+        dims = [self.items_x, self.items_y]
+
+        # Hide Z dimension unless greater than 1
+        if self.items_z > 1:
+            dims.append(self.items_z)
+
+        return f'{"x".join([str(dim) for dim in dims])} items'
+
     def get_long_label(self) -> str:
         '''
         Get the long form label for this workload.
@@ -452,22 +590,7 @@ class GPUTraceRays(GPUWorkload):
             Returns the label for use in the UI.
         '''
         lines = []
-
-        # If indirect then show a placeholder
-        if self.items_x == -1:
-            line = "?x?x? items"
-
-        # Else show the actual dimension
-        else:
-            dims = [self.items_x, self.items_y]
-
-            # Hide Z dimension unless greater than 1
-            if self.items_z > 1:
-                dims.append(self.items_z)
-
-            line = f'{"x".join([str(dim) for dim in dims])} items'
-
-        lines.append(line)
+        lines.append(self.get_resolution_str())
         return '\n'.join(lines)
 
 
@@ -495,6 +618,37 @@ class GPUImageTransfer(GPUWorkload):
         self.transfer_type = metadata.subtype
         self.pixel_count = metadata.pixel_count
 
+    def get_workload_type_name(self) -> str:
+        '''
+        Get the type of this workload.
+        '''
+        return 'Image transfer'
+
+    def get_key_value_properties(self) -> dict[str, str]:
+        '''
+        Get an ordered list of key-value pairs for this workload.
+
+        Returns:
+            Returns the label for use in the UI.
+        '''
+        return {
+            'transfer size': self.get_transfer_size_str()
+        }
+
+    def get_transfer_size_str(self) -> str:
+        '''
+        Get the transfer size string.
+
+        Returns:
+            Returns the label for use in the UI.
+        '''
+        # If indirect then show a placeholder
+        if self.pixel_count == -1:
+            return f'? pixels'
+
+        s = 's' if self.pixel_count != 1 else ''
+        return f'{self.pixel_count} pixel{s}'
+
     def get_long_label(self) -> str:
         '''
         Get the long form label for this workload.
@@ -507,12 +661,7 @@ class GPUImageTransfer(GPUWorkload):
         if label_name := self.get_label_name():
             lines.append(label_name)
 
-        # If indirect then show a placeholder
-        if self.pixel_count == -1:
-            line = f'{self.transfer_type} (? pixels)'
-        else:
-            s = 's' if self.pixel_count != 1 else ''
-            line = f'{self.transfer_type} ({self.pixel_count} pixel{s})'
+        line = f'{self.transfer_type} ({self.get_transfer_size_str()})'
         lines.append(line)
 
         return '\n'.join(lines)
@@ -551,6 +700,37 @@ class GPUBufferTransfer(GPUWorkload):
         self.transfer_type = metadata.subtype
         self.byte_count = metadata.byte_count
 
+    def get_workload_type_name(self) -> str:
+        '''
+        Get the type of this workload.
+        '''
+        return 'Buffer transfer'
+
+    def get_key_value_properties(self) -> dict[str, str]:
+        '''
+        Get an ordered list of key-value pairs for this workload.
+
+        Returns:
+            Returns the label for use in the UI.
+        '''
+        return {
+            'transfer size': self.get_transfer_size_str()
+        }
+
+    def get_transfer_size_str(self) -> str:
+        '''
+        Get the transfer size string.
+
+        Returns:
+            Returns the label for use in the UI.
+        '''
+        # If indirect then show a placeholder
+        if self.byte_count == -1:
+            return f'? bytes'
+
+        s = 's' if self.byte_count != 1 else ''
+        return f'{self.byte_count} byte{s}'
+
     def get_long_label(self) -> str:
         '''
         Get the long form label for this workload.
@@ -563,12 +743,7 @@ class GPUBufferTransfer(GPUWorkload):
         if label_name := self.get_label_name():
             lines.append(label_name)
 
-        # If indirect then show a placeholder
-        if self.byte_count == -1:
-            line = f'{self.transfer_type} (? bytes)'
-        else:
-            s = 's' if self.byte_count != 1 else ''
-            line = f'{self.transfer_type} ({self.byte_count} byte{s})'
+        line = f'{self.transfer_type} ({self.get_transfer_size_str()})'
         lines.append(line)
 
         return '\n'.join(lines)
@@ -612,6 +787,37 @@ class GPUASBuild(GPUWorkload):
         # We must have metadata so no need to check
         self.primitive_count = metadata.primitive_count
 
+    def get_workload_type_name(self) -> str:
+        '''
+        Get the type of this workload.
+        '''
+        return 'Acceleration structure build'
+
+    def get_key_value_properties(self) -> dict[str, str]:
+        '''
+        Get an ordered list of key-value pairs for this workload.
+
+        Returns:
+            Returns the label for use in the UI.
+        '''
+        return {
+            'build size': self.get_transfer_size_str()
+        }
+
+    def get_transfer_size_str(self) -> str:
+        '''
+        Get the transfer size string.
+
+        Returns:
+            Returns the label for use in the UI.
+        '''
+        # If indirect then show a placeholder
+        if self.primitive_count == -1:
+            return f'? primitives'
+
+        s = 's' if self.primitive_count != 1 else ''
+        return f'{self.primitive_count} primitive{s}'
+
     def get_long_label(self) -> str:
         '''
         Get the long form label for this workload.
@@ -624,12 +830,7 @@ class GPUASBuild(GPUWorkload):
         if label_name := self.get_label_name():
             lines.append(label_name)
 
-        # If indirect then show a placeholder
-        if self.primitive_count == -1:
-            line = f'{self.build_type} (? primitives)'
-        else:
-            s = 's' if self.primitive_count != 1 else ''
-            line = f'{self.build_type} ({self.primitive_count} primitive{s})'
+        line = f'{self.build_type} ({self.get_transfer_size_str()})'
         lines.append(line)
 
         return '\n'.join(lines)
@@ -665,6 +866,37 @@ class GPUASTransfer(GPUWorkload):
         self.transfer_type = metadata.subtype
         self.byte_count = metadata.byte_count
 
+    def get_workload_type_name(self) -> str:
+        '''
+        Get the type of this workload.
+        '''
+        return 'Acceleration structure transfer'
+
+    def get_key_value_properties(self) -> dict[str, str]:
+        '''
+        Get an ordered list of key-value pairs for this workload.
+
+        Returns:
+            Returns the label for use in the UI.
+        '''
+        return {
+            'transfer size': self.get_transfer_size_str()
+        }
+
+    def get_transfer_size_str(self) -> str:
+        '''
+        Get the transfer size string.
+
+        Returns:
+            Returns the label for use in the UI.
+        '''
+        # If indirect then show a placeholder
+        if self.byte_count == -1:
+            return f'? bytes'
+
+        s = 's' if self.byte_count != 1 else ''
+        return f'{self.byte_count} byte{s}'
+
     def get_long_label(self) -> str:
         '''
         Get the long form label for this workload.
@@ -677,12 +909,7 @@ class GPUASTransfer(GPUWorkload):
         if label_name := self.get_label_name():
             lines.append(label_name)
 
-        # If indirect then show a placeholder
-        if self.byte_count == -1:
-            line = f'{self.transfer_type} (? bytes)'
-        else:
-            s = 's' if self.byte_count != 1 else ''
-            line = f'{self.transfer_type} ({self.byte_count} byte{s})'
+        line = f'{self.transfer_type} ({self.get_transfer_size_str()})'
         lines.append(line)
 
         return '\n'.join(lines)
