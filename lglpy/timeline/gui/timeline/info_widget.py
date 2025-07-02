@@ -221,7 +221,6 @@ class TimelineInfoWidget(TextPaneWidget):
 
         lines = [
             'Active region:',
-            f'  Start:       {start:0.3f} s',
             f'  Duration:    {duration:0.3f} ms'
         ]
 
@@ -301,8 +300,12 @@ class TimelineInfoWidget(TextPaneWidget):
         metrics.append(f'  Name: {label}')
         metrics.append(f'  Stream: {stream_name}')
         metrics.append(f'  Stage: {stage_name}')
-        metrics.append(f'  Start: {event.start_time / 1000000.0:0.2f} ms')
         metrics.append(f'  Duration: {event.duration / 1000000.0:0.2f} ms')
+
+        for key, value in event.get_key_value_properties().items():
+            key = key.capitalize()
+            metrics.append(f'  {key}: {value}')
+
         metrics.append('')
         return metrics
 
