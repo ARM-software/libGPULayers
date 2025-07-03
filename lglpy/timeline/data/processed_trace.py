@@ -301,6 +301,7 @@ class GPURenderPass(GPUWorkload):
         width: The workload width, in pixels.
         height: The workload height, in pixels.
         draw_call_count: The number of draw calls in the render pass.
+        subpass_count: The number of subpasses in the render pass.
         attachments: The list of framebuffer attachments.
     '''
 
@@ -319,6 +320,7 @@ class GPURenderPass(GPUWorkload):
         self.width = metadata.width
         self.height = metadata.height
         self.draw_call_count = metadata.draw_call_count
+        self.subpass_count = metadata.subpass_count
         self.attachments = list(metadata.attachments.attachments)
 
     def get_workload_type_name(self) -> str:
@@ -334,13 +336,15 @@ class GPURenderPass(GPUWorkload):
         Returns:
             Returns the label for use in the UI.
         '''
-        return {
-            'resolution': self.get_resolution_str(),
-            'draw count': self.get_draw_count_str(),
-            'attachments': self.get_attachment_present_str(),
-            'attachments loaded': self.get_attachment_loadop_str(),
-            'attachments stored': self.get_attachment_storeop_str()
-        }
+        properties = {}
+        properties['resolution'] = self.get_resolution_str()
+        properties['draw count'] = self.get_draw_count_str()
+        if self.subpass_count > 1:
+            properties['subpass count'] = self.get_subpass_count_str()
+        properties['attachments'] = self.get_attachment_present_str()
+        properties['attachments loaded'] = self.get_attachment_loadop_str()
+        properties['attachments stored'] = self.get_attachment_storeop_str()
+        return properties
 
     def get_resolution_str(self) -> str:
         '''
@@ -365,6 +369,16 @@ class GPURenderPass(GPUWorkload):
             return '1 draw'
 
         return f'{self.draw_call_count} draws'
+
+    def get_subpass_count_str(self) -> str:
+        '''
+        Get the subpass count string.
+
+        Returns:
+            Returns the label for use in the UI.
+        '''
+        es = '' if self.subpass_count == 1 else 'es'
+        return f'{self.subpass_count} subpass{es}'
 
     def get_attachment_present_str(self) -> str:
         '''
