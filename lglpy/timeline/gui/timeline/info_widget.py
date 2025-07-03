@@ -320,6 +320,7 @@ class TimelineInfoWidget(TextPaneWidget):
 
         metrics.append(f'  Stream: {stream_name}')
         metrics.append(f'  Stage: {stage_name}')
+        metrics.append(f'  Start: {event.start_time / 1000000.0:0.2f} ms')
         metrics.append(f'  Duration: {event.duration / 1000000.0:0.2f} ms')
 
         for key, value in event.get_key_value_properties().items():
