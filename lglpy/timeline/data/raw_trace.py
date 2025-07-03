@@ -347,6 +347,7 @@ class MetadataRenderPass(MetadataWorkload):
         self.width = int(metadata['width'])
         self.height = int(metadata['height'])
         self.draw_call_count = int(metadata['drawCallCount'])
+        self.subpass_count = int(metadata['subpassCount'])
 
         self.attachments = MetadataAttachments(metadata)
 
