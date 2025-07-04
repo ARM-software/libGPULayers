@@ -116,9 +116,10 @@ std::pair<bool, PFN_vkVoidFunction> getInstanceLayerFunction(const char* name)
     const std::array<const char*, 5> globalFunctions {
         // Supported since Vulkan 1.0
         "vkCreateInstance",
-        "vkEnumerateInstanceVersion",
         "vkEnumerateInstanceExtensionProperties",
         "vkEnumerateInstanceLayerProperties",
+        // Supported since Vulkan 1.1
+        "vkEnumerateInstanceVersion",
         // Supported since Vulkan 1.2
         "vkGetInstanceProcAddr",
     };
@@ -167,12 +168,14 @@ APIVersion getInstanceAPIVersion(PFN_vkGetInstanceProcAddr fpGetProcAddr)
     return { 1, 3 };
 #endif
 
+    // Try to get vkEnumerateInstanceVersion, and assume this is a Vulkan 1.0
+    // feature level if we don't get it ...
     auto fpFunctionRaw = fpGetProcAddr(nullptr, "vkEnumerateInstanceVersion");
     auto fpFunction = reinterpret_cast<PFN_vkEnumerateInstanceVersion>(fpFunctionRaw);
     if (!fpFunction)
     {
-        LAYER_ERR("Failed to get vkEnumerateInstanceVersion()");
-        return {0, 0};
+        LAYER_ERR("Failed to get vkEnumerateInstanceVersion(), assuming Vulkan 1.0");
+        return {1, 0};
     }
 
     uint32_t apiVersion = 0;
