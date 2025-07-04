@@ -113,11 +113,14 @@ VkLayerDeviceCreateInfo* getChainInfo(const VkDeviceCreateInfo* pCreateInfo)
 /* See header for documentation. */
 std::pair<bool, PFN_vkVoidFunction> getInstanceLayerFunction(const char* name)
 {
-    const std::array<const char*, 4> globalFunctions {
+    const std::array<const char*, 5> globalFunctions {
+        // Supported since Vulkan 1.0
         "vkCreateInstance",
         "vkEnumerateInstanceVersion",
         "vkEnumerateInstanceExtensionProperties",
-        "vkEnumerateInstanceLayerProperties"
+        "vkEnumerateInstanceLayerProperties",
+        // Supported since Vulkan 1.2
+        "vkGetInstanceProcAddr",
     };
 
     bool isGlobal {false};
