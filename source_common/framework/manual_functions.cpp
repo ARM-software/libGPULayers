@@ -111,17 +111,34 @@ VkLayerDeviceCreateInfo* getChainInfo(const VkDeviceCreateInfo* pCreateInfo)
 }
 
 /* See header for documentation. */
-PFN_vkVoidFunction getInstanceLayerFunction(const char* name)
+std::pair<bool, PFN_vkVoidFunction> getInstanceLayerFunction(const char* name)
 {
+    const std::array<const char*, 4> globalFunctions {
+        "vkCreateInstance",
+        "vkEnumerateInstanceVersion",
+        "vkEnumerateInstanceExtensionProperties",
+        "vkEnumerateInstanceLayerProperties"
+    };
+
+    bool isGlobal {false};
+    for (const auto* globalName : globalFunctions)
+    {
+        if (!strcmp(globalName, name))
+        {
+            isGlobal = true;
+            break;
+        }
+    }
+
     for (auto& function : instanceIntercepts)
     {
         if (!strcmp(function.name, name))
         {
-            return function.function;
+            return {isGlobal, function.function};
         }
     }
 
-    return nullptr;
+    return {isGlobal, nullptr};
 }
 
 /* See header for documentation. */
@@ -474,9 +491,18 @@ void enableDeviceVkExtImageCompressionControl(Instance& instance,
 /** See Vulkan API for documentation. */
 PFN_vkVoidFunction layer_vkGetInstanceProcAddr_default(VkInstance instance, const char* pName)
 {
-    // Only expose functions that the driver exposes to avoid changing
-    // queryable interface behavior seen by the application
-    auto layerFunction = getInstanceLayerFunction(pName);
+    auto [isGlobal, layerFunction] = getInstanceLayerFunction(pName);
+
+    // Global functions must be exposed and do not require the caller to pass
+    // a valid instance pointer, although it is required to be nullptr in
+    // Vulkan 1.2.193 or later
+    if (isGlobal)
+    {
+        return layerFunction;
+    }
+
+    // For other functions, only expose functions that the driver exposes to
+    // avoid changing queryable interface behavior seen by the application
     if (instance)
     {
         std::unique_lock<std::mutex> lock {g_vulkanLock};

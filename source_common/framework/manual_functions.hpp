@@ -44,6 +44,7 @@
 #include <mutex>
 #include <string>
 #include <thread>
+#include <utility>
 #include <vector>
 
 /**
@@ -85,10 +86,11 @@ PFN_vkVoidFunction getFixedInstanceLayerFunction(const char* name);
  *
  * @param name   The Vulkan function name.
  *
- * @return The layer function pointer, or \c nullptr if the layer doesn't
+ * @return Boolean indicating if this is a globally accessible function, and
+ *         the layer function pointer, or \c nullptr if the layer doesn't
  *         intercept the function.
  */
-PFN_vkVoidFunction getInstanceLayerFunction(const char* name);
+std::pair<bool, PFN_vkVoidFunction> getInstanceLayerFunction(const char* name);
 
 /**
  * @brief Fetch the function for a given dynamic instance entrypoint name.
