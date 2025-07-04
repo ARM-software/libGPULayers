@@ -178,20 +178,11 @@ APIVersion getApplicationAPIVersion(const VkInstanceCreateInfo* pCreateInfo)
 }
 
 /* See header for documentation. */
-APIVersion getDeviceAPIVersion(PFN_vkGetInstanceProcAddr fpGetProcAddr,
-                               VkInstance instance,
+APIVersion getDeviceAPIVersion(Instance& instance,
                                VkPhysicalDevice physicalDevice)
 {
-    auto fpFunctionRaw = fpGetProcAddr(instance, "vkGetPhysicalDeviceProperties");
-    auto fpFunction = reinterpret_cast<PFN_vkGetPhysicalDeviceProperties>(fpFunctionRaw);
-    if (!fpFunction)
-    {
-        LAYER_ERR("Failed to get vkGetPhysicalDeviceProperties()");
-        return {0, 0};
-    }
-
     VkPhysicalDeviceProperties properties {};
-    fpFunction(physicalDevice, &properties);
+    instance.driver.vkGetPhysicalDeviceProperties(physicalDevice, &properties);
 
     uint32_t major = VK_API_VERSION_MAJOR(properties.apiVersion);
     uint32_t minor = VK_API_VERSION_MINOR(properties.apiVersion);
@@ -291,32 +282,21 @@ std::vector<std::string> getInstanceExtensionList(const VkInstanceCreateInfo* pC
 }
 
 /* See header for documentation. */
-std::vector<std::string> getDeviceExtensionList(VkInstance instance,
-                                                VkPhysicalDevice physicalDevice,
-                                                const VkDeviceCreateInfo* pCreateInfo)
+std::vector<std::string> getDeviceExtensionList(Instance& instance,
+                                                VkPhysicalDevice physicalDevice)
 {
-    std::vector<std::string> foundExtensions;
-
-    // Fetch the functions needed to query extensions availability
-    auto* chainInfo = getChainInfo(pCreateInfo);
-    auto fpGetProcAddr = chainInfo->u.pLayerInfo->pfnNextGetInstanceProcAddr;
-    auto fpGetExtensionsRaw = fpGetProcAddr(instance, "vkEnumerateDeviceExtensionProperties");
-    auto fpGetExtensions = reinterpret_cast<PFN_vkEnumerateDeviceExtensionProperties>(fpGetExtensionsRaw);
-    if (!fpGetExtensions)
-    {
-        return foundExtensions;
-    }
-
     // Query number of extensions
     uint32_t count;
-    fpGetExtensions(physicalDevice, nullptr, &count, nullptr);
+    instance.driver.vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &count, nullptr);
 
     // Reserve memory for, and then query, the extensions
     std::vector<VkExtensionProperties> extensions;
     extensions.resize(count);
-    fpGetExtensions(physicalDevice, nullptr, &count, extensions.data());
+    instance.driver.vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &count, extensions.data());
 
     // Build the function return list
+    std::vector<std::string> foundExtensions;
+    foundExtensions.reserve(count);
     for (uint32_t i = 0; i < count; i++)
     {
         foundExtensions.emplace_back(extensions[i].extensionName);
@@ -329,6 +309,7 @@ std::vector<std::string> getDeviceExtensionList(VkInstance instance,
 std::vector<const char*> cloneExtensionList(uint32_t extensionCount, const char* const* extensionList)
 {
     std::vector<const char*> data;
+    data.reserve(extensionCount);
     for (uint32_t i = 0; i < extensionCount; i++)
     {
         data.emplace_back(extensionList[i]);
@@ -763,7 +744,7 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDevice_default(VkPhysicalDevice phy
     lock.unlock();
 
     // Get the list is supported extensions
-    auto supportedExtensions = getDeviceExtensionList(layer->instance, physicalDevice, pCreateInfo);
+    auto supportedExtensions = getDeviceExtensionList(*layer, physicalDevice);
 
     // Query the supported Vulkan version
     auto* chainInfo = getChainInfo(pCreateInfo);
@@ -771,7 +752,7 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDevice_default(VkPhysicalDevice phy
     auto fpGetDeviceProcAddr = chainInfo->u.pLayerInfo->pfnNextGetDeviceProcAddr;
 
     // Log this for support purposes ...
-    APIVersion apiVersion = getDeviceAPIVersion(fpGetInstanceProcAddr, layer->instance, physicalDevice);
+    APIVersion apiVersion = getDeviceAPIVersion(*layer, physicalDevice);
     LAYER_LOG("Device API version %u.%u", apiVersion.first, apiVersion.second);
 
     // Create a modifiable structure we can patch
@@ -790,7 +771,9 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDevice_default(VkPhysicalDevice phy
         LAYER_LOG("Requested device extension list: [%u] = %s", i, newCreateInfo->ppEnabledExtensionNames[i]);
     }
 
-    // TODO: Issue #123: Why can't we just use layer.driver.vkGetInstanceProcAddr?
+    // This must be resolved here rather than via the instance tables because
+    // the desktop loader sets this up on device creation, however now that
+    // device-time layers are deprecated this may no longer be necessary
     auto fpCreateDeviceRaw = fpGetInstanceProcAddr(layer->instance, "vkCreateDevice");
     auto fpCreateDevice = reinterpret_cast<PFN_vkCreateDevice>(fpCreateDeviceRaw);
     if (!fpCreateDevice)
