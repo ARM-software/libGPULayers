@@ -80,7 +80,7 @@ namespace
         }
 
         /**
-         * @brief Visit a renderpass workload instruction
+         * @brief Visit a render pass workload instruction
          *
          * @param instruction The workload instruction
          */
@@ -99,7 +99,7 @@ namespace
         }
 
         /**
-         * @brief Visit a renderpass continuation workload instruction
+         * @brief Visit a render pass continuation workload instruction
          *
          * @param instruction The workload instruction
          */

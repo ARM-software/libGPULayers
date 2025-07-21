@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024 Arm Limited
+ * Copyright (c) 2024-2025 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -44,7 +44,7 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDebugMarkerBeginEXT<user_tag>(VkCommandBuf
     auto& tracker = layer->getStateTracker();
     auto& cb = tracker.getCommandBuffer(commandBuffer);
 
-    // Increment the render pass counter in the tracker
+    // Push the label scope to the tracker
     cb.debugMarkerBegin(pMarkerInfo->pMarkerName);
 
     // Note that we do not call the driver for user labels - they are
@@ -65,7 +65,7 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDebugMarkerEndEXT<user_tag>(VkCommandBuffe
     auto& tracker = layer->getStateTracker();
     auto& cb = tracker.getCommandBuffer(commandBuffer);
 
-    // Increment the render pass counter in the tracker
+    // Pop the label scope in the tracker
     cb.debugMarkerEnd();
 
     // Note that we do not call the driver for user labels - they are
@@ -87,7 +87,7 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginDebugUtilsLabelEXT<user_tag>(VkComman
     auto& tracker = layer->getStateTracker();
     auto& cb = tracker.getCommandBuffer(commandBuffer);
 
-    // Increment the render pass counter in the tracker
+    // Push the label scope to the tracker
     cb.debugMarkerBegin(pLabelInfo->pLabelName);
 
     // Note that we do not call the driver for user labels - they are
@@ -108,7 +108,7 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndDebugUtilsLabelEXT<user_tag>(VkCommandB
     auto& tracker = layer->getStateTracker();
     auto& cb = tracker.getCommandBuffer(commandBuffer);
 
-    // Increment the render pass counter in the tracker
+    // Pop the label scope in the tracker
     cb.debugMarkerEnd();
 
     // Note that we do not call the driver for user labels - they are
