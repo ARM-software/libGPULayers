@@ -1,0 +1,141 @@
+# Layer: GPU Profile - Developer Documentation
+
+This layer is used to profile Arm GPUs, providing API correlated performance
+data. This page provides documentation for developers working on creating and
+maintaining the layer.
+
+## Measuring performance
+
+Arm GPUs can run multiple workloads in parallel, if the application pipeline
+barriers allow it. This is good for overall frame performance, but it makes
+a mess of profiling data!
+
+## Measuring performance
+
+Arm GPUs can run multiple workloads in parallel, if the application pipeline
+barriers allow it. This is good for overall frame performance, but it makes
+profiling data messy due to cross-talk between unrelated workloads.
+
+For profiling we therefore inject serialization points between workloads to
+ensure that data corresponds to a single workload. Note that we can only
+serialize within our own application process, so data could still be perturbed
+by other processes using the GPU.
+
+### Sampling performance counters
+
+This layer will sample performance counters between each workload but, because
+sampling is a CPU-side operation, it must trap back to the CPU to make the
+counter sample. The correct way to implement this in Vulkan is to split the
+application command buffer into multiple command buffers, each containing a
+single workload. However, rewriting the command stream like this is expensive
+in terms of CPU overhead caused by the state tracking.
+
+Instead use rely on an undocumented extension supported by Arm GPUs which
+allows the CPU to set/wait on events in a submitted but not complete command
+buffer. The layer injects a `vkCmdSetEvent(A)` and `vkCmdWaitEvent(B)` pair
+between each workload, and then has the reverse `vkWaitEvent(A)` and
+`vkSetEvent(B)` pair on the CPU side. The counter sample can be inserted
+in between the two CPU-side operations. Note that there is no blocking wait on
+an event for the CPU, so `vkWaitEvent()` is really a polling loop around
+`vkGetEventStatus()`.
+
+```mermaid
+sequenceDiagram
+    actor CPU
+    actor GPU
+    CPU->>CPU: vkGetEventStatus(A)
+    Note over GPU: Run workload
+    GPU->>CPU: vkCmdSetEvent(A)
+    GPU->>GPU: vkCmdWaitEvent(B)
+    Note over CPU: Take sample
+    CPU->>GPU: vkSetEvent(B)
+    Note over GPU: Start next workload
+```
+
+### Performance implications
+
+Serializing workloads usually means that individual workloads will run with
+lower completion latency, because they are no longer contending for resources.
+However, loss of overlap means that overall frame latency will increase.
+
+In addition, serializing workloads and then trapping back to the CPU to
+sample performance counters will cause the GPU to go idle waiting for the CPU
+to complete the counter sample. This makes the GPU appear underutilized to the
+system DVFS governor, which may subsequently decide to reduce the GPU clock
+frequency. On pre-production devices we recommend locking CPU, GPU and memory
+clock frequencies to avoid this problem.
+
+```mermaid
+---
+displayMode: compact
+---
+gantt
+    dateFormat x
+    axisFormat %Lms
+    section CPU
+    Sample: a1, 0, 2ms
+    Sample: a2, after w1, 2ms
+    section GPU
+    Workload 1:w1, after a1, 10ms
+    Workload 2:w2, after a2, 10ms
+```
+
+## Software architecture
+
+The basic architecture for this layer is an extension of the timeline layer,
+using a layer command stream (LCS) recorded alongside each command buffer to
+define the software operations that the layer needs to perform.
+
+Unlike the timeline layer, which only performs operations synchronously at
+submit time, this layer also needs to perform asynchronous sampling operations
+associated with each workload after a command buffer has been submitted. To
+support this approach the layer tracks the number of workloads submitted
+in each command buffer and their debug labels, and hands this over to an
+async handler to process as the workloads complete.
+
+To ensure that the async worker gets a predictable workload stream to
+instrument, all Vulkan queue submits are serialized on the GPU. As with the
+support layer, queue serialization may cause an application to hang if the
+application submits command buffers rely on out-of-order execution to unblock
+commands in a submitted command stream. This is only possible if applications
+are using timeline semaphores, which earlier submits to depend on a later
+submit to make forward progress.
+
+## Event handling
+
+To implement this functionality, the layer allocates three additional sync
+primitives.
+
+* A timeline semaphore is allocated to implement queue serialization.
+* Two events are allocated to support the CPU<->GPU handover for counter
+  sampling. These events are reset and reused for all counter samples to avoid
+  managing many different events.
+
+```c
+CPU                       GPU
+===                       ===
+                          // Workload 1
+                          vkCmdSetEvent(A)
+// Spin test until set
+vkGetEventStatus(A)
+vkResetEvent(A)
+
+// Sample counters
+
+vSetEvent(B)
+                          // Block until set
+                          vkCmdWaitEvent(B)
+                          vkCmdResetEvent(B)
+
+                          // Workload 2
+```
+
+Due to buggy interaction between the counter sampling and power management in
+some kernel driver versions, Valhall+CSF GPUs prior to r54p0 need a sleep after
+successfully waiting on event A and before sampling any counters. Initial
+investigations seem to show that the shortest reliable sleep is 3ms, so this is
+quite a very overhead for applications with many workloads and therefore should
+be enabled conditionally only for CSF GPUs with a driver older than r54p0.
+
+- - -
+_Copyright © 2025, Arm Limited and contributors._

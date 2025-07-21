@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024-2025 Arm Limited
+ * Copyright (c) 2024 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -24,41 +24,13 @@
  */
 
 /**
- * @file Declares a simple comms encoded for the timeline layer.
+ * @file Placeholder templates that are populated by CMake during configure.
  */
 
 #pragma once
 
-#include "comms/comms_interface.hpp"
-
-/**
- * @brief A simple message encoder for the timeline comms endpoint.
- */
-class TimelineComms
-{
-public:
-    /**
-     * @brief Construct a new encoder.
-     *
-     * @param comms   The common comms module used by all services.
-     */
-    TimelineComms(Comms::CommsInterface& comms);
-
-    /**
-     * @brief Send a message to the GPU timeline endpoint service.
-     *
-     * @param message   The message to send.
-     */
-    void txMessage(Comms::MessageData&& message);
-
-private:
-    /**
-     * @brief The endpoint ID of the service, or 0 if not found.
-     */
-    Comms::EndpointID endpoint {0};
-
-    /**
-     * @brief The common module for network messaging.
-     */
-    Comms::CommsInterface& comms;
-};
+#define LGL_VER_MAJOR @PROJECT_VERSION_MAJOR@
+#define LGL_VER_MINOR @PROJECT_VERSION_MINOR@
+#define LGL_VER_PATCH @PROJECT_VERSION_PATCH@
+#define LGL_LAYER_NAME "@LGL_LAYER_NAME_STR@"
+#define LGL_LAYER_DESC "@LGL_LAYER_DESC_STR@"

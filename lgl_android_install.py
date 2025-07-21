@@ -135,6 +135,7 @@ from lglpy.android.utils import AndroidUtils, NamedTempFile
 from lglpy.android.filesystem import AndroidFilesystem
 from lglpy.comms import server
 from lglpy.comms import service_gpu_timeline
+from lglpy.comms import service_gpu_profile
 from lglpy.ui import console
 
 # Android 9 is the minimum version supported for our method of enabling layers
@@ -592,7 +593,9 @@ def configure_logcat(conn: ADBConnect, output_path: str) -> None:
         print('WARNING: Cannot enable logcat recording')
 
 
-def configure_server(conn: ADBConnect, output_path: str) -> None:
+def configure_server(conn: ADBConnect,
+                     timeline_file: Optional[str],
+                     profile_dir: Optional[str]) -> None:
     '''
     Configure the remote server to collect data.
 
@@ -601,13 +604,20 @@ def configure_server(conn: ADBConnect, output_path: str) -> None:
 
     Args:
         conn: The adb connection.
-        output_path: The desired output file path.
+        timeline_file: The desired output file path for timeline.
+        profile_dir: The desired output directory path for timeline. Existing
+            files in the directory may be overwritten.
     '''
     # Create a server instance
     instance = server.CommsServer(0)
 
-    service = service_gpu_timeline.GPUTimelineService(output_path)
-    instance.register_endpoint(service)
+    if timeline_file:
+        service = service_gpu_timeline.GPUTimelineService(timeline_file)
+        instance.register_endpoint(service)
+
+    if profile_dir:
+        service = service_gpu_profile.GPUProfileService(profile_dir)
+        instance.register_endpoint(service)
 
     # Start it running
     thread = threading.Thread(target=instance.run, daemon=True)
@@ -784,6 +794,10 @@ def parse_cli() -> Optional[argparse.Namespace]:
         '--timeline-perfetto', type=str, default=None,
         help='save Timeline Perfetto trace to this file')
 
+    parser.add_argument(
+        '--profile', type=str, default=None,
+        help='save Profile data to this directory')
+
     args = parser.parse_args()
 
     # Validate arguments
@@ -886,9 +900,11 @@ def main() -> int:
         print(f'    - {layer.name}')
     print()
 
-    # Enable Timeline
-    if args.timeline_metadata:
-        configure_server(conn, args.timeline_metadata)
+    # Enable communications server
+    if args.timeline_metadata or args.profile:
+        configure_server(conn,
+                         args.timeline_metadata,
+                         args.profile)
 
     # Enable logcat
     if args.logcat:
@@ -918,7 +934,7 @@ def main() -> int:
         print(f'{message:<{max_len}}')
 
     else:
-        input('Press any key when finished to uninstall all layers')
+        input('Press any key when finished to uninstall all layers\n\n')
 
     print('\nUninstalling all layers')
 
