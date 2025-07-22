@@ -323,6 +323,11 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderPass2<user_tag>(VkCommandBuffer c
     std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
 
+    // Update the layer command stream in the tracker
+    auto& tracker = layer->getStateTracker();
+    auto& cb = tracker.getCommandBuffer(commandBuffer);
+    cb.renderPassEnd();
+
     // Release the lock to call into the driver
     lock.unlock();
     layer->driver.vkCmdEndRenderPass2(commandBuffer, pSubpassEndInfo);
@@ -339,6 +344,11 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderPass2KHR<user_tag>(VkCommandBuffe
     // Hold the lock to access layer-wide global store
     std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
+
+    // Update the layer command stream in the tracker
+    auto& tracker = layer->getStateTracker();
+    auto& cb = tracker.getCommandBuffer(commandBuffer);
+    cb.renderPassEnd();
 
     // Release the lock to call into the driver
     lock.unlock();
