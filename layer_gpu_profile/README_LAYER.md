@@ -68,16 +68,16 @@ application under test and the capture process. For full instructions see the
 The current layer supports two `sampling_mode` values:
 
 * `periodic_frame`: Sample every N frames.
-* `frame_list`: Sample specific frame numbers.
+* `frame_list`: Sample specific frames.
 
-When `mode` is `periodic_frame` the value of `periodic_frame` key defines the
-frame sampling period as an integer. The value of the `periodic_min_frame` key
-defines the first possible frame that could be profiled, allowing profiles to
-skip over any loading frames. By default frame 0 is ignored. Other keys are
-ignored.
+When `mode` is `periodic_frame` the integer value of the `periodic_frame` key
+defines the frame sampling period. The integer value of the
+`periodic_min_frame` key defines the first possible frame that could be
+profiled, allowing profiles to skip over any loading frames. By default frame 0
+is ignored.
 
 When `mode` is `frame_list` the value of the `frame_list` key defines a list
-of integers giving the frame indices to capture. Other keys are ignored.
+of integers giving the specific frames to capture.
 
 ## Layer counters
 

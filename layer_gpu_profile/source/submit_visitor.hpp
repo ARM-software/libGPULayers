@@ -89,6 +89,12 @@ public:
         const std::vector<std::string>& debugStack) override;
 
 private:
+    /**
+     * @brief Handle the CPU-side of the counter sampling sequence.
+     *
+     * @param workloadType   The coarse type of the workload.
+     * @param debugStack     The user debug label stack.
+     */
     void handleCPUTrap(
         const std::string& workloadType,
         const std::vector<std::string>& debugStack);

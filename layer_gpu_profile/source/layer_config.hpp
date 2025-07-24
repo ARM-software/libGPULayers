@@ -49,16 +49,18 @@ public:
      */
     LayerConfig();
 
-    // Config queries for features
-
     /**
-     * @brief True if next frame should be profiled.
+     * @brief Test if next frame should be profiled.
+     *
+     * @param frameID   The index of the next frame.
+     *
+     * @return True if profiling should be enabled, False otherwise.
      */
-    bool isFrameOfInterest(uint64_t frame_index) const;
+    bool isFrameOfInterest(uint64_t frameID) const;
 
 private:
     /**
-     * Supported sampling modes.
+     * @brief Supported sampling modes.
      */
     enum SamplingMode
     {
@@ -66,7 +68,6 @@ private:
         MODE_FRAME_LIST,
         MODE_PERIODIC_FRAME
     };
-
 
     /**
      * @brief Parse the configuration options for the sampling module.

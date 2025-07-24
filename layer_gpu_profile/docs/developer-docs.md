@@ -8,18 +8,12 @@ maintaining the layer.
 
 Arm GPUs can run multiple workloads in parallel, if the application pipeline
 barriers allow it. This is good for overall frame performance, but it makes
-a mess of profiling data!
-
-## Measuring performance
-
-Arm GPUs can run multiple workloads in parallel, if the application pipeline
-barriers allow it. This is good for overall frame performance, but it makes
 profiling data messy due to cross-talk between unrelated workloads.
 
 For profiling we therefore inject serialization points between workloads to
 ensure that data corresponds to a single workload. Note that we can only
-serialize within our own application process, so data could still be perturbed
-by other processes using the GPU.
+serialize within the current application process, so data could still be
+perturbed by other processes using the GPU.
 
 ### Sampling performance counters
 
@@ -33,11 +27,11 @@ in terms of CPU overhead caused by the state tracking.
 Instead we rely on an undocumented extension supported by Arm GPUs which
 allows the CPU to set/wait on events in a submitted but not complete command
 buffer. The layer injects a `vkCmdSetEvent(A)` and `vkCmdWaitEvent(B)` pair
-between each workload, and then has the reverse `vkWaitEvent(A)` and
-`vkSetEvent(B)` pair on the CPU side. The counter sample can be inserted
-in between the two CPU-side operations. Note that there is no blocking wait on
-an event for the CPU, so `vkWaitEvent()` is really a polling loop around
-`vkGetEventStatus()`.
+between each workload in the command buffer, and then has the reverse
+`vkWaitEvent(A)` and `vkSetEvent(B)` pair on the CPU side. The counter sample
+can be inserted in between the two CPU-side operations. Note that there is no
+blocking CPU-side wait for an event so `vkWaitEvent()` is really a polling loop
+around `vkGetEventStatus()`.
 
 ```mermaid
 sequenceDiagram

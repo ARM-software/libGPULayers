@@ -32,12 +32,11 @@
 
 using json = nlohmann::json;
 
+/* See header for documentation */
 void ProfileSubmitVisitor::handleCPUTrap(
     const std::string& workloadType,
     const std::vector<std::string>& debugStack
 ) {
-    UNUSED(debugStack);
-
     json message {
         { "type", workloadType },
         { "labels", debugStack },
