@@ -88,7 +88,7 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueuePresentKHR<user_tag>(VkQueue queue, 
 
     // TODO: Replace this with a dynamic config selection
     uint64_t frameID = tracker.totalStats.getFrameCount();
-    layer->isFrameOfInterest = (frameID % 120) == 0;
+    layer->isFrameOfInterest = layer->instance->config.isFrameOfInterest(frameID);
 
     // Start the next frame if it is "of interest"
     if (layer->isFrameOfInterest)

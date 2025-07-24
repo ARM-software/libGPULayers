@@ -86,30 +86,18 @@ The basic architecture for this layer is an extension of the timeline layer,
 using a layer command stream (LCS) recorded alongside each command buffer to
 define the software operations that the layer needs to perform.
 
-Unlike the timeline layer, which only performs operations synchronously at
-submit time, this layer also needs to perform asynchronous sampling operations
-associated with each workload after a command buffer has been submitted. To
-support this approach the layer tracks the number of workloads submitted
-in each command buffer and their debug labels, and hands this over to an
-async handler to process as the workloads complete.
-
-To ensure that the async worker gets a predictable workload stream to
-instrument, all Vulkan queue submits are serialized on the GPU. As with the
-support layer, queue serialization may cause an application to hang if the
-application submits command buffers rely on out-of-order execution to unblock
-commands in a submitted command stream. This is only possible if applications
-are using timeline semaphores, which earlier submits to depend on a later
-submit to make forward progress.
+Because sampling is handled synchronously on the CPU, when a frame is being
+profiled, the layer handles each `vkQueueSubmit` and its associated counter
+samples synchronously at submit time before returning to the application.
+When sampling the layer retains the layer lock when calling into the driver,
+ensuring that only one thread can process a submit with counter samples at a
+time.
 
 ## Event handling
 
-To implement this functionality, the layer allocates three additional sync
-primitives.
-
-* A timeline semaphore is allocated to implement queue serialization.
-* Two events are allocated to support the CPU<->GPU handover for counter
-  sampling. These events are reset and reused for all counter samples to avoid
-  managing many different events.
+To implement this functionality, the layer allocates two `VkEvent` objects to
+support the CPU<->GPU handover for counter sampling. These events are reset and
+reused for all counter samples to avoid managing many different events.
 
 ```c
 CPU                       GPU
@@ -130,12 +118,15 @@ vSetEvent(B)
                           // Workload 2
 ```
 
-Due to buggy interaction between the counter sampling and power management in
-some kernel driver versions, Valhall+CSF GPUs prior to r54p0 need a sleep after
-successfully waiting on event A and before sampling any counters. Initial
-investigations seem to show that the shortest reliable sleep is 3ms, so this is
-quite a very overhead for applications with many workloads and therefore should
-be enabled conditionally only for CSF GPUs with a driver older than r54p0.
+Due to an errata in the interaction between the counter sampling and power
+management in some older kernel driver versions, Arm GPUs with the CSF frontend
+and a driver older than r54p0 need a sleep after successfully waiting on
+event A and before sampling any counters.
+
+Initial investigations seem to show that the shortest reliable sleep is 3ms, so
+this is quite a high overhead for applications with many workloads and
+therefore should be enabled conditionally only for CSF GPUs with a driver older
+than r54p0.
 
 - - -
 _Copyright © 2025, Arm Limited and contributors._

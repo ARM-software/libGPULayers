@@ -115,7 +115,7 @@ class GPUProfileService:
 
         # Emit the CSV file
         print(f'Generating CSV for frame {self.frame_id}')
-        path = os.path.join(self.base_dir, f'frame_{self.frame_id}.csv')
+        path = os.path.join(self.base_dir, f'frame_{self.frame_id:05d}.csv')
         with open(path, 'w', newline='') as handle:
             writer = csv.writer(handle)
             writer.writerow(self.frame_header)

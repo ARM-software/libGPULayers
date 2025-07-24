@@ -45,6 +45,7 @@ add_library(
         device.cpp
         instance.cpp
         layer_comms.cpp
+        layer_config.cpp
         layer_device_functions_command_buffer.cpp
         layer_device_functions_command_pool.cpp
         layer_device_functions_debug.cpp

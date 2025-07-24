@@ -55,6 +55,7 @@
 #pragma once
 
 #include "framework/instance_dispatch_table.hpp"
+#include "layer_config.hpp"
 
 #include <memory>
 #include <unordered_map>
@@ -124,6 +125,11 @@ public:
      * @brief The driver function dispatch table.
      */
     InstanceDispatchTable driver {};
+
+    /**
+     * @brief The layer configuration.
+     */
+    const LayerConfig config;
 
     /**
      * @brief The minimum API version needed by this layer.
