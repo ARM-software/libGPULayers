@@ -85,8 +85,6 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueuePresentKHR<user_tag>(VkQueue queue, 
         layer->txMessage(endFrameMessage.dump());
     }
 
-
-    // TODO: Replace this with a dynamic config selection
     uint64_t frameID = tracker.totalStats.getFrameCount();
     layer->isFrameOfInterest = layer->instance->config.isFrameOfInterest(frameID);
 
@@ -181,23 +179,32 @@ VKAPI_ATTR VkResult VKAPI_CALL
     std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(queue);
 
-    // Release the lock to call into the driver
-    lock.unlock();
+    // If a "normal" frame then release the lock before calling in to the
+    // driver, otherwise keep the lock to stop other threads using Vulkan
+    // while we sync and reset the counter stream
+    if (!layer->isFrameOfInterest)
+    {
+        lock.unlock();
+    }
+
     auto res = layer->driver.vkQueueSubmit2(queue, submitCount, pSubmits, fence);
-    if (res != VK_SUCCESS || !layer->isFrameOfInterest)
+    if (res != VK_SUCCESS)
     {
         return res;
     }
 
-    // TODO: Move this to an async handler
-    lock.lock();
-    for (uint32_t i = 0; i < submitCount; i++)
+    // If we are measuring performance then run the layer command stream with
+    // the lock held to stop other submits perturbing the counter data
+    if (layer->isFrameOfInterest)
     {
-        const auto& submit = pSubmits[i];
-        for (uint32_t j = 0; j < submit.commandBufferInfoCount; j++)
+        for (uint32_t i = 0; i < submitCount; i++)
         {
-            VkCommandBuffer commandBuffer = submit.pCommandBufferInfos[j].commandBuffer;
-            processLayerCommandStream(*layer, queue, commandBuffer);
+            const auto& submit = pSubmits[i];
+            for (uint32_t j = 0; j < submit.commandBufferInfoCount; j++)
+            {
+                VkCommandBuffer commandBuffer = submit.pCommandBufferInfos[j].commandBuffer;
+                processLayerCommandStream(*layer, queue, commandBuffer);
+            }
         }
     }
 
@@ -215,23 +222,32 @@ VKAPI_ATTR VkResult VKAPI_CALL
     std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(queue);
 
-    // Release the lock to call into the driver
-    lock.unlock();
+    // If a "normal" frame then release the lock before calling in to the
+    // driver, otherwise keep the lock to stop other threads using Vulkan
+    // while we sync and reset the counter stream
+    if (!layer->isFrameOfInterest)
+    {
+        lock.unlock();
+    }
+
     auto res = layer->driver.vkQueueSubmit2KHR(queue, submitCount, pSubmits, fence);
     if (res != VK_SUCCESS || !layer->isFrameOfInterest)
     {
         return res;
     }
 
-    // TODO: Move this to an async handler
-    lock.lock();
-    for (uint32_t i = 0; i < submitCount; i++)
+    // If we are measuring performance then run the layer command stream with
+    // the lock held to stop other submits perturbing the counter data
+    if (layer->isFrameOfInterest)
     {
-        const auto& submit = pSubmits[i];
-        for (uint32_t j = 0; j < submit.commandBufferInfoCount; j++)
+        for (uint32_t i = 0; i < submitCount; i++)
         {
-            VkCommandBuffer commandBuffer = submit.pCommandBufferInfos[j].commandBuffer;
-            processLayerCommandStream(*layer, queue, commandBuffer);
+            const auto& submit = pSubmits[i];
+            for (uint32_t j = 0; j < submit.commandBufferInfoCount; j++)
+            {
+                VkCommandBuffer commandBuffer = submit.pCommandBufferInfos[j].commandBuffer;
+                processLayerCommandStream(*layer, queue, commandBuffer);
+            }
         }
     }
 

@@ -30,7 +30,7 @@ application command buffer into multiple command buffers, each containing a
 single workload. However, rewriting the command stream like this is expensive
 in terms of CPU overhead caused by the state tracking.
 
-Instead use rely on an undocumented extension supported by Arm GPUs which
+Instead we rely on an undocumented extension supported by Arm GPUs which
 allows the CPU to set/wait on events in a submitted but not complete command
 buffer. The layer injects a `vkCmdSetEvent(A)` and `vkCmdWaitEvent(B)` pair
 between each workload, and then has the reverse `vkWaitEvent(A)` and
@@ -56,7 +56,8 @@ sequenceDiagram
 
 Serializing workloads usually means that individual workloads will run with
 lower completion latency, because they are no longer contending for resources.
-However, loss of overlap means that overall frame latency will increase.
+However, loss of pipelining and overlap means that overall frame latency will
+increase compared to a well overlapped scenario.
 
 In addition, serializing workloads and then trapping back to the CPU to
 sample performance counters will cause the GPU to go idle waiting for the CPU
@@ -84,14 +85,14 @@ gantt
 
 The basic architecture for this layer is an extension of the timeline layer,
 using a layer command stream (LCS) recorded alongside each command buffer to
-define the software operations that the layer needs to perform.
+define the software operations that the layer needs to perform at submit time.
 
-Because sampling is handled synchronously on the CPU, when a frame is being
-profiled, the layer handles each `vkQueueSubmit` and its associated counter
-samples synchronously at submit time before returning to the application.
-When sampling the layer retains the layer lock when calling into the driver,
-ensuring that only one thread can process a submit with counter samples at a
-time.
+Because counter sampling is handled synchronously on the CPU when a frame is
+being profiled, the layer handles each `vkQueueSubmit` and its associated
+counter samples synchronously at submit time before returning to the
+application. When sampling the layer retains the layer lock when calling into
+the driver, ensuring that only one thread at a time can process a submit that
+makes counter samples.
 
 ## Event handling
 

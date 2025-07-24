@@ -1,6 +1,7 @@
 {
     "layer": "VK_LAYER_LGL_gpu_profile",
     "sample_mode": "periodic_frame",
+    "periodic_min_frame": 1,
     "periodic_frame": 600,
     "frame_list": []
 }

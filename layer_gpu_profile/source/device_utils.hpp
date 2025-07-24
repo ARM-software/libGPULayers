@@ -32,13 +32,14 @@
 
 #include <vulkan/vulkan.h>
 
-
 /**
  * @brief Emit workaround sleep if needed.
  */
 [[maybe_unused]] static void workaroundDelay()
 {
-    // TODO: Make this conditional
+    // We could make this conditional (enable if GPU is CSF and DDK < r54p0).
+    // However the profile is always going to be invasive, and it's quite a bit
+    // of added complexity to handle.
     std::this_thread::sleep_for(std::chrono::milliseconds(3));
 }
 

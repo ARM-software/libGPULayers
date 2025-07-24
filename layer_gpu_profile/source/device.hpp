@@ -203,8 +203,6 @@ public:
 
     /**
      * @brief Is this frame being profiled?
-     *
-     * TODO: Hook this to configuration file settings and dynamic update.
      */
     bool isFrameOfInterest {false};
 

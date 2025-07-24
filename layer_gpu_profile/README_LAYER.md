@@ -52,7 +52,7 @@ python3 lgl_android_install.py --layer layer_gpu_profile --config <your.json>  -
 
 The [`layer_config.json`](layer_config.json) file in this directory is a
 template configuration file you can start from. It defaults to periodic
-sampling every 1000 frames, but you can modify this to suit your needs.
+sampling every 600 frames, but you can modify this to suit your needs.
 
 The `--profile` option specifies an output directory on the host to contain
 the CSV files written by the tool. One CSV is written for each frame, each CSV
@@ -71,7 +71,10 @@ The current layer supports two `sampling_mode` values:
 * `frame_list`: Sample specific frame numbers.
 
 When `mode` is `periodic_frame` the value of `periodic_frame` key defines the
-frame sampling period as an integer. Other keys are ignored.
+frame sampling period as an integer. The value of the `periodic_min_frame` key
+defines the first possible frame that could be profiled, allowing profiles to
+skip over any loading frames. By default frame 0 is ignored. Other keys are
+ignored.
 
 When `mode` is `frame_list` the value of the `frame_list` key defines a list
 of integers giving the frame indices to capture. Other keys are ignored.

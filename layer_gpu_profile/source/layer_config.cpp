@@ -54,6 +54,7 @@ void LayerConfig::parseSamplingOptions(const json& config)
     {
         mode = MODE_PERIODIC_FRAME;
         periodicFrame = config.at("periodic_frame");
+        periodicMinFrame = config.at("periodic_min_frame");
     }
     else if (rawMode == "frame_list")
     {
@@ -73,6 +74,7 @@ void LayerConfig::parseSamplingOptions(const json& config)
     if (mode == MODE_PERIODIC_FRAME)
     {
         LAYER_LOG(" - Frame period: %" PRIu64, periodicFrame);
+        LAYER_LOG(" - Minimum frame: %" PRIu64, periodicMinFrame);
     }
     else if (mode == MODE_FRAME_LIST)
     {
@@ -134,7 +136,8 @@ bool LayerConfig::isFrameOfInterest(
     case MODE_DISABLED:
         return false;
     case MODE_PERIODIC_FRAME:
-        return (frameID % periodicFrame) == 0;
+        return (frameID >= periodicMinFrame) &&
+               ((frameID % periodicFrame) == 0);
     case MODE_FRAME_LIST:
         return isIn(frameID, specificFrames);
     }

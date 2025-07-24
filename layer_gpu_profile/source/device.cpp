@@ -26,11 +26,15 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include <nlohmann/json.hpp>
+
 #include "comms/comms_module.hpp"
 #include "device.hpp"
 #include "framework/manual_functions.hpp"
 #include "framework/utils.hpp"
 #include "instance.hpp"
+
+using json = nlohmann::json;
 
 /**
  * @brief The dispatch lookup for all of the created Vulkan devices.
@@ -187,6 +191,20 @@ Device::Device(Instance* _instance,
     if (ec)
     {
         LAYER_ERR("Failed libGPUCounters GPU sampler creation");
+    }
+
+    // Configure frame selection here so we can profile frame zero
+    isFrameOfInterest = instance->config.isFrameOfInterest(0);
+
+    // Start the next frame if it is "of interest"
+    if (isFrameOfInterest)
+    {
+        json startFrameMessage {
+            { "type", "start_frame" },
+            { "frame", 0 },
+        };
+
+        txMessage(startFrameMessage.dump());
     }
 }
 

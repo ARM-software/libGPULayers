@@ -83,9 +83,14 @@ private:
     SamplingMode mode {MODE_DISABLED};
 
     /**
-     * @brief The sampling period, or 0 if disabled.
+     * @brief The sampling period in frames, or 0 if disabled.
      */
     uint64_t periodicFrame {0};
+
+    /**
+     * @brief The minimum frame to sample (inclusive).
+     */
+    uint64_t periodicMinFrame {0};
 
     /**
      * @brief The sampling frame list, or empty if disabled.
