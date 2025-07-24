@@ -29,7 +29,7 @@ handles record preprocessing and serializing the resulting GPU Profile layer.
 import csv
 import json
 import os
-from typing import TypedDict, Union
+from typing import Any, Optional, TypedDict, Union
 
 from lglpy.comms.server import Message
 
@@ -73,9 +73,9 @@ class GPUProfileService:
         '''
         self.base_dir = dir_path
 
-        self.frame_id = None
-        self.frame_header = None
-        self.frame_data = None
+        self.frame_id: Optional[int] = None
+        self.frame_header: Optional[list[str]] = None
+        self.frame_data: Optional[list[list[str]]] = None
 
         os.makedirs(dir_path, exist_ok=True)
 
@@ -108,6 +108,10 @@ class GPUProfileService:
         '''
         # Message contains nothing we need
         del message
+
+        assert self.frame_id is not None
+        assert self.frame_header is not None
+        assert self.frame_data is not None
 
         # Emit the CSV file
         print(f'Generating CSV for frame {self.frame_id}')
@@ -147,10 +151,15 @@ class GPUProfileService:
         Args:
             message: The decoded JSON.
         '''
-        columns = []
+        assert self.frame_id is not None
+        assert self.frame_header is not None
+        assert self.frame_data is not None
 
-        columns.append(len(self.frame_data))
+        columns: list[str] = []
+
+        columns.append(str(len(self.frame_data)))
         columns.append(message['type'])
+
         for counter in message['counters']:
             value = list(counter.values())[0]
             columns.append(f'{value:0.2f}')
