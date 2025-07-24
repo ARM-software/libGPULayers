@@ -41,15 +41,19 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDebugMarkerBeginEXT<user_tag>(VkCommandBuf
     std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
 
-    auto& tracker = layer->getStateTracker();
-    auto& cb = tracker.getCommandBuffer(commandBuffer);
+    // Only instrument inside active frame of interest
+    if(layer->isFrameOfInterest)
+    {
+        auto& tracker = layer->getStateTracker();
+        auto& cb = tracker.getCommandBuffer(commandBuffer);
 
-    // Push the label scope to the tracker
-    cb.debugMarkerBegin(pMarkerInfo->pMarkerName);
+        // Push the label scope to the tracker
+        cb.debugMarkerBegin(pMarkerInfo->pMarkerName);
+    }
 
-    // Note that we do not call the driver for user labels - they are
-    // emitted via the comms side-channel for each workload to avoid
-    // polluting the layer's use of the driver for tag labelling
+    // ... and forward to the driver
+    lock.unlock();
+    layer->driver.vkCmdDebugMarkerBeginEXT(commandBuffer, pMarkerInfo);
 }
 
 /* See Vulkan API for documentation. */
@@ -62,15 +66,19 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDebugMarkerEndEXT<user_tag>(VkCommandBuffe
     std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
 
-    auto& tracker = layer->getStateTracker();
-    auto& cb = tracker.getCommandBuffer(commandBuffer);
+    // Only instrument inside active frame of interest
+    if(layer->isFrameOfInterest)
+    {
+        auto& tracker = layer->getStateTracker();
+        auto& cb = tracker.getCommandBuffer(commandBuffer);
 
-    // Pop the label scope in the tracker
-    cb.debugMarkerEnd();
+        // Pop the label scope in the tracker
+        cb.debugMarkerEnd();
+    }
 
-    // Note that we do not call the driver for user labels - they are
-    // emitted via the comms side-channel for each workload to avoid
-    // polluting the layer's use of the driver for tag labelling
+    // ... and forward to the driver
+    lock.unlock();
+    layer->driver.vkCmdDebugMarkerEndEXT(commandBuffer);
 }
 
 /* See Vulkan API for documentation. */
@@ -84,15 +92,19 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginDebugUtilsLabelEXT<user_tag>(VkComman
     std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
 
-    auto& tracker = layer->getStateTracker();
-    auto& cb = tracker.getCommandBuffer(commandBuffer);
+    // Only instrument inside active frame of interest
+    if(layer->isFrameOfInterest)
+    {
+        auto& tracker = layer->getStateTracker();
+        auto& cb = tracker.getCommandBuffer(commandBuffer);
 
-    // Push the label scope to the tracker
-    cb.debugMarkerBegin(pLabelInfo->pLabelName);
+        // Push the label scope to the tracker
+        cb.debugMarkerBegin(pLabelInfo->pLabelName);
+    }
 
-    // Note that we do not call the driver for user labels - they are
-    // emitted via the comms side-channel for each workload to avoid
-    // polluting the layer's use of the driver for tag labelling
+    // ... and forward to the driver
+    lock.unlock();
+    layer->driver.vkCmdBeginDebugUtilsLabelEXT(commandBuffer, pLabelInfo);
 }
 
 /* See Vulkan API for documentation. */
@@ -105,13 +117,17 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndDebugUtilsLabelEXT<user_tag>(VkCommandB
     std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
 
-    auto& tracker = layer->getStateTracker();
-    auto& cb = tracker.getCommandBuffer(commandBuffer);
+    // Only instrument inside active frame of interest
+    if(layer->isFrameOfInterest)
+    {
+        auto& tracker = layer->getStateTracker();
+        auto& cb = tracker.getCommandBuffer(commandBuffer);
 
-    // Pop the label scope in the tracker
-    cb.debugMarkerEnd();
+        // Pop the label scope in the tracker
+        cb.debugMarkerEnd();
+    }
 
-    // Note that we do not call the driver for user labels - they are
-    // emitted via the comms side-channel for each workload to avoid
-    // polluting the layer's use of the driver for tag labelling
+    // ... and forward to the driver
+    lock.unlock();
+    layer->driver.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
 }

@@ -62,23 +62,23 @@ public:
     virtual ~SubmitCommandWorkloadVisitor() noexcept = default;
 
     /**
-     * @brief Visit a renderpass workload object
+     * @brief Visit a render pass workload object
      *
-     * @param renderpass The renderpass
-     * @param debugStack The stack of debug labels that are associated with this renderpass
+     * @param renderPass The render pass
+     * @param debugStack The stack of debug labels that are associated with this render pass
      */
-    virtual void operator()(const LCSRenderPass& renderpass, const std::vector<std::string>& debugStack) = 0;
+    virtual void operator()(const LCSRenderPass& renderPass, const std::vector<std::string>& debugStack) = 0;
 
     /**
-     * @brief Visit a renderpass continuation workload object
+     * @brief Visit a render pass continuation workload object
      *
-     * @param continuation The renderpass continuation
-     * @param debugStack The stack of debug labels that are associated with this renderpass
-     * @param renderpassTagID The renderpass tag that the continuation was associated with
+     * @param continuation The render pass continuation
+     * @param debugStack The stack of debug labels that are associated with this render pass
+     * @param renderPassTagID The render pass tag that the continuation was associated with
      */
     virtual void operator()(const LCSRenderPassContinuation& continuation,
                             const std::vector<std::string>& debugStack,
-                            uint64_t renderpassTagID) = 0;
+                            uint64_t renderPassTagID) = 0;
 
     /**
      * @brief Visit a dispatch workload object

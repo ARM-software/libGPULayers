@@ -90,7 +90,7 @@ public:
     static void emitFrame(Device& device, uint64_t frameNumber, uint64_t timestamp);
 
     /**
-     * Construct a new workload metadata emitter that will output paylaods for the provided device
+     * Construct a new workload metadata emitter that will output payloads for the provided device
      *
      * @param _device The device object that the payloads are produced for, and to which they are passed for
      * transmission
@@ -100,17 +100,17 @@ public:
     {
     }
 
-    // visitor should not be copied or moved from
+    // Visitor should not be copied or moved from
     TimelineProtobufEncoder(const TimelineProtobufEncoder&) = delete;
     TimelineProtobufEncoder(TimelineProtobufEncoder&&) noexcept = delete;
     TimelineProtobufEncoder& operator=(const TimelineProtobufEncoder&) = delete;
     TimelineProtobufEncoder& operator=(TimelineProtobufEncoder&&) noexcept = delete;
 
-    // methods from the visitor interface
-    void operator()(const Tracker::LCSRenderPass& renderpass, const std::vector<std::string>& debugStack) override;
+    // Methods from the visitor interface
+    void operator()(const Tracker::LCSRenderPass& renderPass, const std::vector<std::string>& debugStack) override;
     void operator()(const Tracker::LCSRenderPassContinuation& continuation,
                     const std::vector<std::string>& debugStack,
-                    uint64_t renderpassTagID) override;
+                    uint64_t renderPassTagID) override;
     void operator()(const Tracker::LCSDispatch& dispatch, const std::vector<std::string>& debugStack) override;
     void operator()(const Tracker::LCSTraceRays& traceRays, const std::vector<std::string>& debugStack) override;
     void operator()(const Tracker::LCSImageTransfer& imageTransfer,

@@ -87,7 +87,7 @@ using Submit = pp::message<
     /* The VkQueue the frame belongs to */
     pp::uint64_field<"queue", 3>>;
 
-/* Enumerates the possible attachment types a renderpass can have */
+/* Enumerates the possible attachment types a render pass can have */
 enum class RenderpassAttachmentType
 {
     undefined = 0,
@@ -96,7 +96,7 @@ enum class RenderpassAttachmentType
     stencil = 3,
 };
 
-/* Describe an attachment to a renderpass */
+/* Describe an attachment to a render pass */
 using RenderpassAttachment = pp::message<
     /* The attachment type */
     pp::enum_field<"type", 1, RenderpassAttachmentType>,
@@ -112,29 +112,29 @@ using RenderpassAttachment = pp::message<
        things are not resolved, so this saves a field in the data) */
     pp::bool_field<"resolved", 5>>;
 
-/* Start a new renderpass */
+/* Start a new render pass */
 using BeginRenderpass = pp::message<
-    /* The unique identifier for this new renderpass */
+    /* The unique identifier for this new render pass */
     pp::uint64_field<"tag_id", 1>,
-    /* The dimensions of the renderpass' attachments */
+    /* The dimensions of the render pass' attachments */
     pp::uint32_field<"width", 2>,
     pp::uint32_field<"height", 3>,
-    /* The number of drawcalls in the renderpass */
+    /* The number of drawcalls in the render pass */
     pp::uint32_field<"draw_call_count", 4>,
     /* The subpass count */
     pp::uint32_field<"subpass_count", 5>,
-    /* Any user defined debug labels associated with the renderpass */
+    /* Any user defined debug labels associated with the render pass */
     pp::string_field<"debug_label", 6, pp::repeated>,
-    /* Any attachments associated with the renderpass */
+    /* Any attachments associated with the render pass */
     pp::message_field<"attachments", 7, RenderpassAttachment, pp::repeated>>;
 
-/* Continue a split renderpass */
+/* Continue a split render pass */
 using ContinueRenderpass = pp::message<
-    /* The unique identifier for the renderpass that is being continued */
+    /* The unique identifier for the render pass that is being continued */
     pp::uint64_field<"tag_id", 1>,
-    /* The number of drawcalls to add to the total in the renderpass */
+    /* The number of drawcalls to add to the total in the render pass */
     pp::uint32_field<"draw_call_count", 2>,
-    /* Any user defined debug labels to add to the renderpass */
+    /* Any user defined debug labels to add to the render pass */
     pp::string_field<"debug_label", 3, pp::repeated>>;
 
 /* A dispatch object submission */
@@ -295,7 +295,7 @@ Comms::MessageData packBuffer(pp::constant<F> c, T&& f)
  * @return A pair, where the first value is the corresponding attachment type, and the second value is
  * the corresponding attachment index (or nullopt in the case the index is not relevant).
  */
-constexpr std::pair<RenderpassAttachmentType, std::optional<uint32_t>> mapRenderpassAttachmentName(
+constexpr std::pair<RenderpassAttachmentType, std::optional<uint32_t>> mapRenderPassAttachmentName(
     Tracker::RenderPassAttachName name)
 {
     switch (name)
@@ -443,10 +443,10 @@ constexpr AccelerationStructureTransferType mapASTransferType(Tracker::LCSAccele
 /**
  * @brief Serialize the metadata for this render pass workload.
  *
- * @param renderpass   The render pass to serialize
+ * @param renderPass   The render pass to serialize
  * @param debugLabel   The debug label stack of the VkQueue at submit time.
  */
-Comms::MessageData serialize(const Tracker::LCSRenderPass& renderpass, const std::vector<std::string>& debugLabel)
+Comms::MessageData serialize(const Tracker::LCSRenderPass& renderPass, const std::vector<std::string>& debugLabel)
 {
     using namespace pp;
 
@@ -454,18 +454,18 @@ Comms::MessageData serialize(const Tracker::LCSRenderPass& renderpass, const std
     // associated with a single tagID if restartable across command buffer
     // boundaries because different command buffer submit combinations can
     // result in different draw counts for the same starting tagID.
-    const auto drawCount = (!renderpass.isOneTimeSubmit() && renderpass.isSuspending()
+    const auto drawCount = (!renderPass.isOneTimeSubmit() && renderPass.isSuspending()
                                 ? -1
-                                : static_cast<int64_t>(renderpass.getDrawCallCount()));
+                                : static_cast<int64_t>(renderPass.getDrawCallCount()));
 
     // Make the attachments array
-    const auto& attachments = renderpass.getAttachments();
+    const auto& attachments = renderPass.getAttachments();
     std::vector<RenderpassAttachment> attachmentsMsg {};
     attachmentsMsg.reserve(attachments.size());
 
     for (const auto& attachment : attachments)
     {
-        const auto [type, index] = mapRenderpassAttachmentName(attachment.getAttachmentName());
+        const auto [type, index] = mapRenderPassAttachmentName(attachment.getAttachmentName());
 
         attachmentsMsg.emplace_back(type,
                                     index,
@@ -479,11 +479,11 @@ Comms::MessageData serialize(const Tracker::LCSRenderPass& renderpass, const std
 
     return packBuffer("renderpass"_f,
                       BeginRenderpass {
-                          renderpass.getTagID(),
-                          renderpass.getWidth(),
-                          renderpass.getHeight(),
+                          renderPass.getTagID(),
+                          renderPass.getWidth(),
+                          renderPass.getHeight(),
                           drawCount,
-                          renderpass.getSubpassCount(),
+                          renderPass.getSubpassCount(),
                           debugLabel,
                           std::move(attachmentsMsg),
                       });
@@ -492,7 +492,7 @@ Comms::MessageData serialize(const Tracker::LCSRenderPass& renderpass, const std
 /**
  * @brief Serialize the metadata for this render pass continuation workload.
  *
- * @param continuation        The renderpass continuation to serialize
+ * @param continuation        The render pass continuation to serialize
  * @param tagIDContinuation   The ID of the workload if this is a continuation of it.
  */
 Comms::MessageData serialize(const Tracker::LCSRenderPassContinuation& continuation, uint64_t tagIDContinuation)
@@ -681,19 +681,19 @@ void TimelineProtobufEncoder::emitSubmit(VkQueue queue, uint64_t timestamp)
                                 }));
 }
 
-void TimelineProtobufEncoder::operator()(const Tracker::LCSRenderPass& renderpass,
+void TimelineProtobufEncoder::operator()(const Tracker::LCSRenderPass& renderPass,
                                          const std::vector<std::string>& debugStack)
 {
-    device.txMessage(serialize(renderpass, debugStack));
+    device.txMessage(serialize(renderPass, debugStack));
 }
 
 void TimelineProtobufEncoder::operator()(const Tracker::LCSRenderPassContinuation& continuation,
                                          const std::vector<std::string>& debugStack,
-                                         uint64_t renderpassTagID)
+                                         uint64_t renderPassTagID)
 {
     UNUSED(debugStack);
 
-    device.txMessage(serialize(continuation, renderpassTagID));
+    device.txMessage(serialize(continuation, renderPassTagID));
 }
 
 void TimelineProtobufEncoder::operator()(const Tracker::LCSDispatch& dispatch,

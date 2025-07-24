@@ -23,42 +23,30 @@
  * ----------------------------------------------------------------------------
  */
 
-/**
- * @file Declares a simple comms encoded for the timeline layer.
- */
+#include <memory>
 
-#pragma once
+#include "layer_comms.hpp"
 
-#include "comms/comms_interface.hpp"
 
-/**
- * @brief A simple message encoder for the timeline comms endpoint.
- */
-class TimelineComms
+/* See header for documentation. */
+ProfileComms::ProfileComms(Comms::CommsInterface& _comms)
+    : comms(_comms)
 {
-public:
-    /**
-     * @brief Construct a new encoder.
-     *
-     * @param comms   The common comms module used by all services.
-     */
-    TimelineComms(Comms::CommsInterface& comms);
+    if (comms.isConnected())
+    {
+        endpoint = comms.getEndpointID("GPUProfile");
+    }
+}
 
-    /**
-     * @brief Send a message to the GPU timeline endpoint service.
-     *
-     * @param message   The message to send.
-     */
-    void txMessage(Comms::MessageData&& message);
+/* See header for documentation. */
+void ProfileComms::txMessage(const std::string& message)
+{
+    // Message endpoint is not available
+    if (endpoint == 0)
+    {
+        return;
+    }
 
-private:
-    /**
-     * @brief The endpoint ID of the service, or 0 if not found.
-     */
-    Comms::EndpointID endpoint {0};
-
-    /**
-     * @brief The common module for network messaging.
-     */
-    Comms::CommsInterface& comms;
-};
+    auto data = std::make_unique<Comms::MessageData>(message.begin(), message.end());
+    comms.txAsync(endpoint, std::move(data));
+}

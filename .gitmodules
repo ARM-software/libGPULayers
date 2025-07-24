@@ -10,3 +10,6 @@
 [submodule "source_third_party/khronos/vulkan-utilities"]
 	path = source_third_party/khronos/vulkan-utilities
 	url = https://github.com/KhronosGroup/Vulkan-Utility-Libraries/
+[submodule "source_third_party/libGPUCounters"]
+	path = source_third_party/libGPUCounters
+	url = https://github.com/ARM-software/libGPUCounters.git

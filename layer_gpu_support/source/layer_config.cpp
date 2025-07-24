@@ -279,7 +279,6 @@ LayerConfig::LayerConfig()
         LAYER_ERR("Error: %s", e.what());
     }
 
-
     try
     {
         parse_serialization_options(data);

@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024-2025 Arm Limited
+ * Copyright (c) 2024 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -24,7 +24,7 @@
  */
 
 /**
- * @file Declares a simple comms encoded for the timeline layer.
+ * @file Declares a simple comms encoder for the profile layer.
  */
 
 #pragma once
@@ -32,9 +32,9 @@
 #include "comms/comms_interface.hpp"
 
 /**
- * @brief A simple message encoder for the timeline comms endpoint.
+ * @brief A simple message encoder for the profile layer comms endpoint.
  */
-class TimelineComms
+class ProfileComms
 {
 public:
     /**
@@ -42,14 +42,14 @@ public:
      *
      * @param comms   The common comms module used by all services.
      */
-    TimelineComms(Comms::CommsInterface& comms);
+    ProfileComms(Comms::CommsInterface& comms);
 
     /**
-     * @brief Send a message to the GPU timeline endpoint service.
+     * @brief Send a message to the GPU profile endpoint service.
      *
      * @param message   The message to send.
      */
-    void txMessage(Comms::MessageData&& message);
+    void txMessage(const std::string& message);
 
 private:
     /**

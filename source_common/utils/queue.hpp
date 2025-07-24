@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024 Arm Limited
+ * Copyright (c) 2024-2025 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -44,12 +44,13 @@ public:
     /**
      * @brief Destroy the task.
      */
-    virtual ~Task() { }
+    virtual ~Task() = default;
 
     /**
      * @brief Wait for the task to be complete.
      */
-    void wait() {
+    void wait()
+    {
         std::unique_lock<std::mutex> lock(condition_lock);
         complete_condition.wait(lock, [this]{ return complete.load(); });
     }
@@ -57,7 +58,8 @@ public:
     /**
      * @brief Notify that the task is complete.
      */
-    void notify() {
+    void notify()
+    {
         std::unique_lock<std::mutex> lock(condition_lock);
         complete = true;
         lock.unlock();

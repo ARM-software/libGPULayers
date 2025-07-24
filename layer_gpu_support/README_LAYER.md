@@ -43,10 +43,10 @@ sections in the [Build documentation](../docs/building.md).
 
 ### Running using the layer
 
-You can perform support experiments by using the Android helper utility found
-in the root directory to configure the layer and manage the application. You
-must enable the support layer, and provide a configuration file to parameterize
-it.
+You can configure a device to run support experiments by using the Android
+helper utility found in the root directory to configure the layer and manage
+the application. You must enable the support layer, and provide a configuration
+file to parameterize it.
 
 ```sh
 python3 lgl_android_install.py --layer layer_gpu_support --config <your.json>
