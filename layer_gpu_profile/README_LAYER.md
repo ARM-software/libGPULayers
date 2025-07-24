@@ -8,6 +8,48 @@ counters for selected frames running on an Arm GPU.
 This layer requires Vulkan 1.0 and an Arm GPU because it uses an Arm-specific
 counter sampling library.
 
+## What data can be collected?
+
+The layer serializes workloads for instrumented frames and injects counter
+samples between them, allowing the layer to measure the hardware cost of
+render passes, compute dispatches, transfers, etc.
+
+The serialization is very invasive to wall-clock performance, due to removal
+of pipeline overlap between workloads and additional GPU idle time waiting for
+the layer to performs each performance counter sampling operation. This will
+have an impact on the counter data being captured!
+
+Derived counters that show queue and functional unit utilization as a
+percentage of the overall "active" time of their parent block will report low
+because of time spent refilling and then draining the GPU pipeline between
+workloads. The overall _GPU Active Cycles_ counter is known to be unreliable,
+because the serialization means that command stream setup and teardown costs
+are not hidden in the shadow of surrounding work. We recommend using the
+individual queue active cycles counters as the main measure of performance.
+
+Note that any counter that measure direct work, such as architectural issue
+cycles, or workload nouns, such as primitives or threads, should be unaffected
+by the loss of pipelining.
+
+Arm GPUs provide a wide range of performance counters covering many different
+aspects of hardware performance. The layer will collect a standard set of
+counters by default but, with source modification, can collect any of the
+hardware counters and derived expressions supported by the
+[libGPUCounters][LGC] library that Arm provides on GitHub.
+
+[LGC]: https://github.com/ARM-software/libGPUCounters
+
+### GPU clock frequency impact
+
+The GPU idle time waiting for the CPU to take a counter sample can cause the
+system DVFS power governor to decide that the GPU is not busy. In production
+devices we commonly see that the GPU will be down-clocked during the
+instrumented frame, which may have an impact on a subset of the available
+performance counters.
+
+When running on a pre-production device we recommend pinning CPU, GPU, and bus
+clock speeds to avoid the performance instability.
+
 ## How do I use the layer?
 
 ### Prerequisites
@@ -30,7 +72,6 @@ Tooling setup steps
   environment variable.
 * Install the Android NDK and set the `ANDROID_NDK_HOME` environment variable
   to its installation path.
-
 
 ### Layer build
 
