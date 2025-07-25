@@ -751,13 +751,15 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyInstance_default(VkInstance instance, 
     std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Instance::retrieve(instance);
 
-    // Layer proxy must be destroyed before the driver version
-    // so we can clean up any layer-owned resources
+    // Save the driver function to avoid a use-after free when proxy is destroyed
+    auto destroyInstance = layer->driver.vkDestroyInstance;
+
+    // Layer proxy must be destroyed before the driver object as we use its dispatchable handle
     Instance::destroy(layer);
 
     // Release the lock to call into the driver
     lock.unlock();
-    layer->driver.vkDestroyInstance(instance, pAllocator);
+    destroyInstance(instance, pAllocator);
 }
 
 /* See Vulkan API for documentation. */
@@ -839,13 +841,15 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyDevice_default(VkDevice device, const 
     std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(device);
 
-    // Layer proxy must be destroyed before the driver version
-    // so we can clean up any layer-owned resources
+    // Save the driver function to avoid a use-after free when proxy is destroyed
+    auto destroyDevice = layer->driver.vkDestroyDevice;
+
+    // Layer proxy must be destroyed before the driver object as we use its dispatchable handle
     Device::destroy(layer);
 
     // Release the lock to call into the driver
     lock.unlock();
-    layer->driver.vkDestroyDevice(device, pAllocator);
+    destroyDevice(device, pAllocator);
 }
 
 /* See Vulkan API for documentation. */
