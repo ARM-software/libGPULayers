@@ -99,12 +99,17 @@ public:
         VkPhysicalDevice handle);
 
     /**
-     * @brief Drop an instance from the global store of dispatchable instances.
+     * \brief Drop an instance from the global store of dispatchable instances.
      *
-     * @param instance   The instance to drop.
+     * This must be called before the driver VkInstance has been destroyed, as
+     * we deference the native instance handle to get the dispatch key.
+     *
+     * \param handle   The dispatchable instance handle to use as an indirect lookup.
+     *
+     * \return Returns the ownership of the Instance object to the caller.
      */
-    static void destroy(
-        Instance* instance);
+    static std::unique_ptr<Instance> destroy(
+        VkInstance handle);
 
     /**
      * @brief Create a new layer instance object.

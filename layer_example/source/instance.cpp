@@ -64,9 +64,15 @@ Instance* Instance::retrieve(VkPhysicalDevice handle)
 }
 
 /* See header for documentation. */
-void Instance::destroy(Instance* instance)
-{
-    g_instances.erase(getDispatchKey(instance->instance));
+std::unique_ptr<Instance> Instance::destroy(
+    VkInstance handle
+) {
+    void* key = getDispatchKey(handle);
+    assert(isInMap(key, g_instances));
+
+    auto instance = std::move(g_instances.at(key));
+    g_instances.erase(key);
+    return instance;
 }
 
 /* See header for documentation. */
