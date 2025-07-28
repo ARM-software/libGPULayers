@@ -80,6 +80,15 @@ jobs:
           cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
           make -j4
 
+      - name: Build layer_gpu_profile
+        run: |
+          export CC=clang
+          export CXX=clang++
+          mkdir layer_gpu_profile/build_rel
+          cd layer_gpu_profile/build_rel
+          cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
+          make -j4
+
       - name: Build and run unit tests
         run: |
           export CC=clang
@@ -126,6 +135,15 @@ jobs:
           cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
           make -j4
 
+      - name: Build layer_gpu_profile
+        run: |
+          export CC=gcc
+          export CXX=g++
+          mkdir layer_gpu_profile/build_rel
+          cd layer_gpu_profile/build_rel
+          cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
+          make -j4
+
   build-android:
     name: Android
     runs-on: ubuntu-22.04
@@ -148,6 +166,11 @@ jobs:
       - name: Build layer_gpu_timeline
         run: |
           cd layer_gpu_timeline
+          bash ./android_build.sh Release
+
+      - name: Build layer_gpu_profile
+        run: |
+          cd layer_gpu_profile
           bash ./android_build.sh Release
 
   build-ubuntu-x64-clang-new-common:
