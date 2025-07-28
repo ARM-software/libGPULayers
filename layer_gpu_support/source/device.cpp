@@ -80,9 +80,15 @@ Device* Device::retrieve(VkCommandBuffer handle)
 }
 
 /* See header for documentation. */
-void Device::destroy(Device* device)
-{
-    g_devices.erase(getDispatchKey(device));
+std::unique_ptr<Device> Device::destroy(
+    VkDevice handle
+) {
+    void* key = getDispatchKey(handle);
+    assert(isInMap(key, g_devices));
+
+    auto device = std::move(g_devices.at(key));
+    g_devices.erase(key);
+    return device;
 }
 
 /* See header for documentation. */
