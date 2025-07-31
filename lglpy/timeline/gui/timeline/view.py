@@ -438,7 +438,7 @@ class TimelineView(View):
                 workload = 'window'
                 style = self.timeline_styles.get_style('Submit', 0, workload)
                 draw = TLSpec.get_box(
-                    'Submit', stime, etime, style, '', '', submit)
+                    'Submit', stime, etime, style, '', '', present)
                 channel.add_object(draw)
 
         # Add scheduling channels
