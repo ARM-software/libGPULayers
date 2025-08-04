@@ -4,6 +4,7 @@
 
 # Python directories
 __pycache__
+pve
 
 # CMake build directories
 build*
