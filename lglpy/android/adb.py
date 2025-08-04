@@ -29,6 +29,7 @@ line tool which can be used to run commands on a connected Android device.
 from collections.abc import Iterable
 import os
 import shlex
+import shutil
 import subprocess as sp
 from typing import Optional
 
@@ -64,9 +65,16 @@ class ADBConnect:
                 None for non-specific use.
             package: The package name, as returned by `adb shell pm list
                 packages` or None for non-specific use.
+
+        Raise:
+            FileNotFoundError will be raised if adb is not available on the
+            environment PATH.
         '''
         self.device = device
         self.package = package
+
+        if not shutil.which('adb'):
+            raise FileNotFoundError('Android adb not found on the PATH')
 
     def set_device(self, device: Optional[str]) -> None:
         '''
