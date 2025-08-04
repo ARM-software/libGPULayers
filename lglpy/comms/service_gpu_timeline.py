@@ -327,7 +327,10 @@ class GPUTimelineService:
             msg: The Python decode of a Timeline PB payload.
         '''
         assert msg.version_no == timeline_pb2.HeaderVersionNo.version_1
-        assert not self.seen_header
+        assert not self.seen_header, (
+            "Handshaking header has already been seen. To start a new "
+            "timeline, you need to restart this script."
+        )
 
         self.seen_header = True
 
