@@ -339,7 +339,7 @@ class Window:
         if not metadata_file:
             postfix = '.perfetto'
             if trace_file.endswith(postfix):
-                metadata_file = f'{trace_file[:-len(postfix)]}.gputl'
+                metadata_file = f'{trace_file[:-len(postfix)]}.metadata'
 
             if not os.path.exists(metadata_file):
                 metadata_file = None

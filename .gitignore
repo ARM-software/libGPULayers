@@ -10,7 +10,6 @@ pve
 build*
 
 # Data files and build outputs
-*.gputl
 *.log
 *.metadata
 *.perfetto
