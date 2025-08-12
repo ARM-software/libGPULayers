@@ -46,6 +46,8 @@ std::unique_ptr<Comms::CommsModule> Device::commsModule;
 /* See header for documentation. */
 std::unique_ptr<TimelineComms> Device::commsWrapper;
 
+extern std::mutex g_vulkanLock;
+
 /* See header for documentation. */
 void Device::store(VkDevice handle, std::unique_ptr<Device> device)
 {
@@ -115,10 +117,13 @@ Device::Device(Instance* _instance,
     }
 
     // Init the shared comms module for the first device built
-    if (!commsModule)
     {
-        commsModule = std::make_unique<Comms::CommsModule>("lglcomms");
-        commsWrapper = std::make_unique<TimelineComms>(*commsModule);
+        std::lock_guard<std::mutex> lock { g_vulkanLock };
+        if (!commsModule)
+        {
+            commsModule = std::make_unique<Comms::CommsModule>("lglcomms");
+            commsWrapper = std::make_unique<TimelineComms>(*commsModule);
+        }
     }
 
     // Determine the driver version and emit the preamble message
