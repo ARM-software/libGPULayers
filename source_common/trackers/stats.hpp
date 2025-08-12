@@ -24,7 +24,7 @@
  */
 
 /**
- * \file
+ * @file
  * This module implements basic counter tracking of Vulkan workloads.
  */
 

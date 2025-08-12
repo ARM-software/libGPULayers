@@ -24,7 +24,7 @@
  */
 
 /**
- * \file
+ * @file
  * Methods for transforming layer command stream workloads into metadata messages
  * for transmission to the host.
  *

@@ -24,7 +24,7 @@
  */
 
 /**
- * \file
+ * @file
  * The declaration of Vulkan render pass use trackers.
  *
  * Role summary

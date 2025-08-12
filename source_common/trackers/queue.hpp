@@ -24,7 +24,7 @@
  */
 
 /**
- * \file
+ * @file
  * The declaration of Vulkan queue use trackers.
  *
  * Role summary
