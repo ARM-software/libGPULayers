@@ -24,7 +24,7 @@
  */
 
 /**
- * \file
+ * @file
  * The declaration of a replayable layer command stream.
  *
  * Role summary

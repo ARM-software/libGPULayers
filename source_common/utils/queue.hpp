@@ -51,8 +51,8 @@ public:
      */
     void wait()
     {
-        std::unique_lock<std::mutex> lock(condition_lock);
-        complete_condition.wait(lock, [this]{ return complete.load(); });
+        std::unique_lock<std::mutex> lock(conditionLock);
+        completeCondition.wait(lock, [this]{ return complete.load(); });
     }
 
     /**
@@ -60,10 +60,10 @@ public:
      */
     void notify()
     {
-        std::unique_lock<std::mutex> lock(condition_lock);
+        std::unique_lock<std::mutex> lock(conditionLock);
         complete = true;
         lock.unlock();
-        complete_condition.notify_all();
+        completeCondition.notify_all();
     }
 
 private:
@@ -71,10 +71,10 @@ private:
     std::atomic<bool> complete { false };
 
     /** @brief Condition variable for notifications. */
-    std::condition_variable complete_condition;
+    std::condition_variable completeCondition;
 
     /** @brief Lock for notifications. */
-    std::mutex condition_lock;
+    std::mutex conditionLock;
 };
 
 
@@ -86,7 +86,7 @@ class TaskQueue
 {
 private:
     /** @brief Lock for thread-safe access. */
-    std::mutex store_lock;
+    std::mutex storeLock;
 
     /** @brief Condition variable for notifications. */
     std::condition_variable condition;
@@ -103,7 +103,7 @@ public:
     void put(
         T task
     ) {
-        std::lock_guard<std::mutex> lock(store_lock);
+        std::lock_guard<std::mutex> lock(storeLock);
         store.push_back(task);
         condition.notify_one();
     }
@@ -117,7 +117,7 @@ public:
      */
     T get()
     {
-        std::unique_lock<std::mutex> lock(store_lock);
+        std::unique_lock<std::mutex> lock(storeLock);
 
         // Release lock until we have data, and then reacquire
         while(store.empty())
@@ -138,9 +138,9 @@ public:
      *
      * @return @c true if the queue is empty, @c false otherwise.
      */
-    bool is_empty()
+    bool isEmpty()
     {
-        std::unique_lock<std::mutex> lock(store_lock);
+        std::lock_guard<std::mutex> lock(storeLock);
         return store.empty();
     }
 };

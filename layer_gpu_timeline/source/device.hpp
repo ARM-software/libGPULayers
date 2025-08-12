@@ -113,14 +113,14 @@ public:
     static Device* retrieve(VkCommandBuffer handle);
 
     /**
-     * \brief Drop a device from the global store of dispatchable devices.
+     * @brief Drop a device from the global store of dispatchable devices.
      *
      * This must be called before the driver VkDevice has been destroyed, as
      * we deference the native device handle to get the dispatch key.
      *
-     * \param handle   The dispatchable device handle to use as an indirect lookup.
+     * @param handle   The dispatchable device handle to use as an indirect lookup.
      *
-     * \return Returns the ownership of the Device object to the caller.
+     * @return Returns the ownership of the Device object to the caller.
      */
     static std::unique_ptr<Device> destroy(
         VkDevice handle);

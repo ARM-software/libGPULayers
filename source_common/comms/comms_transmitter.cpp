@@ -61,7 +61,7 @@ Transmitter::~Transmitter()
 void Transmitter::runTransmitter()
 {
     // Keep looping until we are told to stop and message queue is empty
-    while (!stopRequested || !parent.messageQueue.is_empty())
+    while (!stopRequested || !parent.messageQueue.isEmpty())
     {
         auto message = parent.dequeueMessage();
 

@@ -24,7 +24,7 @@
  */
 
 /**
- * \file
+ * @file
  * This module implements basic tracking of Vulkan devices.
  *
  * Role summary

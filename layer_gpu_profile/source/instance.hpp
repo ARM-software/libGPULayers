@@ -96,14 +96,14 @@ public:
     static Instance* retrieve(VkPhysicalDevice handle);
 
     /**
-     * \brief Drop an instance from the global store of dispatchable instances.
+     * @brief Drop an instance from the global store of dispatchable instances.
      *
      * This must be called before the driver VkInstance has been destroyed, as
      * we deference the native instance handle to get the dispatch key.
      *
-     * \param handle   The dispatchable instance handle to use as an indirect lookup.
+     * @param handle   The dispatchable instance handle to use as an indirect lookup.
      *
-     * \return Returns the ownership of the Instance object to the caller.
+     * @return Returns the ownership of the Instance object to the caller.
      */
     static std::unique_ptr<Instance> destroy(
         VkInstance handle);

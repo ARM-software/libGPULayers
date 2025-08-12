@@ -24,7 +24,7 @@
  */
 
 /**
- * \file
+ * @file
  * The declaration of Vulkan command pool and command buffer use trackers.
  *
  * Role summary
@@ -246,7 +246,7 @@ public:
      *
      * @param commandBuffer   The Vulkan handle of the allocated command buffer.
      *
-     * \return The layer wrapper object for the command buffer.
+     * @return The layer wrapper object for the command buffer.
      */
     CommandBuffer& allocateCommandBuffer(VkCommandBuffer commandBuffer);
 

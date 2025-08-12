@@ -7,7 +7,7 @@ __pycache__
 pve
 
 # CMake build directories
-build*
+**/build*
 
 # Data files and build outputs
 *.log
