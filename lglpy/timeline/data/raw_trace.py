@@ -161,7 +161,7 @@ class MetadataAttachment:
         Args:
             metadata: JSON payload from the layer.
         '''
-        self.binding = str(metadata['binding'])
+        self.binding = MetadataWorkload.memoize(metadata['binding'])
         self.is_loaded = bool(metadata.get('load', False))
         self.is_stored = bool(metadata.get('store', True))
         self.is_resolved = bool(metadata.get('resolve', True))
@@ -300,9 +300,37 @@ class MetadataWorkload:
         label_stack: Debug label stack, or None if no user labels.
     '''
 
+    MEMO: dict[str, str] = dict()
+
+    @classmethod
+    def memoize(cls, string: str) -> str:
+        '''
+        Get a memoized version of a string to reduce runtime memory use and
+        improve rendering performance.
+
+        Args:
+            string: User string to memoize.
+
+        Return:
+            Memoized copy of a string.
+        '''
+        string = str(string)
+        memo = MetadataWorkload.MEMO
+
+        if string not in memo:
+            memo[string] = string
+        return memo[string]
+
+    @classmethod
+    def clear_memoize_cache(cls) -> None:
+        '''
+        Clear the local memoization cache.
+        '''
+        MetadataWorkload.MEMO.clear()
+
     def __init__(self, submit: MetadataSubmit, metadata: JSONType):
         '''
-        Parsed GPU Timeline layer payload for a single render pass.
+        Parsed GPU Timeline layer payload for a single workload.
 
         Args:
             submit: The submit information.
@@ -310,8 +338,17 @@ class MetadataWorkload:
         '''
         self.tag_id = int(metadata['tid'])
         self.submit = submit
+        self.label_stack = None
 
-        self.label_stack = metadata.get('label', None)
+        raw_labels = metadata.get('label', None)
+        if raw_labels is None:
+            return
+
+        # Memoize the debug label stack as it tends to repeat
+        self.label_stack = []
+        for label in raw_labels:
+            label = MetadataWorkload.memoize(label)
+            self.label_stack.append(label)
 
     def get_perfetto_tag_id(self) -> str:
         '''
@@ -439,7 +476,7 @@ class MetadataImageTransfer(MetadataWorkload):
         '''
         super().__init__(submit, metadata)
 
-        self.subtype = str(metadata['subtype'])
+        self.subtype = MetadataWorkload.memoize(metadata['subtype'])
         self.pixel_count = int(metadata['pixelCount'])
 
 
@@ -462,7 +499,8 @@ class MetadataBufferTransfer(MetadataWorkload):
         '''
         super().__init__(submit, metadata)
 
-        self.subtype = str(metadata['subtype'])
+        subtype = MetadataWorkload.memoize(metadata['subtype'])
+        self.subtype = subtype
         self.byte_count = int(metadata['byteCount'])
 
 
@@ -485,7 +523,7 @@ class MetadataASBuild(MetadataWorkload):
         '''
         super().__init__(submit, metadata)
 
-        self.subtype = str(metadata['subtype'])
+        self.subtype = MetadataWorkload.memoize(metadata['subtype'])
         self.primitive_count = int(metadata['primitiveCount'])
 
 
@@ -510,7 +548,7 @@ class MetadataASTransfer(MetadataWorkload):
         '''
         super().__init__(submit, metadata)
 
-        self.subtype = str(metadata['subtype'])
+        self.subtype = MetadataWorkload.memoize(metadata['subtype'])
         self.byte_count = int(metadata['byteCount'])
 
 
@@ -560,7 +598,7 @@ class RenderstageEvent:
             if item.name != 'Labels':
                 continue
 
-            self.user_label = str(item.value)
+            self.user_label = MetadataWorkload.memoize(item.value)
 
 
 # Helper for typing all workload subclasses of MetadataWorkload
@@ -933,3 +971,6 @@ class RawTrace:
         if metadata_file:
             self.metadata = \
                 self.load_metadata_from_file(metadata_file, start_time)
+
+        # Clear the memoization cache as we don't need it any more
+        MetadataWorkload.clear_memoize_cache()

@@ -61,6 +61,31 @@ class GPUWorkload:
     PARENS = re.compile(r'(\(.*\))')
     RESOLUTION = re.compile(r'\d+x\d+')
     WHITESPACE = re.compile(r'\s\s+')
+    MEMO: dict[str, str] = dict()
+
+    @classmethod
+    def memoize(cls, string: str) -> str:
+        '''
+        Get a memoized version of a string to reduce runtime memory use and
+        improve rendering performance.
+
+        Args:
+            string: User string to memoize.
+
+        Return:
+            Memoized copy of a string.
+        '''
+        memo = GPUWorkload.MEMO
+        if string not in memo:
+            memo[string] = string
+        return memo[string]
+
+    @classmethod
+    def clear_memoize_cache(cls) -> None:
+        '''
+        Clear the local memoization cache.
+        '''
+        GPUWorkload.MEMO.clear()
 
     def __init__(
             self, event: RenderstageEvent, metadata: Optional[MetadataWork]):
@@ -105,7 +130,8 @@ class GPUWorkload:
             return None
 
         if not LABEL_HEURISTICS:
-            self.parsed_label_name_full = self.label_stack[-1]
+            label = GPUWorkload.memoize(self.label_stack[-1])
+            self.parsed_label_name_full = label
             return self.parsed_label_name_full
 
         # Create a copy we can edit ...
@@ -146,6 +172,7 @@ class GPUWorkload:
         else:
             label = '.'.join(labels)
 
+        label = GPUWorkload.memoize(label)
         self.parsed_label_name_full = label
         return self.parsed_label_name_full
 
@@ -181,6 +208,7 @@ class GPUWorkload:
             postfix = label[-half_max:]
             label = f'{prefix}...{postfix}'
 
+        label = GPUWorkload.memoize(label)
         self.parsed_label_name = label
         return self.parsed_label_name
 
@@ -239,7 +267,8 @@ class GPUWorkload:
         '''
         # Subclass will override this if metadata exists
         # Submit ID isn't useful, but traces back to Perfetto data for debug
-        return f'Submit: {self.submit_id}'
+        label = f'Submit: {self.submit_id}'
+        return GPUWorkload.memoize(label)
 
     def get_short_label(self) -> str:
         '''
@@ -250,7 +279,8 @@ class GPUWorkload:
         '''
         # Subclass will override this if metadata exists
         # Submit ID isn't useful, but traces back to Perfetto data for debug
-        return f'Submit: {self.submit_id}'
+        label = f'Submit: {self.submit_id}'
+        return GPUWorkload.memoize(label)
 
     def get_key_value_properties(self) -> dict[str, str]:
         '''
@@ -353,7 +383,9 @@ class GPURenderPass(GPUWorkload):
         Returns:
             Returns the label for use in the UI.
         '''
-        return f'{self.width}x{self.height}'
+        label = f'{self.width}x{self.height}'
+        label = self.memoize(label)
+        return label
 
     def get_draw_count_str(self) -> str:
         '''
@@ -368,7 +400,8 @@ class GPURenderPass(GPUWorkload):
         if self.draw_call_count == 1:
             return '1 draw'
 
-        return f'{self.draw_call_count} draws'
+        label = f'{self.draw_call_count} draws'
+        return self.memoize(label)
 
     def get_subpass_count_str(self) -> str:
         '''
@@ -378,7 +411,8 @@ class GPURenderPass(GPUWorkload):
             Returns the label for use in the UI.
         '''
         es = '' if self.subpass_count == 1 else 'es'
-        return f'{self.subpass_count} subpass{es}'
+        label = f'{self.subpass_count} subpass{es}'
+        return self.memoize(label)
 
     def get_attachment_present_str(self) -> str:
         '''
@@ -388,7 +422,8 @@ class GPURenderPass(GPUWorkload):
             Returns the label for use in the UI.
         '''
         bindings = [x.binding for x in self.attachments]
-        return self.get_compact_string(bindings)
+        label = self.get_compact_str(bindings)
+        return GPUWorkload.memoize(label)
 
     def get_attachment_loadop_str(self) -> str:
         '''
@@ -398,7 +433,8 @@ class GPURenderPass(GPUWorkload):
             Returns the label for use in the UI.
         '''
         bindings = [x.binding for x in self.attachments if x.is_loaded]
-        return self.get_compact_string(bindings)
+        label = self.get_compact_str(bindings)
+        return GPUWorkload.memoize(label)
 
     def get_attachment_storeop_str(self) -> str:
         '''
@@ -408,10 +444,11 @@ class GPURenderPass(GPUWorkload):
             Returns the label for use in the UI.
         '''
         bindings = [x.binding for x in self.attachments if x.is_stored]
-        return self.get_compact_string(bindings)
+        label = self.get_compact_str(bindings)
+        return GPUWorkload.memoize(label)
 
     @classmethod
-    def get_compact_string(cls, bindings: list[str]) -> str:
+    def get_compact_str(cls, bindings: list[str]) -> str:
         '''
         Get the compact UI string for a set of attachment bind points.
 
@@ -422,7 +459,8 @@ class GPURenderPass(GPUWorkload):
             A binding string of the form, e.g. "C0124DS".
         '''
         merge = ''.join(bindings)
-        return ''.join([j for i, j in enumerate(merge) if j not in merge[:i]])
+        label = ''.join([j for i, j in enumerate(merge) if j not in merge[:i]])
+        return GPUWorkload.memoize(label)
 
     def get_attachment_long_label(self) -> str:
         '''
@@ -441,7 +479,8 @@ class GPURenderPass(GPUWorkload):
         if stored:
             stored = f' > store({stored}) '
 
-        return f'{loaded}[{present}]{stored}'
+        label = f'{loaded}[{present}]{stored}'
+        return GPUWorkload.memoize(label)
 
     def get_attachment_short_label(self) -> str:
         '''
@@ -451,7 +490,8 @@ class GPURenderPass(GPUWorkload):
             A string showing attachments without load/storeOp usage.
         '''
         present = self.get_attachment_present_str()
-        return f'[{present}]'
+        label = f'[{present}]'
+        return GPUWorkload.memoize(label)
 
     def get_long_label(self) -> str:
         '''
@@ -471,7 +511,8 @@ class GPURenderPass(GPUWorkload):
         line = self.get_attachment_long_label()
         lines.append(line)
 
-        return '\n'.join(lines)
+        label = '\n'.join(lines)
+        return GPUWorkload.memoize(label)
 
     def get_short_label(self) -> str:
         '''
@@ -488,7 +529,8 @@ class GPURenderPass(GPUWorkload):
         line = self.get_attachment_short_label()
         lines.append(line)
 
-        return '\n'.join(lines)
+        label = '\n'.join(lines)
+        return GPUWorkload.memoize(label)
 
 
 class GPUDispatch(GPUWorkload):
@@ -547,7 +589,8 @@ class GPUDispatch(GPUWorkload):
         if self.groups_z > 1:
             dims.append(self.groups_z)
 
-        return f'{"x".join([str(dim) for dim in dims])} groups'
+        label = f'{"x".join([str(dim) for dim in dims])} groups'
+        return GPUWorkload.memoize(label)
 
     def get_long_label(self) -> str:
         '''
@@ -562,7 +605,8 @@ class GPUDispatch(GPUWorkload):
             lines.append(label_name)
 
         lines.append(self.get_short_label())
-        return '\n'.join(lines)
+        label = '\n'.join(lines)
+        return GPUWorkload.memoize(label)
 
     def get_short_label(self) -> str:
         '''
@@ -574,7 +618,8 @@ class GPUDispatch(GPUWorkload):
         lines = []
         line = self.get_resolution_str()
         lines.append(line)
-        return '\n'.join(lines)
+        label = '\n'.join(lines)
+        return GPUWorkload.memoize(label)
 
 
 class GPUTraceRays(GPUWorkload):
@@ -633,7 +678,8 @@ class GPUTraceRays(GPUWorkload):
         if self.items_z > 1:
             dims.append(self.items_z)
 
-        return f'{"x".join([str(dim) for dim in dims])} items'
+        label = f'{"x".join([str(dim) for dim in dims])} items'
+        return GPUWorkload.memoize(label)
 
     def get_long_label(self) -> str:
         '''
@@ -648,7 +694,8 @@ class GPUTraceRays(GPUWorkload):
             lines.append(label_name)
 
         lines.append(self.get_short_label())
-        return '\n'.join(lines)
+        label = '\n'.join(lines)
+        return GPUWorkload.memoize(label)
 
     def get_short_label(self) -> str:
         '''
@@ -659,7 +706,8 @@ class GPUTraceRays(GPUWorkload):
         '''
         lines = []
         lines.append(self.get_resolution_str())
-        return '\n'.join(lines)
+        label = '\n'.join(lines)
+        return GPUWorkload.memoize(label)
 
 
 class GPUImageTransfer(GPUWorkload):
@@ -715,7 +763,8 @@ class GPUImageTransfer(GPUWorkload):
             return f'? pixels'
 
         s = 's' if self.pixel_count != 1 else ''
-        return f'{self.pixel_count} pixel{s}'
+        label = f'{self.pixel_count} pixel{s}'
+        return GPUWorkload.memoize(label)
 
     def get_long_label(self) -> str:
         '''
@@ -732,7 +781,8 @@ class GPUImageTransfer(GPUWorkload):
         line = f'{self.transfer_type} ({self.get_transfer_size_str()})'
         lines.append(line)
 
-        return '\n'.join(lines)
+        label = '\n'.join(lines)
+        return GPUWorkload.memoize(label)
 
     def get_short_label(self) -> str:
         '''
@@ -797,7 +847,8 @@ class GPUBufferTransfer(GPUWorkload):
             return f'? bytes'
 
         s = 's' if self.byte_count != 1 else ''
-        return f'{self.byte_count} byte{s}'
+        label = f'{self.byte_count} byte{s}'
+        return GPUWorkload.memoize(label)
 
     def get_long_label(self) -> str:
         '''
@@ -814,7 +865,8 @@ class GPUBufferTransfer(GPUWorkload):
         line = f'{self.transfer_type} ({self.get_transfer_size_str()})'
         lines.append(line)
 
-        return '\n'.join(lines)
+        label = '\n'.join(lines)
+        return GPUWorkload.memoize(label)
 
     def get_short_label(self) -> str:
         '''
@@ -884,7 +936,8 @@ class GPUASBuild(GPUWorkload):
             return f'? primitives'
 
         s = 's' if self.primitive_count != 1 else ''
-        return f'{self.primitive_count} primitive{s}'
+        label = f'{self.primitive_count} primitive{s}'
+        return GPUWorkload.memoize(label)
 
     def get_long_label(self) -> str:
         '''
@@ -901,7 +954,8 @@ class GPUASBuild(GPUWorkload):
         line = f'{self.build_type} ({self.get_transfer_size_str()})'
         lines.append(line)
 
-        return '\n'.join(lines)
+        label = '\n'.join(lines)
+        return GPUWorkload.memoize(label)
 
     def get_short_label(self) -> str:
         '''
@@ -963,7 +1017,8 @@ class GPUASTransfer(GPUWorkload):
             return f'? bytes'
 
         s = 's' if self.byte_count != 1 else ''
-        return f'{self.byte_count} byte{s}'
+        label = f'{self.byte_count} byte{s}'
+        return GPUWorkload.memoize(label)
 
     def get_long_label(self) -> str:
         '''
@@ -980,7 +1035,8 @@ class GPUASTransfer(GPUWorkload):
         line = f'{self.transfer_type} ({self.get_transfer_size_str()})'
         lines.append(line)
 
-        return '\n'.join(lines)
+        label = '\n'.join(lines)
+        return GPUWorkload.memoize(label)
 
     def get_short_label(self) -> str:
         '''
