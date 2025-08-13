@@ -30,8 +30,11 @@ project(VkLayerExample VERSION 1.0.0)
 
 # Common configuration
 set(LGL_LOG_TAG "VkLayerExample")
-set(LGL_CONFIG_TRACE 0)
-set(LGL_CONFIG_LOG 1)
+
+option(LGL_CONFIG_TRACE "Enable Vulkan entrypoint logging")
+option(LGL_CONFIG_OPTIMIZE_DISPATCH "Enable Vulkan entrypoint dispatch optimization" ON)
+option(LGL_CONFIG_LOG "Enable general layer logging" ON)
+
 
 include(../source_common/compiler_helper.cmake)
 include(../cmake/clang-tools.cmake)

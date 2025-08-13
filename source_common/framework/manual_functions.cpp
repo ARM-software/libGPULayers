@@ -540,9 +540,12 @@ PFN_vkVoidFunction layer_vkGetInstanceProcAddr_default(VkInstance instance, cons
     bool exportLayerFunction { layerFunction != nullptr };
 
     // Function is not exported because layer doesn't specialize a user_tag version
-    if (!isFunctionAlwaysExported(pName) && layerFunction == layerDefaultFunction)
+    if constexpr(CONFIG_OPTIMIZE_DISPATCH)
     {
-        exportLayerFunction = false;
+        if (!isFunctionAlwaysExported(pName) && layerFunction == layerDefaultFunction)
+        {
+            exportLayerFunction = false;
+        }
     }
 
     // For other functions, only expose functions that the driver exposes to
@@ -586,9 +589,12 @@ PFN_vkVoidFunction layer_vkGetDeviceProcAddr_default(VkDevice device, const char
     bool exportLayerFunction { layerFunction != nullptr };
 
     // Function is not exported because layer doesn't specialize a user_tag version
-    if (!isFunctionAlwaysExported(pName) && layerFunction == layerDefaultFunction)
+    if constexpr(CONFIG_OPTIMIZE_DISPATCH)
     {
-        exportLayerFunction = false;
+        if (!isFunctionAlwaysExported(pName) && layerFunction == layerDefaultFunction)
+        {
+            exportLayerFunction = false;
+        }
     }
 
     // If driver exposes it and the layer has one, use the layer function
