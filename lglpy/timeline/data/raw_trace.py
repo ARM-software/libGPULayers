@@ -300,7 +300,7 @@ class MetadataWorkload:
         label_stack: Debug label stack, or None if no user labels.
     '''
 
-    MEMO = dict()
+    MEMO: dict[str, str] = dict()
 
     @classmethod
     def memoize(cls, string: str) -> str:

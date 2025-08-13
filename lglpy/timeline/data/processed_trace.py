@@ -61,7 +61,7 @@ class GPUWorkload:
     PARENS = re.compile(r'(\(.*\))')
     RESOLUTION = re.compile(r'\d+x\d+')
     WHITESPACE = re.compile(r'\s\s+')
-    MEMO = dict()
+    MEMO: dict[str, str] = dict()
 
     @classmethod
     def memoize(cls, string: str) -> str:
