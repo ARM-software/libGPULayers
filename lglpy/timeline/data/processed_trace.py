@@ -387,7 +387,6 @@ class GPURenderPass(GPUWorkload):
         label = self.memoize(label)
         return label
 
-
     def get_draw_count_str(self) -> str:
         '''
         Get the draw call count string.
