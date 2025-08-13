@@ -29,6 +29,7 @@
  * implemented as library code which can be swapped for alternative
  * implementations on a per-layer basis if needed.
  */
+
 #include <vulkan/utility/vk_struct_helper.hpp>
 
 #include "framework/manual_functions.hpp"
@@ -111,7 +112,35 @@ VkLayerDeviceCreateInfo* getChainInfo(const VkDeviceCreateInfo* pCreateInfo)
 }
 
 /* See header for documentation. */
-std::pair<bool, PFN_vkVoidFunction> getInstanceLayerFunction(const char* name)
+bool isFunctionAlwaysExported(const char* name)
+{
+    const std::array<const char*, 11> alwaysExportedFunctions {
+        "vkGetInstanceProcAddr",
+        "vkGetDeviceProcAddr",
+        "vkEnumerateInstanceExtensionProperties",
+        "vkEnumerateDeviceExtensionProperties",
+        "vkEnumerateInstanceLayerProperties",
+        "vkEnumerateDeviceLayerProperties",
+        "vkCreateInstance",
+        "vkDestroyInstance",
+        "vkCreateDevice",
+        "vkDestroyDevice",
+        "vkGetDeviceImageMemoryRequirementsKHR",
+    };
+
+    for (const char* functionName : alwaysExportedFunctions)
+    {
+        if (!strcmp(functionName, name))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/* See header for documentation. */
+std::tuple<bool, PFN_vkVoidFunction, PFN_vkVoidFunction> getInstanceLayerFunction(const char* name)
 {
     const std::array<const char*, 5> globalFunctions {
         // Supported since Vulkan 1.0
@@ -125,7 +154,7 @@ std::pair<bool, PFN_vkVoidFunction> getInstanceLayerFunction(const char* name)
     };
 
     bool isGlobal {false};
-    for (const auto* globalName : globalFunctions)
+    for (const char* globalName : globalFunctions)
     {
         if (!strcmp(globalName, name))
         {
@@ -138,25 +167,25 @@ std::pair<bool, PFN_vkVoidFunction> getInstanceLayerFunction(const char* name)
     {
         if (!strcmp(function.name, name))
         {
-            return {isGlobal, function.function};
+            return std::make_tuple(isGlobal, function.function, function.defaultFunction);
         }
     }
 
-    return {isGlobal, nullptr};
+    return std::make_tuple(isGlobal, nullptr, nullptr);
 }
 
 /* See header for documentation. */
-PFN_vkVoidFunction getDeviceLayerFunction(const char* name)
+std::pair<PFN_vkVoidFunction, PFN_vkVoidFunction> getDeviceLayerFunction(const char* name)
 {
     for (auto& function : deviceIntercepts)
     {
         if (!strcmp(function.name, name))
         {
-            return function.function;
+            return {function.function, function.defaultFunction};
         }
     }
 
-    return nullptr;
+    return {nullptr, nullptr};
 }
 
 /* See header for documentation. */
@@ -497,7 +526,7 @@ void enableDeviceVkExtImageCompressionControl(Instance& instance,
 /** See Vulkan API for documentation. */
 PFN_vkVoidFunction layer_vkGetInstanceProcAddr_default(VkInstance instance, const char* pName)
 {
-    auto [isGlobal, layerFunction] = getInstanceLayerFunction(pName);
+    auto [isGlobal, layerFunction, layerDefaultFunction] = getInstanceLayerFunction(pName);
 
     // Global functions must be exposed and do not require the caller to pass
     // a valid instance pointer, although it is required to be nullptr in
@@ -505,6 +534,18 @@ PFN_vkVoidFunction layer_vkGetInstanceProcAddr_default(VkInstance instance, cons
     if (isGlobal)
     {
         return layerFunction;
+    }
+
+    // Function is not exported because layer doesn't implement it at all
+    bool exportLayerFunction { layerFunction != nullptr };
+
+    // Function is not exported because layer doesn't specialize a user_tag version
+    if constexpr(CONFIG_OPTIMIZE_DISPATCH)
+    {
+        if (!isFunctionAlwaysExported(pName) && layerFunction == layerDefaultFunction)
+        {
+            exportLayerFunction = false;
+        }
     }
 
     // For other functions, only expose functions that the driver exposes to
@@ -519,7 +560,7 @@ PFN_vkVoidFunction layer_vkGetInstanceProcAddr_default(VkInstance instance, cons
         PFN_vkVoidFunction driverFunction = layer->nlayerGetProcAddress(instance, pName);
 
         // If driver exposes it and the layer has one, use the layer function
-        if (driverFunction && layerFunction)
+        if (driverFunction && exportLayerFunction)
         {
             return layerFunction;
         }
@@ -542,10 +583,22 @@ PFN_vkVoidFunction layer_vkGetDeviceProcAddr_default(VkDevice device, const char
     // Only expose functions that the driver exposes to avoid changing
     // queryable interface behavior seen by the application
     auto driverFunction = layer->driver.vkGetDeviceProcAddr(device, pName);
-    auto layerFunction = getDeviceLayerFunction(pName);
+    auto [layerFunction, layerDefaultFunction] = getDeviceLayerFunction(pName);
+
+    // Function is not exported because layer doesn't implement it at all
+    bool exportLayerFunction { layerFunction != nullptr };
+
+    // Function is not exported because layer doesn't specialize a user_tag version
+    if constexpr(CONFIG_OPTIMIZE_DISPATCH)
+    {
+        if (!isFunctionAlwaysExported(pName) && layerFunction == layerDefaultFunction)
+        {
+            exportLayerFunction = false;
+        }
+    }
 
     // If driver exposes it and the layer has one, use the layer function
-    if (driverFunction && layerFunction)
+    if (driverFunction && exportLayerFunction)
     {
         return layerFunction;
     }
