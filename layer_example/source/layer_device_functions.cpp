@@ -23,8 +23,8 @@
  * ----------------------------------------------------------------------------
  */
 
-#include "device.hpp"
 #include "framework/device_dispatch_table.hpp"
+#include "device.hpp"
 
 #include <memory>
 #include <mutex>

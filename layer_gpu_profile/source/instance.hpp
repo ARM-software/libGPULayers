@@ -123,7 +123,7 @@ public:
     VkInstance instance;
 
     /**
-     * @brief The next layer's \c vkGetInstanceProcAddr() function pointer.
+     * @brief The next layer's @c vkGetInstanceProcAddr() function pointer.
      */
     PFN_vkGetInstanceProcAddr nlayerGetProcAddress;
 

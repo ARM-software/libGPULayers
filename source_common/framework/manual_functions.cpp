@@ -29,6 +29,7 @@
  * implemented as library code which can be swapped for alternative
  * implementations on a per-layer basis if needed.
  */
+
 #include <vulkan/utility/vk_struct_helper.hpp>
 
 #include "framework/manual_functions.hpp"
@@ -111,7 +112,35 @@ VkLayerDeviceCreateInfo* getChainInfo(const VkDeviceCreateInfo* pCreateInfo)
 }
 
 /* See header for documentation. */
-std::pair<bool, PFN_vkVoidFunction> getInstanceLayerFunction(const char* name)
+bool isFunctionAlwaysExported(const char* name)
+{
+    const std::array<const char*, 11> alwaysExportedFunctions {
+        "vkGetInstanceProcAddr",
+        "vkGetDeviceProcAddr",
+        "vkEnumerateInstanceExtensionProperties",
+        "vkEnumerateDeviceExtensionProperties",
+        "vkEnumerateInstanceLayerProperties",
+        "vkEnumerateDeviceLayerProperties",
+        "vkCreateInstance",
+        "vkDestroyInstance",
+        "vkCreateDevice",
+        "vkDestroyDevice",
+        "vkGetDeviceImageMemoryRequirementsKHR",
+    };
+
+    for (const char* functionName : alwaysExportedFunctions)
+    {
+        if (!strcmp(functionName, name))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/* See header for documentation. */
+std::tuple<bool, PFN_vkVoidFunction, bool> getInstanceLayerFunction(const char* name)
 {
     const std::array<const char*, 5> globalFunctions {
         // Supported since Vulkan 1.0
@@ -125,7 +154,7 @@ std::pair<bool, PFN_vkVoidFunction> getInstanceLayerFunction(const char* name)
     };
 
     bool isGlobal {false};
-    for (const auto* globalName : globalFunctions)
+    for (const char* globalName : globalFunctions)
     {
         if (!strcmp(globalName, name))
         {
@@ -138,25 +167,25 @@ std::pair<bool, PFN_vkVoidFunction> getInstanceLayerFunction(const char* name)
     {
         if (!strcmp(function.name, name))
         {
-            return {isGlobal, function.function};
+            return std::make_tuple(isGlobal, function.function, function.hasLayerSpecialization);
         }
     }
 
-    return {isGlobal, nullptr};
+    return std::make_tuple(isGlobal, nullptr, false);
 }
 
 /* See header for documentation. */
-PFN_vkVoidFunction getDeviceLayerFunction(const char* name)
+std::pair<PFN_vkVoidFunction, bool> getDeviceLayerFunction(const char* name)
 {
     for (auto& function : deviceIntercepts)
     {
         if (!strcmp(function.name, name))
         {
-            return function.function;
+            return {function.function, function.hasLayerSpecialization};
         }
     }
 
-    return nullptr;
+    return {nullptr, false};
 }
 
 /* See header for documentation. */
@@ -495,9 +524,10 @@ void enableDeviceVkExtImageCompressionControl(Instance& instance,
 }
 
 /** See Vulkan API for documentation. */
-PFN_vkVoidFunction layer_vkGetInstanceProcAddr_default(VkInstance instance, const char* pName)
+template <>
+PFN_vkVoidFunction layer_vkGetInstanceProcAddr<default_tag>(VkInstance instance, const char* pName)
 {
-    auto [isGlobal, layerFunction] = getInstanceLayerFunction(pName);
+    auto [isGlobal, layerFunction, hasSpecialization] = getInstanceLayerFunction(pName);
 
     // Global functions must be exposed and do not require the caller to pass
     // a valid instance pointer, although it is required to be nullptr in
@@ -506,6 +536,20 @@ PFN_vkVoidFunction layer_vkGetInstanceProcAddr_default(VkInstance instance, cons
     {
         return layerFunction;
     }
+
+    // Function is not exported because layer doesn't implement it at all
+    bool exportLayerFunction { layerFunction != nullptr };
+
+    // Function is not exported because layer doesn't specialize a user_tag version
+    if constexpr(CONFIG_OPTIMIZE_DISPATCH)
+    {
+        if (!isFunctionAlwaysExported(pName) && !hasSpecialization)
+        {
+            exportLayerFunction = false;
+        }
+    }
+
+    LAYER_LOG("Export: %s = %u", pName, hasSpecialization);
 
     // For other functions, only expose functions that the driver exposes to
     // avoid changing queryable interface behavior seen by the application
@@ -519,7 +563,7 @@ PFN_vkVoidFunction layer_vkGetInstanceProcAddr_default(VkInstance instance, cons
         PFN_vkVoidFunction driverFunction = layer->nlayerGetProcAddress(instance, pName);
 
         // If driver exposes it and the layer has one, use the layer function
-        if (driverFunction && layerFunction)
+        if (driverFunction && exportLayerFunction)
         {
             return layerFunction;
         }
@@ -532,7 +576,8 @@ PFN_vkVoidFunction layer_vkGetInstanceProcAddr_default(VkInstance instance, cons
 }
 
 /** See Vulkan API for documentation. */
-PFN_vkVoidFunction layer_vkGetDeviceProcAddr_default(VkDevice device, const char* pName)
+template <>
+PFN_vkVoidFunction layer_vkGetDeviceProcAddr<default_tag>(VkDevice device, const char* pName)
 {
     // Hold the lock to access layer-wide global store
     std::unique_lock<std::mutex> lock {g_vulkanLock};
@@ -542,10 +587,24 @@ PFN_vkVoidFunction layer_vkGetDeviceProcAddr_default(VkDevice device, const char
     // Only expose functions that the driver exposes to avoid changing
     // queryable interface behavior seen by the application
     auto driverFunction = layer->driver.vkGetDeviceProcAddr(device, pName);
-    auto layerFunction = getDeviceLayerFunction(pName);
+    auto [layerFunction, hasSpecialization] = getDeviceLayerFunction(pName);
+
+    // Function is not exported because layer doesn't implement it at all
+    bool exportLayerFunction { layerFunction != nullptr };
+
+    // Function is not exported because layer doesn't specialize a user_tag version
+    if constexpr(CONFIG_OPTIMIZE_DISPATCH)
+    {
+        if (!isFunctionAlwaysExported(pName) && !hasSpecialization)
+        {
+            exportLayerFunction = false;
+        }
+    }
+
+    LAYER_LOG("Export: %s = %u", pName, hasSpecialization);
 
     // If driver exposes it and the layer has one, use the layer function
-    if (driverFunction && layerFunction)
+    if (driverFunction && exportLayerFunction)
     {
         return layerFunction;
     }
@@ -555,9 +614,10 @@ PFN_vkVoidFunction layer_vkGetDeviceProcAddr_default(VkDevice device, const char
 }
 
 /** See Vulkan API for documentation. */
-VkResult layer_vkEnumerateInstanceExtensionProperties_default(const char* pLayerName,
-                                                              uint32_t* pPropertyCount,
-                                                              VkExtensionProperties* pProperties)
+template <>
+VkResult layer_vkEnumerateInstanceExtensionProperties<default_tag>(const char* pLayerName,
+                                                                   uint32_t* pPropertyCount,
+                                                                   VkExtensionProperties* pProperties)
 {
     LAYER_TRACE(__func__);
 
@@ -573,10 +633,11 @@ VkResult layer_vkEnumerateInstanceExtensionProperties_default(const char* pLayer
 }
 
 /** See Vulkan API for documentation. */
-VkResult layer_vkEnumerateDeviceExtensionProperties_default(VkPhysicalDevice gpu,
-                                                            const char* pLayerName,
-                                                            uint32_t* pPropertyCount,
-                                                            VkExtensionProperties* pProperties)
+template <>
+VkResult layer_vkEnumerateDeviceExtensionProperties<default_tag>(VkPhysicalDevice gpu,
+                                                                 const char* pLayerName,
+                                                                 uint32_t* pPropertyCount,
+                                                                 VkExtensionProperties* pProperties)
 {
     LAYER_TRACE(__func__);
 
@@ -608,7 +669,8 @@ VkResult layer_vkEnumerateDeviceExtensionProperties_default(VkPhysicalDevice gpu
 }
 
 /** See Vulkan API for documentation. */
-VkResult layer_vkEnumerateInstanceLayerProperties_default(uint32_t* pPropertyCount, VkLayerProperties* pProperties)
+template <>
+VkResult layer_vkEnumerateInstanceLayerProperties<default_tag>(uint32_t* pPropertyCount, VkLayerProperties* pProperties)
 {
     LAYER_TRACE(__func__);
 
@@ -630,9 +692,10 @@ VkResult layer_vkEnumerateInstanceLayerProperties_default(uint32_t* pPropertyCou
 }
 
 /** See Vulkan API for documentation. */
-VkResult layer_vkEnumerateDeviceLayerProperties_default(VkPhysicalDevice gpu,
-                                                        uint32_t* pPropertyCount,
-                                                        VkLayerProperties* pProperties)
+template <>
+VkResult layer_vkEnumerateDeviceLayerProperties<default_tag>(VkPhysicalDevice gpu,
+                                                             uint32_t* pPropertyCount,
+                                                             VkLayerProperties* pProperties)
 {
     LAYER_TRACE(__func__);
 
@@ -656,9 +719,10 @@ VkResult layer_vkEnumerateDeviceLayerProperties_default(VkPhysicalDevice gpu,
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateInstance_default(const VkInstanceCreateInfo* pCreateInfo,
-                                                              const VkAllocationCallbacks* pAllocator,
-                                                              VkInstance* pInstance)
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateInstance<default_tag>(const VkInstanceCreateInfo* pCreateInfo,
+                                                                   const VkAllocationCallbacks* pAllocator,
+                                                                   VkInstance* pInstance)
 {
     LAYER_TRACE(__func__);
 
@@ -743,7 +807,9 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateInstance_default(const VkInstanceCr
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroyInstance_default(VkInstance instance, const VkAllocationCallbacks* pAllocator)
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyInstance<default_tag>(VkInstance instance,
+                                                                const VkAllocationCallbacks* pAllocator)
 {
     LAYER_TRACE(__func__);
 
@@ -759,10 +825,11 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyInstance_default(VkInstance instance, 
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDevice_default(VkPhysicalDevice physicalDevice,
-                                                            const VkDeviceCreateInfo* pCreateInfo,
-                                                            const VkAllocationCallbacks* pAllocator,
-                                                            VkDevice* pDevice)
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDevice<default_tag>(VkPhysicalDevice physicalDevice,
+                                                                 const VkDeviceCreateInfo* pCreateInfo,
+                                                                 const VkAllocationCallbacks* pAllocator,
+                                                                 VkDevice* pDevice)
 {
     LAYER_TRACE(__func__);
 
@@ -829,7 +896,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDevice_default(VkPhysicalDevice phy
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroyDevice_default(VkDevice device, const VkAllocationCallbacks* pAllocator)
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyDevice<default_tag>(VkDevice device, const VkAllocationCallbacks* pAllocator)
 {
     LAYER_TRACE(__func__);
 
@@ -845,10 +913,10 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyDevice_default(VkDevice device, const 
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL
-    layer_vkGetDeviceImageMemoryRequirementsKHR_default(VkDevice device,
-                                                        const VkDeviceImageMemoryRequirements* pInfo,
-                                                        VkMemoryRequirements2* pMemoryRequirements)
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceImageMemoryRequirementsKHR<default_tag>(VkDevice device,
+                                                                                    const VkDeviceImageMemoryRequirements* pInfo,
+                                                                                    VkMemoryRequirements2* pMemoryRequirements)
 {
     LAYER_TRACE(__func__);
 

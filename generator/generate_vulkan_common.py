@@ -508,11 +508,27 @@ def generate_instance_decls(
         if plat_define:
             lines.append(f'#if defined({plat_define})\n')
 
-        # Declare the default implementation
+        # Explicitly delete the generic primary template
         lines.append('/* See Vulkan API for documentation. */')
-        lines.append('/* Default common code pass-through implementation. */')
-        decl = f'VKAPI_ATTR {command.rtype} ' \
-               f'VKAPI_CALL layer_{command.name}_default('
+        lines.append('/* Delete the generic match-all */')
+        decl = f'template <typename T>\n' \
+               f'VKAPI_ATTR {command.rtype} ' \
+               f'VKAPI_CALL layer_{command.name}('
+        lines.append(decl)
+
+        for i, (ptype, pname, array) in enumerate(command.params):
+            ending = ','
+            if i == len(command.params) - 1:
+                ending = ') = delete;'
+            parl = f'    {ptype} {pname}{array}{ending}'
+            lines.append(parl)
+        lines.append('')
+
+        # Define the default_tag template
+        lines.append('/* Default common code implementation. */')
+        decl = f'template <>\n' \
+               f'VKAPI_ATTR {command.rtype} ' \
+               f'VKAPI_CALL layer_{command.name}<default_tag>('
         lines.append(decl)
 
         for i, (ptype, pname, array) in enumerate(command.params):
@@ -523,25 +539,81 @@ def generate_instance_decls(
             lines.append(parl)
         lines.append('')
 
-        # Define the default tag dispatch handler
-        lines.append('/* Match-all template to use default implementation. */')
-        decl = 'template <typename T>'
-        lines.append(decl)
-        decl = f'VKAPI_ATTR {command.rtype} VKAPI_CALL layer_{command.name}('
-        lines.append(decl)
+        if plat_define:
+            lines.append('#endif\n')
 
+        file.write('\n'.join(lines))
+        file.write('\n')
+
+    file.write('// clang-format on\n')
+
+
+def generate_instance_queries(
+        file: TextIO, mapping: VersionInfo, commands: list[Command]) -> None:
+    '''
+    Generate the instance intercept declarations header.
+
+    Args:
+        file: The file to write.
+        mapping: The version mapping information for the commands.
+        commands: The list of commands read from the spec.
+    '''
+    # Write the copyright header to the file
+    write_copyright_header(file)
+
+    file.write('#pragma once\n')
+    file.write('\n')
+
+    file.write('// clang-format off\n')
+    file.write('\n')
+
+    file.write('#include <vulkan/vulkan.h>\n')
+    file.write('\n')
+
+    # Create a listing of API versions and API extensions
+    for command in commands:
+        if command.dispatch_type != 'instance':
+            continue
+
+        lines = []
+        assert command.name
+
+        plat_define = mapping.get_platform_define(command.name)
+        if plat_define:
+            lines.append(f'#if defined({plat_define})\n')
+
+        # Define the concept to test if user_tag specialization exists
+        plist = []
+        nlist = []
         for i, (ptype, pname, array) in enumerate(command.params):
-            ending = ','
-            if i == len(command.params) - 1:
-                ending = ''
-            parl = f'    {ptype} {pname}{array}{ending}'
-            lines.append(parl)
+            plist.append(f'{ptype} {pname}{array}')
+            nlist.append(pname)
+        plistStr = ', '.join(plist)
+        nlistStr = ', '.join(nlist)
 
-        parmfwd = ', '.join([x[1] for x in command.params])
-        retfwd = 'return ' if command.rtype != 'void' else ''
-        lines.append(') {')
-        lines.append(f'    {retfwd}layer_{command.name}_default({parmfwd});')
-        lines.append('}\n')
+        lines.append('/* Test for user_tag availability. */')
+        decl = f'template <typename T>\n' \
+               f'concept hasLayerPtr_{command.name} = ' \
+               f'requires(\n    {plistStr}\n) {{\n    layer_{command.name}<T>({nlistStr});\n}};'
+        lines.append(decl)
+        lines.append('')
+
+        # Define the function pointer resolution
+        lines.append('/* Function pointer resolution. */')
+        decl = f'constexpr PFN_{command.name} getLayerPtr_{command.name}()\n' \
+               f'{{\n' \
+               f'    return [] <typename T>\n' \
+               f'    {{\n' \
+               f'        if constexpr(hasLayerPtr_{command.name}<T>)\n' \
+               f'        {{\n' \
+               f'            return layer_{command.name}<T>;\n' \
+               f'        }}\n' \
+               f'\n' \
+               f'        return layer_{command.name}<default_tag>;\n' \
+               f'    }}.operator()<user_tag>();\n' \
+               f'}}'
+        lines.append(decl)
+        lines.append('')
 
         if plat_define:
             lines.append('#endif\n')
@@ -582,8 +654,9 @@ def generate_instance_defs(
             lines.append(f'#if defined({plat_define})\n')
 
         lines.append('/* See Vulkan API for documentation. */')
-        decl = f'VKAPI_ATTR {command.rtype} ' \
-               f'VKAPI_CALL layer_{command.name}_default('
+        decl = f'template <>\n' \
+               f'VKAPI_ATTR {command.rtype} ' \
+               f'VKAPI_CALL layer_{command.name}<default_tag>('
         lines.append(decl)
 
         for i, (ptype, pname, array) in enumerate(command.params):
@@ -691,7 +764,8 @@ def generate_device_decls(
     file.write('// clang-format off\n')
     file.write('\n')
 
-    file.write('#include <vulkan/vulkan.h>\n')
+    file.write('#include <vulkan/vulkan.h>\n\n')
+    file.write('#include "framework/utils.hpp"\n')
     file.write('\n')
 
     # Create a listing of API versions and API extensions
@@ -706,10 +780,27 @@ def generate_device_decls(
         if plat_define:
             lines.append(f'#if defined({plat_define})\n')
 
+        # Explicitly delete the generic primary template
         lines.append('/* See Vulkan API for documentation. */')
-        lines.append('/* Default common code pass-through implementation. */')
-        decl = f'VKAPI_ATTR {command.rtype} ' \
-               f'VKAPI_CALL layer_{command.name}_default('
+        lines.append('/* Delete the generic match-all */')
+        decl = f'template <typename T>\n' \
+               f'VKAPI_ATTR {command.rtype} ' \
+               f'VKAPI_CALL layer_{command.name}('
+        lines.append(decl)
+
+        for i, (ptype, pname, array) in enumerate(command.params):
+            ending = ','
+            if i == len(command.params) - 1:
+                ending = ') = delete;'
+            parl = f'    {ptype} {pname}{array}{ending}'
+            lines.append(parl)
+        lines.append('')
+
+        # Define the default_tag template
+        lines.append('/* Default common code implementation. */')
+        decl = f'template <>\n' \
+               f'VKAPI_ATTR {command.rtype} ' \
+               f'VKAPI_CALL layer_{command.name}<default_tag>('
         lines.append(decl)
 
         for i, (ptype, pname, array) in enumerate(command.params):
@@ -719,26 +810,6 @@ def generate_device_decls(
             parl = f'    {ptype} {pname}{array}{ending}'
             lines.append(parl)
         lines.append('')
-
-        # Define the default tag dispatch handler
-        lines.append('/* Match-all template to use default implementation. */')
-        decl = 'template <typename T>'
-        lines.append(decl)
-        decl = f'VKAPI_ATTR {command.rtype} VKAPI_CALL layer_{command.name}('
-        lines.append(decl)
-
-        for i, (ptype, pname, array) in enumerate(command.params):
-            ending = ','
-            if i == len(command.params) - 1:
-                ending = ''
-            parl = f'    {ptype} {pname}{array}{ending}'
-            lines.append(parl)
-
-        parmfwd = ', '.join([x[1] for x in command.params])
-        retfwd = 'return ' if command.rtype != 'void' else ''
-        lines.append(') {')
-        lines.append(f'    {retfwd}layer_{command.name}_default({parmfwd});')
-        lines.append('}\n')
 
         if plat_define:
             lines.append('#endif\n')
@@ -779,9 +850,9 @@ def generate_device_defs(
             lines.append(f'#if defined({plat_define})\n')
 
         lines.append('/* See Vulkan API for documentation. */')
-
-        decl = f'VKAPI_ATTR {command.rtype} ' \
-               f'VKAPI_CALL layer_{command.name}_default('
+        decl = f'template <>\n' \
+               f'VKAPI_ATTR {command.rtype} ' \
+               f'VKAPI_CALL layer_{command.name}<default_tag>('
         lines.append(decl)
 
         for i, (ptype, pname, array) in enumerate(command.params):
@@ -813,6 +884,84 @@ def generate_device_defs(
 
     data = data.replace('{FUNCTION_DEFS}', '\n'.join(lines))
     file.write(data)
+
+
+def generate_device_queries(
+        file: TextIO, mapping: VersionInfo, commands: list[Command]) -> None:
+    '''
+    Generate the device intercept queries header.
+
+    Args:
+        file: The file to write.
+        mapping: The version mapping information for the commands.
+        commands: The list of commands read from the spec.
+    '''
+
+    # Write the copyright header to the file
+    write_copyright_header(file)
+
+    file.write('#pragma once\n')
+    file.write('\n')
+
+    file.write('// clang-format off\n')
+    file.write('\n')
+
+    file.write('#include <vulkan/vulkan.h>\n\n')
+    file.write('#include "framework/utils.hpp"\n')
+    file.write('\n')
+
+    # Create a listing of API versions and API extensions
+    for command in commands:
+        if command.dispatch_type != 'device':
+            continue
+
+        assert command.name
+
+        lines = []
+        plat_define = mapping.get_platform_define(command.name)
+        if plat_define:
+            lines.append(f'#if defined({plat_define})\n')
+
+        # Define the concept to test if user_tag specialization exists
+        plist = []
+        nlist = []
+        for i, (ptype, pname, array) in enumerate(command.params):
+            plist.append(f'{ptype} {pname}{array}')
+            nlist.append(pname)
+        plistStr = ', '.join(plist)
+        nlistStr = ', '.join(nlist)
+
+        lines.append('/* Test for user_tag availability. */')
+        decl = f'template <typename T>\n' \
+               f'concept hasLayerPtr_{command.name} = ' \
+               f'requires(\n    {plistStr}\n) {{\n    layer_{command.name}<T>({nlistStr});\n}};'
+        lines.append(decl)
+        lines.append('')
+
+        # Define the function pointer resolution
+        lines.append('/* Function pointer resolution. */')
+        decl = f'constexpr PFN_{command.name} getLayerPtr_{command.name}()\n' \
+               f'{{\n' \
+               f'    return [] <typename T>\n' \
+               f'    {{\n' \
+               f'        if constexpr(hasLayerPtr_{command.name}<T>)\n' \
+               f'        {{\n' \
+               f'            return layer_{command.name}<T>;\n' \
+               f'        }}\n' \
+               f'\n' \
+               f'        return layer_{command.name}<default_tag>;\n' \
+               f'    }}.operator()<user_tag>();\n' \
+               f'}}'
+        lines.append(decl)
+        lines.append('')
+
+        if plat_define:
+            lines.append('#endif\n')
+
+        file.write('\n'.join(lines))
+        file.write('\n')
+
+    file.write('// clang-format on\n')
 
 
 def main() -> int:
@@ -867,6 +1016,10 @@ def main() -> int:
     with open(outfile, 'w', encoding='utf-8', newline='\n') as handle:
         generate_instance_decls(handle, mapping, commands)
 
+    outfile = os.path.join(outdir, 'instance_functions_query.hpp')
+    with open(outfile, 'w', encoding='utf-8', newline='\n') as handle:
+        generate_instance_queries(handle, mapping, commands)
+
     outfile = os.path.join(outdir, 'instance_functions.cpp')
     with open(outfile, 'w', encoding='utf-8', newline='\n') as handle:
         generate_instance_defs(handle, mapping, commands)
@@ -878,6 +1031,10 @@ def main() -> int:
     outfile = os.path.join(outdir, 'device_functions.hpp')
     with open(outfile, 'w', encoding='utf-8', newline='\n') as handle:
         generate_device_decls(handle, mapping, commands)
+
+    outfile = os.path.join(outdir, 'device_functions_query.hpp')
+    with open(outfile, 'w', encoding='utf-8', newline='\n') as handle:
+        generate_device_queries(handle, mapping, commands)
 
     outfile = os.path.join(outdir, 'device_functions.cpp')
     with open(outfile, 'w', encoding='utf-8', newline='\n') as handle:

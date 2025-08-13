@@ -61,11 +61,22 @@
 using APIVersion = std::pair<uint32_t, uint32_t>;
 
 /**
- * @brief Tag type used for template function dispatch;
+ * @brief Tag type used for template function dispatch.
+ *
+ * Layer-specified intercepts implemented for a specific layer must use
+ * user_tag type for their specializations to ensure that their version of
+ * the function is selected.
  */
-struct user_tag
-{
-};
+struct user_tag {};
+
+/**
+ * @brief Tag type used for template function dispatch.
+ *
+ * Layer-specified intercepts implemented for a specific layer must NOT use
+ * default_tag type for their specializations. This is a dummy tag used in the
+ * dispatch logic that will not match a layer-specific specialization.
+ */
+struct default_tag {};
 
 /**
  * @brief Convert a dispatchable API handle to the underlying dispatch key.

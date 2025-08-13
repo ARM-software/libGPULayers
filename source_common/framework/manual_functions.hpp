@@ -44,6 +44,7 @@
 #include <mutex>
 #include <string>
 #include <thread>
+#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -66,17 +67,18 @@ VkLayerInstanceCreateInfo* getChainInfo(const VkInstanceCreateInfo* pCreateInfo)
 VkLayerDeviceCreateInfo* getChainInfo(const VkDeviceCreateInfo* pCreateInfo);
 
 /**
- * @brief Fetch the function for a given static instance entrypoint name.
+ * @brief Is this function always exported by the layer?
  *
- * This function is used for finding the fixed entrypoints that must exist and
- * that can return a valid function pointer without needing a created instance.
+ * When optimizing entrypoints the layer will not use the layer function
+ * if no user_tag variant exists, unless the function is marked as always
+ * exported.
  *
  * @param name   The Vulkan function name.
  *
- * @return The layer function pointer, or \c nullptr if the layer doesn't
- *         intercept the function.
+ * @return @c true if default implementation is always exported, @c false if
+ *         only @c <user_tag> specializations are exported .
  */
-PFN_vkVoidFunction getFixedInstanceLayerFunction(const char* name);
+bool isFunctionAlwaysExported(const char* name);
 
 /**
  * @brief Fetch the function for a given dynamic instance entrypoint name.
@@ -86,11 +88,12 @@ PFN_vkVoidFunction getFixedInstanceLayerFunction(const char* name);
  *
  * @param name   The Vulkan function name.
  *
- * @return Boolean indicating if this is a globally accessible function, and
- *         the layer function pointer, or \c nullptr if the layer doesn't
- *         intercept the function.
+ * @return Boolean indicating if this is a globally accessible function, the
+ *         active layer function pointer, and whether the layer function was a
+ *         layer specialization. Returns @c nullptr for the function if the
+ *         layer doesn't implement any handler for the function.
  */
-std::pair<bool, PFN_vkVoidFunction> getInstanceLayerFunction(const char* name);
+std::tuple<bool, PFN_vkVoidFunction, bool> getInstanceLayerFunction(const char* name);
 
 /**
  * @brief Fetch the function for a given dynamic instance entrypoint name.
@@ -100,10 +103,12 @@ std::pair<bool, PFN_vkVoidFunction> getInstanceLayerFunction(const char* name);
  *
  * @param name   The Vulkan function name.
  *
- * @return The layer function pointer, or \c nullptr if the layer doesn't
- *         intercept the function.
+ * @return The active the layer function pointer, and whether the layer
+ *         function was a layer specialization. Returns @c nullptr for the
+ *         function pointers if the layer doesn't implement any handler for the
+ *         function.
  */
-PFN_vkVoidFunction getDeviceLayerFunction(const char* name);
+std::pair<PFN_vkVoidFunction, bool> getDeviceLayerFunction(const char* name);
 
 /**
  * @brief Fetch the maximum supported instance API version.
