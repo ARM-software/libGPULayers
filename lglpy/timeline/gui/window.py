@@ -366,7 +366,6 @@ class Window:
             try:
                 trace_data = RawTrace(trace_file, metadata_file)
                 self.trace_data = GPUTrace(trace_data)
-
                 self.loaded_file_path = trace_file
             except Exception:
                 self.status.log('Open cancelled (failed to load)')

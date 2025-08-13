@@ -39,6 +39,7 @@ from ...drawable.drawable_trace import DrawableTrace
 from ...drawable.drawable_channel import DrawableChannel
 from ...drawable.world_drawable import WorldDrawableRect
 from ...drawable.style import Style, StyleSet, StyleSetLibrary
+from ...data.processed_trace import GPUWorkload
 
 
 class FakeMouseDrag:
