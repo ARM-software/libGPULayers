@@ -27,9 +27,14 @@ struct InstanceInterceptTableEntry
      * @brief The layer function pointer.
      */
     PFN_vkVoidFunction function;
+
+    /**
+     * @brief The layer default function pointer.
+     */
+    PFN_vkVoidFunction defaultFunction;
 };
 
-#define ENTRY(fnc) { STR(fnc), reinterpret_cast<PFN_vkVoidFunction>(layer_##fnc<user_tag>) }
+#define ENTRY(fnc) { STR(fnc), reinterpret_cast<PFN_vkVoidFunction>(layer_##fnc<user_tag>), reinterpret_cast<PFN_vkVoidFunction>(layer_##fnc<default_tag>) }
 
 /**
  * @brief The instance dispatch table used to call the driver.
