@@ -1,5 +1,5 @@
-name: Build and test
-run-name: Build and test PR${{ github.event.number }}
+name: Native test
+run-name: Native test PR${{ github.event.number }}
 
 on:
   workflow_dispatch:
@@ -8,42 +8,15 @@ on:
       - main
     tags:
       - '*'
+    paths-ignore:
+      - 'lglpy/**'
   pull_request:
     branches:
       - main
+    paths-ignore:
+      - 'lglpy/**'
 
 jobs:
-  python-test:
-    name: Python tests
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Git checkout
-        uses: actions/checkout@v4
-        with:
-          submodules: 'true'
-
-      - name: Get Python modules
-        run: |
-          python3 -m pip install --upgrade pip
-          python3 -m pip install pycodestyle mypy
-
-      - name: Check code style
-        run: |
-          python3 -m pycodestyle --config .pycodestyle.ini ./*.py
-          python3 -m pycodestyle --config .pycodestyle.ini ./lglpy
-          python3 -m pycodestyle --config .pycodestyle.ini ./generator
-
-      - name: Check typing
-        run: |
-          python3 -m mypy ./*.py
-          python3 -m mypy ./lglpy
-          python3 -m mypy ./generator
-
-      - name: Run unit tests
-        # Note: Only run tests that do not require a connected device
-        run: |
-          python3 -m lglpy.ui.test
-
   build-ubuntu-x64-clang:
     name: Ubuntu x64 Clang
     runs-on: ubuntu-22.04
