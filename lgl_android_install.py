@@ -612,12 +612,12 @@ def configure_server(conn: ADBConnect,
     instance = server.CommsServer(0)
 
     if timeline_file:
-        serviceTL = service_gpu_timeline.GPUTimelineService(timeline_file)
-        instance.register_endpoint(serviceTL)
+        service_tl = service_gpu_timeline.GPUTimelineService(timeline_file)
+        instance.register_endpoint(service_tl)
 
     if profile_dir:
-        serviceProf = service_gpu_profile.GPUProfileService(profile_dir)
-        instance.register_endpoint(serviceProf)
+        service_prof = service_gpu_profile.GPUProfileService(profile_dir)
+        instance.register_endpoint(service_prof)
 
     # Start it running
     thread = threading.Thread(target=instance.run, daemon=True)

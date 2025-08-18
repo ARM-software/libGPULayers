@@ -13,6 +13,10 @@
     #include "layer_instance_functions.hpp"
 #endif
 
+// These must be after the layer_*_functions.hpp includes
+#include "framework/device_functions_query.hpp"
+#include "framework/instance_functions_query.hpp"
+
 /**
  * @brief Interception table lookup entry.
  */
@@ -27,9 +31,14 @@ struct InstanceInterceptTableEntry
      * @brief The layer function pointer.
      */
     PFN_vkVoidFunction function;
+
+    /**
+     * @brief Did the layer provide a specialization?
+     */
+    bool hasLayerSpecialization;
 };
 
-#define ENTRY(fnc) { STR(fnc), reinterpret_cast<PFN_vkVoidFunction>(layer_##fnc<user_tag>) }
+#define ENTRY(fnc) { STR(fnc), reinterpret_cast<PFN_vkVoidFunction>(getLayerPtr_##fnc()), hasLayerPtr_##fnc<user_tag> }
 
 /**
  * @brief The instance dispatch table used to call the driver.

@@ -37,7 +37,8 @@
 extern std::mutex g_vulkanLock;
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkAcquireNextImage2KHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkAcquireNextImage2KHR<default_tag>(
     VkDevice device,
     const VkAcquireNextImageInfoKHR* pAcquireInfo,
     uint32_t* pImageIndex
@@ -54,7 +55,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkAcquireNextImage2KHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkAcquireNextImageKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkAcquireNextImageKHR<default_tag>(
     VkDevice device,
     VkSwapchainKHR swapchain,
     uint64_t timeout,
@@ -74,7 +76,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkAcquireNextImageKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkAcquireProfilingLockKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkAcquireProfilingLockKHR<default_tag>(
     VkDevice device,
     const VkAcquireProfilingLockInfoKHR* pInfo
 ) {
@@ -90,7 +93,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkAcquireProfilingLockKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkAllocateCommandBuffers_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkAllocateCommandBuffers<default_tag>(
     VkDevice device,
     const VkCommandBufferAllocateInfo* pAllocateInfo,
     VkCommandBuffer* pCommandBuffers
@@ -107,7 +111,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkAllocateCommandBuffers_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkAllocateDescriptorSets_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkAllocateDescriptorSets<default_tag>(
     VkDevice device,
     const VkDescriptorSetAllocateInfo* pAllocateInfo,
     VkDescriptorSet* pDescriptorSets
@@ -124,7 +129,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkAllocateDescriptorSets_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkAllocateMemory_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkAllocateMemory<default_tag>(
     VkDevice device,
     const VkMemoryAllocateInfo* pAllocateInfo,
     const VkAllocationCallbacks* pAllocator,
@@ -142,7 +148,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkAllocateMemory_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkBeginCommandBuffer_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkBeginCommandBuffer<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkCommandBufferBeginInfo* pBeginInfo
 ) {
@@ -158,7 +165,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkBeginCommandBuffer_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkBindBufferMemory_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkBindBufferMemory<default_tag>(
     VkDevice device,
     VkBuffer buffer,
     VkDeviceMemory memory,
@@ -176,7 +184,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkBindBufferMemory_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkBindBufferMemory2_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkBindBufferMemory2<default_tag>(
     VkDevice device,
     uint32_t bindInfoCount,
     const VkBindBufferMemoryInfo* pBindInfos
@@ -193,7 +202,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkBindBufferMemory2_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkBindBufferMemory2KHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkBindBufferMemory2KHR<default_tag>(
     VkDevice device,
     uint32_t bindInfoCount,
     const VkBindBufferMemoryInfo* pBindInfos
@@ -210,7 +220,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkBindBufferMemory2KHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkBindImageMemory_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkBindImageMemory<default_tag>(
     VkDevice device,
     VkImage image,
     VkDeviceMemory memory,
@@ -228,7 +239,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkBindImageMemory_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkBindImageMemory2_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkBindImageMemory2<default_tag>(
     VkDevice device,
     uint32_t bindInfoCount,
     const VkBindImageMemoryInfo* pBindInfos
@@ -245,7 +257,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkBindImageMemory2_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkBindImageMemory2KHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkBindImageMemory2KHR<default_tag>(
     VkDevice device,
     uint32_t bindInfoCount,
     const VkBindImageMemoryInfo* pBindInfos
@@ -262,7 +275,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkBindImageMemory2KHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkBindTensorMemoryARM_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkBindTensorMemoryARM<default_tag>(
     VkDevice device,
     uint32_t bindInfoCount,
     const VkBindTensorMemoryInfoARM* pBindInfos
@@ -279,7 +293,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkBindTensorMemoryARM_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkBuildAccelerationStructuresKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkBuildAccelerationStructuresKHR<default_tag>(
     VkDevice device,
     VkDeferredOperationKHR deferredOperation,
     uint32_t infoCount,
@@ -298,7 +313,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkBuildAccelerationStructuresKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkBuildMicromapsEXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkBuildMicromapsEXT<default_tag>(
     VkDevice device,
     VkDeferredOperationKHR deferredOperation,
     uint32_t infoCount,
@@ -316,7 +332,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkBuildMicromapsEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginConditionalRenderingEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginConditionalRenderingEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkConditionalRenderingBeginInfoEXT* pConditionalRenderingBegin
 ) {
@@ -332,7 +349,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginConditionalRenderingEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginDebugUtilsLabelEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginDebugUtilsLabelEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkDebugUtilsLabelEXT* pLabelInfo
 ) {
@@ -348,7 +366,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginDebugUtilsLabelEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginQuery_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginQuery<default_tag>(
     VkCommandBuffer commandBuffer,
     VkQueryPool queryPool,
     uint32_t query,
@@ -366,7 +385,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginQuery_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginQueryIndexedEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginQueryIndexedEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     VkQueryPool queryPool,
     uint32_t query,
@@ -385,7 +405,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginQueryIndexedEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkRenderPassBeginInfo* pRenderPassBegin,
     VkSubpassContents contents
@@ -402,7 +423,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass2_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass2<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkRenderPassBeginInfo* pRenderPassBegin,
     const VkSubpassBeginInfo* pSubpassBeginInfo
@@ -419,7 +441,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass2_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass2KHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass2KHR<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkRenderPassBeginInfo* pRenderPassBegin,
     const VkSubpassBeginInfo* pSubpassBeginInfo
@@ -436,7 +459,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass2KHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRendering_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRendering<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkRenderingInfo* pRenderingInfo
 ) {
@@ -452,7 +476,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRendering_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderingKHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderingKHR<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkRenderingInfo* pRenderingInfo
 ) {
@@ -468,7 +493,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderingKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginTransformFeedbackEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginTransformFeedbackEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t firstCounterBuffer,
     uint32_t counterBufferCount,
@@ -487,7 +513,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginTransformFeedbackEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindDescriptorBufferEmbeddedSamplers2EXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindDescriptorBufferEmbeddedSamplers2EXT<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* pBindDescriptorBufferEmbeddedSamplersInfo
 ) {
@@ -503,7 +530,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindDescriptorBufferEmbeddedSamplers2EXT_d
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindDescriptorBufferEmbeddedSamplersEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindDescriptorBufferEmbeddedSamplersEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     VkPipelineBindPoint pipelineBindPoint,
     VkPipelineLayout layout,
@@ -521,7 +549,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindDescriptorBufferEmbeddedSamplersEXT_de
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindDescriptorBuffersEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindDescriptorBuffersEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t bufferCount,
     const VkDescriptorBufferBindingInfoEXT* pBindingInfos
@@ -538,7 +567,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindDescriptorBuffersEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindDescriptorSets_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindDescriptorSets<default_tag>(
     VkCommandBuffer commandBuffer,
     VkPipelineBindPoint pipelineBindPoint,
     VkPipelineLayout layout,
@@ -560,7 +590,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindDescriptorSets_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindDescriptorSets2_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindDescriptorSets2<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkBindDescriptorSetsInfo* pBindDescriptorSetsInfo
 ) {
@@ -576,7 +607,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindDescriptorSets2_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindDescriptorSets2KHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindDescriptorSets2KHR<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkBindDescriptorSetsInfo* pBindDescriptorSetsInfo
 ) {
@@ -592,7 +624,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindDescriptorSets2KHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindIndexBuffer_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindIndexBuffer<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBuffer buffer,
     VkDeviceSize offset,
@@ -610,7 +643,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindIndexBuffer_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindIndexBuffer2_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindIndexBuffer2<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBuffer buffer,
     VkDeviceSize offset,
@@ -629,7 +663,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindIndexBuffer2_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindIndexBuffer2KHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindIndexBuffer2KHR<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBuffer buffer,
     VkDeviceSize offset,
@@ -648,7 +683,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindIndexBuffer2KHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindPipeline_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindPipeline<default_tag>(
     VkCommandBuffer commandBuffer,
     VkPipelineBindPoint pipelineBindPoint,
     VkPipeline pipeline
@@ -665,7 +701,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindPipeline_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindShadersEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindShadersEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t stageCount,
     const VkShaderStageFlagBits* pStages,
@@ -683,7 +720,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindShadersEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindTransformFeedbackBuffersEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindTransformFeedbackBuffersEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t firstBinding,
     uint32_t bindingCount,
@@ -703,7 +741,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindTransformFeedbackBuffersEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindVertexBuffers_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindVertexBuffers<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t firstBinding,
     uint32_t bindingCount,
@@ -722,7 +761,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindVertexBuffers_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindVertexBuffers2_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindVertexBuffers2<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t firstBinding,
     uint32_t bindingCount,
@@ -743,7 +783,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindVertexBuffers2_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindVertexBuffers2EXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindVertexBuffers2EXT<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t firstBinding,
     uint32_t bindingCount,
@@ -764,7 +805,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindVertexBuffers2EXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBlitImage_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBlitImage<default_tag>(
     VkCommandBuffer commandBuffer,
     VkImage srcImage,
     VkImageLayout srcImageLayout,
@@ -786,7 +828,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBlitImage_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBlitImage2_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBlitImage2<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkBlitImageInfo2* pBlitImageInfo
 ) {
@@ -802,7 +845,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBlitImage2_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBlitImage2KHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBlitImage2KHR<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkBlitImageInfo2* pBlitImageInfo
 ) {
@@ -818,7 +862,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBlitImage2KHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBuildAccelerationStructuresIndirectKHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBuildAccelerationStructuresIndirectKHR<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t infoCount,
     const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,
@@ -838,7 +883,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBuildAccelerationStructuresIndirectKHR_def
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBuildAccelerationStructuresKHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBuildAccelerationStructuresKHR<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t infoCount,
     const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,
@@ -856,7 +902,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBuildAccelerationStructuresKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBuildMicromapsEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBuildMicromapsEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t infoCount,
     const VkMicromapBuildInfoEXT* pInfos
@@ -873,7 +920,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBuildMicromapsEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdClearAttachments_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdClearAttachments<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t attachmentCount,
     const VkClearAttachment* pAttachments,
@@ -892,7 +940,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdClearAttachments_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdClearColorImage_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdClearColorImage<default_tag>(
     VkCommandBuffer commandBuffer,
     VkImage image,
     VkImageLayout imageLayout,
@@ -912,7 +961,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdClearColorImage_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdClearDepthStencilImage_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdClearDepthStencilImage<default_tag>(
     VkCommandBuffer commandBuffer,
     VkImage image,
     VkImageLayout imageLayout,
@@ -932,7 +982,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdClearDepthStencilImage_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyAccelerationStructureKHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyAccelerationStructureKHR<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkCopyAccelerationStructureInfoKHR* pInfo
 ) {
@@ -948,7 +999,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyAccelerationStructureKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyAccelerationStructureToMemoryKHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyAccelerationStructureToMemoryKHR<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkCopyAccelerationStructureToMemoryInfoKHR* pInfo
 ) {
@@ -964,7 +1016,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyAccelerationStructureToMemoryKHR_defau
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBuffer_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBuffer<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBuffer srcBuffer,
     VkBuffer dstBuffer,
@@ -983,7 +1036,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBuffer_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBuffer2_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBuffer2<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkCopyBufferInfo2* pCopyBufferInfo
 ) {
@@ -999,7 +1053,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBuffer2_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBuffer2KHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBuffer2KHR<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkCopyBufferInfo2* pCopyBufferInfo
 ) {
@@ -1015,7 +1070,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBuffer2KHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBufferToImage_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBufferToImage<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBuffer srcBuffer,
     VkImage dstImage,
@@ -1035,7 +1091,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBufferToImage_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBufferToImage2_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBufferToImage2<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkCopyBufferToImageInfo2* pCopyBufferToImageInfo
 ) {
@@ -1051,7 +1108,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBufferToImage2_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBufferToImage2KHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBufferToImage2KHR<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkCopyBufferToImageInfo2* pCopyBufferToImageInfo
 ) {
@@ -1067,7 +1125,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBufferToImage2KHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImage_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImage<default_tag>(
     VkCommandBuffer commandBuffer,
     VkImage srcImage,
     VkImageLayout srcImageLayout,
@@ -1088,7 +1147,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImage_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImage2_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImage2<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkCopyImageInfo2* pCopyImageInfo
 ) {
@@ -1104,7 +1164,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImage2_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImage2KHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImage2KHR<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkCopyImageInfo2* pCopyImageInfo
 ) {
@@ -1120,7 +1181,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImage2KHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImageToBuffer_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImageToBuffer<default_tag>(
     VkCommandBuffer commandBuffer,
     VkImage srcImage,
     VkImageLayout srcImageLayout,
@@ -1140,7 +1202,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImageToBuffer_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImageToBuffer2_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImageToBuffer2<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkCopyImageToBufferInfo2* pCopyImageToBufferInfo
 ) {
@@ -1156,7 +1219,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImageToBuffer2_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImageToBuffer2KHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImageToBuffer2KHR<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkCopyImageToBufferInfo2* pCopyImageToBufferInfo
 ) {
@@ -1172,7 +1236,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImageToBuffer2KHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMemoryToAccelerationStructureKHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMemoryToAccelerationStructureKHR<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkCopyMemoryToAccelerationStructureInfoKHR* pInfo
 ) {
@@ -1188,7 +1253,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMemoryToAccelerationStructureKHR_defau
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMemoryToMicromapEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMemoryToMicromapEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkCopyMemoryToMicromapInfoEXT* pInfo
 ) {
@@ -1204,7 +1270,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMemoryToMicromapEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMicromapEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMicromapEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkCopyMicromapInfoEXT* pInfo
 ) {
@@ -1220,7 +1287,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMicromapEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMicromapToMemoryEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMicromapToMemoryEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkCopyMicromapToMemoryInfoEXT* pInfo
 ) {
@@ -1236,7 +1304,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMicromapToMemoryEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyQueryPoolResults_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyQueryPoolResults<default_tag>(
     VkCommandBuffer commandBuffer,
     VkQueryPool queryPool,
     uint32_t firstQuery,
@@ -1258,7 +1327,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyQueryPoolResults_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyTensorARM_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyTensorARM<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkCopyTensorInfoARM* pCopyTensorInfo
 ) {
@@ -1274,7 +1344,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyTensorARM_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDebugMarkerBeginEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDebugMarkerBeginEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkDebugMarkerMarkerInfoEXT* pMarkerInfo
 ) {
@@ -1290,7 +1361,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDebugMarkerBeginEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDebugMarkerEndEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDebugMarkerEndEXT<default_tag>(
     VkCommandBuffer commandBuffer
 ) {
     LAYER_TRACE(__func__);
@@ -1305,7 +1377,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDebugMarkerEndEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDebugMarkerInsertEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDebugMarkerInsertEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkDebugMarkerMarkerInfoEXT* pMarkerInfo
 ) {
@@ -1321,7 +1394,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDebugMarkerInsertEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatch_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatch<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t groupCountX,
     uint32_t groupCountY,
@@ -1339,7 +1413,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatch_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchBase_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchBase<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t baseGroupX,
     uint32_t baseGroupY,
@@ -1360,7 +1435,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchBase_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchBaseKHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchBaseKHR<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t baseGroupX,
     uint32_t baseGroupY,
@@ -1381,7 +1457,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchBaseKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchIndirect_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchIndirect<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBuffer buffer,
     VkDeviceSize offset
@@ -1398,7 +1475,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchIndirect_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDraw_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDraw<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t vertexCount,
     uint32_t instanceCount,
@@ -1417,7 +1495,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDraw_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndexed_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndexed<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t indexCount,
     uint32_t instanceCount,
@@ -1437,7 +1516,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndexed_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndexedIndirect_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndexedIndirect<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBuffer buffer,
     VkDeviceSize offset,
@@ -1456,7 +1536,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndexedIndirect_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndexedIndirectCount_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndexedIndirectCount<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBuffer buffer,
     VkDeviceSize offset,
@@ -1477,7 +1558,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndexedIndirectCount_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndexedIndirectCountKHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndexedIndirectCountKHR<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBuffer buffer,
     VkDeviceSize offset,
@@ -1498,7 +1580,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndexedIndirectCountKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirect_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirect<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBuffer buffer,
     VkDeviceSize offset,
@@ -1517,7 +1600,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirect_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirectByteCountEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirectByteCountEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t instanceCount,
     uint32_t firstInstance,
@@ -1538,7 +1622,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirectByteCountEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirectCount_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirectCount<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBuffer buffer,
     VkDeviceSize offset,
@@ -1559,7 +1644,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirectCount_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirectCountKHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirectCountKHR<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBuffer buffer,
     VkDeviceSize offset,
@@ -1580,7 +1666,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirectCountKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawMeshTasksEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawMeshTasksEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t groupCountX,
     uint32_t groupCountY,
@@ -1598,7 +1685,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawMeshTasksEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawMeshTasksIndirectCountEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawMeshTasksIndirectCountEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBuffer buffer,
     VkDeviceSize offset,
@@ -1619,7 +1707,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawMeshTasksIndirectCountEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawMeshTasksIndirectEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawMeshTasksIndirectEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBuffer buffer,
     VkDeviceSize offset,
@@ -1638,7 +1727,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawMeshTasksIndirectEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawMultiEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawMultiEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t drawCount,
     const VkMultiDrawInfoEXT* pVertexInfo,
@@ -1658,7 +1748,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawMultiEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawMultiIndexedEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawMultiIndexedEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t drawCount,
     const VkMultiDrawIndexedInfoEXT* pIndexInfo,
@@ -1679,7 +1770,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawMultiIndexedEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndConditionalRenderingEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndConditionalRenderingEXT<default_tag>(
     VkCommandBuffer commandBuffer
 ) {
     LAYER_TRACE(__func__);
@@ -1694,7 +1786,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndConditionalRenderingEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndDebugUtilsLabelEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndDebugUtilsLabelEXT<default_tag>(
     VkCommandBuffer commandBuffer
 ) {
     LAYER_TRACE(__func__);
@@ -1709,7 +1802,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndDebugUtilsLabelEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndQuery_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndQuery<default_tag>(
     VkCommandBuffer commandBuffer,
     VkQueryPool queryPool,
     uint32_t query
@@ -1726,7 +1820,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndQuery_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndQueryIndexedEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndQueryIndexedEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     VkQueryPool queryPool,
     uint32_t query,
@@ -1744,7 +1839,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndQueryIndexedEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderPass_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderPass<default_tag>(
     VkCommandBuffer commandBuffer
 ) {
     LAYER_TRACE(__func__);
@@ -1759,7 +1855,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderPass_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderPass2_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderPass2<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkSubpassEndInfo* pSubpassEndInfo
 ) {
@@ -1775,7 +1872,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderPass2_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderPass2KHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderPass2KHR<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkSubpassEndInfo* pSubpassEndInfo
 ) {
@@ -1791,7 +1889,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderPass2KHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRendering_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRendering<default_tag>(
     VkCommandBuffer commandBuffer
 ) {
     LAYER_TRACE(__func__);
@@ -1806,7 +1905,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRendering_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRendering2EXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRendering2EXT<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkRenderingEndInfoEXT* pRenderingEndInfo
 ) {
@@ -1822,7 +1922,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRendering2EXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderingKHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderingKHR<default_tag>(
     VkCommandBuffer commandBuffer
 ) {
     LAYER_TRACE(__func__);
@@ -1837,7 +1938,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderingKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndTransformFeedbackEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndTransformFeedbackEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t firstCounterBuffer,
     uint32_t counterBufferCount,
@@ -1856,7 +1958,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndTransformFeedbackEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdExecuteCommands_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdExecuteCommands<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t commandBufferCount,
     const VkCommandBuffer* pCommandBuffers
@@ -1873,7 +1976,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdExecuteCommands_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdExecuteGeneratedCommandsEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdExecuteGeneratedCommandsEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBool32 isPreprocessed,
     const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo
@@ -1890,7 +1994,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdExecuteGeneratedCommandsEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdFillBuffer_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdFillBuffer<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBuffer dstBuffer,
     VkDeviceSize dstOffset,
@@ -1909,7 +2014,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdFillBuffer_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdInsertDebugUtilsLabelEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdInsertDebugUtilsLabelEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkDebugUtilsLabelEXT* pLabelInfo
 ) {
@@ -1925,7 +2031,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdInsertDebugUtilsLabelEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdNextSubpass_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdNextSubpass<default_tag>(
     VkCommandBuffer commandBuffer,
     VkSubpassContents contents
 ) {
@@ -1941,7 +2048,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdNextSubpass_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdNextSubpass2_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdNextSubpass2<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkSubpassBeginInfo* pSubpassBeginInfo,
     const VkSubpassEndInfo* pSubpassEndInfo
@@ -1958,7 +2066,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdNextSubpass2_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdNextSubpass2KHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdNextSubpass2KHR<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkSubpassBeginInfo* pSubpassBeginInfo,
     const VkSubpassEndInfo* pSubpassEndInfo
@@ -1975,7 +2084,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdNextSubpass2KHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdPipelineBarrier_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdPipelineBarrier<default_tag>(
     VkCommandBuffer commandBuffer,
     VkPipelineStageFlags srcStageMask,
     VkPipelineStageFlags dstStageMask,
@@ -1999,7 +2109,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdPipelineBarrier_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdPipelineBarrier2_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdPipelineBarrier2<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkDependencyInfo* pDependencyInfo
 ) {
@@ -2015,7 +2126,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdPipelineBarrier2_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdPipelineBarrier2KHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdPipelineBarrier2KHR<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkDependencyInfo* pDependencyInfo
 ) {
@@ -2031,7 +2143,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdPipelineBarrier2KHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdPreprocessGeneratedCommandsEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdPreprocessGeneratedCommandsEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo,
     VkCommandBuffer stateCommandBuffer
@@ -2048,7 +2161,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdPreprocessGeneratedCommandsEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushConstants_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushConstants<default_tag>(
     VkCommandBuffer commandBuffer,
     VkPipelineLayout layout,
     VkShaderStageFlags stageFlags,
@@ -2068,7 +2182,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushConstants_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushConstants2_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushConstants2<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkPushConstantsInfo* pPushConstantsInfo
 ) {
@@ -2084,7 +2199,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushConstants2_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushConstants2KHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushConstants2KHR<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkPushConstantsInfo* pPushConstantsInfo
 ) {
@@ -2100,7 +2216,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushConstants2KHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushDescriptorSet_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushDescriptorSet<default_tag>(
     VkCommandBuffer commandBuffer,
     VkPipelineBindPoint pipelineBindPoint,
     VkPipelineLayout layout,
@@ -2120,7 +2237,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushDescriptorSet_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushDescriptorSet2_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushDescriptorSet2<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkPushDescriptorSetInfo* pPushDescriptorSetInfo
 ) {
@@ -2136,7 +2254,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushDescriptorSet2_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushDescriptorSet2KHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushDescriptorSet2KHR<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkPushDescriptorSetInfo* pPushDescriptorSetInfo
 ) {
@@ -2152,7 +2271,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushDescriptorSet2KHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushDescriptorSetKHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushDescriptorSetKHR<default_tag>(
     VkCommandBuffer commandBuffer,
     VkPipelineBindPoint pipelineBindPoint,
     VkPipelineLayout layout,
@@ -2172,7 +2292,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushDescriptorSetKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushDescriptorSetWithTemplate_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushDescriptorSetWithTemplate<default_tag>(
     VkCommandBuffer commandBuffer,
     VkDescriptorUpdateTemplate descriptorUpdateTemplate,
     VkPipelineLayout layout,
@@ -2191,7 +2312,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushDescriptorSetWithTemplate_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushDescriptorSetWithTemplate2_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushDescriptorSetWithTemplate2<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkPushDescriptorSetWithTemplateInfo* pPushDescriptorSetWithTemplateInfo
 ) {
@@ -2207,7 +2329,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushDescriptorSetWithTemplate2_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushDescriptorSetWithTemplate2KHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushDescriptorSetWithTemplate2KHR<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkPushDescriptorSetWithTemplateInfo* pPushDescriptorSetWithTemplateInfo
 ) {
@@ -2223,7 +2346,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushDescriptorSetWithTemplate2KHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushDescriptorSetWithTemplateKHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushDescriptorSetWithTemplateKHR<default_tag>(
     VkCommandBuffer commandBuffer,
     VkDescriptorUpdateTemplate descriptorUpdateTemplate,
     VkPipelineLayout layout,
@@ -2242,7 +2366,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdPushDescriptorSetWithTemplateKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdResetEvent_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdResetEvent<default_tag>(
     VkCommandBuffer commandBuffer,
     VkEvent event,
     VkPipelineStageFlags stageMask
@@ -2259,7 +2384,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdResetEvent_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdResetEvent2_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdResetEvent2<default_tag>(
     VkCommandBuffer commandBuffer,
     VkEvent event,
     VkPipelineStageFlags2 stageMask
@@ -2276,7 +2402,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdResetEvent2_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdResetEvent2KHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdResetEvent2KHR<default_tag>(
     VkCommandBuffer commandBuffer,
     VkEvent event,
     VkPipelineStageFlags2 stageMask
@@ -2293,7 +2420,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdResetEvent2KHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdResetQueryPool_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdResetQueryPool<default_tag>(
     VkCommandBuffer commandBuffer,
     VkQueryPool queryPool,
     uint32_t firstQuery,
@@ -2311,7 +2439,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdResetQueryPool_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdResolveImage_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdResolveImage<default_tag>(
     VkCommandBuffer commandBuffer,
     VkImage srcImage,
     VkImageLayout srcImageLayout,
@@ -2332,7 +2461,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdResolveImage_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdResolveImage2_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdResolveImage2<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkResolveImageInfo2* pResolveImageInfo
 ) {
@@ -2348,7 +2478,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdResolveImage2_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdResolveImage2KHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdResolveImage2KHR<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkResolveImageInfo2* pResolveImageInfo
 ) {
@@ -2364,7 +2495,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdResolveImage2KHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetAlphaToCoverageEnableEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetAlphaToCoverageEnableEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBool32 alphaToCoverageEnable
 ) {
@@ -2380,7 +2512,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetAlphaToCoverageEnableEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetAlphaToOneEnableEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetAlphaToOneEnableEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBool32 alphaToOneEnable
 ) {
@@ -2396,7 +2529,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetAlphaToOneEnableEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetAttachmentFeedbackLoopEnableEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetAttachmentFeedbackLoopEnableEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     VkImageAspectFlags aspectMask
 ) {
@@ -2412,7 +2546,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetAttachmentFeedbackLoopEnableEXT_default
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetBlendConstants_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetBlendConstants<default_tag>(
     VkCommandBuffer commandBuffer,
     const float blendConstants[4]
 ) {
@@ -2428,7 +2563,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetBlendConstants_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetColorBlendAdvancedEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetColorBlendAdvancedEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t firstAttachment,
     uint32_t attachmentCount,
@@ -2446,7 +2582,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetColorBlendAdvancedEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetColorBlendEnableEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetColorBlendEnableEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t firstAttachment,
     uint32_t attachmentCount,
@@ -2464,7 +2601,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetColorBlendEnableEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetColorBlendEquationEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetColorBlendEquationEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t firstAttachment,
     uint32_t attachmentCount,
@@ -2482,7 +2620,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetColorBlendEquationEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetColorWriteEnableEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetColorWriteEnableEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t attachmentCount,
     const VkBool32* pColorWriteEnables
@@ -2499,7 +2638,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetColorWriteEnableEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetColorWriteMaskEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetColorWriteMaskEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t firstAttachment,
     uint32_t attachmentCount,
@@ -2517,7 +2657,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetColorWriteMaskEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetConservativeRasterizationModeEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetConservativeRasterizationModeEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     VkConservativeRasterizationModeEXT conservativeRasterizationMode
 ) {
@@ -2533,7 +2674,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetConservativeRasterizationModeEXT_defaul
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetCoverageModulationModeNV_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetCoverageModulationModeNV<default_tag>(
     VkCommandBuffer commandBuffer,
     VkCoverageModulationModeNV coverageModulationMode
 ) {
@@ -2549,7 +2691,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetCoverageModulationModeNV_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetCoverageModulationTableEnableNV_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetCoverageModulationTableEnableNV<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBool32 coverageModulationTableEnable
 ) {
@@ -2565,7 +2708,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetCoverageModulationTableEnableNV_default
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetCoverageModulationTableNV_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetCoverageModulationTableNV<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t coverageModulationTableCount,
     const float* pCoverageModulationTable
@@ -2582,7 +2726,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetCoverageModulationTableNV_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetCoverageReductionModeNV_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetCoverageReductionModeNV<default_tag>(
     VkCommandBuffer commandBuffer,
     VkCoverageReductionModeNV coverageReductionMode
 ) {
@@ -2598,7 +2743,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetCoverageReductionModeNV_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetCoverageToColorEnableNV_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetCoverageToColorEnableNV<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBool32 coverageToColorEnable
 ) {
@@ -2614,7 +2760,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetCoverageToColorEnableNV_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetCoverageToColorLocationNV_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetCoverageToColorLocationNV<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t coverageToColorLocation
 ) {
@@ -2630,7 +2777,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetCoverageToColorLocationNV_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetCullMode_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetCullMode<default_tag>(
     VkCommandBuffer commandBuffer,
     VkCullModeFlags cullMode
 ) {
@@ -2646,7 +2794,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetCullMode_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetCullModeEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetCullModeEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     VkCullModeFlags cullMode
 ) {
@@ -2662,7 +2811,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetCullModeEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthBias_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthBias<default_tag>(
     VkCommandBuffer commandBuffer,
     float depthBiasConstantFactor,
     float depthBiasClamp,
@@ -2680,7 +2830,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthBias_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthBias2EXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthBias2EXT<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkDepthBiasInfoEXT* pDepthBiasInfo
 ) {
@@ -2696,7 +2847,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthBias2EXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthBiasEnable_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthBiasEnable<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBool32 depthBiasEnable
 ) {
@@ -2712,7 +2864,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthBiasEnable_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthBiasEnableEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthBiasEnableEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBool32 depthBiasEnable
 ) {
@@ -2728,7 +2881,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthBiasEnableEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthBounds_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthBounds<default_tag>(
     VkCommandBuffer commandBuffer,
     float minDepthBounds,
     float maxDepthBounds
@@ -2745,7 +2899,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthBounds_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthBoundsTestEnable_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthBoundsTestEnable<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBool32 depthBoundsTestEnable
 ) {
@@ -2761,7 +2916,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthBoundsTestEnable_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthBoundsTestEnableEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthBoundsTestEnableEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBool32 depthBoundsTestEnable
 ) {
@@ -2777,7 +2933,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthBoundsTestEnableEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthClampEnableEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthClampEnableEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBool32 depthClampEnable
 ) {
@@ -2793,7 +2950,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthClampEnableEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthClampRangeEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthClampRangeEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     VkDepthClampModeEXT depthClampMode,
     const VkDepthClampRangeEXT* pDepthClampRange
@@ -2810,7 +2968,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthClampRangeEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthClipEnableEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthClipEnableEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBool32 depthClipEnable
 ) {
@@ -2826,7 +2985,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthClipEnableEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthClipNegativeOneToOneEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthClipNegativeOneToOneEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBool32 negativeOneToOne
 ) {
@@ -2842,7 +3002,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthClipNegativeOneToOneEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthCompareOp_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthCompareOp<default_tag>(
     VkCommandBuffer commandBuffer,
     VkCompareOp depthCompareOp
 ) {
@@ -2858,7 +3019,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthCompareOp_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthCompareOpEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthCompareOpEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     VkCompareOp depthCompareOp
 ) {
@@ -2874,7 +3036,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthCompareOpEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthTestEnable_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthTestEnable<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBool32 depthTestEnable
 ) {
@@ -2890,7 +3053,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthTestEnable_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthTestEnableEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthTestEnableEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBool32 depthTestEnable
 ) {
@@ -2906,7 +3070,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthTestEnableEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthWriteEnable_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthWriteEnable<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBool32 depthWriteEnable
 ) {
@@ -2922,7 +3087,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthWriteEnable_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthWriteEnableEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthWriteEnableEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBool32 depthWriteEnable
 ) {
@@ -2938,7 +3104,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDepthWriteEnableEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDescriptorBufferOffsets2EXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDescriptorBufferOffsets2EXT<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkSetDescriptorBufferOffsetsInfoEXT* pSetDescriptorBufferOffsetsInfo
 ) {
@@ -2954,7 +3121,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDescriptorBufferOffsets2EXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDescriptorBufferOffsetsEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDescriptorBufferOffsetsEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     VkPipelineBindPoint pipelineBindPoint,
     VkPipelineLayout layout,
@@ -2975,7 +3143,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDescriptorBufferOffsetsEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDeviceMask_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDeviceMask<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t deviceMask
 ) {
@@ -2991,7 +3160,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDeviceMask_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDeviceMaskKHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDeviceMaskKHR<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t deviceMask
 ) {
@@ -3007,7 +3177,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDeviceMaskKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDiscardRectangleEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDiscardRectangleEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t firstDiscardRectangle,
     uint32_t discardRectangleCount,
@@ -3025,7 +3196,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDiscardRectangleEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDiscardRectangleEnableEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDiscardRectangleEnableEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBool32 discardRectangleEnable
 ) {
@@ -3041,7 +3213,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDiscardRectangleEnableEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDiscardRectangleModeEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDiscardRectangleModeEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     VkDiscardRectangleModeEXT discardRectangleMode
 ) {
@@ -3057,7 +3230,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDiscardRectangleModeEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetEvent_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetEvent<default_tag>(
     VkCommandBuffer commandBuffer,
     VkEvent event,
     VkPipelineStageFlags stageMask
@@ -3074,7 +3248,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetEvent_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetEvent2_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetEvent2<default_tag>(
     VkCommandBuffer commandBuffer,
     VkEvent event,
     const VkDependencyInfo* pDependencyInfo
@@ -3091,7 +3266,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetEvent2_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetEvent2KHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetEvent2KHR<default_tag>(
     VkCommandBuffer commandBuffer,
     VkEvent event,
     const VkDependencyInfo* pDependencyInfo
@@ -3108,7 +3284,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetEvent2KHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetExtraPrimitiveOverestimationSizeEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetExtraPrimitiveOverestimationSizeEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     float extraPrimitiveOverestimationSize
 ) {
@@ -3124,7 +3301,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetExtraPrimitiveOverestimationSizeEXT_def
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetFragmentShadingRateKHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetFragmentShadingRateKHR<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkExtent2D* pFragmentSize,
     const VkFragmentShadingRateCombinerOpKHR combinerOps[2]
@@ -3141,7 +3319,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetFragmentShadingRateKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetFrontFace_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetFrontFace<default_tag>(
     VkCommandBuffer commandBuffer,
     VkFrontFace frontFace
 ) {
@@ -3157,7 +3336,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetFrontFace_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetFrontFaceEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetFrontFaceEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     VkFrontFace frontFace
 ) {
@@ -3173,7 +3353,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetFrontFaceEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetLineRasterizationModeEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetLineRasterizationModeEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     VkLineRasterizationModeEXT lineRasterizationMode
 ) {
@@ -3189,7 +3370,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetLineRasterizationModeEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetLineStipple_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetLineStipple<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t lineStippleFactor,
     uint16_t lineStipplePattern
@@ -3206,7 +3388,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetLineStipple_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetLineStippleEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetLineStippleEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t lineStippleFactor,
     uint16_t lineStipplePattern
@@ -3223,7 +3406,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetLineStippleEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetLineStippleEnableEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetLineStippleEnableEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBool32 stippledLineEnable
 ) {
@@ -3239,7 +3423,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetLineStippleEnableEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetLineStippleKHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetLineStippleKHR<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t lineStippleFactor,
     uint16_t lineStipplePattern
@@ -3256,7 +3441,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetLineStippleKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetLineWidth_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetLineWidth<default_tag>(
     VkCommandBuffer commandBuffer,
     float lineWidth
 ) {
@@ -3272,7 +3458,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetLineWidth_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetLogicOpEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetLogicOpEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     VkLogicOp logicOp
 ) {
@@ -3288,7 +3475,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetLogicOpEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetLogicOpEnableEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetLogicOpEnableEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBool32 logicOpEnable
 ) {
@@ -3304,7 +3492,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetLogicOpEnableEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetPatchControlPointsEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetPatchControlPointsEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t patchControlPoints
 ) {
@@ -3320,7 +3509,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetPatchControlPointsEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetPolygonModeEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetPolygonModeEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     VkPolygonMode polygonMode
 ) {
@@ -3336,7 +3526,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetPolygonModeEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetPrimitiveRestartEnable_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetPrimitiveRestartEnable<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBool32 primitiveRestartEnable
 ) {
@@ -3352,7 +3543,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetPrimitiveRestartEnable_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetPrimitiveRestartEnableEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetPrimitiveRestartEnableEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBool32 primitiveRestartEnable
 ) {
@@ -3368,7 +3560,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetPrimitiveRestartEnableEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetPrimitiveTopology_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetPrimitiveTopology<default_tag>(
     VkCommandBuffer commandBuffer,
     VkPrimitiveTopology primitiveTopology
 ) {
@@ -3384,7 +3577,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetPrimitiveTopology_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetPrimitiveTopologyEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetPrimitiveTopologyEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     VkPrimitiveTopology primitiveTopology
 ) {
@@ -3400,7 +3594,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetPrimitiveTopologyEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetProvokingVertexModeEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetProvokingVertexModeEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     VkProvokingVertexModeEXT provokingVertexMode
 ) {
@@ -3416,7 +3611,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetProvokingVertexModeEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetRasterizationSamplesEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetRasterizationSamplesEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     VkSampleCountFlagBits rasterizationSamples
 ) {
@@ -3432,7 +3628,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetRasterizationSamplesEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetRasterizationStreamEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetRasterizationStreamEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t rasterizationStream
 ) {
@@ -3448,7 +3645,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetRasterizationStreamEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetRasterizerDiscardEnable_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetRasterizerDiscardEnable<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBool32 rasterizerDiscardEnable
 ) {
@@ -3464,7 +3662,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetRasterizerDiscardEnable_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetRasterizerDiscardEnableEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetRasterizerDiscardEnableEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBool32 rasterizerDiscardEnable
 ) {
@@ -3480,7 +3679,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetRasterizerDiscardEnableEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetRayTracingPipelineStackSizeKHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetRayTracingPipelineStackSizeKHR<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t pipelineStackSize
 ) {
@@ -3496,7 +3696,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetRayTracingPipelineStackSizeKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetRenderingAttachmentLocations_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetRenderingAttachmentLocations<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkRenderingAttachmentLocationInfo* pLocationInfo
 ) {
@@ -3512,7 +3713,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetRenderingAttachmentLocations_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetRenderingAttachmentLocationsKHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetRenderingAttachmentLocationsKHR<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkRenderingAttachmentLocationInfo* pLocationInfo
 ) {
@@ -3528,7 +3730,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetRenderingAttachmentLocationsKHR_default
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetRenderingInputAttachmentIndices_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetRenderingInputAttachmentIndices<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo
 ) {
@@ -3544,7 +3747,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetRenderingInputAttachmentIndices_default
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetRenderingInputAttachmentIndicesKHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetRenderingInputAttachmentIndicesKHR<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo
 ) {
@@ -3560,7 +3764,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetRenderingInputAttachmentIndicesKHR_defa
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetRepresentativeFragmentTestEnableNV_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetRepresentativeFragmentTestEnableNV<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBool32 representativeFragmentTestEnable
 ) {
@@ -3576,7 +3781,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetRepresentativeFragmentTestEnableNV_defa
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetSampleLocationsEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetSampleLocationsEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkSampleLocationsInfoEXT* pSampleLocationsInfo
 ) {
@@ -3592,7 +3798,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetSampleLocationsEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetSampleLocationsEnableEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetSampleLocationsEnableEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBool32 sampleLocationsEnable
 ) {
@@ -3608,7 +3815,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetSampleLocationsEnableEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetSampleMaskEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetSampleMaskEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     VkSampleCountFlagBits samples,
     const VkSampleMask* pSampleMask
@@ -3625,7 +3833,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetSampleMaskEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetScissor_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetScissor<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t firstScissor,
     uint32_t scissorCount,
@@ -3643,7 +3852,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetScissor_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetScissorWithCount_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetScissorWithCount<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t scissorCount,
     const VkRect2D* pScissors
@@ -3660,7 +3870,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetScissorWithCount_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetScissorWithCountEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetScissorWithCountEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t scissorCount,
     const VkRect2D* pScissors
@@ -3677,7 +3888,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetScissorWithCountEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetShadingRateImageEnableNV_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetShadingRateImageEnableNV<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBool32 shadingRateImageEnable
 ) {
@@ -3693,7 +3905,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetShadingRateImageEnableNV_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetStencilCompareMask_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetStencilCompareMask<default_tag>(
     VkCommandBuffer commandBuffer,
     VkStencilFaceFlags faceMask,
     uint32_t compareMask
@@ -3710,7 +3923,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetStencilCompareMask_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetStencilOp_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetStencilOp<default_tag>(
     VkCommandBuffer commandBuffer,
     VkStencilFaceFlags faceMask,
     VkStencilOp failOp,
@@ -3730,7 +3944,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetStencilOp_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetStencilOpEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetStencilOpEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     VkStencilFaceFlags faceMask,
     VkStencilOp failOp,
@@ -3750,7 +3965,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetStencilOpEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetStencilReference_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetStencilReference<default_tag>(
     VkCommandBuffer commandBuffer,
     VkStencilFaceFlags faceMask,
     uint32_t reference
@@ -3767,7 +3983,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetStencilReference_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetStencilTestEnable_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetStencilTestEnable<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBool32 stencilTestEnable
 ) {
@@ -3783,7 +4000,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetStencilTestEnable_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetStencilTestEnableEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetStencilTestEnableEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBool32 stencilTestEnable
 ) {
@@ -3799,7 +4017,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetStencilTestEnableEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetStencilWriteMask_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetStencilWriteMask<default_tag>(
     VkCommandBuffer commandBuffer,
     VkStencilFaceFlags faceMask,
     uint32_t writeMask
@@ -3816,7 +4035,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetStencilWriteMask_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetTessellationDomainOriginEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetTessellationDomainOriginEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     VkTessellationDomainOrigin domainOrigin
 ) {
@@ -3832,7 +4052,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetTessellationDomainOriginEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetVertexInputEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetVertexInputEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t vertexBindingDescriptionCount,
     const VkVertexInputBindingDescription2EXT* pVertexBindingDescriptions,
@@ -3851,7 +4072,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetVertexInputEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetViewport_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetViewport<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t firstViewport,
     uint32_t viewportCount,
@@ -3869,7 +4091,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetViewport_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetViewportSwizzleNV_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetViewportSwizzleNV<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t firstViewport,
     uint32_t viewportCount,
@@ -3887,7 +4110,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetViewportSwizzleNV_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetViewportWScalingEnableNV_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetViewportWScalingEnableNV<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBool32 viewportWScalingEnable
 ) {
@@ -3903,7 +4127,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetViewportWScalingEnableNV_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetViewportWithCount_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetViewportWithCount<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t viewportCount,
     const VkViewport* pViewports
@@ -3920,7 +4145,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetViewportWithCount_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetViewportWithCountEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetViewportWithCountEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t viewportCount,
     const VkViewport* pViewports
@@ -3937,7 +4163,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetViewportWithCountEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdTraceRaysIndirect2KHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdTraceRaysIndirect2KHR<default_tag>(
     VkCommandBuffer commandBuffer,
     VkDeviceAddress indirectDeviceAddress
 ) {
@@ -3953,7 +4180,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdTraceRaysIndirect2KHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdTraceRaysIndirectKHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdTraceRaysIndirectKHR<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkStridedDeviceAddressRegionKHR* pRaygenShaderBindingTable,
     const VkStridedDeviceAddressRegionKHR* pMissShaderBindingTable,
@@ -3973,7 +4201,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdTraceRaysIndirectKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdTraceRaysKHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdTraceRaysKHR<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkStridedDeviceAddressRegionKHR* pRaygenShaderBindingTable,
     const VkStridedDeviceAddressRegionKHR* pMissShaderBindingTable,
@@ -3995,7 +4224,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdTraceRaysKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdUpdateBuffer_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdUpdateBuffer<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBuffer dstBuffer,
     VkDeviceSize dstOffset,
@@ -4014,7 +4244,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdUpdateBuffer_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdWaitEvents_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdWaitEvents<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t eventCount,
     const VkEvent* pEvents,
@@ -4039,7 +4270,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdWaitEvents_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdWaitEvents2_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdWaitEvents2<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t eventCount,
     const VkEvent* pEvents,
@@ -4057,7 +4289,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdWaitEvents2_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdWaitEvents2KHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdWaitEvents2KHR<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t eventCount,
     const VkEvent* pEvents,
@@ -4075,7 +4308,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdWaitEvents2KHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdWriteAccelerationStructuresPropertiesKHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdWriteAccelerationStructuresPropertiesKHR<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t accelerationStructureCount,
     const VkAccelerationStructureKHR* pAccelerationStructures,
@@ -4095,7 +4329,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdWriteAccelerationStructuresPropertiesKHR_d
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdWriteMicromapsPropertiesEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdWriteMicromapsPropertiesEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t micromapCount,
     const VkMicromapEXT* pMicromaps,
@@ -4115,7 +4350,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdWriteMicromapsPropertiesEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdWriteTimestamp_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdWriteTimestamp<default_tag>(
     VkCommandBuffer commandBuffer,
     VkPipelineStageFlagBits pipelineStage,
     VkQueryPool queryPool,
@@ -4133,7 +4369,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdWriteTimestamp_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdWriteTimestamp2_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdWriteTimestamp2<default_tag>(
     VkCommandBuffer commandBuffer,
     VkPipelineStageFlags2 stage,
     VkQueryPool queryPool,
@@ -4151,7 +4388,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdWriteTimestamp2_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdWriteTimestamp2KHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdWriteTimestamp2KHR<default_tag>(
     VkCommandBuffer commandBuffer,
     VkPipelineStageFlags2 stage,
     VkQueryPool queryPool,
@@ -4169,7 +4407,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdWriteTimestamp2KHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyAccelerationStructureKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyAccelerationStructureKHR<default_tag>(
     VkDevice device,
     VkDeferredOperationKHR deferredOperation,
     const VkCopyAccelerationStructureInfoKHR* pInfo
@@ -4186,7 +4425,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyAccelerationStructureKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyAccelerationStructureToMemoryKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyAccelerationStructureToMemoryKHR<default_tag>(
     VkDevice device,
     VkDeferredOperationKHR deferredOperation,
     const VkCopyAccelerationStructureToMemoryInfoKHR* pInfo
@@ -4203,7 +4443,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyAccelerationStructureToMemoryKHR_defa
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyImageToImage_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyImageToImage<default_tag>(
     VkDevice device,
     const VkCopyImageToImageInfo* pCopyImageToImageInfo
 ) {
@@ -4219,7 +4460,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyImageToImage_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyImageToImageEXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyImageToImageEXT<default_tag>(
     VkDevice device,
     const VkCopyImageToImageInfo* pCopyImageToImageInfo
 ) {
@@ -4235,7 +4477,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyImageToImageEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyImageToMemory_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyImageToMemory<default_tag>(
     VkDevice device,
     const VkCopyImageToMemoryInfo* pCopyImageToMemoryInfo
 ) {
@@ -4251,7 +4494,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyImageToMemory_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyImageToMemoryEXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyImageToMemoryEXT<default_tag>(
     VkDevice device,
     const VkCopyImageToMemoryInfo* pCopyImageToMemoryInfo
 ) {
@@ -4267,7 +4511,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyImageToMemoryEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyMemoryToAccelerationStructureKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyMemoryToAccelerationStructureKHR<default_tag>(
     VkDevice device,
     VkDeferredOperationKHR deferredOperation,
     const VkCopyMemoryToAccelerationStructureInfoKHR* pInfo
@@ -4284,7 +4529,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyMemoryToAccelerationStructureKHR_defa
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyMemoryToImage_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyMemoryToImage<default_tag>(
     VkDevice device,
     const VkCopyMemoryToImageInfo* pCopyMemoryToImageInfo
 ) {
@@ -4300,7 +4546,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyMemoryToImage_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyMemoryToImageEXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyMemoryToImageEXT<default_tag>(
     VkDevice device,
     const VkCopyMemoryToImageInfo* pCopyMemoryToImageInfo
 ) {
@@ -4316,7 +4563,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyMemoryToImageEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyMemoryToMicromapEXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyMemoryToMicromapEXT<default_tag>(
     VkDevice device,
     VkDeferredOperationKHR deferredOperation,
     const VkCopyMemoryToMicromapInfoEXT* pInfo
@@ -4333,7 +4581,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyMemoryToMicromapEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyMicromapEXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyMicromapEXT<default_tag>(
     VkDevice device,
     VkDeferredOperationKHR deferredOperation,
     const VkCopyMicromapInfoEXT* pInfo
@@ -4350,7 +4599,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyMicromapEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyMicromapToMemoryEXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyMicromapToMemoryEXT<default_tag>(
     VkDevice device,
     VkDeferredOperationKHR deferredOperation,
     const VkCopyMicromapToMemoryInfoEXT* pInfo
@@ -4367,7 +4617,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyMicromapToMemoryEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateAccelerationStructureKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateAccelerationStructureKHR<default_tag>(
     VkDevice device,
     const VkAccelerationStructureCreateInfoKHR* pCreateInfo,
     const VkAllocationCallbacks* pAllocator,
@@ -4385,7 +4636,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateAccelerationStructureKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateBuffer_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateBuffer<default_tag>(
     VkDevice device,
     const VkBufferCreateInfo* pCreateInfo,
     const VkAllocationCallbacks* pAllocator,
@@ -4403,7 +4655,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateBuffer_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateBufferView_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateBufferView<default_tag>(
     VkDevice device,
     const VkBufferViewCreateInfo* pCreateInfo,
     const VkAllocationCallbacks* pAllocator,
@@ -4421,7 +4674,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateBufferView_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateCommandPool_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateCommandPool<default_tag>(
     VkDevice device,
     const VkCommandPoolCreateInfo* pCreateInfo,
     const VkAllocationCallbacks* pAllocator,
@@ -4439,7 +4693,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateCommandPool_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateComputePipelines_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateComputePipelines<default_tag>(
     VkDevice device,
     VkPipelineCache pipelineCache,
     uint32_t createInfoCount,
@@ -4459,7 +4714,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateComputePipelines_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDeferredOperationKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDeferredOperationKHR<default_tag>(
     VkDevice device,
     const VkAllocationCallbacks* pAllocator,
     VkDeferredOperationKHR* pDeferredOperation
@@ -4476,7 +4732,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDeferredOperationKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDescriptorPool_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDescriptorPool<default_tag>(
     VkDevice device,
     const VkDescriptorPoolCreateInfo* pCreateInfo,
     const VkAllocationCallbacks* pAllocator,
@@ -4494,7 +4751,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDescriptorPool_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDescriptorSetLayout_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDescriptorSetLayout<default_tag>(
     VkDevice device,
     const VkDescriptorSetLayoutCreateInfo* pCreateInfo,
     const VkAllocationCallbacks* pAllocator,
@@ -4512,7 +4770,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDescriptorSetLayout_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDescriptorUpdateTemplate_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDescriptorUpdateTemplate<default_tag>(
     VkDevice device,
     const VkDescriptorUpdateTemplateCreateInfo* pCreateInfo,
     const VkAllocationCallbacks* pAllocator,
@@ -4530,7 +4789,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDescriptorUpdateTemplate_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDescriptorUpdateTemplateKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDescriptorUpdateTemplateKHR<default_tag>(
     VkDevice device,
     const VkDescriptorUpdateTemplateCreateInfo* pCreateInfo,
     const VkAllocationCallbacks* pAllocator,
@@ -4548,7 +4808,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDescriptorUpdateTemplateKHR_default
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateEvent_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateEvent<default_tag>(
     VkDevice device,
     const VkEventCreateInfo* pCreateInfo,
     const VkAllocationCallbacks* pAllocator,
@@ -4566,7 +4827,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateEvent_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateFence_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateFence<default_tag>(
     VkDevice device,
     const VkFenceCreateInfo* pCreateInfo,
     const VkAllocationCallbacks* pAllocator,
@@ -4584,7 +4846,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateFence_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateFramebuffer_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateFramebuffer<default_tag>(
     VkDevice device,
     const VkFramebufferCreateInfo* pCreateInfo,
     const VkAllocationCallbacks* pAllocator,
@@ -4602,7 +4865,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateFramebuffer_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateGraphicsPipelines_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateGraphicsPipelines<default_tag>(
     VkDevice device,
     VkPipelineCache pipelineCache,
     uint32_t createInfoCount,
@@ -4622,7 +4886,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateGraphicsPipelines_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateImage_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateImage<default_tag>(
     VkDevice device,
     const VkImageCreateInfo* pCreateInfo,
     const VkAllocationCallbacks* pAllocator,
@@ -4640,7 +4905,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateImage_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateImageView_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateImageView<default_tag>(
     VkDevice device,
     const VkImageViewCreateInfo* pCreateInfo,
     const VkAllocationCallbacks* pAllocator,
@@ -4658,7 +4924,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateImageView_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateIndirectCommandsLayoutEXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateIndirectCommandsLayoutEXT<default_tag>(
     VkDevice device,
     const VkIndirectCommandsLayoutCreateInfoEXT* pCreateInfo,
     const VkAllocationCallbacks* pAllocator,
@@ -4676,7 +4943,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateIndirectCommandsLayoutEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateIndirectExecutionSetEXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateIndirectExecutionSetEXT<default_tag>(
     VkDevice device,
     const VkIndirectExecutionSetCreateInfoEXT* pCreateInfo,
     const VkAllocationCallbacks* pAllocator,
@@ -4694,7 +4962,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateIndirectExecutionSetEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateMicromapEXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateMicromapEXT<default_tag>(
     VkDevice device,
     const VkMicromapCreateInfoEXT* pCreateInfo,
     const VkAllocationCallbacks* pAllocator,
@@ -4712,7 +4981,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateMicromapEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreatePipelineBinariesKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreatePipelineBinariesKHR<default_tag>(
     VkDevice device,
     const VkPipelineBinaryCreateInfoKHR* pCreateInfo,
     const VkAllocationCallbacks* pAllocator,
@@ -4730,7 +5000,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreatePipelineBinariesKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreatePipelineCache_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreatePipelineCache<default_tag>(
     VkDevice device,
     const VkPipelineCacheCreateInfo* pCreateInfo,
     const VkAllocationCallbacks* pAllocator,
@@ -4748,7 +5019,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreatePipelineCache_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreatePipelineLayout_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreatePipelineLayout<default_tag>(
     VkDevice device,
     const VkPipelineLayoutCreateInfo* pCreateInfo,
     const VkAllocationCallbacks* pAllocator,
@@ -4766,7 +5038,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreatePipelineLayout_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreatePrivateDataSlot_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreatePrivateDataSlot<default_tag>(
     VkDevice device,
     const VkPrivateDataSlotCreateInfo* pCreateInfo,
     const VkAllocationCallbacks* pAllocator,
@@ -4784,7 +5057,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreatePrivateDataSlot_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreatePrivateDataSlotEXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreatePrivateDataSlotEXT<default_tag>(
     VkDevice device,
     const VkPrivateDataSlotCreateInfo* pCreateInfo,
     const VkAllocationCallbacks* pAllocator,
@@ -4802,7 +5076,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreatePrivateDataSlotEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateQueryPool_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateQueryPool<default_tag>(
     VkDevice device,
     const VkQueryPoolCreateInfo* pCreateInfo,
     const VkAllocationCallbacks* pAllocator,
@@ -4820,7 +5095,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateQueryPool_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateRayTracingPipelinesKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateRayTracingPipelinesKHR<default_tag>(
     VkDevice device,
     VkDeferredOperationKHR deferredOperation,
     VkPipelineCache pipelineCache,
@@ -4841,7 +5117,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateRayTracingPipelinesKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateRenderPass_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateRenderPass<default_tag>(
     VkDevice device,
     const VkRenderPassCreateInfo* pCreateInfo,
     const VkAllocationCallbacks* pAllocator,
@@ -4859,7 +5136,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateRenderPass_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateRenderPass2_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateRenderPass2<default_tag>(
     VkDevice device,
     const VkRenderPassCreateInfo2* pCreateInfo,
     const VkAllocationCallbacks* pAllocator,
@@ -4877,7 +5155,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateRenderPass2_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateRenderPass2KHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateRenderPass2KHR<default_tag>(
     VkDevice device,
     const VkRenderPassCreateInfo2* pCreateInfo,
     const VkAllocationCallbacks* pAllocator,
@@ -4895,7 +5174,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateRenderPass2KHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateSampler_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateSampler<default_tag>(
     VkDevice device,
     const VkSamplerCreateInfo* pCreateInfo,
     const VkAllocationCallbacks* pAllocator,
@@ -4913,7 +5193,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateSampler_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateSamplerYcbcrConversion_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateSamplerYcbcrConversion<default_tag>(
     VkDevice device,
     const VkSamplerYcbcrConversionCreateInfo* pCreateInfo,
     const VkAllocationCallbacks* pAllocator,
@@ -4931,7 +5212,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateSamplerYcbcrConversion_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateSamplerYcbcrConversionKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateSamplerYcbcrConversionKHR<default_tag>(
     VkDevice device,
     const VkSamplerYcbcrConversionCreateInfo* pCreateInfo,
     const VkAllocationCallbacks* pAllocator,
@@ -4949,7 +5231,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateSamplerYcbcrConversionKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateSemaphore_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateSemaphore<default_tag>(
     VkDevice device,
     const VkSemaphoreCreateInfo* pCreateInfo,
     const VkAllocationCallbacks* pAllocator,
@@ -4967,7 +5250,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateSemaphore_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateShaderModule_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateShaderModule<default_tag>(
     VkDevice device,
     const VkShaderModuleCreateInfo* pCreateInfo,
     const VkAllocationCallbacks* pAllocator,
@@ -4985,7 +5269,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateShaderModule_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateShadersEXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateShadersEXT<default_tag>(
     VkDevice device,
     uint32_t createInfoCount,
     const VkShaderCreateInfoEXT* pCreateInfos,
@@ -5004,7 +5289,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateShadersEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateSharedSwapchainsKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateSharedSwapchainsKHR<default_tag>(
     VkDevice device,
     uint32_t swapchainCount,
     const VkSwapchainCreateInfoKHR* pCreateInfos,
@@ -5023,7 +5309,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateSharedSwapchainsKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateSwapchainKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateSwapchainKHR<default_tag>(
     VkDevice device,
     const VkSwapchainCreateInfoKHR* pCreateInfo,
     const VkAllocationCallbacks* pAllocator,
@@ -5041,7 +5328,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateSwapchainKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateTensorARM_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateTensorARM<default_tag>(
     VkDevice device,
     const VkTensorCreateInfoARM* pCreateInfo,
     const VkAllocationCallbacks* pAllocator,
@@ -5059,7 +5347,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateTensorARM_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateTensorViewARM_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateTensorViewARM<default_tag>(
     VkDevice device,
     const VkTensorViewCreateInfoARM* pCreateInfo,
     const VkAllocationCallbacks* pAllocator,
@@ -5077,7 +5366,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateTensorViewARM_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateValidationCacheEXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateValidationCacheEXT<default_tag>(
     VkDevice device,
     const VkValidationCacheCreateInfoEXT* pCreateInfo,
     const VkAllocationCallbacks* pAllocator,
@@ -5095,7 +5385,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateValidationCacheEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkDebugMarkerSetObjectNameEXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkDebugMarkerSetObjectNameEXT<default_tag>(
     VkDevice device,
     const VkDebugMarkerObjectNameInfoEXT* pNameInfo
 ) {
@@ -5111,7 +5402,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkDebugMarkerSetObjectNameEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkDebugMarkerSetObjectTagEXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkDebugMarkerSetObjectTagEXT<default_tag>(
     VkDevice device,
     const VkDebugMarkerObjectTagInfoEXT* pTagInfo
 ) {
@@ -5127,7 +5419,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkDebugMarkerSetObjectTagEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkDeferredOperationJoinKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkDeferredOperationJoinKHR<default_tag>(
     VkDevice device,
     VkDeferredOperationKHR operation
 ) {
@@ -5143,7 +5436,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkDeferredOperationJoinKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroyAccelerationStructureKHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyAccelerationStructureKHR<default_tag>(
     VkDevice device,
     VkAccelerationStructureKHR accelerationStructure,
     const VkAllocationCallbacks* pAllocator
@@ -5160,7 +5454,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyAccelerationStructureKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroyBuffer_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyBuffer<default_tag>(
     VkDevice device,
     VkBuffer buffer,
     const VkAllocationCallbacks* pAllocator
@@ -5177,7 +5472,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyBuffer_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroyBufferView_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyBufferView<default_tag>(
     VkDevice device,
     VkBufferView bufferView,
     const VkAllocationCallbacks* pAllocator
@@ -5194,7 +5490,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyBufferView_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroyCommandPool_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyCommandPool<default_tag>(
     VkDevice device,
     VkCommandPool commandPool,
     const VkAllocationCallbacks* pAllocator
@@ -5211,7 +5508,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyCommandPool_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroyDeferredOperationKHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyDeferredOperationKHR<default_tag>(
     VkDevice device,
     VkDeferredOperationKHR operation,
     const VkAllocationCallbacks* pAllocator
@@ -5228,7 +5526,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyDeferredOperationKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroyDescriptorPool_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyDescriptorPool<default_tag>(
     VkDevice device,
     VkDescriptorPool descriptorPool,
     const VkAllocationCallbacks* pAllocator
@@ -5245,7 +5544,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyDescriptorPool_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroyDescriptorSetLayout_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyDescriptorSetLayout<default_tag>(
     VkDevice device,
     VkDescriptorSetLayout descriptorSetLayout,
     const VkAllocationCallbacks* pAllocator
@@ -5262,7 +5562,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyDescriptorSetLayout_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroyDescriptorUpdateTemplate_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyDescriptorUpdateTemplate<default_tag>(
     VkDevice device,
     VkDescriptorUpdateTemplate descriptorUpdateTemplate,
     const VkAllocationCallbacks* pAllocator
@@ -5279,7 +5580,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyDescriptorUpdateTemplate_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroyDescriptorUpdateTemplateKHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyDescriptorUpdateTemplateKHR<default_tag>(
     VkDevice device,
     VkDescriptorUpdateTemplate descriptorUpdateTemplate,
     const VkAllocationCallbacks* pAllocator
@@ -5296,7 +5598,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyDescriptorUpdateTemplateKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroyEvent_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyEvent<default_tag>(
     VkDevice device,
     VkEvent event,
     const VkAllocationCallbacks* pAllocator
@@ -5313,7 +5616,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyEvent_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroyFence_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyFence<default_tag>(
     VkDevice device,
     VkFence fence,
     const VkAllocationCallbacks* pAllocator
@@ -5330,7 +5634,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyFence_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroyFramebuffer_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyFramebuffer<default_tag>(
     VkDevice device,
     VkFramebuffer framebuffer,
     const VkAllocationCallbacks* pAllocator
@@ -5347,7 +5652,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyFramebuffer_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroyImage_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyImage<default_tag>(
     VkDevice device,
     VkImage image,
     const VkAllocationCallbacks* pAllocator
@@ -5364,7 +5670,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyImage_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroyImageView_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyImageView<default_tag>(
     VkDevice device,
     VkImageView imageView,
     const VkAllocationCallbacks* pAllocator
@@ -5381,7 +5688,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyImageView_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroyIndirectCommandsLayoutEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyIndirectCommandsLayoutEXT<default_tag>(
     VkDevice device,
     VkIndirectCommandsLayoutEXT indirectCommandsLayout,
     const VkAllocationCallbacks* pAllocator
@@ -5398,7 +5706,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyIndirectCommandsLayoutEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroyIndirectExecutionSetEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyIndirectExecutionSetEXT<default_tag>(
     VkDevice device,
     VkIndirectExecutionSetEXT indirectExecutionSet,
     const VkAllocationCallbacks* pAllocator
@@ -5415,7 +5724,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyIndirectExecutionSetEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroyMicromapEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyMicromapEXT<default_tag>(
     VkDevice device,
     VkMicromapEXT micromap,
     const VkAllocationCallbacks* pAllocator
@@ -5432,7 +5742,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyMicromapEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroyPipeline_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyPipeline<default_tag>(
     VkDevice device,
     VkPipeline pipeline,
     const VkAllocationCallbacks* pAllocator
@@ -5449,7 +5760,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyPipeline_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroyPipelineBinaryKHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyPipelineBinaryKHR<default_tag>(
     VkDevice device,
     VkPipelineBinaryKHR pipelineBinary,
     const VkAllocationCallbacks* pAllocator
@@ -5466,7 +5778,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyPipelineBinaryKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroyPipelineCache_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyPipelineCache<default_tag>(
     VkDevice device,
     VkPipelineCache pipelineCache,
     const VkAllocationCallbacks* pAllocator
@@ -5483,7 +5796,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyPipelineCache_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroyPipelineLayout_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyPipelineLayout<default_tag>(
     VkDevice device,
     VkPipelineLayout pipelineLayout,
     const VkAllocationCallbacks* pAllocator
@@ -5500,7 +5814,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyPipelineLayout_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroyPrivateDataSlot_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyPrivateDataSlot<default_tag>(
     VkDevice device,
     VkPrivateDataSlot privateDataSlot,
     const VkAllocationCallbacks* pAllocator
@@ -5517,7 +5832,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyPrivateDataSlot_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroyPrivateDataSlotEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyPrivateDataSlotEXT<default_tag>(
     VkDevice device,
     VkPrivateDataSlot privateDataSlot,
     const VkAllocationCallbacks* pAllocator
@@ -5534,7 +5850,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyPrivateDataSlotEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroyQueryPool_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyQueryPool<default_tag>(
     VkDevice device,
     VkQueryPool queryPool,
     const VkAllocationCallbacks* pAllocator
@@ -5551,7 +5868,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyQueryPool_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroyRenderPass_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyRenderPass<default_tag>(
     VkDevice device,
     VkRenderPass renderPass,
     const VkAllocationCallbacks* pAllocator
@@ -5568,7 +5886,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyRenderPass_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroySampler_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroySampler<default_tag>(
     VkDevice device,
     VkSampler sampler,
     const VkAllocationCallbacks* pAllocator
@@ -5585,7 +5904,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroySampler_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroySamplerYcbcrConversion_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroySamplerYcbcrConversion<default_tag>(
     VkDevice device,
     VkSamplerYcbcrConversion ycbcrConversion,
     const VkAllocationCallbacks* pAllocator
@@ -5602,7 +5922,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroySamplerYcbcrConversion_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroySamplerYcbcrConversionKHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroySamplerYcbcrConversionKHR<default_tag>(
     VkDevice device,
     VkSamplerYcbcrConversion ycbcrConversion,
     const VkAllocationCallbacks* pAllocator
@@ -5619,7 +5940,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroySamplerYcbcrConversionKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroySemaphore_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroySemaphore<default_tag>(
     VkDevice device,
     VkSemaphore semaphore,
     const VkAllocationCallbacks* pAllocator
@@ -5636,7 +5958,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroySemaphore_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroyShaderEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyShaderEXT<default_tag>(
     VkDevice device,
     VkShaderEXT shader,
     const VkAllocationCallbacks* pAllocator
@@ -5653,7 +5976,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyShaderEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroyShaderModule_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyShaderModule<default_tag>(
     VkDevice device,
     VkShaderModule shaderModule,
     const VkAllocationCallbacks* pAllocator
@@ -5670,7 +5994,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyShaderModule_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroySwapchainKHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroySwapchainKHR<default_tag>(
     VkDevice device,
     VkSwapchainKHR swapchain,
     const VkAllocationCallbacks* pAllocator
@@ -5687,7 +6012,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroySwapchainKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroyTensorARM_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyTensorARM<default_tag>(
     VkDevice device,
     VkTensorARM tensor,
     const VkAllocationCallbacks* pAllocator
@@ -5704,7 +6030,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyTensorARM_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroyTensorViewARM_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyTensorViewARM<default_tag>(
     VkDevice device,
     VkTensorViewARM tensorView,
     const VkAllocationCallbacks* pAllocator
@@ -5721,7 +6048,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyTensorViewARM_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroyValidationCacheEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyValidationCacheEXT<default_tag>(
     VkDevice device,
     VkValidationCacheEXT validationCache,
     const VkAllocationCallbacks* pAllocator
@@ -5738,7 +6066,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyValidationCacheEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkDeviceWaitIdle_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkDeviceWaitIdle<default_tag>(
     VkDevice device
 ) {
     LAYER_TRACE(__func__);
@@ -5753,7 +6082,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkDeviceWaitIdle_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkDisplayPowerControlEXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkDisplayPowerControlEXT<default_tag>(
     VkDevice device,
     VkDisplayKHR display,
     const VkDisplayPowerInfoEXT* pDisplayPowerInfo
@@ -5770,7 +6100,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkDisplayPowerControlEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkEndCommandBuffer_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkEndCommandBuffer<default_tag>(
     VkCommandBuffer commandBuffer
 ) {
     LAYER_TRACE(__func__);
@@ -5785,7 +6116,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkEndCommandBuffer_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkFlushMappedMemoryRanges_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkFlushMappedMemoryRanges<default_tag>(
     VkDevice device,
     uint32_t memoryRangeCount,
     const VkMappedMemoryRange* pMemoryRanges
@@ -5802,7 +6134,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkFlushMappedMemoryRanges_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkFreeCommandBuffers_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkFreeCommandBuffers<default_tag>(
     VkDevice device,
     VkCommandPool commandPool,
     uint32_t commandBufferCount,
@@ -5820,7 +6153,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkFreeCommandBuffers_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkFreeDescriptorSets_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkFreeDescriptorSets<default_tag>(
     VkDevice device,
     VkDescriptorPool descriptorPool,
     uint32_t descriptorSetCount,
@@ -5838,7 +6172,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkFreeDescriptorSets_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkFreeMemory_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkFreeMemory<default_tag>(
     VkDevice device,
     VkDeviceMemory memory,
     const VkAllocationCallbacks* pAllocator
@@ -5855,7 +6190,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkFreeMemory_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetAccelerationStructureBuildSizesKHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetAccelerationStructureBuildSizesKHR<default_tag>(
     VkDevice device,
     VkAccelerationStructureBuildTypeKHR buildType,
     const VkAccelerationStructureBuildGeometryInfoKHR* pBuildInfo,
@@ -5874,7 +6210,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetAccelerationStructureBuildSizesKHR_default
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkDeviceAddress VKAPI_CALL layer_vkGetAccelerationStructureDeviceAddressKHR_default(
+template <>
+VKAPI_ATTR VkDeviceAddress VKAPI_CALL layer_vkGetAccelerationStructureDeviceAddressKHR<default_tag>(
     VkDevice device,
     const VkAccelerationStructureDeviceAddressInfoKHR* pInfo
 ) {
@@ -5890,7 +6227,8 @@ VKAPI_ATTR VkDeviceAddress VKAPI_CALL layer_vkGetAccelerationStructureDeviceAddr
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetAccelerationStructureOpaqueCaptureDescriptorDataEXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetAccelerationStructureOpaqueCaptureDescriptorDataEXT<default_tag>(
     VkDevice device,
     const VkAccelerationStructureCaptureDescriptorDataInfoEXT* pInfo,
     void* pData
@@ -5907,7 +6245,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetAccelerationStructureOpaqueCaptureDesc
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkDeviceAddress VKAPI_CALL layer_vkGetBufferDeviceAddress_default(
+template <>
+VKAPI_ATTR VkDeviceAddress VKAPI_CALL layer_vkGetBufferDeviceAddress<default_tag>(
     VkDevice device,
     const VkBufferDeviceAddressInfo* pInfo
 ) {
@@ -5923,7 +6262,8 @@ VKAPI_ATTR VkDeviceAddress VKAPI_CALL layer_vkGetBufferDeviceAddress_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkDeviceAddress VKAPI_CALL layer_vkGetBufferDeviceAddressEXT_default(
+template <>
+VKAPI_ATTR VkDeviceAddress VKAPI_CALL layer_vkGetBufferDeviceAddressEXT<default_tag>(
     VkDevice device,
     const VkBufferDeviceAddressInfo* pInfo
 ) {
@@ -5939,7 +6279,8 @@ VKAPI_ATTR VkDeviceAddress VKAPI_CALL layer_vkGetBufferDeviceAddressEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkDeviceAddress VKAPI_CALL layer_vkGetBufferDeviceAddressKHR_default(
+template <>
+VKAPI_ATTR VkDeviceAddress VKAPI_CALL layer_vkGetBufferDeviceAddressKHR<default_tag>(
     VkDevice device,
     const VkBufferDeviceAddressInfo* pInfo
 ) {
@@ -5955,7 +6296,8 @@ VKAPI_ATTR VkDeviceAddress VKAPI_CALL layer_vkGetBufferDeviceAddressKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetBufferMemoryRequirements_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetBufferMemoryRequirements<default_tag>(
     VkDevice device,
     VkBuffer buffer,
     VkMemoryRequirements* pMemoryRequirements
@@ -5972,7 +6314,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetBufferMemoryRequirements_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetBufferMemoryRequirements2_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetBufferMemoryRequirements2<default_tag>(
     VkDevice device,
     const VkBufferMemoryRequirementsInfo2* pInfo,
     VkMemoryRequirements2* pMemoryRequirements
@@ -5989,7 +6332,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetBufferMemoryRequirements2_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetBufferMemoryRequirements2KHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetBufferMemoryRequirements2KHR<default_tag>(
     VkDevice device,
     const VkBufferMemoryRequirementsInfo2* pInfo,
     VkMemoryRequirements2* pMemoryRequirements
@@ -6006,7 +6350,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetBufferMemoryRequirements2KHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR uint64_t VKAPI_CALL layer_vkGetBufferOpaqueCaptureAddress_default(
+template <>
+VKAPI_ATTR uint64_t VKAPI_CALL layer_vkGetBufferOpaqueCaptureAddress<default_tag>(
     VkDevice device,
     const VkBufferDeviceAddressInfo* pInfo
 ) {
@@ -6022,7 +6367,8 @@ VKAPI_ATTR uint64_t VKAPI_CALL layer_vkGetBufferOpaqueCaptureAddress_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR uint64_t VKAPI_CALL layer_vkGetBufferOpaqueCaptureAddressKHR_default(
+template <>
+VKAPI_ATTR uint64_t VKAPI_CALL layer_vkGetBufferOpaqueCaptureAddressKHR<default_tag>(
     VkDevice device,
     const VkBufferDeviceAddressInfo* pInfo
 ) {
@@ -6038,7 +6384,8 @@ VKAPI_ATTR uint64_t VKAPI_CALL layer_vkGetBufferOpaqueCaptureAddressKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetBufferOpaqueCaptureDescriptorDataEXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetBufferOpaqueCaptureDescriptorDataEXT<default_tag>(
     VkDevice device,
     const VkBufferCaptureDescriptorDataInfoEXT* pInfo,
     void* pData
@@ -6055,7 +6402,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetBufferOpaqueCaptureDescriptorDataEXT_d
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetCalibratedTimestampsEXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetCalibratedTimestampsEXT<default_tag>(
     VkDevice device,
     uint32_t timestampCount,
     const VkCalibratedTimestampInfoKHR* pTimestampInfos,
@@ -6074,7 +6422,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetCalibratedTimestampsEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetCalibratedTimestampsKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetCalibratedTimestampsKHR<default_tag>(
     VkDevice device,
     uint32_t timestampCount,
     const VkCalibratedTimestampInfoKHR* pTimestampInfos,
@@ -6093,7 +6442,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetCalibratedTimestampsKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR uint32_t VKAPI_CALL layer_vkGetDeferredOperationMaxConcurrencyKHR_default(
+template <>
+VKAPI_ATTR uint32_t VKAPI_CALL layer_vkGetDeferredOperationMaxConcurrencyKHR<default_tag>(
     VkDevice device,
     VkDeferredOperationKHR operation
 ) {
@@ -6109,7 +6459,8 @@ VKAPI_ATTR uint32_t VKAPI_CALL layer_vkGetDeferredOperationMaxConcurrencyKHR_def
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetDeferredOperationResultKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetDeferredOperationResultKHR<default_tag>(
     VkDevice device,
     VkDeferredOperationKHR operation
 ) {
@@ -6125,7 +6476,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetDeferredOperationResultKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetDescriptorEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetDescriptorEXT<default_tag>(
     VkDevice device,
     const VkDescriptorGetInfoEXT* pDescriptorInfo,
     size_t dataSize,
@@ -6143,7 +6495,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetDescriptorEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetDescriptorSetLayoutBindingOffsetEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetDescriptorSetLayoutBindingOffsetEXT<default_tag>(
     VkDevice device,
     VkDescriptorSetLayout layout,
     uint32_t binding,
@@ -6161,7 +6514,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetDescriptorSetLayoutBindingOffsetEXT_defaul
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetDescriptorSetLayoutSizeEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetDescriptorSetLayoutSizeEXT<default_tag>(
     VkDevice device,
     VkDescriptorSetLayout layout,
     VkDeviceSize* pLayoutSizeInBytes
@@ -6178,7 +6532,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetDescriptorSetLayoutSizeEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetDescriptorSetLayoutSupport_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetDescriptorSetLayoutSupport<default_tag>(
     VkDevice device,
     const VkDescriptorSetLayoutCreateInfo* pCreateInfo,
     VkDescriptorSetLayoutSupport* pSupport
@@ -6195,7 +6550,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetDescriptorSetLayoutSupport_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetDescriptorSetLayoutSupportKHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetDescriptorSetLayoutSupportKHR<default_tag>(
     VkDevice device,
     const VkDescriptorSetLayoutCreateInfo* pCreateInfo,
     VkDescriptorSetLayoutSupport* pSupport
@@ -6212,7 +6568,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetDescriptorSetLayoutSupportKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceAccelerationStructureCompatibilityKHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceAccelerationStructureCompatibilityKHR<default_tag>(
     VkDevice device,
     const VkAccelerationStructureVersionInfoKHR* pVersionInfo,
     VkAccelerationStructureCompatibilityKHR* pCompatibility
@@ -6229,7 +6586,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceAccelerationStructureCompatibilityKH
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceBufferMemoryRequirements_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceBufferMemoryRequirements<default_tag>(
     VkDevice device,
     const VkDeviceBufferMemoryRequirements* pInfo,
     VkMemoryRequirements2* pMemoryRequirements
@@ -6246,7 +6604,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceBufferMemoryRequirements_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceBufferMemoryRequirementsKHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceBufferMemoryRequirementsKHR<default_tag>(
     VkDevice device,
     const VkDeviceBufferMemoryRequirements* pInfo,
     VkMemoryRequirements2* pMemoryRequirements
@@ -6263,7 +6622,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceBufferMemoryRequirementsKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetDeviceFaultInfoEXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetDeviceFaultInfoEXT<default_tag>(
     VkDevice device,
     VkDeviceFaultCountsEXT* pFaultCounts,
     VkDeviceFaultInfoEXT* pFaultInfo
@@ -6280,7 +6640,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetDeviceFaultInfoEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceGroupPeerMemoryFeatures_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceGroupPeerMemoryFeatures<default_tag>(
     VkDevice device,
     uint32_t heapIndex,
     uint32_t localDeviceIndex,
@@ -6299,7 +6660,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceGroupPeerMemoryFeatures_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceGroupPeerMemoryFeaturesKHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceGroupPeerMemoryFeaturesKHR<default_tag>(
     VkDevice device,
     uint32_t heapIndex,
     uint32_t localDeviceIndex,
@@ -6318,7 +6680,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceGroupPeerMemoryFeaturesKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetDeviceGroupPresentCapabilitiesKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetDeviceGroupPresentCapabilitiesKHR<default_tag>(
     VkDevice device,
     VkDeviceGroupPresentCapabilitiesKHR* pDeviceGroupPresentCapabilities
 ) {
@@ -6334,7 +6697,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetDeviceGroupPresentCapabilitiesKHR_defa
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetDeviceGroupSurfacePresentModesKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetDeviceGroupSurfacePresentModesKHR<default_tag>(
     VkDevice device,
     VkSurfaceKHR surface,
     VkDeviceGroupPresentModeFlagsKHR* pModes
@@ -6351,7 +6715,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetDeviceGroupSurfacePresentModesKHR_defa
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceImageMemoryRequirements_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceImageMemoryRequirements<default_tag>(
     VkDevice device,
     const VkDeviceImageMemoryRequirements* pInfo,
     VkMemoryRequirements2* pMemoryRequirements
@@ -6368,7 +6733,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceImageMemoryRequirements_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceImageSparseMemoryRequirements_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceImageSparseMemoryRequirements<default_tag>(
     VkDevice device,
     const VkDeviceImageMemoryRequirements* pInfo,
     uint32_t* pSparseMemoryRequirementCount,
@@ -6386,7 +6752,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceImageSparseMemoryRequirements_defaul
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceImageSparseMemoryRequirementsKHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceImageSparseMemoryRequirementsKHR<default_tag>(
     VkDevice device,
     const VkDeviceImageMemoryRequirements* pInfo,
     uint32_t* pSparseMemoryRequirementCount,
@@ -6404,7 +6771,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceImageSparseMemoryRequirementsKHR_def
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceImageSubresourceLayout_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceImageSubresourceLayout<default_tag>(
     VkDevice device,
     const VkDeviceImageSubresourceInfo* pInfo,
     VkSubresourceLayout2* pLayout
@@ -6421,7 +6789,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceImageSubresourceLayout_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceImageSubresourceLayoutKHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceImageSubresourceLayoutKHR<default_tag>(
     VkDevice device,
     const VkDeviceImageSubresourceInfo* pInfo,
     VkSubresourceLayout2* pLayout
@@ -6438,7 +6807,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceImageSubresourceLayoutKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceMemoryCommitment_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceMemoryCommitment<default_tag>(
     VkDevice device,
     VkDeviceMemory memory,
     VkDeviceSize* pCommittedMemoryInBytes
@@ -6455,7 +6825,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceMemoryCommitment_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR uint64_t VKAPI_CALL layer_vkGetDeviceMemoryOpaqueCaptureAddress_default(
+template <>
+VKAPI_ATTR uint64_t VKAPI_CALL layer_vkGetDeviceMemoryOpaqueCaptureAddress<default_tag>(
     VkDevice device,
     const VkDeviceMemoryOpaqueCaptureAddressInfo* pInfo
 ) {
@@ -6471,7 +6842,8 @@ VKAPI_ATTR uint64_t VKAPI_CALL layer_vkGetDeviceMemoryOpaqueCaptureAddress_defau
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR uint64_t VKAPI_CALL layer_vkGetDeviceMemoryOpaqueCaptureAddressKHR_default(
+template <>
+VKAPI_ATTR uint64_t VKAPI_CALL layer_vkGetDeviceMemoryOpaqueCaptureAddressKHR<default_tag>(
     VkDevice device,
     const VkDeviceMemoryOpaqueCaptureAddressInfo* pInfo
 ) {
@@ -6487,7 +6859,8 @@ VKAPI_ATTR uint64_t VKAPI_CALL layer_vkGetDeviceMemoryOpaqueCaptureAddressKHR_de
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceMicromapCompatibilityEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceMicromapCompatibilityEXT<default_tag>(
     VkDevice device,
     const VkMicromapVersionInfoEXT* pVersionInfo,
     VkAccelerationStructureCompatibilityKHR* pCompatibility
@@ -6504,7 +6877,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceMicromapCompatibilityEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceQueue_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceQueue<default_tag>(
     VkDevice device,
     uint32_t queueFamilyIndex,
     uint32_t queueIndex,
@@ -6522,7 +6896,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceQueue_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceQueue2_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceQueue2<default_tag>(
     VkDevice device,
     const VkDeviceQueueInfo2* pQueueInfo,
     VkQueue* pQueue
@@ -6539,7 +6914,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceQueue2_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceTensorMemoryRequirementsARM_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceTensorMemoryRequirementsARM<default_tag>(
     VkDevice device,
     const VkDeviceTensorMemoryRequirementsARM* pInfo,
     VkMemoryRequirements2* pMemoryRequirements
@@ -6556,7 +6932,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceTensorMemoryRequirementsARM_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetEventStatus_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetEventStatus<default_tag>(
     VkDevice device,
     VkEvent event
 ) {
@@ -6572,7 +6949,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetEventStatus_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetFenceFdKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetFenceFdKHR<default_tag>(
     VkDevice device,
     const VkFenceGetFdInfoKHR* pGetFdInfo,
     int* pFd
@@ -6589,7 +6967,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetFenceFdKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetFenceStatus_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetFenceStatus<default_tag>(
     VkDevice device,
     VkFence fence
 ) {
@@ -6605,7 +6984,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetFenceStatus_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetGeneratedCommandsMemoryRequirementsEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetGeneratedCommandsMemoryRequirementsEXT<default_tag>(
     VkDevice device,
     const VkGeneratedCommandsMemoryRequirementsInfoEXT* pInfo,
     VkMemoryRequirements2* pMemoryRequirements
@@ -6622,7 +7002,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetGeneratedCommandsMemoryRequirementsEXT_def
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetImageDrmFormatModifierPropertiesEXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetImageDrmFormatModifierPropertiesEXT<default_tag>(
     VkDevice device,
     VkImage image,
     VkImageDrmFormatModifierPropertiesEXT* pProperties
@@ -6639,7 +7020,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetImageDrmFormatModifierPropertiesEXT_de
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetImageMemoryRequirements_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetImageMemoryRequirements<default_tag>(
     VkDevice device,
     VkImage image,
     VkMemoryRequirements* pMemoryRequirements
@@ -6656,7 +7038,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetImageMemoryRequirements_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetImageMemoryRequirements2_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetImageMemoryRequirements2<default_tag>(
     VkDevice device,
     const VkImageMemoryRequirementsInfo2* pInfo,
     VkMemoryRequirements2* pMemoryRequirements
@@ -6673,7 +7056,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetImageMemoryRequirements2_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetImageMemoryRequirements2KHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetImageMemoryRequirements2KHR<default_tag>(
     VkDevice device,
     const VkImageMemoryRequirementsInfo2* pInfo,
     VkMemoryRequirements2* pMemoryRequirements
@@ -6690,7 +7074,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetImageMemoryRequirements2KHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetImageOpaqueCaptureDescriptorDataEXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetImageOpaqueCaptureDescriptorDataEXT<default_tag>(
     VkDevice device,
     const VkImageCaptureDescriptorDataInfoEXT* pInfo,
     void* pData
@@ -6707,7 +7092,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetImageOpaqueCaptureDescriptorDataEXT_de
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetImageSparseMemoryRequirements_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetImageSparseMemoryRequirements<default_tag>(
     VkDevice device,
     VkImage image,
     uint32_t* pSparseMemoryRequirementCount,
@@ -6725,7 +7111,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetImageSparseMemoryRequirements_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetImageSparseMemoryRequirements2_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetImageSparseMemoryRequirements2<default_tag>(
     VkDevice device,
     const VkImageSparseMemoryRequirementsInfo2* pInfo,
     uint32_t* pSparseMemoryRequirementCount,
@@ -6743,7 +7130,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetImageSparseMemoryRequirements2_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetImageSparseMemoryRequirements2KHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetImageSparseMemoryRequirements2KHR<default_tag>(
     VkDevice device,
     const VkImageSparseMemoryRequirementsInfo2* pInfo,
     uint32_t* pSparseMemoryRequirementCount,
@@ -6761,7 +7149,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetImageSparseMemoryRequirements2KHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetImageSubresourceLayout_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetImageSubresourceLayout<default_tag>(
     VkDevice device,
     VkImage image,
     const VkImageSubresource* pSubresource,
@@ -6779,7 +7168,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetImageSubresourceLayout_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetImageSubresourceLayout2_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetImageSubresourceLayout2<default_tag>(
     VkDevice device,
     VkImage image,
     const VkImageSubresource2* pSubresource,
@@ -6797,7 +7187,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetImageSubresourceLayout2_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetImageSubresourceLayout2EXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetImageSubresourceLayout2EXT<default_tag>(
     VkDevice device,
     VkImage image,
     const VkImageSubresource2* pSubresource,
@@ -6815,7 +7206,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetImageSubresourceLayout2EXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetImageSubresourceLayout2KHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetImageSubresourceLayout2KHR<default_tag>(
     VkDevice device,
     VkImage image,
     const VkImageSubresource2* pSubresource,
@@ -6833,7 +7225,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetImageSubresourceLayout2KHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetImageViewOpaqueCaptureDescriptorDataEXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetImageViewOpaqueCaptureDescriptorDataEXT<default_tag>(
     VkDevice device,
     const VkImageViewCaptureDescriptorDataInfoEXT* pInfo,
     void* pData
@@ -6850,7 +7243,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetImageViewOpaqueCaptureDescriptorDataEX
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetMemoryFdKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetMemoryFdKHR<default_tag>(
     VkDevice device,
     const VkMemoryGetFdInfoKHR* pGetFdInfo,
     int* pFd
@@ -6867,7 +7261,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetMemoryFdKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetMemoryFdPropertiesKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetMemoryFdPropertiesKHR<default_tag>(
     VkDevice device,
     VkExternalMemoryHandleTypeFlagBits handleType,
     int fd,
@@ -6885,7 +7280,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetMemoryFdPropertiesKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetMemoryHostPointerPropertiesEXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetMemoryHostPointerPropertiesEXT<default_tag>(
     VkDevice device,
     VkExternalMemoryHandleTypeFlagBits handleType,
     const void* pHostPointer,
@@ -6903,7 +7299,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetMemoryHostPointerPropertiesEXT_default
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetMicromapBuildSizesEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetMicromapBuildSizesEXT<default_tag>(
     VkDevice device,
     VkAccelerationStructureBuildTypeKHR buildType,
     const VkMicromapBuildInfoEXT* pBuildInfo,
@@ -6921,7 +7318,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetMicromapBuildSizesEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPipelineBinaryDataKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPipelineBinaryDataKHR<default_tag>(
     VkDevice device,
     const VkPipelineBinaryDataInfoKHR* pInfo,
     VkPipelineBinaryKeyKHR* pPipelineBinaryKey,
@@ -6940,7 +7338,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPipelineBinaryDataKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPipelineCacheData_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPipelineCacheData<default_tag>(
     VkDevice device,
     VkPipelineCache pipelineCache,
     size_t* pDataSize,
@@ -6958,7 +7357,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPipelineCacheData_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPipelineExecutableInternalRepresentationsKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPipelineExecutableInternalRepresentationsKHR<default_tag>(
     VkDevice device,
     const VkPipelineExecutableInfoKHR* pExecutableInfo,
     uint32_t* pInternalRepresentationCount,
@@ -6976,7 +7376,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPipelineExecutableInternalRepresentati
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPipelineExecutablePropertiesKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPipelineExecutablePropertiesKHR<default_tag>(
     VkDevice device,
     const VkPipelineInfoKHR* pPipelineInfo,
     uint32_t* pExecutableCount,
@@ -6994,7 +7395,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPipelineExecutablePropertiesKHR_defaul
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPipelineExecutableStatisticsKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPipelineExecutableStatisticsKHR<default_tag>(
     VkDevice device,
     const VkPipelineExecutableInfoKHR* pExecutableInfo,
     uint32_t* pStatisticCount,
@@ -7012,7 +7414,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPipelineExecutableStatisticsKHR_defaul
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPipelineKeyKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPipelineKeyKHR<default_tag>(
     VkDevice device,
     const VkPipelineCreateInfoKHR* pPipelineCreateInfo,
     VkPipelineBinaryKeyKHR* pPipelineKey
@@ -7029,7 +7432,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPipelineKeyKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPipelinePropertiesEXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPipelinePropertiesEXT<default_tag>(
     VkDevice device,
     const VkPipelineInfoEXT* pPipelineInfo,
     VkBaseOutStructure* pPipelineProperties
@@ -7046,7 +7450,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPipelinePropertiesEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetPrivateData_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetPrivateData<default_tag>(
     VkDevice device,
     VkObjectType objectType,
     uint64_t objectHandle,
@@ -7065,7 +7470,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetPrivateData_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetPrivateDataEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetPrivateDataEXT<default_tag>(
     VkDevice device,
     VkObjectType objectType,
     uint64_t objectHandle,
@@ -7084,7 +7490,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetPrivateDataEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetQueryPoolResults_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetQueryPoolResults<default_tag>(
     VkDevice device,
     VkQueryPool queryPool,
     uint32_t firstQuery,
@@ -7106,7 +7513,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetQueryPoolResults_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetRayTracingCaptureReplayShaderGroupHandlesKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetRayTracingCaptureReplayShaderGroupHandlesKHR<default_tag>(
     VkDevice device,
     VkPipeline pipeline,
     uint32_t firstGroup,
@@ -7126,7 +7534,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetRayTracingCaptureReplayShaderGroupHand
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetRayTracingShaderGroupHandlesKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetRayTracingShaderGroupHandlesKHR<default_tag>(
     VkDevice device,
     VkPipeline pipeline,
     uint32_t firstGroup,
@@ -7146,7 +7555,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetRayTracingShaderGroupHandlesKHR_defaul
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkDeviceSize VKAPI_CALL layer_vkGetRayTracingShaderGroupStackSizeKHR_default(
+template <>
+VKAPI_ATTR VkDeviceSize VKAPI_CALL layer_vkGetRayTracingShaderGroupStackSizeKHR<default_tag>(
     VkDevice device,
     VkPipeline pipeline,
     uint32_t group,
@@ -7164,7 +7574,8 @@ VKAPI_ATTR VkDeviceSize VKAPI_CALL layer_vkGetRayTracingShaderGroupStackSizeKHR_
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetRenderAreaGranularity_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetRenderAreaGranularity<default_tag>(
     VkDevice device,
     VkRenderPass renderPass,
     VkExtent2D* pGranularity
@@ -7181,7 +7592,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetRenderAreaGranularity_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetRenderingAreaGranularity_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetRenderingAreaGranularity<default_tag>(
     VkDevice device,
     const VkRenderingAreaInfo* pRenderingAreaInfo,
     VkExtent2D* pGranularity
@@ -7198,7 +7610,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetRenderingAreaGranularity_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetRenderingAreaGranularityKHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetRenderingAreaGranularityKHR<default_tag>(
     VkDevice device,
     const VkRenderingAreaInfo* pRenderingAreaInfo,
     VkExtent2D* pGranularity
@@ -7215,7 +7628,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetRenderingAreaGranularityKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetSamplerOpaqueCaptureDescriptorDataEXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetSamplerOpaqueCaptureDescriptorDataEXT<default_tag>(
     VkDevice device,
     const VkSamplerCaptureDescriptorDataInfoEXT* pInfo,
     void* pData
@@ -7232,7 +7646,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetSamplerOpaqueCaptureDescriptorDataEXT_
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetSemaphoreCounterValue_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetSemaphoreCounterValue<default_tag>(
     VkDevice device,
     VkSemaphore semaphore,
     uint64_t* pValue
@@ -7249,7 +7664,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetSemaphoreCounterValue_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetSemaphoreCounterValueKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetSemaphoreCounterValueKHR<default_tag>(
     VkDevice device,
     VkSemaphore semaphore,
     uint64_t* pValue
@@ -7266,7 +7682,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetSemaphoreCounterValueKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetSemaphoreFdKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetSemaphoreFdKHR<default_tag>(
     VkDevice device,
     const VkSemaphoreGetFdInfoKHR* pGetFdInfo,
     int* pFd
@@ -7283,7 +7700,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetSemaphoreFdKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetShaderBinaryDataEXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetShaderBinaryDataEXT<default_tag>(
     VkDevice device,
     VkShaderEXT shader,
     size_t* pDataSize,
@@ -7301,7 +7719,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetShaderBinaryDataEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetShaderModuleCreateInfoIdentifierEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetShaderModuleCreateInfoIdentifierEXT<default_tag>(
     VkDevice device,
     const VkShaderModuleCreateInfo* pCreateInfo,
     VkShaderModuleIdentifierEXT* pIdentifier
@@ -7318,7 +7737,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetShaderModuleCreateInfoIdentifierEXT_defaul
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetShaderModuleIdentifierEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetShaderModuleIdentifierEXT<default_tag>(
     VkDevice device,
     VkShaderModule shaderModule,
     VkShaderModuleIdentifierEXT* pIdentifier
@@ -7335,7 +7755,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetShaderModuleIdentifierEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetSwapchainCounterEXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetSwapchainCounterEXT<default_tag>(
     VkDevice device,
     VkSwapchainKHR swapchain,
     VkSurfaceCounterFlagBitsEXT counter,
@@ -7353,7 +7774,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetSwapchainCounterEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetSwapchainImagesKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetSwapchainImagesKHR<default_tag>(
     VkDevice device,
     VkSwapchainKHR swapchain,
     uint32_t* pSwapchainImageCount,
@@ -7371,7 +7793,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetSwapchainImagesKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetSwapchainStatusKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetSwapchainStatusKHR<default_tag>(
     VkDevice device,
     VkSwapchainKHR swapchain
 ) {
@@ -7387,7 +7810,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetSwapchainStatusKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetTensorMemoryRequirementsARM_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetTensorMemoryRequirementsARM<default_tag>(
     VkDevice device,
     const VkTensorMemoryRequirementsInfoARM* pInfo,
     VkMemoryRequirements2* pMemoryRequirements
@@ -7404,7 +7828,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetTensorMemoryRequirementsARM_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetTensorOpaqueCaptureDescriptorDataARM_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetTensorOpaqueCaptureDescriptorDataARM<default_tag>(
     VkDevice device,
     const VkTensorCaptureDescriptorDataInfoARM* pInfo,
     void* pData
@@ -7421,7 +7846,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetTensorOpaqueCaptureDescriptorDataARM_d
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetTensorViewOpaqueCaptureDescriptorDataARM_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetTensorViewOpaqueCaptureDescriptorDataARM<default_tag>(
     VkDevice device,
     const VkTensorViewCaptureDescriptorDataInfoARM* pInfo,
     void* pData
@@ -7438,7 +7864,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetTensorViewOpaqueCaptureDescriptorDataA
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetValidationCacheDataEXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetValidationCacheDataEXT<default_tag>(
     VkDevice device,
     VkValidationCacheEXT validationCache,
     size_t* pDataSize,
@@ -7456,7 +7883,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetValidationCacheDataEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkImportFenceFdKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkImportFenceFdKHR<default_tag>(
     VkDevice device,
     const VkImportFenceFdInfoKHR* pImportFenceFdInfo
 ) {
@@ -7472,7 +7900,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkImportFenceFdKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkImportSemaphoreFdKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkImportSemaphoreFdKHR<default_tag>(
     VkDevice device,
     const VkImportSemaphoreFdInfoKHR* pImportSemaphoreFdInfo
 ) {
@@ -7488,7 +7917,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkImportSemaphoreFdKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkInvalidateMappedMemoryRanges_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkInvalidateMappedMemoryRanges<default_tag>(
     VkDevice device,
     uint32_t memoryRangeCount,
     const VkMappedMemoryRange* pMemoryRanges
@@ -7505,7 +7935,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkInvalidateMappedMemoryRanges_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkMapMemory_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkMapMemory<default_tag>(
     VkDevice device,
     VkDeviceMemory memory,
     VkDeviceSize offset,
@@ -7525,7 +7956,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkMapMemory_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkMapMemory2_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkMapMemory2<default_tag>(
     VkDevice device,
     const VkMemoryMapInfo* pMemoryMapInfo,
     void** ppData
@@ -7542,7 +7974,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkMapMemory2_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkMapMemory2KHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkMapMemory2KHR<default_tag>(
     VkDevice device,
     const VkMemoryMapInfo* pMemoryMapInfo,
     void** ppData
@@ -7559,7 +7992,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkMapMemory2KHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkMergePipelineCaches_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkMergePipelineCaches<default_tag>(
     VkDevice device,
     VkPipelineCache dstCache,
     uint32_t srcCacheCount,
@@ -7577,7 +8011,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkMergePipelineCaches_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkMergeValidationCachesEXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkMergeValidationCachesEXT<default_tag>(
     VkDevice device,
     VkValidationCacheEXT dstCache,
     uint32_t srcCacheCount,
@@ -7595,7 +8030,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkMergeValidationCachesEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkQueueBeginDebugUtilsLabelEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkQueueBeginDebugUtilsLabelEXT<default_tag>(
     VkQueue queue,
     const VkDebugUtilsLabelEXT* pLabelInfo
 ) {
@@ -7611,7 +8047,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkQueueBeginDebugUtilsLabelEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueBindSparse_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueBindSparse<default_tag>(
     VkQueue queue,
     uint32_t bindInfoCount,
     const VkBindSparseInfo* pBindInfo,
@@ -7629,7 +8066,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueBindSparse_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkQueueEndDebugUtilsLabelEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkQueueEndDebugUtilsLabelEXT<default_tag>(
     VkQueue queue
 ) {
     LAYER_TRACE(__func__);
@@ -7644,7 +8082,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkQueueEndDebugUtilsLabelEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkQueueInsertDebugUtilsLabelEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkQueueInsertDebugUtilsLabelEXT<default_tag>(
     VkQueue queue,
     const VkDebugUtilsLabelEXT* pLabelInfo
 ) {
@@ -7660,7 +8099,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkQueueInsertDebugUtilsLabelEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueuePresentKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueuePresentKHR<default_tag>(
     VkQueue queue,
     const VkPresentInfoKHR* pPresentInfo
 ) {
@@ -7676,7 +8116,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueuePresentKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit<default_tag>(
     VkQueue queue,
     uint32_t submitCount,
     const VkSubmitInfo* pSubmits,
@@ -7694,7 +8135,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit2_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit2<default_tag>(
     VkQueue queue,
     uint32_t submitCount,
     const VkSubmitInfo2* pSubmits,
@@ -7712,7 +8154,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit2_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit2KHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit2KHR<default_tag>(
     VkQueue queue,
     uint32_t submitCount,
     const VkSubmitInfo2* pSubmits,
@@ -7730,7 +8173,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit2KHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueWaitIdle_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueWaitIdle<default_tag>(
     VkQueue queue
 ) {
     LAYER_TRACE(__func__);
@@ -7745,7 +8189,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueWaitIdle_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkRegisterDeviceEventEXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkRegisterDeviceEventEXT<default_tag>(
     VkDevice device,
     const VkDeviceEventInfoEXT* pDeviceEventInfo,
     const VkAllocationCallbacks* pAllocator,
@@ -7763,7 +8208,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkRegisterDeviceEventEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkRegisterDisplayEventEXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkRegisterDisplayEventEXT<default_tag>(
     VkDevice device,
     VkDisplayKHR display,
     const VkDisplayEventInfoEXT* pDisplayEventInfo,
@@ -7782,7 +8228,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkRegisterDisplayEventEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkReleaseCapturedPipelineDataKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkReleaseCapturedPipelineDataKHR<default_tag>(
     VkDevice device,
     const VkReleaseCapturedPipelineDataInfoKHR* pInfo,
     const VkAllocationCallbacks* pAllocator
@@ -7799,7 +8246,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkReleaseCapturedPipelineDataKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkReleaseProfilingLockKHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkReleaseProfilingLockKHR<default_tag>(
     VkDevice device
 ) {
     LAYER_TRACE(__func__);
@@ -7814,7 +8262,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkReleaseProfilingLockKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkReleaseSwapchainImagesEXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkReleaseSwapchainImagesEXT<default_tag>(
     VkDevice device,
     const VkReleaseSwapchainImagesInfoEXT* pReleaseInfo
 ) {
@@ -7830,7 +8279,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkReleaseSwapchainImagesEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkResetCommandBuffer_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkResetCommandBuffer<default_tag>(
     VkCommandBuffer commandBuffer,
     VkCommandBufferResetFlags flags
 ) {
@@ -7846,7 +8296,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkResetCommandBuffer_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkResetCommandPool_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkResetCommandPool<default_tag>(
     VkDevice device,
     VkCommandPool commandPool,
     VkCommandPoolResetFlags flags
@@ -7863,7 +8314,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkResetCommandPool_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkResetDescriptorPool_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkResetDescriptorPool<default_tag>(
     VkDevice device,
     VkDescriptorPool descriptorPool,
     VkDescriptorPoolResetFlags flags
@@ -7880,7 +8332,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkResetDescriptorPool_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkResetEvent_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkResetEvent<default_tag>(
     VkDevice device,
     VkEvent event
 ) {
@@ -7896,7 +8349,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkResetEvent_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkResetFences_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkResetFences<default_tag>(
     VkDevice device,
     uint32_t fenceCount,
     const VkFence* pFences
@@ -7913,7 +8367,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkResetFences_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkResetQueryPool_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkResetQueryPool<default_tag>(
     VkDevice device,
     VkQueryPool queryPool,
     uint32_t firstQuery,
@@ -7931,7 +8386,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkResetQueryPool_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkResetQueryPoolEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkResetQueryPoolEXT<default_tag>(
     VkDevice device,
     VkQueryPool queryPool,
     uint32_t firstQuery,
@@ -7949,7 +8405,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkResetQueryPoolEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkSetDebugUtilsObjectNameEXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkSetDebugUtilsObjectNameEXT<default_tag>(
     VkDevice device,
     const VkDebugUtilsObjectNameInfoEXT* pNameInfo
 ) {
@@ -7965,7 +8422,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkSetDebugUtilsObjectNameEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkSetDebugUtilsObjectTagEXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkSetDebugUtilsObjectTagEXT<default_tag>(
     VkDevice device,
     const VkDebugUtilsObjectTagInfoEXT* pTagInfo
 ) {
@@ -7981,7 +8439,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkSetDebugUtilsObjectTagEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkSetDeviceMemoryPriorityEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkSetDeviceMemoryPriorityEXT<default_tag>(
     VkDevice device,
     VkDeviceMemory memory,
     float priority
@@ -7998,7 +8457,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkSetDeviceMemoryPriorityEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkSetEvent_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkSetEvent<default_tag>(
     VkDevice device,
     VkEvent event
 ) {
@@ -8014,7 +8474,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkSetEvent_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkSetHdrMetadataEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkSetHdrMetadataEXT<default_tag>(
     VkDevice device,
     uint32_t swapchainCount,
     const VkSwapchainKHR* pSwapchains,
@@ -8032,7 +8493,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkSetHdrMetadataEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkSetPrivateData_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkSetPrivateData<default_tag>(
     VkDevice device,
     VkObjectType objectType,
     uint64_t objectHandle,
@@ -8051,7 +8513,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkSetPrivateData_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkSetPrivateDataEXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkSetPrivateDataEXT<default_tag>(
     VkDevice device,
     VkObjectType objectType,
     uint64_t objectHandle,
@@ -8070,7 +8533,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkSetPrivateDataEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkSignalSemaphore_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkSignalSemaphore<default_tag>(
     VkDevice device,
     const VkSemaphoreSignalInfo* pSignalInfo
 ) {
@@ -8086,7 +8550,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkSignalSemaphore_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkSignalSemaphoreKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkSignalSemaphoreKHR<default_tag>(
     VkDevice device,
     const VkSemaphoreSignalInfo* pSignalInfo
 ) {
@@ -8102,7 +8567,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkSignalSemaphoreKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkTransitionImageLayout_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkTransitionImageLayout<default_tag>(
     VkDevice device,
     uint32_t transitionCount,
     const VkHostImageLayoutTransitionInfo* pTransitions
@@ -8119,7 +8585,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkTransitionImageLayout_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkTransitionImageLayoutEXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkTransitionImageLayoutEXT<default_tag>(
     VkDevice device,
     uint32_t transitionCount,
     const VkHostImageLayoutTransitionInfo* pTransitions
@@ -8136,7 +8603,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkTransitionImageLayoutEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkTrimCommandPool_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkTrimCommandPool<default_tag>(
     VkDevice device,
     VkCommandPool commandPool,
     VkCommandPoolTrimFlags flags
@@ -8153,7 +8621,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkTrimCommandPool_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkTrimCommandPoolKHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkTrimCommandPoolKHR<default_tag>(
     VkDevice device,
     VkCommandPool commandPool,
     VkCommandPoolTrimFlags flags
@@ -8170,7 +8639,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkTrimCommandPoolKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkUnmapMemory_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkUnmapMemory<default_tag>(
     VkDevice device,
     VkDeviceMemory memory
 ) {
@@ -8186,7 +8656,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkUnmapMemory_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkUnmapMemory2_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkUnmapMemory2<default_tag>(
     VkDevice device,
     const VkMemoryUnmapInfo* pMemoryUnmapInfo
 ) {
@@ -8202,7 +8673,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkUnmapMemory2_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkUnmapMemory2KHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkUnmapMemory2KHR<default_tag>(
     VkDevice device,
     const VkMemoryUnmapInfo* pMemoryUnmapInfo
 ) {
@@ -8218,7 +8690,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkUnmapMemory2KHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkUpdateDescriptorSetWithTemplate_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkUpdateDescriptorSetWithTemplate<default_tag>(
     VkDevice device,
     VkDescriptorSet descriptorSet,
     VkDescriptorUpdateTemplate descriptorUpdateTemplate,
@@ -8236,7 +8709,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkUpdateDescriptorSetWithTemplate_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkUpdateDescriptorSetWithTemplateKHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkUpdateDescriptorSetWithTemplateKHR<default_tag>(
     VkDevice device,
     VkDescriptorSet descriptorSet,
     VkDescriptorUpdateTemplate descriptorUpdateTemplate,
@@ -8254,7 +8728,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkUpdateDescriptorSetWithTemplateKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkUpdateDescriptorSets_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkUpdateDescriptorSets<default_tag>(
     VkDevice device,
     uint32_t descriptorWriteCount,
     const VkWriteDescriptorSet* pDescriptorWrites,
@@ -8273,7 +8748,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkUpdateDescriptorSets_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkUpdateIndirectExecutionSetPipelineEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkUpdateIndirectExecutionSetPipelineEXT<default_tag>(
     VkDevice device,
     VkIndirectExecutionSetEXT indirectExecutionSet,
     uint32_t executionSetWriteCount,
@@ -8291,7 +8767,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkUpdateIndirectExecutionSetPipelineEXT_default
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkUpdateIndirectExecutionSetShaderEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkUpdateIndirectExecutionSetShaderEXT<default_tag>(
     VkDevice device,
     VkIndirectExecutionSetEXT indirectExecutionSet,
     uint32_t executionSetWriteCount,
@@ -8309,7 +8786,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkUpdateIndirectExecutionSetShaderEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkWaitForFences_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkWaitForFences<default_tag>(
     VkDevice device,
     uint32_t fenceCount,
     const VkFence* pFences,
@@ -8328,7 +8806,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkWaitForFences_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkWaitForPresent2KHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkWaitForPresent2KHR<default_tag>(
     VkDevice device,
     VkSwapchainKHR swapchain,
     const VkPresentWait2InfoKHR* pPresentWait2Info
@@ -8345,7 +8824,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkWaitForPresent2KHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkWaitForPresentKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkWaitForPresentKHR<default_tag>(
     VkDevice device,
     VkSwapchainKHR swapchain,
     uint64_t presentId,
@@ -8363,7 +8843,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkWaitForPresentKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkWaitSemaphores_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkWaitSemaphores<default_tag>(
     VkDevice device,
     const VkSemaphoreWaitInfo* pWaitInfo,
     uint64_t timeout
@@ -8380,7 +8861,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkWaitSemaphores_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkWaitSemaphoresKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkWaitSemaphoresKHR<default_tag>(
     VkDevice device,
     const VkSemaphoreWaitInfo* pWaitInfo,
     uint64_t timeout
@@ -8397,7 +8879,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkWaitSemaphoresKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkWriteAccelerationStructuresPropertiesKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkWriteAccelerationStructuresPropertiesKHR<default_tag>(
     VkDevice device,
     uint32_t accelerationStructureCount,
     const VkAccelerationStructureKHR* pAccelerationStructures,
@@ -8418,7 +8901,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkWriteAccelerationStructuresPropertiesKHR_
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkWriteMicromapsPropertiesEXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkWriteMicromapsPropertiesEXT<default_tag>(
     VkDevice device,
     uint32_t micromapCount,
     const VkMicromapEXT* pMicromaps,

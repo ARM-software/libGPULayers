@@ -41,7 +41,8 @@ extern std::mutex g_vulkanLock;
 #if defined(VK_USE_PLATFORM_ANDROID_KHR)
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateAndroidSurfaceKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateAndroidSurfaceKHR<default_tag>(
     VkInstance instance,
     const VkAndroidSurfaceCreateInfoKHR* pCreateInfo,
     const VkAllocationCallbacks* pAllocator,
@@ -61,7 +62,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateAndroidSurfaceKHR_default(
 #endif
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDebugReportCallbackEXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDebugReportCallbackEXT<default_tag>(
     VkInstance instance,
     const VkDebugReportCallbackCreateInfoEXT* pCreateInfo,
     const VkAllocationCallbacks* pAllocator,
@@ -79,7 +81,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDebugReportCallbackEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDebugUtilsMessengerEXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDebugUtilsMessengerEXT<default_tag>(
     VkInstance instance,
     const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
     const VkAllocationCallbacks* pAllocator,
@@ -97,7 +100,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDebugUtilsMessengerEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDisplayModeKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDisplayModeKHR<default_tag>(
     VkPhysicalDevice physicalDevice,
     VkDisplayKHR display,
     const VkDisplayModeCreateInfoKHR* pCreateInfo,
@@ -116,7 +120,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDisplayModeKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDisplayPlaneSurfaceKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDisplayPlaneSurfaceKHR<default_tag>(
     VkInstance instance,
     const VkDisplaySurfaceCreateInfoKHR* pCreateInfo,
     const VkAllocationCallbacks* pAllocator,
@@ -134,7 +139,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDisplayPlaneSurfaceKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkDebugReportMessageEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkDebugReportMessageEXT<default_tag>(
     VkInstance instance,
     VkDebugReportFlagsEXT flags,
     VkDebugReportObjectTypeEXT objectType,
@@ -156,7 +162,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDebugReportMessageEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroyDebugReportCallbackEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyDebugReportCallbackEXT<default_tag>(
     VkInstance instance,
     VkDebugReportCallbackEXT callback,
     const VkAllocationCallbacks* pAllocator
@@ -173,7 +180,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyDebugReportCallbackEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroyDebugUtilsMessengerEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyDebugUtilsMessengerEXT<default_tag>(
     VkInstance instance,
     VkDebugUtilsMessengerEXT messenger,
     const VkAllocationCallbacks* pAllocator
@@ -190,7 +198,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyDebugUtilsMessengerEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroySurfaceKHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroySurfaceKHR<default_tag>(
     VkInstance instance,
     VkSurfaceKHR surface,
     const VkAllocationCallbacks* pAllocator
@@ -207,7 +216,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroySurfaceKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkEnumeratePhysicalDeviceGroups_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkEnumeratePhysicalDeviceGroups<default_tag>(
     VkInstance instance,
     uint32_t* pPhysicalDeviceGroupCount,
     VkPhysicalDeviceGroupProperties* pPhysicalDeviceGroupProperties
@@ -224,7 +234,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkEnumeratePhysicalDeviceGroups_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkEnumeratePhysicalDeviceGroupsKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkEnumeratePhysicalDeviceGroupsKHR<default_tag>(
     VkInstance instance,
     uint32_t* pPhysicalDeviceGroupCount,
     VkPhysicalDeviceGroupProperties* pPhysicalDeviceGroupProperties
@@ -241,7 +252,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkEnumeratePhysicalDeviceGroupsKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR<default_tag>(
     VkPhysicalDevice physicalDevice,
     uint32_t queueFamilyIndex,
     uint32_t* pCounterCount,
@@ -260,7 +272,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkEnumeratePhysicalDeviceQueueFamilyPerform
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkEnumeratePhysicalDevices_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkEnumeratePhysicalDevices<default_tag>(
     VkInstance instance,
     uint32_t* pPhysicalDeviceCount,
     VkPhysicalDevice* pPhysicalDevices
@@ -277,7 +290,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkEnumeratePhysicalDevices_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetDisplayModeProperties2KHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetDisplayModeProperties2KHR<default_tag>(
     VkPhysicalDevice physicalDevice,
     VkDisplayKHR display,
     uint32_t* pPropertyCount,
@@ -295,7 +309,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetDisplayModeProperties2KHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetDisplayModePropertiesKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetDisplayModePropertiesKHR<default_tag>(
     VkPhysicalDevice physicalDevice,
     VkDisplayKHR display,
     uint32_t* pPropertyCount,
@@ -313,7 +328,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetDisplayModePropertiesKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetDisplayPlaneCapabilities2KHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetDisplayPlaneCapabilities2KHR<default_tag>(
     VkPhysicalDevice physicalDevice,
     const VkDisplayPlaneInfo2KHR* pDisplayPlaneInfo,
     VkDisplayPlaneCapabilities2KHR* pCapabilities
@@ -330,7 +346,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetDisplayPlaneCapabilities2KHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetDisplayPlaneCapabilitiesKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetDisplayPlaneCapabilitiesKHR<default_tag>(
     VkPhysicalDevice physicalDevice,
     VkDisplayModeKHR mode,
     uint32_t planeIndex,
@@ -348,7 +365,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetDisplayPlaneCapabilitiesKHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetDisplayPlaneSupportedDisplaysKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetDisplayPlaneSupportedDisplaysKHR<default_tag>(
     VkPhysicalDevice physicalDevice,
     uint32_t planeIndex,
     uint32_t* pDisplayCount,
@@ -366,7 +384,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetDisplayPlaneSupportedDisplaysKHR_defau
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceCalibrateableTimeDomainsEXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceCalibrateableTimeDomainsEXT<default_tag>(
     VkPhysicalDevice physicalDevice,
     uint32_t* pTimeDomainCount,
     VkTimeDomainKHR* pTimeDomains
@@ -383,7 +402,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceCalibrateableTimeDomains
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceCalibrateableTimeDomainsKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceCalibrateableTimeDomainsKHR<default_tag>(
     VkPhysicalDevice physicalDevice,
     uint32_t* pTimeDomainCount,
     VkTimeDomainKHR* pTimeDomains
@@ -400,7 +420,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceCalibrateableTimeDomains
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR<default_tag>(
     VkPhysicalDevice physicalDevice,
     uint32_t* pPropertyCount,
     VkCooperativeMatrixPropertiesKHR* pProperties
@@ -417,7 +438,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceCooperativeMatrixPropert
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceDisplayPlaneProperties2KHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceDisplayPlaneProperties2KHR<default_tag>(
     VkPhysicalDevice physicalDevice,
     uint32_t* pPropertyCount,
     VkDisplayPlaneProperties2KHR* pProperties
@@ -434,7 +456,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceDisplayPlaneProperties2K
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceDisplayPlanePropertiesKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceDisplayPlanePropertiesKHR<default_tag>(
     VkPhysicalDevice physicalDevice,
     uint32_t* pPropertyCount,
     VkDisplayPlanePropertiesKHR* pProperties
@@ -451,7 +474,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceDisplayPlanePropertiesKH
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceDisplayProperties2KHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceDisplayProperties2KHR<default_tag>(
     VkPhysicalDevice physicalDevice,
     uint32_t* pPropertyCount,
     VkDisplayProperties2KHR* pProperties
@@ -468,7 +492,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceDisplayProperties2KHR_de
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceDisplayPropertiesKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceDisplayPropertiesKHR<default_tag>(
     VkPhysicalDevice physicalDevice,
     uint32_t* pPropertyCount,
     VkDisplayPropertiesKHR* pProperties
@@ -485,7 +510,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceDisplayPropertiesKHR_def
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceExternalBufferProperties_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceExternalBufferProperties<default_tag>(
     VkPhysicalDevice physicalDevice,
     const VkPhysicalDeviceExternalBufferInfo* pExternalBufferInfo,
     VkExternalBufferProperties* pExternalBufferProperties
@@ -502,7 +528,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceExternalBufferProperties_def
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceExternalBufferPropertiesKHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceExternalBufferPropertiesKHR<default_tag>(
     VkPhysicalDevice physicalDevice,
     const VkPhysicalDeviceExternalBufferInfo* pExternalBufferInfo,
     VkExternalBufferProperties* pExternalBufferProperties
@@ -519,7 +546,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceExternalBufferPropertiesKHR_
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceExternalFenceProperties_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceExternalFenceProperties<default_tag>(
     VkPhysicalDevice physicalDevice,
     const VkPhysicalDeviceExternalFenceInfo* pExternalFenceInfo,
     VkExternalFenceProperties* pExternalFenceProperties
@@ -536,7 +564,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceExternalFenceProperties_defa
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceExternalFencePropertiesKHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceExternalFencePropertiesKHR<default_tag>(
     VkPhysicalDevice physicalDevice,
     const VkPhysicalDeviceExternalFenceInfo* pExternalFenceInfo,
     VkExternalFenceProperties* pExternalFenceProperties
@@ -553,7 +582,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceExternalFencePropertiesKHR_d
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceExternalSemaphoreProperties_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceExternalSemaphoreProperties<default_tag>(
     VkPhysicalDevice physicalDevice,
     const VkPhysicalDeviceExternalSemaphoreInfo* pExternalSemaphoreInfo,
     VkExternalSemaphoreProperties* pExternalSemaphoreProperties
@@ -570,7 +600,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceExternalSemaphoreProperties_
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceExternalSemaphorePropertiesKHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceExternalSemaphorePropertiesKHR<default_tag>(
     VkPhysicalDevice physicalDevice,
     const VkPhysicalDeviceExternalSemaphoreInfo* pExternalSemaphoreInfo,
     VkExternalSemaphoreProperties* pExternalSemaphoreProperties
@@ -587,7 +618,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceExternalSemaphorePropertiesK
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceExternalTensorPropertiesARM_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceExternalTensorPropertiesARM<default_tag>(
     VkPhysicalDevice physicalDevice,
     const VkPhysicalDeviceExternalTensorInfoARM* pExternalTensorInfo,
     VkExternalTensorPropertiesARM* pExternalTensorProperties
@@ -604,7 +636,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceExternalTensorPropertiesARM_
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceFeatures_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceFeatures<default_tag>(
     VkPhysicalDevice physicalDevice,
     VkPhysicalDeviceFeatures* pFeatures
 ) {
@@ -620,7 +653,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceFeatures_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceFeatures2_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceFeatures2<default_tag>(
     VkPhysicalDevice physicalDevice,
     VkPhysicalDeviceFeatures2* pFeatures
 ) {
@@ -636,7 +670,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceFeatures2_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceFeatures2KHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceFeatures2KHR<default_tag>(
     VkPhysicalDevice physicalDevice,
     VkPhysicalDeviceFeatures2* pFeatures
 ) {
@@ -652,7 +687,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceFeatures2KHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceFormatProperties_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceFormatProperties<default_tag>(
     VkPhysicalDevice physicalDevice,
     VkFormat format,
     VkFormatProperties* pFormatProperties
@@ -669,7 +705,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceFormatProperties_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceFormatProperties2_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceFormatProperties2<default_tag>(
     VkPhysicalDevice physicalDevice,
     VkFormat format,
     VkFormatProperties2* pFormatProperties
@@ -686,7 +723,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceFormatProperties2_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceFormatProperties2KHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceFormatProperties2KHR<default_tag>(
     VkPhysicalDevice physicalDevice,
     VkFormat format,
     VkFormatProperties2* pFormatProperties
@@ -703,7 +741,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceFormatProperties2KHR_default
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceFragmentShadingRatesKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceFragmentShadingRatesKHR<default_tag>(
     VkPhysicalDevice physicalDevice,
     uint32_t* pFragmentShadingRateCount,
     VkPhysicalDeviceFragmentShadingRateKHR* pFragmentShadingRates
@@ -720,7 +759,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceFragmentShadingRatesKHR_
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceImageFormatProperties_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceImageFormatProperties<default_tag>(
     VkPhysicalDevice physicalDevice,
     VkFormat format,
     VkImageType type,
@@ -741,7 +781,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceImageFormatProperties_de
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceImageFormatProperties2_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceImageFormatProperties2<default_tag>(
     VkPhysicalDevice physicalDevice,
     const VkPhysicalDeviceImageFormatInfo2* pImageFormatInfo,
     VkImageFormatProperties2* pImageFormatProperties
@@ -758,7 +799,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceImageFormatProperties2_d
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceImageFormatProperties2KHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceImageFormatProperties2KHR<default_tag>(
     VkPhysicalDevice physicalDevice,
     const VkPhysicalDeviceImageFormatInfo2* pImageFormatInfo,
     VkImageFormatProperties2* pImageFormatProperties
@@ -775,7 +817,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceImageFormatProperties2KH
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceMemoryProperties_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceMemoryProperties<default_tag>(
     VkPhysicalDevice physicalDevice,
     VkPhysicalDeviceMemoryProperties* pMemoryProperties
 ) {
@@ -791,7 +834,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceMemoryProperties_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceMemoryProperties2_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceMemoryProperties2<default_tag>(
     VkPhysicalDevice physicalDevice,
     VkPhysicalDeviceMemoryProperties2* pMemoryProperties
 ) {
@@ -807,7 +851,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceMemoryProperties2_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceMemoryProperties2KHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceMemoryProperties2KHR<default_tag>(
     VkPhysicalDevice physicalDevice,
     VkPhysicalDeviceMemoryProperties2* pMemoryProperties
 ) {
@@ -823,7 +868,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceMemoryProperties2KHR_default
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceMultisamplePropertiesEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceMultisamplePropertiesEXT<default_tag>(
     VkPhysicalDevice physicalDevice,
     VkSampleCountFlagBits samples,
     VkMultisamplePropertiesEXT* pMultisampleProperties
@@ -840,7 +886,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceMultisamplePropertiesEXT_def
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDevicePresentRectanglesKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDevicePresentRectanglesKHR<default_tag>(
     VkPhysicalDevice physicalDevice,
     VkSurfaceKHR surface,
     uint32_t* pRectCount,
@@ -858,7 +905,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDevicePresentRectanglesKHR_def
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceProperties_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceProperties<default_tag>(
     VkPhysicalDevice physicalDevice,
     VkPhysicalDeviceProperties* pProperties
 ) {
@@ -874,7 +922,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceProperties_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceProperties2_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceProperties2<default_tag>(
     VkPhysicalDevice physicalDevice,
     VkPhysicalDeviceProperties2* pProperties
 ) {
@@ -890,7 +939,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceProperties2_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceProperties2KHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceProperties2KHR<default_tag>(
     VkPhysicalDevice physicalDevice,
     VkPhysicalDeviceProperties2* pProperties
 ) {
@@ -906,7 +956,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceProperties2KHR_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR<default_tag>(
     VkPhysicalDevice physicalDevice,
     const VkQueryPoolPerformanceCreateInfoKHR* pPerformanceQueryCreateInfo,
     uint32_t* pNumPasses
@@ -923,7 +974,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceQueueFamilyPerformanceQueryP
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceQueueFamilyProperties_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceQueueFamilyProperties<default_tag>(
     VkPhysicalDevice physicalDevice,
     uint32_t* pQueueFamilyPropertyCount,
     VkQueueFamilyProperties* pQueueFamilyProperties
@@ -940,7 +992,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceQueueFamilyProperties_defaul
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceQueueFamilyProperties2_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceQueueFamilyProperties2<default_tag>(
     VkPhysicalDevice physicalDevice,
     uint32_t* pQueueFamilyPropertyCount,
     VkQueueFamilyProperties2* pQueueFamilyProperties
@@ -957,7 +1010,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceQueueFamilyProperties2_defau
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceQueueFamilyProperties2KHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceQueueFamilyProperties2KHR<default_tag>(
     VkPhysicalDevice physicalDevice,
     uint32_t* pQueueFamilyPropertyCount,
     VkQueueFamilyProperties2* pQueueFamilyProperties
@@ -974,7 +1028,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceQueueFamilyProperties2KHR_de
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceSparseImageFormatProperties_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceSparseImageFormatProperties<default_tag>(
     VkPhysicalDevice physicalDevice,
     VkFormat format,
     VkImageType type,
@@ -996,7 +1051,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceSparseImageFormatProperties_
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceSparseImageFormatProperties2_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceSparseImageFormatProperties2<default_tag>(
     VkPhysicalDevice physicalDevice,
     const VkPhysicalDeviceSparseImageFormatInfo2* pFormatInfo,
     uint32_t* pPropertyCount,
@@ -1014,7 +1070,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceSparseImageFormatProperties2
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceSparseImageFormatProperties2KHR_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceSparseImageFormatProperties2KHR<default_tag>(
     VkPhysicalDevice physicalDevice,
     const VkPhysicalDeviceSparseImageFormatInfo2* pFormatInfo,
     uint32_t* pPropertyCount,
@@ -1032,7 +1089,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceSparseImageFormatProperties2
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceSurfaceCapabilities2EXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceSurfaceCapabilities2EXT<default_tag>(
     VkPhysicalDevice physicalDevice,
     VkSurfaceKHR surface,
     VkSurfaceCapabilities2EXT* pSurfaceCapabilities
@@ -1049,7 +1107,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceSurfaceCapabilities2EXT_
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceSurfaceCapabilities2KHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceSurfaceCapabilities2KHR<default_tag>(
     VkPhysicalDevice physicalDevice,
     const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo,
     VkSurfaceCapabilities2KHR* pSurfaceCapabilities
@@ -1066,7 +1125,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceSurfaceCapabilities2KHR_
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceSurfaceCapabilitiesKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceSurfaceCapabilitiesKHR<default_tag>(
     VkPhysicalDevice physicalDevice,
     VkSurfaceKHR surface,
     VkSurfaceCapabilitiesKHR* pSurfaceCapabilities
@@ -1083,7 +1143,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceSurfaceCapabilitiesKHR_d
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceSurfaceFormats2KHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceSurfaceFormats2KHR<default_tag>(
     VkPhysicalDevice physicalDevice,
     const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo,
     uint32_t* pSurfaceFormatCount,
@@ -1101,7 +1162,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceSurfaceFormats2KHR_defau
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceSurfaceFormatsKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceSurfaceFormatsKHR<default_tag>(
     VkPhysicalDevice physicalDevice,
     VkSurfaceKHR surface,
     uint32_t* pSurfaceFormatCount,
@@ -1119,7 +1181,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceSurfaceFormatsKHR_defaul
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceSurfacePresentModesKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceSurfacePresentModesKHR<default_tag>(
     VkPhysicalDevice physicalDevice,
     VkSurfaceKHR surface,
     uint32_t* pPresentModeCount,
@@ -1137,7 +1200,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceSurfacePresentModesKHR_d
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceSurfaceSupportKHR_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceSurfaceSupportKHR<default_tag>(
     VkPhysicalDevice physicalDevice,
     uint32_t queueFamilyIndex,
     VkSurfaceKHR surface,
@@ -1155,7 +1219,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceSurfaceSupportKHR_defaul
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceToolProperties_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceToolProperties<default_tag>(
     VkPhysicalDevice physicalDevice,
     uint32_t* pToolCount,
     VkPhysicalDeviceToolProperties* pToolProperties
@@ -1172,7 +1237,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceToolProperties_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceToolPropertiesEXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceToolPropertiesEXT<default_tag>(
     VkPhysicalDevice physicalDevice,
     uint32_t* pToolCount,
     VkPhysicalDeviceToolProperties* pToolProperties
@@ -1189,7 +1255,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceToolPropertiesEXT_defaul
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkReleaseDisplayEXT_default(
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkReleaseDisplayEXT<default_tag>(
     VkPhysicalDevice physicalDevice,
     VkDisplayKHR display
 ) {
@@ -1205,7 +1272,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkReleaseDisplayEXT_default(
 }
 
 /* See Vulkan API for documentation. */
-VKAPI_ATTR void VKAPI_CALL layer_vkSubmitDebugUtilsMessageEXT_default(
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkSubmitDebugUtilsMessageEXT<default_tag>(
     VkInstance instance,
     VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
     VkDebugUtilsMessageTypeFlagsEXT messageTypes,
