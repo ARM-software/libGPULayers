@@ -549,8 +549,6 @@ PFN_vkVoidFunction layer_vkGetInstanceProcAddr<default_tag>(VkInstance instance,
         }
     }
 
-    LAYER_LOG("Export: %s = %u", pName, hasSpecialization);
-
     // For other functions, only expose functions that the driver exposes to
     // avoid changing queryable interface behavior seen by the application
     if (instance)
@@ -600,8 +598,6 @@ PFN_vkVoidFunction layer_vkGetDeviceProcAddr<default_tag>(VkDevice device, const
             exportLayerFunction = false;
         }
     }
-
-    LAYER_LOG("Export: %s = %u", pName, hasSpecialization);
 
     // If driver exposes it and the layer has one, use the layer function
     if (driverFunction && exportLayerFunction)
