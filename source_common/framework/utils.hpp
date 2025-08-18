@@ -74,7 +74,8 @@ struct user_tag {};
  *
  * Layer-specified intercepts implemented for a specific layer must NOT use
  * default_tag type for their specializations. This is a dummy tag used in the
- * dispatch logic that will not match a layer-specific specialization.
+ * dispatch logic to select the common-code implementation instead of a
+ * layer-specific specialization.
  */
 struct default_tag {};
 

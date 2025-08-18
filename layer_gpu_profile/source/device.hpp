@@ -62,10 +62,9 @@
 #include <vulkan/utility/vk_safe_struct.hpp>
 #include <vulkan/vk_layer.h>
 
-#include "framework/device_dispatch_table.hpp"
-
 #include "layer_comms.hpp"
 #include "comms/comms_module.hpp"
+#include "framework/device_dispatch_table.hpp"
 #include "instance.hpp"
 #include "trackers/device.hpp"
 
