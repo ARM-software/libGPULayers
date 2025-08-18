@@ -585,16 +585,19 @@ def generate_instance_queries(
         # Define the concept to test if user_tag specialization exists
         plist = []
         nlist = []
-        for i, (ptype, pname, array) in enumerate(command.params):
+        for (ptype, pname, array) in command.params:
             plist.append(f'{ptype} {pname}{array}')
             nlist.append(pname)
-        plistStr = ', '.join(plist)
-        nlistStr = ', '.join(nlist)
+        plist_str = ', '.join(plist)
+        nlist_str = ', '.join(nlist)
 
         lines.append('/* Test for user_tag availability. */')
         decl = f'template <typename T>\n' \
-               f'concept hasLayerPtr_{command.name} = ' \
-               f'requires(\n    {plistStr}\n) {{\n    layer_{command.name}<T>({nlistStr});\n}};'
+               f'concept hasLayerPtr_{command.name} = requires(\n' \
+               f'    {plist_str}\n' \
+               f') {{\n' \
+               f'    layer_{command.name}<T>({nlist_str});\n' \
+               f'}};'
         lines.append(decl)
         lines.append('')
 
@@ -925,16 +928,19 @@ def generate_device_queries(
         # Define the concept to test if user_tag specialization exists
         plist = []
         nlist = []
-        for i, (ptype, pname, array) in enumerate(command.params):
+        for (ptype, pname, array) in command.params:
             plist.append(f'{ptype} {pname}{array}')
             nlist.append(pname)
-        plistStr = ', '.join(plist)
-        nlistStr = ', '.join(nlist)
+        plist_str = ', '.join(plist)
+        nlist_str = ', '.join(nlist)
 
         lines.append('/* Test for user_tag availability. */')
         decl = f'template <typename T>\n' \
-               f'concept hasLayerPtr_{command.name} = ' \
-               f'requires(\n    {plistStr}\n) {{\n    layer_{command.name}<T>({nlistStr});\n}};'
+               f'concept hasLayerPtr_{command.name} = requires(\n' \
+               f'    {plist_str}\n' \
+               f') {{\n' \
+               f'    layer_{command.name}<T>({nlist_str});\n' \
+               f'}};'
         lines.append(decl)
         lines.append('')
 
