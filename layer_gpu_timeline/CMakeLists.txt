@@ -31,7 +31,7 @@ project(VkLayerGPUTimeline VERSION 1.0.0)
 # Common configuration
 set(LGL_LOG_TAG "VkLayerGPUTimeline")
 
-option(LGL_CONFIG_TRACE "Enable Vulkan entrypoint logging" ON)
+option(LGL_CONFIG_TRACE "Enable Vulkan entrypoint logging")
 option(LGL_CONFIG_OPTIMIZE_DISPATCH "Enable Vulkan entrypoint dispatch optimization" ON)
 option(LGL_CONFIG_LOG "Enable general layer logging" ON)
 
