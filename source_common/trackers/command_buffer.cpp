@@ -145,6 +145,21 @@ uint64_t CommandBuffer::dispatch(int64_t xGroups, int64_t yGroups, int64_t zGrou
 }
 
 /* See header for documentation. */
+uint64_t CommandBuffer::dispatchDataGraph()
+{
+    uint64_t tagID = Tracker::LCSWorkload::assignTagID();
+    stats.incDispatchDataGraphCount();
+
+    // Add a workload to the command stream
+    auto workload = std::make_shared<LCSDispatchDataGraph>(tagID);
+
+    // Add a command to the layer-side command stream
+    workloadCommandStream.emplace_back(LCSInstructionWorkload(workload));
+
+    return tagID;
+}
+
+/* See header for documentation. */
 uint64_t CommandBuffer::traceRays(int64_t xItems, int64_t yItems, int64_t zItems)
 {
     uint64_t tagID = Tracker::LCSWorkload::assignTagID();
