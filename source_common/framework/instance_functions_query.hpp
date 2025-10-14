@@ -1311,6 +1311,50 @@ constexpr PFN_vkGetPhysicalDeviceProperties2KHR getLayerPtr_vkGetPhysicalDeviceP
 
 /* Test for user_tag availability. */
 template <typename T>
+concept hasLayerPtr_vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM = requires(
+    VkPhysicalDevice physicalDevice, const VkPhysicalDeviceQueueFamilyDataGraphProcessingEngineInfoARM* pQueueFamilyDataGraphProcessingEngineInfo, VkQueueFamilyDataGraphProcessingEnginePropertiesARM* pQueueFamilyDataGraphProcessingEngineProperties
+) {
+    layer_vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM<T>(physicalDevice, pQueueFamilyDataGraphProcessingEngineInfo, pQueueFamilyDataGraphProcessingEngineProperties);
+};
+
+/* Function pointer resolution. */
+constexpr PFN_vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM getLayerPtr_vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM()
+{
+    return [] <typename T>
+    {
+        if constexpr(hasLayerPtr_vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM<T>)
+        {
+            return layer_vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM<T>;
+        }
+
+        return layer_vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM<default_tag>;
+    }.operator()<user_tag>();
+}
+
+/* Test for user_tag availability. */
+template <typename T>
+concept hasLayerPtr_vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM = requires(
+    VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, uint32_t* pQueueFamilyDataGraphPropertyCount, VkQueueFamilyDataGraphPropertiesARM* pQueueFamilyDataGraphProperties
+) {
+    layer_vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM<T>(physicalDevice, queueFamilyIndex, pQueueFamilyDataGraphPropertyCount, pQueueFamilyDataGraphProperties);
+};
+
+/* Function pointer resolution. */
+constexpr PFN_vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM getLayerPtr_vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM()
+{
+    return [] <typename T>
+    {
+        if constexpr(hasLayerPtr_vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM<T>)
+        {
+            return layer_vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM<T>;
+        }
+
+        return layer_vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM<default_tag>;
+    }.operator()<user_tag>();
+}
+
+/* Test for user_tag availability. */
+template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR = requires(
     VkPhysicalDevice physicalDevice, const VkQueryPoolPerformanceCreateInfoKHR* pPerformanceQueryCreateInfo, uint32_t* pNumPasses
 ) {

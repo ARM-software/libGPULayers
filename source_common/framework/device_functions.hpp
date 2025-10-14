@@ -190,6 +190,21 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkBindBufferMemory2KHR<default_tag>(
 /* See Vulkan API for documentation. */
 /* Delete the generic match-all */
 template <typename T>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkBindDataGraphPipelineSessionMemoryARM(
+    VkDevice device,
+    uint32_t bindInfoCount,
+    const VkBindDataGraphPipelineSessionMemoryInfoARM* pBindInfos) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkBindDataGraphPipelineSessionMemoryARM<default_tag>(
+    VkDevice device,
+    uint32_t bindInfoCount,
+    const VkBindDataGraphPipelineSessionMemoryInfoARM* pBindInfos);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkBindImageMemory(
     VkDevice device,
     VkImage image,
@@ -1088,6 +1103,19 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImageToBuffer2KHR<default_tag>(
 /* See Vulkan API for documentation. */
 /* Delete the generic match-all */
 template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMemoryIndirectKHR(
+    VkCommandBuffer commandBuffer,
+    const VkCopyMemoryIndirectInfoKHR* pCopyMemoryIndirectInfo) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMemoryIndirectKHR<default_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkCopyMemoryIndirectInfoKHR* pCopyMemoryIndirectInfo);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMemoryToAccelerationStructureKHR(
     VkCommandBuffer commandBuffer,
     const VkCopyMemoryToAccelerationStructureInfoKHR* pInfo) = delete;
@@ -1097,6 +1125,19 @@ template <>
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMemoryToAccelerationStructureKHR<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkCopyMemoryToAccelerationStructureInfoKHR* pInfo);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMemoryToImageIndirectKHR(
+    VkCommandBuffer commandBuffer,
+    const VkCopyMemoryToImageIndirectInfoKHR* pCopyMemoryToImageIndirectInfo) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMemoryToImageIndirectKHR<default_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkCopyMemoryToImageIndirectInfoKHR* pCopyMemoryToImageIndirectInfo);
 
 /* See Vulkan API for documentation. */
 /* Delete the generic match-all */
@@ -1274,6 +1315,21 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchBaseKHR<default_tag>(
     uint32_t groupCountX,
     uint32_t groupCountY,
     uint32_t groupCountZ);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchDataGraphARM(
+    VkCommandBuffer commandBuffer,
+    VkDataGraphPipelineSessionARM session,
+    const VkDataGraphPipelineDispatchInfoARM* pInfo) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchDataGraphARM<default_tag>(
+    VkCommandBuffer commandBuffer,
+    VkDataGraphPipelineSessionARM session,
+    const VkDataGraphPipelineDispatchInfoARM* pInfo);
 
 /* See Vulkan API for documentation. */
 /* Delete the generic match-all */
@@ -4033,6 +4089,46 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateComputePipelines<default_tag>(
 /* See Vulkan API for documentation. */
 /* Delete the generic match-all */
 template <typename T>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDataGraphPipelineSessionARM(
+    VkDevice device,
+    const VkDataGraphPipelineSessionCreateInfoARM* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkDataGraphPipelineSessionARM* pSession) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDataGraphPipelineSessionARM<default_tag>(
+    VkDevice device,
+    const VkDataGraphPipelineSessionCreateInfoARM* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkDataGraphPipelineSessionARM* pSession);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDataGraphPipelinesARM(
+    VkDevice device,
+    VkDeferredOperationKHR deferredOperation,
+    VkPipelineCache pipelineCache,
+    uint32_t createInfoCount,
+    const VkDataGraphPipelineCreateInfoARM* pCreateInfos,
+    const VkAllocationCallbacks* pAllocator,
+    VkPipeline* pPipelines) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDataGraphPipelinesARM<default_tag>(
+    VkDevice device,
+    VkDeferredOperationKHR deferredOperation,
+    VkPipelineCache pipelineCache,
+    uint32_t createInfoCount,
+    const VkDataGraphPipelineCreateInfoARM* pCreateInfos,
+    const VkAllocationCallbacks* pAllocator,
+    VkPipeline* pPipelines);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDeferredOperationKHR(
     VkDevice device,
     const VkAllocationCallbacks* pAllocator,
@@ -4734,6 +4830,21 @@ template <>
 VKAPI_ATTR void VKAPI_CALL layer_vkDestroyCommandPool<default_tag>(
     VkDevice device,
     VkCommandPool commandPool,
+    const VkAllocationCallbacks* pAllocator);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyDataGraphPipelineSessionARM(
+    VkDevice device,
+    VkDataGraphPipelineSessionARM session,
+    const VkAllocationCallbacks* pAllocator) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyDataGraphPipelineSessionARM<default_tag>(
+    VkDevice device,
+    VkDataGraphPipelineSessionARM session,
     const VkAllocationCallbacks* pAllocator);
 
 /* See Vulkan API for documentation. */
@@ -5524,6 +5635,72 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetCalibratedTimestampsKHR<default_tag>(
     const VkCalibratedTimestampInfoKHR* pTimestampInfos,
     uint64_t* pTimestamps,
     uint64_t* pMaxDeviation);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetDataGraphPipelineAvailablePropertiesARM(
+    VkDevice device,
+    const VkDataGraphPipelineInfoARM* pPipelineInfo,
+    uint32_t* pPropertiesCount,
+    VkDataGraphPipelinePropertyARM* pProperties) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetDataGraphPipelineAvailablePropertiesARM<default_tag>(
+    VkDevice device,
+    const VkDataGraphPipelineInfoARM* pPipelineInfo,
+    uint32_t* pPropertiesCount,
+    VkDataGraphPipelinePropertyARM* pProperties);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetDataGraphPipelinePropertiesARM(
+    VkDevice device,
+    const VkDataGraphPipelineInfoARM* pPipelineInfo,
+    uint32_t propertiesCount,
+    VkDataGraphPipelinePropertyQueryResultARM* pProperties) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetDataGraphPipelinePropertiesARM<default_tag>(
+    VkDevice device,
+    const VkDataGraphPipelineInfoARM* pPipelineInfo,
+    uint32_t propertiesCount,
+    VkDataGraphPipelinePropertyQueryResultARM* pProperties);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetDataGraphPipelineSessionBindPointRequirementsARM(
+    VkDevice device,
+    const VkDataGraphPipelineSessionBindPointRequirementsInfoARM* pInfo,
+    uint32_t* pBindPointRequirementCount,
+    VkDataGraphPipelineSessionBindPointRequirementARM* pBindPointRequirements) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetDataGraphPipelineSessionBindPointRequirementsARM<default_tag>(
+    VkDevice device,
+    const VkDataGraphPipelineSessionBindPointRequirementsInfoARM* pInfo,
+    uint32_t* pBindPointRequirementCount,
+    VkDataGraphPipelineSessionBindPointRequirementARM* pBindPointRequirements);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetDataGraphPipelineSessionMemoryRequirementsARM(
+    VkDevice device,
+    const VkDataGraphPipelineSessionMemoryRequirementsInfoARM* pInfo,
+    VkMemoryRequirements2* pMemoryRequirements) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetDataGraphPipelineSessionMemoryRequirementsARM<default_tag>(
+    VkDevice device,
+    const VkDataGraphPipelineSessionMemoryRequirementsInfoARM* pInfo,
+    VkMemoryRequirements2* pMemoryRequirements);
 
 /* See Vulkan API for documentation. */
 /* Delete the generic match-all */
@@ -7119,13 +7296,26 @@ VKAPI_ATTR void VKAPI_CALL layer_vkReleaseProfilingLockKHR<default_tag>(
 template <typename T>
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkReleaseSwapchainImagesEXT(
     VkDevice device,
-    const VkReleaseSwapchainImagesInfoEXT* pReleaseInfo) = delete;
+    const VkReleaseSwapchainImagesInfoKHR* pReleaseInfo) = delete;
 
 /* Default common code implementation. */
 template <>
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkReleaseSwapchainImagesEXT<default_tag>(
     VkDevice device,
-    const VkReleaseSwapchainImagesInfoEXT* pReleaseInfo);
+    const VkReleaseSwapchainImagesInfoKHR* pReleaseInfo);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkReleaseSwapchainImagesKHR(
+    VkDevice device,
+    const VkReleaseSwapchainImagesInfoKHR* pReleaseInfo) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkReleaseSwapchainImagesKHR<default_tag>(
+    VkDevice device,
+    const VkReleaseSwapchainImagesInfoKHR* pReleaseInfo);
 
 /* See Vulkan API for documentation. */
 /* Delete the generic match-all */

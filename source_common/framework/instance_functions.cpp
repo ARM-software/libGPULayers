@@ -957,6 +957,43 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceProperties2KHR<default_tag>(
 
 /* See Vulkan API for documentation. */
 template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM<default_tag>(
+    VkPhysicalDevice physicalDevice,
+    const VkPhysicalDeviceQueueFamilyDataGraphProcessingEngineInfoARM* pQueueFamilyDataGraphProcessingEngineInfo,
+    VkQueueFamilyDataGraphProcessingEnginePropertiesARM* pQueueFamilyDataGraphProcessingEngineProperties
+) {
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    auto* layer = Instance::retrieve(physicalDevice);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    layer->driver.vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM(physicalDevice, pQueueFamilyDataGraphProcessingEngineInfo, pQueueFamilyDataGraphProcessingEngineProperties);
+}
+
+/* See Vulkan API for documentation. */
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM<default_tag>(
+    VkPhysicalDevice physicalDevice,
+    uint32_t queueFamilyIndex,
+    uint32_t* pQueueFamilyDataGraphPropertyCount,
+    VkQueueFamilyDataGraphPropertiesARM* pQueueFamilyDataGraphProperties
+) {
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    auto* layer = Instance::retrieve(physicalDevice);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    return layer->driver.vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM(physicalDevice, queueFamilyIndex, pQueueFamilyDataGraphPropertyCount, pQueueFamilyDataGraphProperties);
+}
+
+/* See Vulkan API for documentation. */
+template <>
 VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR<default_tag>(
     VkPhysicalDevice physicalDevice,
     const VkQueryPoolPerformanceCreateInfoKHR* pPerformanceQueryCreateInfo,

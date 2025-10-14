@@ -77,6 +77,7 @@ static const struct DeviceInterceptTableEntry deviceIntercepts[] = {
     ENTRY(vkBindBufferMemory),
     ENTRY(vkBindBufferMemory2),
     ENTRY(vkBindBufferMemory2KHR),
+    ENTRY(vkBindDataGraphPipelineSessionMemoryARM),
     ENTRY(vkBindImageMemory),
     ENTRY(vkBindImageMemory2),
     ENTRY(vkBindImageMemory2KHR),
@@ -131,7 +132,9 @@ static const struct DeviceInterceptTableEntry deviceIntercepts[] = {
     ENTRY(vkCmdCopyImageToBuffer),
     ENTRY(vkCmdCopyImageToBuffer2),
     ENTRY(vkCmdCopyImageToBuffer2KHR),
+    ENTRY(vkCmdCopyMemoryIndirectKHR),
     ENTRY(vkCmdCopyMemoryToAccelerationStructureKHR),
+    ENTRY(vkCmdCopyMemoryToImageIndirectKHR),
     ENTRY(vkCmdCopyMemoryToMicromapEXT),
     ENTRY(vkCmdCopyMicromapEXT),
     ENTRY(vkCmdCopyMicromapToMemoryEXT),
@@ -143,6 +146,7 @@ static const struct DeviceInterceptTableEntry deviceIntercepts[] = {
     ENTRY(vkCmdDispatch),
     ENTRY(vkCmdDispatchBase),
     ENTRY(vkCmdDispatchBaseKHR),
+    ENTRY(vkCmdDispatchDataGraphARM),
     ENTRY(vkCmdDispatchIndirect),
     ENTRY(vkCmdDraw),
     ENTRY(vkCmdDrawIndexed),
@@ -322,6 +326,8 @@ static const struct DeviceInterceptTableEntry deviceIntercepts[] = {
     ENTRY(vkCreateBufferView),
     ENTRY(vkCreateCommandPool),
     ENTRY(vkCreateComputePipelines),
+    ENTRY(vkCreateDataGraphPipelineSessionARM),
+    ENTRY(vkCreateDataGraphPipelinesARM),
     ENTRY(vkCreateDeferredOperationKHR),
     ENTRY(vkCreateDescriptorPool),
     ENTRY(vkCreateDescriptorSetLayout),
@@ -364,6 +370,7 @@ static const struct DeviceInterceptTableEntry deviceIntercepts[] = {
     ENTRY(vkDestroyBuffer),
     ENTRY(vkDestroyBufferView),
     ENTRY(vkDestroyCommandPool),
+    ENTRY(vkDestroyDataGraphPipelineSessionARM),
     ENTRY(vkDestroyDeferredOperationKHR),
     ENTRY(vkDestroyDescriptorPool),
     ENTRY(vkDestroyDescriptorSetLayout),
@@ -417,6 +424,10 @@ static const struct DeviceInterceptTableEntry deviceIntercepts[] = {
     ENTRY(vkGetBufferOpaqueCaptureDescriptorDataEXT),
     ENTRY(vkGetCalibratedTimestampsEXT),
     ENTRY(vkGetCalibratedTimestampsKHR),
+    ENTRY(vkGetDataGraphPipelineAvailablePropertiesARM),
+    ENTRY(vkGetDataGraphPipelinePropertiesARM),
+    ENTRY(vkGetDataGraphPipelineSessionBindPointRequirementsARM),
+    ENTRY(vkGetDataGraphPipelineSessionMemoryRequirementsARM),
     ENTRY(vkGetDeferredOperationMaxConcurrencyKHR),
     ENTRY(vkGetDeferredOperationResultKHR),
     ENTRY(vkGetDescriptorEXT),
@@ -519,6 +530,7 @@ static const struct DeviceInterceptTableEntry deviceIntercepts[] = {
     ENTRY(vkReleaseCapturedPipelineDataKHR),
     ENTRY(vkReleaseProfilingLockKHR),
     ENTRY(vkReleaseSwapchainImagesEXT),
+    ENTRY(vkReleaseSwapchainImagesKHR),
     ENTRY(vkResetCommandBuffer),
     ENTRY(vkResetCommandPool),
     ENTRY(vkResetDescriptorPool),
@@ -572,6 +584,7 @@ struct DeviceDispatchTable {
     PFN_vkBindBufferMemory vkBindBufferMemory;
     PFN_vkBindBufferMemory2 vkBindBufferMemory2;
     PFN_vkBindBufferMemory2KHR vkBindBufferMemory2KHR;
+    PFN_vkBindDataGraphPipelineSessionMemoryARM vkBindDataGraphPipelineSessionMemoryARM;
     PFN_vkBindImageMemory vkBindImageMemory;
     PFN_vkBindImageMemory2 vkBindImageMemory2;
     PFN_vkBindImageMemory2KHR vkBindImageMemory2KHR;
@@ -626,7 +639,9 @@ struct DeviceDispatchTable {
     PFN_vkCmdCopyImageToBuffer vkCmdCopyImageToBuffer;
     PFN_vkCmdCopyImageToBuffer2 vkCmdCopyImageToBuffer2;
     PFN_vkCmdCopyImageToBuffer2KHR vkCmdCopyImageToBuffer2KHR;
+    PFN_vkCmdCopyMemoryIndirectKHR vkCmdCopyMemoryIndirectKHR;
     PFN_vkCmdCopyMemoryToAccelerationStructureKHR vkCmdCopyMemoryToAccelerationStructureKHR;
+    PFN_vkCmdCopyMemoryToImageIndirectKHR vkCmdCopyMemoryToImageIndirectKHR;
     PFN_vkCmdCopyMemoryToMicromapEXT vkCmdCopyMemoryToMicromapEXT;
     PFN_vkCmdCopyMicromapEXT vkCmdCopyMicromapEXT;
     PFN_vkCmdCopyMicromapToMemoryEXT vkCmdCopyMicromapToMemoryEXT;
@@ -638,6 +653,7 @@ struct DeviceDispatchTable {
     PFN_vkCmdDispatch vkCmdDispatch;
     PFN_vkCmdDispatchBase vkCmdDispatchBase;
     PFN_vkCmdDispatchBaseKHR vkCmdDispatchBaseKHR;
+    PFN_vkCmdDispatchDataGraphARM vkCmdDispatchDataGraphARM;
     PFN_vkCmdDispatchIndirect vkCmdDispatchIndirect;
     PFN_vkCmdDraw vkCmdDraw;
     PFN_vkCmdDrawIndexed vkCmdDrawIndexed;
@@ -817,6 +833,8 @@ struct DeviceDispatchTable {
     PFN_vkCreateBufferView vkCreateBufferView;
     PFN_vkCreateCommandPool vkCreateCommandPool;
     PFN_vkCreateComputePipelines vkCreateComputePipelines;
+    PFN_vkCreateDataGraphPipelineSessionARM vkCreateDataGraphPipelineSessionARM;
+    PFN_vkCreateDataGraphPipelinesARM vkCreateDataGraphPipelinesARM;
     PFN_vkCreateDeferredOperationKHR vkCreateDeferredOperationKHR;
     PFN_vkCreateDescriptorPool vkCreateDescriptorPool;
     PFN_vkCreateDescriptorSetLayout vkCreateDescriptorSetLayout;
@@ -859,6 +877,7 @@ struct DeviceDispatchTable {
     PFN_vkDestroyBuffer vkDestroyBuffer;
     PFN_vkDestroyBufferView vkDestroyBufferView;
     PFN_vkDestroyCommandPool vkDestroyCommandPool;
+    PFN_vkDestroyDataGraphPipelineSessionARM vkDestroyDataGraphPipelineSessionARM;
     PFN_vkDestroyDeferredOperationKHR vkDestroyDeferredOperationKHR;
     PFN_vkDestroyDescriptorPool vkDestroyDescriptorPool;
     PFN_vkDestroyDescriptorSetLayout vkDestroyDescriptorSetLayout;
@@ -912,6 +931,10 @@ struct DeviceDispatchTable {
     PFN_vkGetBufferOpaqueCaptureDescriptorDataEXT vkGetBufferOpaqueCaptureDescriptorDataEXT;
     PFN_vkGetCalibratedTimestampsEXT vkGetCalibratedTimestampsEXT;
     PFN_vkGetCalibratedTimestampsKHR vkGetCalibratedTimestampsKHR;
+    PFN_vkGetDataGraphPipelineAvailablePropertiesARM vkGetDataGraphPipelineAvailablePropertiesARM;
+    PFN_vkGetDataGraphPipelinePropertiesARM vkGetDataGraphPipelinePropertiesARM;
+    PFN_vkGetDataGraphPipelineSessionBindPointRequirementsARM vkGetDataGraphPipelineSessionBindPointRequirementsARM;
+    PFN_vkGetDataGraphPipelineSessionMemoryRequirementsARM vkGetDataGraphPipelineSessionMemoryRequirementsARM;
     PFN_vkGetDeferredOperationMaxConcurrencyKHR vkGetDeferredOperationMaxConcurrencyKHR;
     PFN_vkGetDeferredOperationResultKHR vkGetDeferredOperationResultKHR;
     PFN_vkGetDescriptorEXT vkGetDescriptorEXT;
@@ -1013,6 +1036,7 @@ struct DeviceDispatchTable {
     PFN_vkReleaseCapturedPipelineDataKHR vkReleaseCapturedPipelineDataKHR;
     PFN_vkReleaseProfilingLockKHR vkReleaseProfilingLockKHR;
     PFN_vkReleaseSwapchainImagesEXT vkReleaseSwapchainImagesEXT;
+    PFN_vkReleaseSwapchainImagesKHR vkReleaseSwapchainImagesKHR;
     PFN_vkResetCommandBuffer vkResetCommandBuffer;
     PFN_vkResetCommandPool vkResetCommandPool;
     PFN_vkResetDescriptorPool vkResetDescriptorPool;
@@ -1076,6 +1100,7 @@ static inline void initDriverDeviceDispatchTable(
     ENTRY(vkBindBufferMemory);
     ENTRY(vkBindBufferMemory2);
     ENTRY(vkBindBufferMemory2KHR);
+    ENTRY(vkBindDataGraphPipelineSessionMemoryARM);
     ENTRY(vkBindImageMemory);
     ENTRY(vkBindImageMemory2);
     ENTRY(vkBindImageMemory2KHR);
@@ -1130,7 +1155,9 @@ static inline void initDriverDeviceDispatchTable(
     ENTRY(vkCmdCopyImageToBuffer);
     ENTRY(vkCmdCopyImageToBuffer2);
     ENTRY(vkCmdCopyImageToBuffer2KHR);
+    ENTRY(vkCmdCopyMemoryIndirectKHR);
     ENTRY(vkCmdCopyMemoryToAccelerationStructureKHR);
+    ENTRY(vkCmdCopyMemoryToImageIndirectKHR);
     ENTRY(vkCmdCopyMemoryToMicromapEXT);
     ENTRY(vkCmdCopyMicromapEXT);
     ENTRY(vkCmdCopyMicromapToMemoryEXT);
@@ -1142,6 +1169,7 @@ static inline void initDriverDeviceDispatchTable(
     ENTRY(vkCmdDispatch);
     ENTRY(vkCmdDispatchBase);
     ENTRY(vkCmdDispatchBaseKHR);
+    ENTRY(vkCmdDispatchDataGraphARM);
     ENTRY(vkCmdDispatchIndirect);
     ENTRY(vkCmdDraw);
     ENTRY(vkCmdDrawIndexed);
@@ -1321,6 +1349,8 @@ static inline void initDriverDeviceDispatchTable(
     ENTRY(vkCreateBufferView);
     ENTRY(vkCreateCommandPool);
     ENTRY(vkCreateComputePipelines);
+    ENTRY(vkCreateDataGraphPipelineSessionARM);
+    ENTRY(vkCreateDataGraphPipelinesARM);
     ENTRY(vkCreateDeferredOperationKHR);
     ENTRY(vkCreateDescriptorPool);
     ENTRY(vkCreateDescriptorSetLayout);
@@ -1363,6 +1393,7 @@ static inline void initDriverDeviceDispatchTable(
     ENTRY(vkDestroyBuffer);
     ENTRY(vkDestroyBufferView);
     ENTRY(vkDestroyCommandPool);
+    ENTRY(vkDestroyDataGraphPipelineSessionARM);
     ENTRY(vkDestroyDeferredOperationKHR);
     ENTRY(vkDestroyDescriptorPool);
     ENTRY(vkDestroyDescriptorSetLayout);
@@ -1416,6 +1447,10 @@ static inline void initDriverDeviceDispatchTable(
     ENTRY(vkGetBufferOpaqueCaptureDescriptorDataEXT);
     ENTRY(vkGetCalibratedTimestampsEXT);
     ENTRY(vkGetCalibratedTimestampsKHR);
+    ENTRY(vkGetDataGraphPipelineAvailablePropertiesARM);
+    ENTRY(vkGetDataGraphPipelinePropertiesARM);
+    ENTRY(vkGetDataGraphPipelineSessionBindPointRequirementsARM);
+    ENTRY(vkGetDataGraphPipelineSessionMemoryRequirementsARM);
     ENTRY(vkGetDeferredOperationMaxConcurrencyKHR);
     ENTRY(vkGetDeferredOperationResultKHR);
     ENTRY(vkGetDescriptorEXT);
@@ -1517,6 +1552,7 @@ static inline void initDriverDeviceDispatchTable(
     ENTRY(vkReleaseCapturedPipelineDataKHR);
     ENTRY(vkReleaseProfilingLockKHR);
     ENTRY(vkReleaseSwapchainImagesEXT);
+    ENTRY(vkReleaseSwapchainImagesKHR);
     ENTRY(vkResetCommandBuffer);
     ENTRY(vkResetCommandPool);
     ENTRY(vkResetDescriptorPool);

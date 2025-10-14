@@ -930,6 +930,38 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceProperties2KHR<default_tag>(
 /* See Vulkan API for documentation. */
 /* Delete the generic match-all */
 template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM(
+    VkPhysicalDevice physicalDevice,
+    const VkPhysicalDeviceQueueFamilyDataGraphProcessingEngineInfoARM* pQueueFamilyDataGraphProcessingEngineInfo,
+    VkQueueFamilyDataGraphProcessingEnginePropertiesARM* pQueueFamilyDataGraphProcessingEngineProperties) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM<default_tag>(
+    VkPhysicalDevice physicalDevice,
+    const VkPhysicalDeviceQueueFamilyDataGraphProcessingEngineInfoARM* pQueueFamilyDataGraphProcessingEngineInfo,
+    VkQueueFamilyDataGraphProcessingEnginePropertiesARM* pQueueFamilyDataGraphProcessingEngineProperties);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM(
+    VkPhysicalDevice physicalDevice,
+    uint32_t queueFamilyIndex,
+    uint32_t* pQueueFamilyDataGraphPropertyCount,
+    VkQueueFamilyDataGraphPropertiesARM* pQueueFamilyDataGraphProperties) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM<default_tag>(
+    VkPhysicalDevice physicalDevice,
+    uint32_t queueFamilyIndex,
+    uint32_t* pQueueFamilyDataGraphPropertyCount,
+    VkQueueFamilyDataGraphPropertiesARM* pQueueFamilyDataGraphProperties);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
 VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR(
     VkPhysicalDevice physicalDevice,
     const VkQueryPoolPerformanceCreateInfoKHR* pPerformanceQueryCreateInfo,
