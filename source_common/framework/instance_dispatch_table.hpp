@@ -130,6 +130,8 @@ static const struct InstanceInterceptTableEntry instanceIntercepts[] = {
     ENTRY(vkGetPhysicalDeviceProperties),
     ENTRY(vkGetPhysicalDeviceProperties2),
     ENTRY(vkGetPhysicalDeviceProperties2KHR),
+    ENTRY(vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM),
+    ENTRY(vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM),
     ENTRY(vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR),
     ENTRY(vkGetPhysicalDeviceQueueFamilyProperties),
     ENTRY(vkGetPhysicalDeviceQueueFamilyProperties2),
@@ -160,6 +162,7 @@ static const struct InstanceInterceptTableEntry instanceIntercepts[] = {
     ENTRY(vkBindBufferMemory),
     ENTRY(vkBindBufferMemory2),
     ENTRY(vkBindBufferMemory2KHR),
+    ENTRY(vkBindDataGraphPipelineSessionMemoryARM),
     ENTRY(vkBindImageMemory),
     ENTRY(vkBindImageMemory2),
     ENTRY(vkBindImageMemory2KHR),
@@ -214,7 +217,9 @@ static const struct InstanceInterceptTableEntry instanceIntercepts[] = {
     ENTRY(vkCmdCopyImageToBuffer),
     ENTRY(vkCmdCopyImageToBuffer2),
     ENTRY(vkCmdCopyImageToBuffer2KHR),
+    ENTRY(vkCmdCopyMemoryIndirectKHR),
     ENTRY(vkCmdCopyMemoryToAccelerationStructureKHR),
+    ENTRY(vkCmdCopyMemoryToImageIndirectKHR),
     ENTRY(vkCmdCopyMemoryToMicromapEXT),
     ENTRY(vkCmdCopyMicromapEXT),
     ENTRY(vkCmdCopyMicromapToMemoryEXT),
@@ -226,6 +231,7 @@ static const struct InstanceInterceptTableEntry instanceIntercepts[] = {
     ENTRY(vkCmdDispatch),
     ENTRY(vkCmdDispatchBase),
     ENTRY(vkCmdDispatchBaseKHR),
+    ENTRY(vkCmdDispatchDataGraphARM),
     ENTRY(vkCmdDispatchIndirect),
     ENTRY(vkCmdDraw),
     ENTRY(vkCmdDrawIndexed),
@@ -405,6 +411,8 @@ static const struct InstanceInterceptTableEntry instanceIntercepts[] = {
     ENTRY(vkCreateBufferView),
     ENTRY(vkCreateCommandPool),
     ENTRY(vkCreateComputePipelines),
+    ENTRY(vkCreateDataGraphPipelineSessionARM),
+    ENTRY(vkCreateDataGraphPipelinesARM),
     ENTRY(vkCreateDeferredOperationKHR),
     ENTRY(vkCreateDescriptorPool),
     ENTRY(vkCreateDescriptorSetLayout),
@@ -447,6 +455,7 @@ static const struct InstanceInterceptTableEntry instanceIntercepts[] = {
     ENTRY(vkDestroyBuffer),
     ENTRY(vkDestroyBufferView),
     ENTRY(vkDestroyCommandPool),
+    ENTRY(vkDestroyDataGraphPipelineSessionARM),
     ENTRY(vkDestroyDeferredOperationKHR),
     ENTRY(vkDestroyDescriptorPool),
     ENTRY(vkDestroyDescriptorSetLayout),
@@ -500,6 +509,10 @@ static const struct InstanceInterceptTableEntry instanceIntercepts[] = {
     ENTRY(vkGetBufferOpaqueCaptureDescriptorDataEXT),
     ENTRY(vkGetCalibratedTimestampsEXT),
     ENTRY(vkGetCalibratedTimestampsKHR),
+    ENTRY(vkGetDataGraphPipelineAvailablePropertiesARM),
+    ENTRY(vkGetDataGraphPipelinePropertiesARM),
+    ENTRY(vkGetDataGraphPipelineSessionBindPointRequirementsARM),
+    ENTRY(vkGetDataGraphPipelineSessionMemoryRequirementsARM),
     ENTRY(vkGetDeferredOperationMaxConcurrencyKHR),
     ENTRY(vkGetDeferredOperationResultKHR),
     ENTRY(vkGetDescriptorEXT),
@@ -602,6 +615,7 @@ static const struct InstanceInterceptTableEntry instanceIntercepts[] = {
     ENTRY(vkReleaseCapturedPipelineDataKHR),
     ENTRY(vkReleaseProfilingLockKHR),
     ENTRY(vkReleaseSwapchainImagesEXT),
+    ENTRY(vkReleaseSwapchainImagesKHR),
     ENTRY(vkResetCommandBuffer),
     ENTRY(vkResetCommandPool),
     ENTRY(vkResetDescriptorPool),
@@ -703,6 +717,8 @@ struct InstanceDispatchTable {
     PFN_vkGetPhysicalDeviceProperties vkGetPhysicalDeviceProperties;
     PFN_vkGetPhysicalDeviceProperties2 vkGetPhysicalDeviceProperties2;
     PFN_vkGetPhysicalDeviceProperties2KHR vkGetPhysicalDeviceProperties2KHR;
+    PFN_vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM;
+    PFN_vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM;
     PFN_vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR;
     PFN_vkGetPhysicalDeviceQueueFamilyProperties vkGetPhysicalDeviceQueueFamilyProperties;
     PFN_vkGetPhysicalDeviceQueueFamilyProperties2 vkGetPhysicalDeviceQueueFamilyProperties2;
@@ -795,6 +811,8 @@ static inline void initDriverInstanceDispatchTable(
     ENTRY(vkGetPhysicalDeviceProperties);
     ENTRY(vkGetPhysicalDeviceProperties2);
     ENTRY(vkGetPhysicalDeviceProperties2KHR);
+    ENTRY(vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM);
+    ENTRY(vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM);
     ENTRY(vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR);
     ENTRY(vkGetPhysicalDeviceQueueFamilyProperties);
     ENTRY(vkGetPhysicalDeviceQueueFamilyProperties2);

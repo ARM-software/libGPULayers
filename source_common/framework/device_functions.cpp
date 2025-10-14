@@ -221,6 +221,24 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkBindBufferMemory2KHR<default_tag>(
 
 /* See Vulkan API for documentation. */
 template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkBindDataGraphPipelineSessionMemoryARM<default_tag>(
+    VkDevice device,
+    uint32_t bindInfoCount,
+    const VkBindDataGraphPipelineSessionMemoryInfoARM* pBindInfos
+) {
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    auto* layer = Device::retrieve(device);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    return layer->driver.vkBindDataGraphPipelineSessionMemoryARM(device, bindInfoCount, pBindInfos);
+}
+
+/* See Vulkan API for documentation. */
+template <>
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkBindImageMemory<default_tag>(
     VkDevice device,
     VkImage image,
@@ -1237,6 +1255,23 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImageToBuffer2KHR<default_tag>(
 
 /* See Vulkan API for documentation. */
 template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMemoryIndirectKHR<default_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkCopyMemoryIndirectInfoKHR* pCopyMemoryIndirectInfo
+) {
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    auto* layer = Device::retrieve(commandBuffer);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    layer->driver.vkCmdCopyMemoryIndirectKHR(commandBuffer, pCopyMemoryIndirectInfo);
+}
+
+/* See Vulkan API for documentation. */
+template <>
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMemoryToAccelerationStructureKHR<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkCopyMemoryToAccelerationStructureInfoKHR* pInfo
@@ -1250,6 +1285,23 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMemoryToAccelerationStructureKHR<defau
     // Release the lock to call into the driver
     lock.unlock();
     layer->driver.vkCmdCopyMemoryToAccelerationStructureKHR(commandBuffer, pInfo);
+}
+
+/* See Vulkan API for documentation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMemoryToImageIndirectKHR<default_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkCopyMemoryToImageIndirectInfoKHR* pCopyMemoryToImageIndirectInfo
+) {
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    auto* layer = Device::retrieve(commandBuffer);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    layer->driver.vkCmdCopyMemoryToImageIndirectKHR(commandBuffer, pCopyMemoryToImageIndirectInfo);
 }
 
 /* See Vulkan API for documentation. */
@@ -1454,6 +1506,24 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchBaseKHR<default_tag>(
     // Release the lock to call into the driver
     lock.unlock();
     layer->driver.vkCmdDispatchBaseKHR(commandBuffer, baseGroupX, baseGroupY, baseGroupZ, groupCountX, groupCountY, groupCountZ);
+}
+
+/* See Vulkan API for documentation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchDataGraphARM<default_tag>(
+    VkCommandBuffer commandBuffer,
+    VkDataGraphPipelineSessionARM session,
+    const VkDataGraphPipelineDispatchInfoARM* pInfo
+) {
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    auto* layer = Device::retrieve(commandBuffer);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    layer->driver.vkCmdDispatchDataGraphARM(commandBuffer, session, pInfo);
 }
 
 /* See Vulkan API for documentation. */
@@ -4715,6 +4785,47 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateComputePipelines<default_tag>(
 
 /* See Vulkan API for documentation. */
 template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDataGraphPipelineSessionARM<default_tag>(
+    VkDevice device,
+    const VkDataGraphPipelineSessionCreateInfoARM* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkDataGraphPipelineSessionARM* pSession
+) {
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    auto* layer = Device::retrieve(device);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    return layer->driver.vkCreateDataGraphPipelineSessionARM(device, pCreateInfo, pAllocator, pSession);
+}
+
+/* See Vulkan API for documentation. */
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDataGraphPipelinesARM<default_tag>(
+    VkDevice device,
+    VkDeferredOperationKHR deferredOperation,
+    VkPipelineCache pipelineCache,
+    uint32_t createInfoCount,
+    const VkDataGraphPipelineCreateInfoARM* pCreateInfos,
+    const VkAllocationCallbacks* pAllocator,
+    VkPipeline* pPipelines
+) {
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    auto* layer = Device::retrieve(device);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    return layer->driver.vkCreateDataGraphPipelinesARM(device, deferredOperation, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
+}
+
+/* See Vulkan API for documentation. */
+template <>
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDeferredOperationKHR<default_tag>(
     VkDevice device,
     const VkAllocationCallbacks* pAllocator,
@@ -5505,6 +5616,24 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyCommandPool<default_tag>(
     // Release the lock to call into the driver
     lock.unlock();
     layer->driver.vkDestroyCommandPool(device, commandPool, pAllocator);
+}
+
+/* See Vulkan API for documentation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyDataGraphPipelineSessionARM<default_tag>(
+    VkDevice device,
+    VkDataGraphPipelineSessionARM session,
+    const VkAllocationCallbacks* pAllocator
+) {
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    auto* layer = Device::retrieve(device);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    layer->driver.vkDestroyDataGraphPipelineSessionARM(device, session, pAllocator);
 }
 
 /* See Vulkan API for documentation. */
@@ -6439,6 +6568,81 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetCalibratedTimestampsKHR<default_tag>(
     // Release the lock to call into the driver
     lock.unlock();
     return layer->driver.vkGetCalibratedTimestampsKHR(device, timestampCount, pTimestampInfos, pTimestamps, pMaxDeviation);
+}
+
+/* See Vulkan API for documentation. */
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetDataGraphPipelineAvailablePropertiesARM<default_tag>(
+    VkDevice device,
+    const VkDataGraphPipelineInfoARM* pPipelineInfo,
+    uint32_t* pPropertiesCount,
+    VkDataGraphPipelinePropertyARM* pProperties
+) {
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    auto* layer = Device::retrieve(device);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    return layer->driver.vkGetDataGraphPipelineAvailablePropertiesARM(device, pPipelineInfo, pPropertiesCount, pProperties);
+}
+
+/* See Vulkan API for documentation. */
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetDataGraphPipelinePropertiesARM<default_tag>(
+    VkDevice device,
+    const VkDataGraphPipelineInfoARM* pPipelineInfo,
+    uint32_t propertiesCount,
+    VkDataGraphPipelinePropertyQueryResultARM* pProperties
+) {
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    auto* layer = Device::retrieve(device);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    return layer->driver.vkGetDataGraphPipelinePropertiesARM(device, pPipelineInfo, propertiesCount, pProperties);
+}
+
+/* See Vulkan API for documentation. */
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetDataGraphPipelineSessionBindPointRequirementsARM<default_tag>(
+    VkDevice device,
+    const VkDataGraphPipelineSessionBindPointRequirementsInfoARM* pInfo,
+    uint32_t* pBindPointRequirementCount,
+    VkDataGraphPipelineSessionBindPointRequirementARM* pBindPointRequirements
+) {
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    auto* layer = Device::retrieve(device);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    return layer->driver.vkGetDataGraphPipelineSessionBindPointRequirementsARM(device, pInfo, pBindPointRequirementCount, pBindPointRequirements);
+}
+
+/* See Vulkan API for documentation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkGetDataGraphPipelineSessionMemoryRequirementsARM<default_tag>(
+    VkDevice device,
+    const VkDataGraphPipelineSessionMemoryRequirementsInfoARM* pInfo,
+    VkMemoryRequirements2* pMemoryRequirements
+) {
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    auto* layer = Device::retrieve(device);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    layer->driver.vkGetDataGraphPipelineSessionMemoryRequirementsARM(device, pInfo, pMemoryRequirements);
 }
 
 /* See Vulkan API for documentation. */
@@ -8265,7 +8469,7 @@ VKAPI_ATTR void VKAPI_CALL layer_vkReleaseProfilingLockKHR<default_tag>(
 template <>
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkReleaseSwapchainImagesEXT<default_tag>(
     VkDevice device,
-    const VkReleaseSwapchainImagesInfoEXT* pReleaseInfo
+    const VkReleaseSwapchainImagesInfoKHR* pReleaseInfo
 ) {
     LAYER_TRACE(__func__);
 
@@ -8276,6 +8480,23 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkReleaseSwapchainImagesEXT<default_tag>(
     // Release the lock to call into the driver
     lock.unlock();
     return layer->driver.vkReleaseSwapchainImagesEXT(device, pReleaseInfo);
+}
+
+/* See Vulkan API for documentation. */
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkReleaseSwapchainImagesKHR<default_tag>(
+    VkDevice device,
+    const VkReleaseSwapchainImagesInfoKHR* pReleaseInfo
+) {
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    auto* layer = Device::retrieve(device);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    return layer->driver.vkReleaseSwapchainImagesKHR(device, pReleaseInfo);
 }
 
 /* See Vulkan API for documentation. */

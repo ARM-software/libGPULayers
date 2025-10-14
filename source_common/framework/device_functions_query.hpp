@@ -253,6 +253,28 @@ constexpr PFN_vkBindBufferMemory2KHR getLayerPtr_vkBindBufferMemory2KHR()
 
 /* Test for user_tag availability. */
 template <typename T>
+concept hasLayerPtr_vkBindDataGraphPipelineSessionMemoryARM = requires(
+    VkDevice device, uint32_t bindInfoCount, const VkBindDataGraphPipelineSessionMemoryInfoARM* pBindInfos
+) {
+    layer_vkBindDataGraphPipelineSessionMemoryARM<T>(device, bindInfoCount, pBindInfos);
+};
+
+/* Function pointer resolution. */
+constexpr PFN_vkBindDataGraphPipelineSessionMemoryARM getLayerPtr_vkBindDataGraphPipelineSessionMemoryARM()
+{
+    return [] <typename T>
+    {
+        if constexpr(hasLayerPtr_vkBindDataGraphPipelineSessionMemoryARM<T>)
+        {
+            return layer_vkBindDataGraphPipelineSessionMemoryARM<T>;
+        }
+
+        return layer_vkBindDataGraphPipelineSessionMemoryARM<default_tag>;
+    }.operator()<user_tag>();
+}
+
+/* Test for user_tag availability. */
+template <typename T>
 concept hasLayerPtr_vkBindImageMemory = requires(
     VkDevice device, VkImage image, VkDeviceMemory memory, VkDeviceSize memoryOffset
 ) {
@@ -1441,6 +1463,28 @@ constexpr PFN_vkCmdCopyImageToBuffer2KHR getLayerPtr_vkCmdCopyImageToBuffer2KHR(
 
 /* Test for user_tag availability. */
 template <typename T>
+concept hasLayerPtr_vkCmdCopyMemoryIndirectKHR = requires(
+    VkCommandBuffer commandBuffer, const VkCopyMemoryIndirectInfoKHR* pCopyMemoryIndirectInfo
+) {
+    layer_vkCmdCopyMemoryIndirectKHR<T>(commandBuffer, pCopyMemoryIndirectInfo);
+};
+
+/* Function pointer resolution. */
+constexpr PFN_vkCmdCopyMemoryIndirectKHR getLayerPtr_vkCmdCopyMemoryIndirectKHR()
+{
+    return [] <typename T>
+    {
+        if constexpr(hasLayerPtr_vkCmdCopyMemoryIndirectKHR<T>)
+        {
+            return layer_vkCmdCopyMemoryIndirectKHR<T>;
+        }
+
+        return layer_vkCmdCopyMemoryIndirectKHR<default_tag>;
+    }.operator()<user_tag>();
+}
+
+/* Test for user_tag availability. */
+template <typename T>
 concept hasLayerPtr_vkCmdCopyMemoryToAccelerationStructureKHR = requires(
     VkCommandBuffer commandBuffer, const VkCopyMemoryToAccelerationStructureInfoKHR* pInfo
 ) {
@@ -1458,6 +1502,28 @@ constexpr PFN_vkCmdCopyMemoryToAccelerationStructureKHR getLayerPtr_vkCmdCopyMem
         }
 
         return layer_vkCmdCopyMemoryToAccelerationStructureKHR<default_tag>;
+    }.operator()<user_tag>();
+}
+
+/* Test for user_tag availability. */
+template <typename T>
+concept hasLayerPtr_vkCmdCopyMemoryToImageIndirectKHR = requires(
+    VkCommandBuffer commandBuffer, const VkCopyMemoryToImageIndirectInfoKHR* pCopyMemoryToImageIndirectInfo
+) {
+    layer_vkCmdCopyMemoryToImageIndirectKHR<T>(commandBuffer, pCopyMemoryToImageIndirectInfo);
+};
+
+/* Function pointer resolution. */
+constexpr PFN_vkCmdCopyMemoryToImageIndirectKHR getLayerPtr_vkCmdCopyMemoryToImageIndirectKHR()
+{
+    return [] <typename T>
+    {
+        if constexpr(hasLayerPtr_vkCmdCopyMemoryToImageIndirectKHR<T>)
+        {
+            return layer_vkCmdCopyMemoryToImageIndirectKHR<T>;
+        }
+
+        return layer_vkCmdCopyMemoryToImageIndirectKHR<default_tag>;
     }.operator()<user_tag>();
 }
 
@@ -1700,6 +1766,28 @@ constexpr PFN_vkCmdDispatchBaseKHR getLayerPtr_vkCmdDispatchBaseKHR()
         }
 
         return layer_vkCmdDispatchBaseKHR<default_tag>;
+    }.operator()<user_tag>();
+}
+
+/* Test for user_tag availability. */
+template <typename T>
+concept hasLayerPtr_vkCmdDispatchDataGraphARM = requires(
+    VkCommandBuffer commandBuffer, VkDataGraphPipelineSessionARM session, const VkDataGraphPipelineDispatchInfoARM* pInfo
+) {
+    layer_vkCmdDispatchDataGraphARM<T>(commandBuffer, session, pInfo);
+};
+
+/* Function pointer resolution. */
+constexpr PFN_vkCmdDispatchDataGraphARM getLayerPtr_vkCmdDispatchDataGraphARM()
+{
+    return [] <typename T>
+    {
+        if constexpr(hasLayerPtr_vkCmdDispatchDataGraphARM<T>)
+        {
+            return layer_vkCmdDispatchDataGraphARM<T>;
+        }
+
+        return layer_vkCmdDispatchDataGraphARM<default_tag>;
     }.operator()<user_tag>();
 }
 
@@ -5643,6 +5731,50 @@ constexpr PFN_vkCreateComputePipelines getLayerPtr_vkCreateComputePipelines()
 
 /* Test for user_tag availability. */
 template <typename T>
+concept hasLayerPtr_vkCreateDataGraphPipelineSessionARM = requires(
+    VkDevice device, const VkDataGraphPipelineSessionCreateInfoARM* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDataGraphPipelineSessionARM* pSession
+) {
+    layer_vkCreateDataGraphPipelineSessionARM<T>(device, pCreateInfo, pAllocator, pSession);
+};
+
+/* Function pointer resolution. */
+constexpr PFN_vkCreateDataGraphPipelineSessionARM getLayerPtr_vkCreateDataGraphPipelineSessionARM()
+{
+    return [] <typename T>
+    {
+        if constexpr(hasLayerPtr_vkCreateDataGraphPipelineSessionARM<T>)
+        {
+            return layer_vkCreateDataGraphPipelineSessionARM<T>;
+        }
+
+        return layer_vkCreateDataGraphPipelineSessionARM<default_tag>;
+    }.operator()<user_tag>();
+}
+
+/* Test for user_tag availability. */
+template <typename T>
+concept hasLayerPtr_vkCreateDataGraphPipelinesARM = requires(
+    VkDevice device, VkDeferredOperationKHR deferredOperation, VkPipelineCache pipelineCache, uint32_t createInfoCount, const VkDataGraphPipelineCreateInfoARM* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkPipeline* pPipelines
+) {
+    layer_vkCreateDataGraphPipelinesARM<T>(device, deferredOperation, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
+};
+
+/* Function pointer resolution. */
+constexpr PFN_vkCreateDataGraphPipelinesARM getLayerPtr_vkCreateDataGraphPipelinesARM()
+{
+    return [] <typename T>
+    {
+        if constexpr(hasLayerPtr_vkCreateDataGraphPipelinesARM<T>)
+        {
+            return layer_vkCreateDataGraphPipelinesARM<T>;
+        }
+
+        return layer_vkCreateDataGraphPipelinesARM<default_tag>;
+    }.operator()<user_tag>();
+}
+
+/* Test for user_tag availability. */
+template <typename T>
 concept hasLayerPtr_vkCreateDeferredOperationKHR = requires(
     VkDevice device, const VkAllocationCallbacks* pAllocator, VkDeferredOperationKHR* pDeferredOperation
 ) {
@@ -6562,6 +6694,28 @@ constexpr PFN_vkDestroyCommandPool getLayerPtr_vkDestroyCommandPool()
         }
 
         return layer_vkDestroyCommandPool<default_tag>;
+    }.operator()<user_tag>();
+}
+
+/* Test for user_tag availability. */
+template <typename T>
+concept hasLayerPtr_vkDestroyDataGraphPipelineSessionARM = requires(
+    VkDevice device, VkDataGraphPipelineSessionARM session, const VkAllocationCallbacks* pAllocator
+) {
+    layer_vkDestroyDataGraphPipelineSessionARM<T>(device, session, pAllocator);
+};
+
+/* Function pointer resolution. */
+constexpr PFN_vkDestroyDataGraphPipelineSessionARM getLayerPtr_vkDestroyDataGraphPipelineSessionARM()
+{
+    return [] <typename T>
+    {
+        if constexpr(hasLayerPtr_vkDestroyDataGraphPipelineSessionARM<T>)
+        {
+            return layer_vkDestroyDataGraphPipelineSessionARM<T>;
+        }
+
+        return layer_vkDestroyDataGraphPipelineSessionARM<default_tag>;
     }.operator()<user_tag>();
 }
 
@@ -7728,6 +7882,94 @@ constexpr PFN_vkGetCalibratedTimestampsKHR getLayerPtr_vkGetCalibratedTimestamps
         }
 
         return layer_vkGetCalibratedTimestampsKHR<default_tag>;
+    }.operator()<user_tag>();
+}
+
+/* Test for user_tag availability. */
+template <typename T>
+concept hasLayerPtr_vkGetDataGraphPipelineAvailablePropertiesARM = requires(
+    VkDevice device, const VkDataGraphPipelineInfoARM* pPipelineInfo, uint32_t* pPropertiesCount, VkDataGraphPipelinePropertyARM* pProperties
+) {
+    layer_vkGetDataGraphPipelineAvailablePropertiesARM<T>(device, pPipelineInfo, pPropertiesCount, pProperties);
+};
+
+/* Function pointer resolution. */
+constexpr PFN_vkGetDataGraphPipelineAvailablePropertiesARM getLayerPtr_vkGetDataGraphPipelineAvailablePropertiesARM()
+{
+    return [] <typename T>
+    {
+        if constexpr(hasLayerPtr_vkGetDataGraphPipelineAvailablePropertiesARM<T>)
+        {
+            return layer_vkGetDataGraphPipelineAvailablePropertiesARM<T>;
+        }
+
+        return layer_vkGetDataGraphPipelineAvailablePropertiesARM<default_tag>;
+    }.operator()<user_tag>();
+}
+
+/* Test for user_tag availability. */
+template <typename T>
+concept hasLayerPtr_vkGetDataGraphPipelinePropertiesARM = requires(
+    VkDevice device, const VkDataGraphPipelineInfoARM* pPipelineInfo, uint32_t propertiesCount, VkDataGraphPipelinePropertyQueryResultARM* pProperties
+) {
+    layer_vkGetDataGraphPipelinePropertiesARM<T>(device, pPipelineInfo, propertiesCount, pProperties);
+};
+
+/* Function pointer resolution. */
+constexpr PFN_vkGetDataGraphPipelinePropertiesARM getLayerPtr_vkGetDataGraphPipelinePropertiesARM()
+{
+    return [] <typename T>
+    {
+        if constexpr(hasLayerPtr_vkGetDataGraphPipelinePropertiesARM<T>)
+        {
+            return layer_vkGetDataGraphPipelinePropertiesARM<T>;
+        }
+
+        return layer_vkGetDataGraphPipelinePropertiesARM<default_tag>;
+    }.operator()<user_tag>();
+}
+
+/* Test for user_tag availability. */
+template <typename T>
+concept hasLayerPtr_vkGetDataGraphPipelineSessionBindPointRequirementsARM = requires(
+    VkDevice device, const VkDataGraphPipelineSessionBindPointRequirementsInfoARM* pInfo, uint32_t* pBindPointRequirementCount, VkDataGraphPipelineSessionBindPointRequirementARM* pBindPointRequirements
+) {
+    layer_vkGetDataGraphPipelineSessionBindPointRequirementsARM<T>(device, pInfo, pBindPointRequirementCount, pBindPointRequirements);
+};
+
+/* Function pointer resolution. */
+constexpr PFN_vkGetDataGraphPipelineSessionBindPointRequirementsARM getLayerPtr_vkGetDataGraphPipelineSessionBindPointRequirementsARM()
+{
+    return [] <typename T>
+    {
+        if constexpr(hasLayerPtr_vkGetDataGraphPipelineSessionBindPointRequirementsARM<T>)
+        {
+            return layer_vkGetDataGraphPipelineSessionBindPointRequirementsARM<T>;
+        }
+
+        return layer_vkGetDataGraphPipelineSessionBindPointRequirementsARM<default_tag>;
+    }.operator()<user_tag>();
+}
+
+/* Test for user_tag availability. */
+template <typename T>
+concept hasLayerPtr_vkGetDataGraphPipelineSessionMemoryRequirementsARM = requires(
+    VkDevice device, const VkDataGraphPipelineSessionMemoryRequirementsInfoARM* pInfo, VkMemoryRequirements2* pMemoryRequirements
+) {
+    layer_vkGetDataGraphPipelineSessionMemoryRequirementsARM<T>(device, pInfo, pMemoryRequirements);
+};
+
+/* Function pointer resolution. */
+constexpr PFN_vkGetDataGraphPipelineSessionMemoryRequirementsARM getLayerPtr_vkGetDataGraphPipelineSessionMemoryRequirementsARM()
+{
+    return [] <typename T>
+    {
+        if constexpr(hasLayerPtr_vkGetDataGraphPipelineSessionMemoryRequirementsARM<T>)
+        {
+            return layer_vkGetDataGraphPipelineSessionMemoryRequirementsARM<T>;
+        }
+
+        return layer_vkGetDataGraphPipelineSessionMemoryRequirementsARM<default_tag>;
     }.operator()<user_tag>();
 }
 
@@ -9956,7 +10198,7 @@ constexpr PFN_vkReleaseProfilingLockKHR getLayerPtr_vkReleaseProfilingLockKHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkReleaseSwapchainImagesEXT = requires(
-    VkDevice device, const VkReleaseSwapchainImagesInfoEXT* pReleaseInfo
+    VkDevice device, const VkReleaseSwapchainImagesInfoKHR* pReleaseInfo
 ) {
     layer_vkReleaseSwapchainImagesEXT<T>(device, pReleaseInfo);
 };
@@ -9972,6 +10214,28 @@ constexpr PFN_vkReleaseSwapchainImagesEXT getLayerPtr_vkReleaseSwapchainImagesEX
         }
 
         return layer_vkReleaseSwapchainImagesEXT<default_tag>;
+    }.operator()<user_tag>();
+}
+
+/* Test for user_tag availability. */
+template <typename T>
+concept hasLayerPtr_vkReleaseSwapchainImagesKHR = requires(
+    VkDevice device, const VkReleaseSwapchainImagesInfoKHR* pReleaseInfo
+) {
+    layer_vkReleaseSwapchainImagesKHR<T>(device, pReleaseInfo);
+};
+
+/* Function pointer resolution. */
+constexpr PFN_vkReleaseSwapchainImagesKHR getLayerPtr_vkReleaseSwapchainImagesKHR()
+{
+    return [] <typename T>
+    {
+        if constexpr(hasLayerPtr_vkReleaseSwapchainImagesKHR<T>)
+        {
+            return layer_vkReleaseSwapchainImagesKHR<T>;
+        }
+
+        return layer_vkReleaseSwapchainImagesKHR<default_tag>;
     }.operator()<user_tag>();
 }
 
