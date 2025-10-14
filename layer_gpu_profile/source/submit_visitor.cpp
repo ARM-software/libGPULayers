@@ -97,7 +97,7 @@ void ProfileSubmitVisitor::operator()(
 ) {
     UNUSED(renderPass);
 
-    handleCPUTrap("renderpass", debugStack);
+    handleCPUTrap("render_pass", debugStack);
 }
 
 /* See header for documentation */
@@ -125,12 +125,22 @@ void ProfileSubmitVisitor::operator()(
 
 /* See header for documentation */
 void ProfileSubmitVisitor::operator()(
+    const Tracker::LCSDispatchDataGraph& dispatch,
+    const std::vector<std::string>& debugStack
+) {
+    UNUSED(dispatch);
+
+    handleCPUTrap("data_graph", debugStack);
+}
+
+/* See header for documentation */
+void ProfileSubmitVisitor::operator()(
     const Tracker::LCSTraceRays& traceRays,
     const std::vector<std::string>& debugStack
 ) {
     UNUSED(traceRays);
 
-    handleCPUTrap("tracerays", debugStack);
+    handleCPUTrap("trace_rays", debugStack);
 }
 
 /* See header for documentation */

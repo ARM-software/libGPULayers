@@ -194,6 +194,14 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchIndirect<user_tag>(VkCommandBuffer
                                                                  VkBuffer buffer,
                                                                  VkDeviceSize offset);
 
+// Commands for data graph
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchDataGraphARM<user_tag>(VkCommandBuffer commandBuffer,
+                                                                     VkDataGraphPipelineSessionARM session,
+                                                                     const VkDataGraphPipelineDispatchInfoARM* pInfo);
+
 // Commands for trace rays
 
 /* See Vulkan API for documentation. */
