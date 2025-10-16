@@ -69,6 +69,10 @@ public:
         const std::vector<std::string>& debugStack) override;
 
     void operator()(
+        const Tracker::LCSDispatchDataGraph& dispatch,
+        const std::vector<std::string>& debugStack) override;
+
+    void operator()(
         const Tracker::LCSTraceRays& traceRays,
         const std::vector<std::string>& debugStack) override;
 

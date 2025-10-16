@@ -112,6 +112,7 @@ public:
                     const std::vector<std::string>& debugStack,
                     uint64_t renderPassTagID) override;
     void operator()(const Tracker::LCSDispatch& dispatch, const std::vector<std::string>& debugStack) override;
+    void operator()(const Tracker::LCSDispatchDataGraph& dispatch, const std::vector<std::string>& debugStack) override;
     void operator()(const Tracker::LCSTraceRays& traceRays, const std::vector<std::string>& debugStack) override;
     void operator()(const Tracker::LCSImageTransfer& imageTransfer,
                     const std::vector<std::string>& debugStack) override;

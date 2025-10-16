@@ -273,6 +273,20 @@ private:
 };
 
 /**
+ * @brief Class representing a data graph dispatch workload in the command stream.
+ */
+class LCSDispatchDataGraph : public LCSWorkload
+{
+public:
+    /**
+     * @brief Create a new data graph dispatch workload.
+     *
+     * @param tagID     The assigned tagID.
+     */
+    LCSDispatchDataGraph(uint64_t tagID);
+};
+
+/**
  * @brief Class representing a trace rays workload in the command stream.
  */
 class LCSTraceRays : public LCSWorkload
@@ -586,8 +600,10 @@ using LCSInstruction = std::variant<
     LCSInstructionWorkload<LCSRenderPass>,
     // The instruction represents a continuation of a render pass workload operation
     LCSInstructionWorkload<LCSRenderPassContinuation>,
-    // The instruction represents a dispatch workload operation
+    // The instruction represents a dispatch compute workload operation
     LCSInstructionWorkload<LCSDispatch>,
+    // The instruction represents a dispatch data graph workload operation
+    LCSInstructionWorkload<LCSDispatchDataGraph>,
     // The instruction represents a trace rays workload operation
     LCSInstructionWorkload<LCSTraceRays>,
     // The instruction represents an image transfer workload operation

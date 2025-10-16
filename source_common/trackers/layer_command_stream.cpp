@@ -72,6 +72,12 @@ LCSDispatch::LCSDispatch(uint64_t _tagID, int64_t _xGroups, int64_t _yGroups, in
 }
 
 /* See header for details. */
+LCSDispatchDataGraph::LCSDispatchDataGraph(uint64_t _tagID)
+    : LCSWorkload(_tagID)
+{
+}
+
+/* See header for details. */
 LCSTraceRays::LCSTraceRays(uint64_t _tagID, int64_t _xItems, int64_t _yItems, int64_t _zItems)
     : LCSWorkload(_tagID),
       xItems(_xItems),

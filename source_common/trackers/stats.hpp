@@ -69,6 +69,12 @@ public:
     void incDispatchCount() { dispatchCount += 1; }
 
     /**
+     * @brief Increment the data graph dispatch counter.
+     */
+    void incDispatchDataGraphCount() { dispatchDataGraphCount += 1; }
+
+
+    /**
      * @brief Increment the trace rays counter.
      */
     void incTraceRaysCount() { traceRaysCount += 1; };
@@ -92,6 +98,7 @@ public:
         renderPassCount += other.renderPassCount;
         drawCallCount += other.drawCallCount;
         dispatchCount = other.dispatchCount;
+        dispatchDataGraphCount = other.dispatchDataGraphCount;
         traceRaysCount = other.traceRaysCount;
         bufferTransferCount = other.bufferTransferCount;
         imageTransferCount = other.imageTransferCount;
@@ -106,6 +113,7 @@ public:
         renderPassCount = 0;
         drawCallCount = 0;
         dispatchCount = 0;
+        dispatchDataGraphCount = 0;
         traceRaysCount = 0;
         bufferTransferCount = 0;
         imageTransferCount = 0;
@@ -117,38 +125,39 @@ public:
     uint64_t getFrameCount() const { return frameCount; }
 
     /**
-     * @brief Increment the render pass counter.
+     * @brief Get the render pass counter.
      */
     uint64_t getRenderPassCount() const { return renderPassCount; }
 
     /**
-     * @brief Increment the draw counter.
+     * @brief Get the draw counter.
      */
     uint64_t getDrawCallCount() const { return drawCallCount; }
 
     /**
-     * @brief Increment the compute dispatch counter.
+     * @brief Get the compute dispatch counter.
      */
     uint64_t getDispatchCount() const { return dispatchCount; }
 
     /**
-     * @brief Increment the trace rays counter.
+     * @brief Get the compute dispatch counter.
+     */
+    uint64_t getDispatchDataGraphCount() const { return dispatchDataGraphCount; }
+
+    /**
+     * @brief Get the trace rays counter.
      */
     uint64_t getTraceRaysCount() const { return traceRaysCount; };
 
     /**
-     * @brief Increment the buffer transfer counter.
+     * @brief Get the buffer transfer counter.
      */
     uint64_t getBufferTransferCount() const { return bufferTransferCount; }
 
     /**
-     * @brief Increment the image transfer counter.
+     * @brief Get the image transfer counter.
      */
-    uint64_t getImageTransferCount() const
-    {
-        return imageTransferCount;
-        ;
-    }
+    uint64_t getImageTransferCount() const { return imageTransferCount; }
 
 private:
     /**
@@ -170,6 +179,11 @@ private:
      * @brief The number of compute dispatches tracked.
      */
     uint64_t dispatchCount {0};
+
+    /**
+     * @brief The number of data graph dispatches tracked.
+     */
+    uint64_t dispatchDataGraphCount {0};
 
     /**
      * @brief The number of trace rays calls tracked.

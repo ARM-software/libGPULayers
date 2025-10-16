@@ -117,6 +117,13 @@ public:
     uint64_t dispatch(int64_t xGroups, int64_t yGroups, int64_t zGroups);
 
     /**
+     * @brief Capture a data graph dispatch.
+     *
+     * @return Returns the tagID assigned to this workload.
+     */
+    uint64_t dispatchDataGraph();
+
+    /**
      * @brief Capture a trace rays dispatch.
      *
      * @param xItems   Number of work items in X dimension, or -1 if unknown.

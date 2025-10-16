@@ -89,6 +89,14 @@ public:
     virtual void operator()(const LCSDispatch& dispatch, const std::vector<std::string>& debugStack) = 0;
 
     /**
+     * @brief Visit a dispatch data graph workload object
+     *
+     * @param dispatch The dispatch data graph
+     * @param debugStack The stack of debug labels that are associated with this dispatch data graph
+     */
+    virtual void operator()(const LCSDispatchDataGraph& dispatch, const std::vector<std::string>& debugStack) = 0;
+
+    /**
      * @brief Visit a trace rays workload object
      *
      * @param traceRays The trace rays

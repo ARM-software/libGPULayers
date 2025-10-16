@@ -148,6 +148,13 @@ using Dispatch = pp::message<
     /* Any user defined debug labels associated with the dispatch */
     pp::string_field<"debug_label", 5, pp::repeated>>;
 
+/* A dispatch data graph object submission */
+using DispatchDataGraph = pp::message<
+    /* The unique identifier for this operation */
+    pp::uint64_field<"tag_id", 1>,
+    /* Any user defined debug labels associated with the dispatch */
+    pp::string_field<"debug_label", 2, pp::repeated>>;
+
 /* A trace rays object submission */
 using TraceRays = pp::message<
     /* The unique identifier for this operation */
@@ -251,7 +258,8 @@ using TimelineRecord =
                 pp::message_field<"image_transfer", 9, ImageTransfer>,
                 pp::message_field<"buffer_transfer", 10, BufferTransfer>,
                 pp::message_field<"acceleration_structure_build", 11, AccelerationStructureBuild>,
-                pp::message_field<"acceleration_structure_transfer", 12, AccelerationStructureTransfer>>;
+                pp::message_field<"acceleration_structure_transfer", 12, AccelerationStructureTransfer>,
+                pp::message_field<"dispatch_data_graph", 13, DispatchDataGraph>>;
 
 namespace
 {
@@ -530,6 +538,23 @@ Comms::MessageData serialize(const Tracker::LCSDispatch& dispatch, const std::ve
 /**
  * @brief Get the metadata for this workload
  *
+ * @param dispatch     The dispatch data graph to serialize
+ * @param debugLabel   The debug label stack for the VkQueue at submit time.
+ */
+Comms::MessageData serialize(const Tracker::LCSDispatchDataGraph& dispatch, const std::vector<std::string>& debugLabel)
+{
+    using namespace pp;
+
+    return packBuffer("dispatch_data_graph"_f,
+                      DispatchDataGraph {
+                          dispatch.getTagID(),
+                          debugLabel,
+                      });
+}
+
+/**
+ * @brief Get the metadata for this workload
+ *
  * @param traceRays    The trace rays to serialize
  * @param debugLabel   The debug label stack for the VkQueue at submit time.
  */
@@ -697,6 +722,12 @@ void TimelineProtobufEncoder::operator()(const Tracker::LCSRenderPassContinuatio
 }
 
 void TimelineProtobufEncoder::operator()(const Tracker::LCSDispatch& dispatch,
+                                         const std::vector<std::string>& debugStack)
+{
+    device.txMessage(serialize(dispatch, debugStack));
+}
+
+void TimelineProtobufEncoder::operator()(const Tracker::LCSDispatchDataGraph& dispatch,
                                          const std::vector<std::string>& debugStack)
 {
     device.txMessage(serialize(dispatch, debugStack));

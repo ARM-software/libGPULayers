@@ -209,6 +209,14 @@ message Dispatch {
     repeated string debug_label = 5;
 }
 
+/* A dispatch data graph object submission */
+message DispatchDataGraph {
+    /* The unique identifier for this operation */
+    uint64 tag_id = 1;
+    /* Any user defined debug labels associated with the dispatch */
+    repeated string debug_label = 2;
+}
+
 /* A trace rays object submission */
 message TraceRays {
     /* The unique identifier for this operation */
@@ -317,4 +325,5 @@ message TimelineRecord {
     BufferTransfer buffer_transfer = 10;
     AccelerationStructureBuild acceleration_structure_build = 11;
     AccelerationStructureTransfer acceleration_structure_transfer = 12;
+    DispatchDataGraph dispatch_data_graph = 13;
 }
