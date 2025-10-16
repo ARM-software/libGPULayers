@@ -76,7 +76,12 @@ namespace
         {
             UNUSED(instruction);
 
-            queueState.debugStack.pop_back();
+            // Only pop if we have an earlier push - this shouldn't happen and
+            // is a validation violation, but not all apps handle this correctly
+            if (!queueState.debugStack.empty())
+            {
+                queueState.debugStack.pop_back();
+            }
         }
 
         /**
