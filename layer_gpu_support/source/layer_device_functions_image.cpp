@@ -178,14 +178,6 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateImage<user_tag>(VkDevice device,
         }
     }
 
-    if (disable_external_compression == 2) {
-
-        static int total_present_like_images = 0;
-        if (present_like) {
-            total_present_like_images++;
-        }
-    }
-
     // -------------------------------------------------
     // Rebuild the pNext chain (drop DRM modifier nodes)
     // -------------------------------------------------

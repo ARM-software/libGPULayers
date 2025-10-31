@@ -74,16 +74,12 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceImageFormatProperties2<u
     // Inspect query intent
     VkExternalMemoryHandleTypeFlagBits handle = (VkExternalMemoryHandleTypeFlagBits)0;
     bool has_external_info = false;
-    bool saw_drm_modifier_info = false;
 
     for (const VkBaseInStructure* n = (const VkBaseInStructure*)pImageFormatInfo->pNext; n; n = n->pNext) {
         if (n->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO) {
             has_external_info = true;
             const auto* ext = (const VkPhysicalDeviceExternalImageFormatInfo*)n;
             handle = (VkExternalMemoryHandleTypeFlagBits)ext->handleType;
-        }
-        if (n->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_DRM_FORMAT_MODIFIER_INFO_EXT) {
-            saw_drm_modifier_info = true;
         }
     }
 
@@ -112,11 +108,10 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceImageFormatProperties2<u
         return out;
     };
 
-    bool dropped_modifier = false;
     for (; src; src = src->pNext) {
         bool drop = false;
         if (src->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_DRM_FORMAT_MODIFIER_INFO_EXT) {
-            drop = true; dropped_modifier = true;
+            drop = true;
         }
         if (!drop) append(clone_base(src));
     }
@@ -160,7 +155,6 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceImageFormatProperties2KH
     // Inspect query intent
     VkExternalMemoryHandleTypeFlagBits handle = (VkExternalMemoryHandleTypeFlagBits)0;
     bool has_external_info = false;
-    bool saw_drm_modifier_info = false;
 
     for (const VkBaseInStructure* n = (const VkBaseInStructure*)pImageFormatInfo->pNext; n; n = n->pNext) {
         if (n->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO) {
@@ -168,18 +162,6 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceImageFormatProperties2KH
             const auto* ext = (const VkPhysicalDeviceExternalImageFormatInfo*)n;
             handle = (VkExternalMemoryHandleTypeFlagBits)ext->handleType;
         }
-        if (n->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_DRM_FORMAT_MODIFIER_INFO_EXT) {
-            saw_drm_modifier_info = true;
-        }
-    }
-
-    if (has_external_info) {
-        fprintf(stderr, "[libGPULayers] vkGetPhysicalDeviceImageFormatProperties2KHR: external handleType=0x%x\n", (unsigned)handle); fflush(stderr);
-    } else {
-        //fprintf(stderr, "[libGPULayers] vkGetPhysicalDeviceImageFormatProperties2KHR: no ExternalImageFormatInfo in query.\n"); fflush(stderr);
-    }
-    if (saw_drm_modifier_info) {
-        fprintf(stderr, "[libGPULayers]Query includes PHYSICAL_DEVICE_IMAGE_DRM_FORMAT_MODIFIER_INFO_EXT\n"); fflush(stderr);
     }
 
     // Only act when we’re asked about DMA-BUF AND policy is enabled
@@ -208,11 +190,10 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceImageFormatProperties2KH
         return out;
     };
 
-    bool dropped_modifier = false;
     for (; src; src = src->pNext) {
         bool drop = false;
         if (src->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_DRM_FORMAT_MODIFIER_INFO_EXT) {
-            drop = true; dropped_modifier = true;
+            drop = true;
         }
         if (!drop) append(clone_base(src));
     }
