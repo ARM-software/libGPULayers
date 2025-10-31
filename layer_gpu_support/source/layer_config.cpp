@@ -167,6 +167,7 @@ void LayerConfig::parse_framebuffer_options(const json& config)
     bool disable_all_compression = framebuffer.at("disable_compression");
     bool default_all_compression = framebuffer.at("force_default_compression");
     uint64_t force_fixed_rate_compression = framebuffer.at("force_fixed_rate_compression");
+    int disable_external_compression = framebuffer.at("disable_external_compression");
 
     // Apply precedence ladder
     if (disable_all_compression)
@@ -228,6 +229,7 @@ void LayerConfig::parse_framebuffer_options(const json& config)
     conf_framebuffer_disable_compression = disable_all_compression;
     conf_framebuffer_force_default_compression = default_all_compression;
     conf_framebuffer_force_fixed_rate_compression = fixed_rate_mask;
+    conf_disable_external_compression = disable_external_compression;
 
     LAYER_LOG("Layer framebuffer configuration");
     LAYER_LOG("===============================");
@@ -235,6 +237,8 @@ void LayerConfig::parse_framebuffer_options(const json& config)
     LAYER_LOG(" - Force default framebuffer compression: %d", conf_framebuffer_force_default_compression);
     LAYER_LOG(" - Force fixed rate compression: %lu bpc", force_fixed_rate_compression);
     LAYER_LOG(" - Force fixed rate compression mask: %08x", conf_framebuffer_force_fixed_rate_compression);
+    LAYER_LOG(" - Force disable external compression: %d", conf_disable_external_compression);
+
 }
 
 /* See header for documentation. */
@@ -429,4 +433,10 @@ bool LayerConfig::framebuffer_force_default_compression() const
 uint32_t LayerConfig::framebuffer_force_fixed_rate_compression() const
 {
     return conf_framebuffer_force_fixed_rate_compression;
+}
+
+/* See header for documentation. */
+int LayerConfig::disable_external_compression() const 
+{ 
+    return conf_disable_external_compression; 
 }

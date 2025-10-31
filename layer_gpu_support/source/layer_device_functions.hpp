@@ -369,3 +369,23 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateImage<user_tag>(VkDevice device,
                                                              const VkImageCreateInfo* pCreateInfo,
                                                              const VkAllocationCallbacks* pAllocator,
                                                              VkImage* pImage);
+
+
+// Functions for swapchains
+
+/* See Vulkan API for documentation. */
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateSwapchainKHR<user_tag>(VkDevice device,
+                                                                    const VkSwapchainCreateInfoKHR* pCreateInfo,
+                                                                    const VkAllocationCallbacks* pAllocator,
+                                                                    VkSwapchainKHR* pSwapchain
+                                                                    );
+
+// Functions for external DMA-buf
+
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkAllocateMemory<user_tag>(VkDevice device,
+                                                                const VkMemoryAllocateInfo* pAllocateInfo,
+                                                                const VkAllocationCallbacks* pAllocator,
+                                                                VkDeviceMemory* pMemory
+                                                                );
