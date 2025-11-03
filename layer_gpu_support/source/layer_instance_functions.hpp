@@ -32,28 +32,22 @@
 
 /* See Vulkan API for documentation. */
 template <>
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceImageFormatProperties<user_tag>(
-    VkPhysicalDevice physicalDevice,
-    VkFormat format,
-    VkImageType type,
-    VkImageTiling tiling,
-    VkImageUsageFlags usage,
-    VkImageCreateFlags flags,
-    VkImageFormatProperties* pImageFormatProperties
-);
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceImageFormatProperties<user_tag>(VkPhysicalDevice physicalDevice,
+                                                                                        VkFormat format,
+                                                                                        VkImageType type,
+                                                                                        VkImageTiling tiling,
+                                                                                        VkImageUsageFlags usage,
+                                                                                        VkImageCreateFlags flags,
+                                                                                        VkImageFormatProperties* pImageFormatProperties);
 
 /* See Vulkan API for documentation. */
 template <>
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceImageFormatProperties2<user_tag>(
-    VkPhysicalDevice physicalDevice,
-    const VkPhysicalDeviceImageFormatInfo2* pImageFormatInfo,
-    VkImageFormatProperties2* pImageFormatProperties
-);
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceImageFormatProperties2<user_tag>(VkPhysicalDevice physicalDevice,
+                                                                                         const VkPhysicalDeviceImageFormatInfo2* pImageFormatInfo,
+                                                                                         VkImageFormatProperties2* pImageFormatProperties);
 
 /* See Vulkan API for documentation. */
 template <>
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceImageFormatProperties2KHR<user_tag>(
-    VkPhysicalDevice physicalDevice,
-    const VkPhysicalDeviceImageFormatInfo2* pImageFormatInfo,
-    VkImageFormatProperties2* pImageFormatProperties
-);
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceImageFormatProperties2KHR<user_tag>(VkPhysicalDevice physicalDevice,
+                                                                                            const VkPhysicalDeviceImageFormatInfo2* pImageFormatInfo,
+                                                                                            VkImageFormatProperties2* pImageFormatProperties);

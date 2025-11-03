@@ -176,11 +176,11 @@ allocated and handled by the driver.
   level that meets this bit rate requirement will be left at the original
   application setting.
 * If `disable_external_compression` option is set to `1` , all the possible measures
-  are taken so that external compression is disabled. In case is not possible to garantuee 
-  that external compression is used, the layer will return VK_ERROR_FEATURE_NOT_PRESENT.  
-  It should be set to `2` only if the application is not presenting, and is targeting vkCreateImage.
-  Option `2` is an heuristic, compression could be disabled accidentally on internal images,
-  and is also possible that it misses external images, if they lack COLOR_ATTACHMENT_BIT.
+  are taken to ensure that external compression is disabled. In case is not possible to guarantee 
+  that external compression is used, the layer will return `VK_ERROR_FEATURE_NOT_PRESENT`.  
+  Option `2`, in addition to what happens with option `1`, enables a heuristic useful when the 
+  application is not presenting; compression could be disabled accidentally on internal images, 
+  and it may also miss external images if they lack `COLOR_ATTACHMENT_BIT`. 
   Feel free to tune the heuristic to your specific use case.
 
 #### Configuration options

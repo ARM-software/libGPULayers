@@ -72,60 +72,91 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceImageFormatProperties2<u
     int disable_external_compression = config.disable_external_compression();
 
     // Inspect query intent
-    VkExternalMemoryHandleTypeFlagBits handle = (VkExternalMemoryHandleTypeFlagBits)0;
+    VkExternalMemoryHandleTypeFlagBits handle{};
     bool has_external_info = false;
 
-    for (const VkBaseInStructure* n = (const VkBaseInStructure*)pImageFormatInfo->pNext; n; n = n->pNext) {
-        if (n->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO) {
+    for (const VkBaseInStructure* n = reinterpret_cast<const VkBaseInStructure*>(pImageFormatInfo->pNext); n; n = n->pNext)
+    {
+        if (n->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO)
+        {
             has_external_info = true;
-            const auto* ext = (const VkPhysicalDeviceExternalImageFormatInfo*)n;
-            handle = (VkExternalMemoryHandleTypeFlagBits)ext->handleType;
+            const auto* ext = reinterpret_cast<const VkPhysicalDeviceExternalImageFormatInfo*>(n);
+            handle = static_cast<VkExternalMemoryHandleTypeFlagBits>(ext->handleType);
         }
     }
 
     // Only act when we’re asked about DMA-BUF AND policy is enabled
     const bool wants_dma_buf = has_external_info && (handle == VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT);
 
-    if (!(disable_external_compression == 0 && wants_dma_buf)) {
+    if (!(disable_external_compression == 0 && wants_dma_buf))
+    {
         // Pass-through (nothing to strip)
         return layer->driver.vkGetPhysicalDeviceImageFormatProperties2(physicalDevice, pImageFormatInfo, pImageFormatProperties);
     }
 
     // Build a filtered copy that removes modifier filters from the QUERY
     VkPhysicalDeviceImageFormatInfo2 local = *pImageFormatInfo;
-    const VkBaseInStructure* src = (const VkBaseInStructure*)pImageFormatInfo->pNext;
+    const VkBaseInStructure* src = reinterpret_cast<const VkBaseInStructure*>(pImageFormatInfo->pNext);
     VkBaseOutStructure* head = nullptr;
     VkBaseOutStructure* tail = nullptr;
 
-    auto append = [&](VkBaseOutStructure* node) {
+    auto append = [&](VkBaseOutStructure* node)
+    {
         node->pNext = nullptr;
-        if (!head) { head = node; tail = node; } else { tail->pNext = node; tail = node; }
+        if (!head) {
+            head = node;
+            tail = node;
+        } 
+        else
+        {
+            tail->pNext = node;
+            tail = node;
+        }
     };
-    auto clone_base = [](const VkBaseInStructure* node)->VkBaseOutStructure*{
-        VkBaseOutStructure* out = (VkBaseOutStructure*)malloc(sizeof(VkBaseOutStructure));
+
+    auto clone_base = [](const VkBaseInStructure* node)->VkBaseOutStructure*
+    {
+        VkBaseOutStructure* out = reinterpret_cast<VkBaseOutStructure*>(malloc(sizeof(VkBaseOutStructure)));
         memcpy(out, node, sizeof(VkBaseOutStructure));
         out->pNext = nullptr;
         return out;
     };
 
-    for (; src; src = src->pNext) {
+    for (; src; src = src->pNext)
+    {
+
         bool drop = false;
-        if (src->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_DRM_FORMAT_MODIFIER_INFO_EXT) {
+
+        if (src->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_DRM_FORMAT_MODIFIER_INFO_EXT) 
+        {
             drop = true;
         }
-        if (!drop) append(clone_base(src));
+
+        if (!drop)
+        {
+            append(clone_base(src));
+        }
+
     }
 
-    if (local.tiling == VK_IMAGE_TILING_DRM_FORMAT_MODIFIER_EXT) {
+    if (local.tiling == VK_IMAGE_TILING_DRM_FORMAT_MODIFIER_EXT)
+    {
         local.tiling = VK_IMAGE_TILING_OPTIMAL;
     }
     local.pNext = head;
 
     VkResult r = layer->driver.vkGetPhysicalDeviceImageFormatProperties2(physicalDevice, &local, pImageFormatProperties);
-    while (head) { auto* next = (VkBaseOutStructure*)head->pNext; free(head); head = next; }
 
-    if (r != VK_SUCCESS) {
-        fprintf(stderr, "[libGPULayers]   Driver returned %d after stripping modifiers.\n", r);
+    while (head)
+    { 
+        auto* next = reinterpret_cast<VkBaseOutStructure*>(head->pNext); 
+        free(head); 
+        head = next;
+    }
+
+    if (r != VK_SUCCESS)
+    {
+        LAYER_LOG("[libGPULayers] Driver returned %d after stripping modifiers.", r);
     }
 
     lock.unlock();
@@ -147,71 +178,96 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceImageFormatProperties2KH
     auto* layer = Instance::retrieve(physicalDevice);
     const auto& config = layer->config;  
 
-    //fprintf(stderr, "[libGPULayers] HIT %s (KHR alias)\n", __func__); fflush(stderr);
-
     // Config gate: only enforce policy for external exports when enabled.
     int disable_external_compression = config.disable_external_compression();
 
     // Inspect query intent
-    VkExternalMemoryHandleTypeFlagBits handle = (VkExternalMemoryHandleTypeFlagBits)0;
+    VkExternalMemoryHandleTypeFlagBits handle{};
     bool has_external_info = false;
 
-    for (const VkBaseInStructure* n = (const VkBaseInStructure*)pImageFormatInfo->pNext; n; n = n->pNext) {
-        if (n->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO) {
+    for (const VkBaseInStructure* n = reinterpret_cast<const VkBaseInStructure*>(pImageFormatInfo->pNext); n; n = n->pNext)
+    {
+        if (n->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO)
+        {
             has_external_info = true;
-            const auto* ext = (const VkPhysicalDeviceExternalImageFormatInfo*)n;
-            handle = (VkExternalMemoryHandleTypeFlagBits)ext->handleType;
+            const auto* ext = reinterpret_cast<const VkPhysicalDeviceExternalImageFormatInfo*>(n);
+            handle = static_cast<VkExternalMemoryHandleTypeFlagBits>(ext->handleType);
         }
     }
 
     // Only act when we’re asked about DMA-BUF AND policy is enabled
     const bool wants_dma_buf = has_external_info && (handle == VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT);
 
-
-    if (!(disable_external_compression == 0 && wants_dma_buf)) {
+    if (!(disable_external_compression == 0 && wants_dma_buf))
+    {
         // Pass-through (nothing to strip)
         return layer->driver.vkGetPhysicalDeviceImageFormatProperties2KHR(physicalDevice, pImageFormatInfo, pImageFormatProperties);
     }
 
     // Build a filtered copy that removes modifier filters from the QUERY
     VkPhysicalDeviceImageFormatInfo2 local = *pImageFormatInfo;
-    const VkBaseInStructure* src = (const VkBaseInStructure*)pImageFormatInfo->pNext;
+    const VkBaseInStructure* src = reinterpret_cast<const VkBaseInStructure*>(pImageFormatInfo->pNext);
     VkBaseOutStructure* head = nullptr;
     VkBaseOutStructure* tail = nullptr;
 
-    auto append = [&](VkBaseOutStructure* node) {
+    auto append = [&](VkBaseOutStructure* node)
+    {
         node->pNext = nullptr;
-        if (!head) { head = node; tail = node; } else { tail->pNext = node; tail = node; }
+
+        if (!head)
+        { 
+            head = node; 
+            tail = node;
+        } else {
+            tail->pNext = node;
+            tail = node;
+        }
     };
-    auto clone_base = [](const VkBaseInStructure* node)->VkBaseOutStructure*{
-        VkBaseOutStructure* out = (VkBaseOutStructure*)malloc(sizeof(VkBaseOutStructure));
+
+    auto clone_base = [](const VkBaseInStructure* node)->VkBaseOutStructure*
+    {
+        VkBaseOutStructure* out = reinterpret_cast<VkBaseOutStructure*>(malloc(sizeof(VkBaseOutStructure)));
         memcpy(out, node, sizeof(VkBaseOutStructure));
         out->pNext = nullptr;
         return out;
     };
 
-    for (; src; src = src->pNext) {
+    for (; src; src = src->pNext)
+    {
         bool drop = false;
-        if (src->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_DRM_FORMAT_MODIFIER_INFO_EXT) {
+
+        if (src->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_DRM_FORMAT_MODIFIER_INFO_EXT)
+        {
             drop = true;
         }
-        if (!drop) append(clone_base(src));
+
+        if (!drop)
+        {
+            append(clone_base(src));
+        }
     }
 
-    if (local.tiling == VK_IMAGE_TILING_DRM_FORMAT_MODIFIER_EXT) {
+    if (local.tiling == VK_IMAGE_TILING_DRM_FORMAT_MODIFIER_EXT)
+    {
         local.tiling = VK_IMAGE_TILING_OPTIMAL;
     }
+
     local.pNext = head;
 
     VkResult r = layer->driver.vkGetPhysicalDeviceImageFormatProperties2KHR(physicalDevice, &local, pImageFormatProperties);
 
-    while (head) { auto* next = (VkBaseOutStructure*)head->pNext; free(head); head = next; }
+    while (head)
+    { 
+        auto* next = reinterpret_cast<VkBaseOutStructure*>(head->pNext); 
+        free(head); 
+        head = next;
+    }
 
-    if (r != VK_SUCCESS) {
-        fprintf(stderr, "[libGPULayers]   Driver (KHR) returned %d after stripping modifiers.\n", r); fflush(stderr);
+    if (r != VK_SUCCESS)
+    {
+        LAYER_LOG("[libGPULayers] Driver (KHR) returned %d after stripping modifiers.", r);
     }
 
     lock.unlock();
     return r;
-
 }

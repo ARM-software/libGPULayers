@@ -67,46 +67,48 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkAllocateMemory<user_tag>(
     const VkAllocationCallbacks* pAllocator,
     VkDeviceMemory* pMemory
 ) {
-    
     LAYER_TRACE(__func__);
-
-    //fprintf(stderr, "[libGPULayers] HIT %s\n", __func__); fflush(stderr);
     
-    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    std::unique_lock<std::mutex> lock{g_vulkanLock};
     auto* layer = Device::retrieve(device);
     const auto& config = layer->instance->config;
 
-    int disable_external_compression = config.disable_external_compression();
+    const int disable_external_compression = config.disable_external_compression();
 
-    //absolute passthrough if feature is off
-    if (disable_external_compression == 0) {
+    // Absolute passthrough if feature is off
+    if (disable_external_compression == 0) 
+    {
         lock.unlock();
         return layer->driver.vkAllocateMemory(device, pAllocateInfo, pAllocator, pMemory);
     }
 
     // Scan pNext for imports that we cannot sanitize -> hard-fail to keep the 100% guarantee that we can disable external compression
-    for (const VkBaseInStructure* n = (const VkBaseInStructure*)pAllocateInfo->pNext; n; n = n->pNext) {
+    for (const auto* n = reinterpret_cast<const VkBaseInStructure*>(pAllocateInfo->pNext); n; n = n->pNext)
+    {
 
-        if (n->sType == VK_STRUCTURE_TYPE_IMPORT_ANDROID_HARDWARE_BUFFER_INFO_ANDROID) {
-            printf("[libGPULayers] vkAllocateMemory: AHardwareBuffer IMPORT detected. "
-                   "Cannot guarantee external compression is disabled (buffer created outside Vulkan). Failing by policy.\n");
+        if (n->sType == VK_STRUCTURE_TYPE_IMPORT_ANDROID_HARDWARE_BUFFER_INFO_ANDROID) 
+        {
+            LAYER_LOG("[libGPULayers] vkAllocateMemory: AHardwareBuffer IMPORT detected. "
+                    "Cannot guarantee external compression is disabled (buffer created outside Vulkan). Failing by policy.");
             return VK_ERROR_FEATURE_NOT_PRESENT;
         }
 
-        if (n->sType == VK_STRUCTURE_TYPE_IMPORT_MEMORY_FD_INFO_KHR) {
-            const VkImportMemoryFdInfoKHR* fdInfo = (const VkImportMemoryFdInfoKHR*)n;
-            if (fdInfo->handleType == VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT) {
-                printf("[libGPULayers] vkAllocateMemory: DMA-BUF memory IMPORT detected (fd=%d). "
-                       "Cannot guarantee external compression (DRM modifier may imply compression). Failing by policy.\n",
-                       fdInfo->fd);
+        if (n->sType == VK_STRUCTURE_TYPE_IMPORT_MEMORY_FD_INFO_KHR)
+        {
+            const auto* fdInfo = reinterpret_cast<const VkImportMemoryFdInfoKHR*>(n);
+
+            if (fdInfo->handleType == VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT) 
+            {
+                LAYER_LOG("[libGPULayers] vkAllocateMemory: DMA-BUF memory IMPORT detected (fd=%d). "
+                        "Cannot guarantee external compression (DRM modifier may imply compression). Failing by policy.",
+                        fdInfo->fd);
                 return VK_ERROR_FEATURE_NOT_PRESENT;
             }
         }
-
+        
     }
 
     // Release the lock to call into the driver
     lock.unlock();
     return layer->driver.vkAllocateMemory(device, pAllocateInfo, pAllocator, pMemory);
-
 }

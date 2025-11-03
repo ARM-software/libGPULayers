@@ -70,7 +70,8 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateSwapchainKHR<user_tag>(
     lock.unlock(); // ensure no lock is held for any Vulkan/loader calls below
 
     // 0) Absolute passthrough if feature is off — do nothing else
-    if (disable_external_compression == 0) {
+    if (disable_external_compression == 0) 
+    {
         VkResult ret = layer->driver.vkCreateSwapchainKHR(device, pCreateInfo, pAllocator, pSwapchain);
         return ret;
     }
@@ -85,25 +86,31 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateSwapchainKHR<user_tag>(
         layer->instance->driver.vkEnumerateDeviceExtensionProperties(
             layer->physicalDevice, nullptr, &extCount, exts.data());
 
-        for (const auto& e : exts) {
-            if (strcmp(e.extensionName, VK_EXT_IMAGE_COMPRESSION_CONTROL_EXTENSION_NAME) == 0) {
+        for (const auto& e : exts) 
+        {
+            if (strcmp(e.extensionName, VK_EXT_IMAGE_COMPRESSION_CONTROL_EXTENSION_NAME) == 0) 
+            {
                 have_image_compression_control = true; break;
             }
         }
     }
 
-    if (!have_image_compression_control) {
-        fprintf(stderr, "[libGPULayers] layer_vkCreateSwapchainKHR<user_tag> ERROR: VK_EXT_image_compression_control not supported; returning VK_ERROR_FEATURE_NOT_PRESENT\n"); fflush(stderr);
+    if (!have_image_compression_control) 
+    {
+        LAYER_LOG("[libGPULayers] layer_vkCreateSwapchainKHR<user_tag> ERROR: VK_EXT_image_compression_control not supported; returning VK_ERROR_FEATURE_NOT_PRESENT");
         return VK_ERROR_FEATURE_NOT_PRESENT; // no lock held here
     }
 
     // 2) Refuse any DRM modifier nodes in pNext (they can mandate compression)
     {
         const VkBaseInStructure* node = reinterpret_cast<const VkBaseInStructure*>(pCreateInfo->pNext);
-        for (; node; node = node->pNext) {
+
+        for (; node; node = node->pNext) 
+        {
             if (node->sType == VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_EXPLICIT_CREATE_INFO_EXT ||
-                node->sType == VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_LIST_CREATE_INFO_EXT) {
-                fprintf(stderr, "[libGPULayers] layer_vkCreateSwapchainKHR<user_tag> ERROR: DRM modifier create-info present in swapchain pNext; returning VK_ERROR_FEATURE_NOT_PRESENT\n"); fflush(stderr);
+                node->sType == VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_LIST_CREATE_INFO_EXT) 
+            {
+                LAYER_LOG("[libGPULayers] layer_vkCreateSwapchainKHR<user_tag> ERROR: DRM modifier create-info present in swapchain pNext; returning VK_ERROR_FEATURE_NOT_PRESENT");
                 return VK_ERROR_FEATURE_NOT_PRESENT; // no lock held here
             }
         }
@@ -115,30 +122,52 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateSwapchainKHR<user_tag>(
     VkBaseOutStructure* head = nullptr;
     VkBaseOutStructure* tail = nullptr;
 
-    auto append = [&](VkBaseOutStructure* n){
+    auto append = [&](VkBaseOutStructure* n)
+    {
         n->pNext = nullptr;
-        if (!head) { head = tail = n; } else { tail->pNext = n; tail = n; }
+
+        if (!head)
+        { 
+            head = tail = n;
+        }
+        else
+        { 
+            tail->pNext = n; 
+            tail = n;
+        }
     };
 
-    auto clone = [](const VkBaseInStructure* n)->VkBaseOutStructure* {
+    auto clone = [](const VkBaseInStructure* n)->VkBaseOutStructure* 
+    {
         size_t sz = sizeof(VkBaseOutStructure);
-        if (n->sType == VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_LIST_CREATE_INFO_EXT)
-            sz = sizeof(VkImageDrmFormatModifierListCreateInfoEXT);
-        else if (n->sType == VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_EXPLICIT_CREATE_INFO_EXT)
-            sz = sizeof(VkImageDrmFormatModifierExplicitCreateInfoEXT);
-        else if (n->sType == VK_STRUCTURE_TYPE_IMAGE_COMPRESSION_CONTROL_EXT)
-            sz = sizeof(VkImageCompressionControlEXT);
 
-        auto* out = (VkBaseOutStructure*)malloc(sz);
+        if (n->sType == VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_LIST_CREATE_INFO_EXT)
+        {
+            sz = sizeof(VkImageDrmFormatModifierListCreateInfoEXT);
+        }
+        else if (n->sType == VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_EXPLICIT_CREATE_INFO_EXT)
+        {
+            sz = sizeof(VkImageDrmFormatModifierExplicitCreateInfoEXT);
+        }
+        else if (n->sType == VK_STRUCTURE_TYPE_IMAGE_COMPRESSION_CONTROL_EXT)
+        {
+            sz = sizeof(VkImageCompressionControlEXT);
+        }
+
+        auto* out = reinterpret_cast<VkBaseOutStructure*>(malloc(sz));
         memcpy(out, n, sz);
         out->pNext = nullptr;
 
         return out;
     };
 
-    for (; src; src = src->pNext) {
+    for (; src; src = src->pNext)
+    {
         const bool drop = (src->sType == VK_STRUCTURE_TYPE_IMAGE_COMPRESSION_CONTROL_EXT);
-        if (!drop) append(clone(src));
+        if (!drop)
+        {
+            append(clone(src));
+        }
     }
 
     VkImageCompressionControlEXT compression_ctl {
@@ -148,12 +177,19 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateSwapchainKHR<user_tag>(
         0,
         nullptr
     };
+
     local.pNext = &compression_ctl;
 
     // 4) Call down-chain create (no lock held)
     VkResult r = layer->driver.vkCreateSwapchainKHR(device, &local, pAllocator, pSwapchain);
 
     // Free rebuilt nodes (do NOT free compression_ctl — it’s on the stack)
-    while (head) { auto* next = (VkBaseOutStructure*)head->pNext; free(head); head = next; }
+    while (head)
+    { 
+        auto* next = reinterpret_cast<VkBaseOutStructure*>(head->pNext); 
+        free(head); 
+        head = next;
+    }
+
     return r;
 }

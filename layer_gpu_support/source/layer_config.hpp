@@ -170,7 +170,7 @@ public:
      * @brief External compression control for swapchains/images.
      * 0 = passthrough (default), 
      * 1 = strip compression on external images, 
-     * 2 = strip compression on external images even without presentation, using heuristic (no garantuee!)
+     * 2 = strip compression on external images even without presentation, using heuristic (no guarantee!)
      */
     int disable_external_compression() const;
 
