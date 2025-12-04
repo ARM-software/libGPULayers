@@ -784,6 +784,10 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateInstance<default_tag>(const VkInsta
         LAYER_LOG("Requested instance extension list: [%u] = %s", i, newCreateInfo->ppEnabledExtensionNames[i]);
     }
 
+    // Get the new chain info so we modify our safe copy, not the original
+    chainInfo = getChainInfo(newCreateInfo);
+
+    // Advance the link info for the next element on the chain
     chainInfo->u.pLayerInfo = chainInfo->u.pLayerInfo->pNext;
     auto result = fpCreateInstance(newCreateInfo, pAllocator, pInstance);
     if (result != VK_SUCCESS)
@@ -873,6 +877,9 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDevice<default_tag>(VkPhysicalDevic
     {
         return VK_ERROR_INITIALIZATION_FAILED;
     }
+
+    // Get the new chain info so we modify our safe copy, not the original
+    chainInfo = getChainInfo(newCreateInfo);
 
     // Advance the link info for the next element on the chain
     chainInfo->u.pLayerInfo = chainInfo->u.pLayerInfo->pNext;
