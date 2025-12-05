@@ -40,6 +40,7 @@
     "framebuffer": {
         "disable_compression": false,
         "force_default_compression": false,
-        "force_fixed_rate_compression": 0
+        "force_fixed_rate_compression": 0,
+        "disable_external_compression": 0
     }
 }

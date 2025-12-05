@@ -47,11 +47,14 @@ add_library(
         layer_config.cpp
         layer_device_functions_dispatch.cpp
         layer_device_functions_image.cpp
+        layer_device_functions_swapchain.cpp
+        layer_device_functions_allocate_memory.cpp
         layer_device_functions_pipelines.cpp
         layer_device_functions_queue.cpp
         layer_device_functions_render_pass.cpp
         layer_device_functions_trace_rays.cpp
-        layer_device_functions_transfer.cpp)
+        layer_device_functions_transfer.cpp
+        layer_instance_functions_get_physical_properties.cpp)
 
 target_include_directories(
     ${VK_LAYER} PRIVATE

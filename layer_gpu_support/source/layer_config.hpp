@@ -165,6 +165,15 @@ public:
      */
     uint32_t framebuffer_force_fixed_rate_compression() const;
 
+
+    /**
+     * @brief External compression control for swapchains/images.
+     * 0 = passthrough (default), 
+     * 1 = strip compression on external images, 
+     * 2 = strip compression on external images even without presentation, using heuristic (no guarantee!)
+     */
+    int disable_external_compression() const;
+
 private:
     /**
      * @brief Parse the configuration options for the feature module.
@@ -315,4 +324,17 @@ private:
      * If zero, then no force is set and default compression will be used.
      */
     uint32_t conf_framebuffer_force_fixed_rate_compression {0};
+
+    /**
+     * @brief Forces disabling external compression.
+     *
+     * 0 = Perform no operation, passthrough.
+     * 1 = Force disable external compression, requires image presentation.
+     * 2 = Force disable external compression also without.
+     * presentation, requires only the use of vkCreateImage.
+     * 
+     * WARNING! Currently implemented as an heuristic.
+     */
+    int conf_disable_external_compression {0};
+
 };

@@ -175,6 +175,13 @@ allocated and handled by the driver.
   per component setting. Images that do not support a fixed rate compression
   level that meets this bit rate requirement will be left at the original
   application setting.
+* If `disable_external_compression` option is set to `1` , all the possible measures
+  are taken to ensure that external compression is disabled. In case is not possible to guarantee 
+  that external compression is used, the layer will return `VK_ERROR_FEATURE_NOT_PRESENT`.  
+  Option `2`, in addition to what happens with option `1`, enables a heuristic useful when the 
+  application is not presenting; compression could be disabled accidentally on internal images, 
+  and it may also miss external images if they lack `COLOR_ATTACHMENT_BIT`. 
+  Feel free to tune the heuristic to your specific use case.
 
 #### Configuration options
 
@@ -182,9 +189,14 @@ allocated and handled by the driver.
 "framebuffer": {
     "disable_compression": false,        // Disable all use of compression
     "force_default_compression": false,  // Force driver default compression
-    "force_fixed_rate_compression": 0    // Force use of fixed rate compression as close
+    "force_fixed_rate_compression": 0,   // Force use of fixed rate compression as close
                                          // to this bits-per-channel as possible, but
                                          // no lower (0 = do not force)
+    "disable_external_compression": 0,   // 0 = Perform no operation, passthrough
+                                         // 1 = Force disable external compression, requires image presentation
+                                         // 2 = Force disable external compression also without 
+                                         // presentation, requires only the use of vkCreateImage
+                                         // WARNING! Currently implemented as an heuristic
 }
 ```
 
