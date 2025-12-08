@@ -26,12 +26,11 @@ This module implements a simple wrapper around the Android Debug Bridge command
 line tool which can be used to run commands on a connected Android device.
 '''
 
-from collections.abc import Iterable
 import os
 import shlex
 import shutil
 import subprocess as sp
-from typing import Optional
+from typing import Iterable, Optional
 
 
 class ADBConnect:
