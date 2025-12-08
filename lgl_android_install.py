@@ -134,8 +134,6 @@ from lglpy.android.adb import ADBConnect
 from lglpy.android.utils import AndroidUtils, NamedTempFile
 from lglpy.android.filesystem import AndroidFilesystem
 from lglpy.comms import server
-from lglpy.comms import service_gpu_timeline
-from lglpy.comms import service_gpu_profile
 from lglpy.ui import console
 
 # Android 9 is the minimum version supported for our method of enabling layers
@@ -612,10 +610,14 @@ def configure_server(conn: ADBConnect,
     instance = server.CommsServer(0)
 
     if timeline_file:
+        # Import late to avoid pulling in transitive deps when unused
+        from lglpy.comms import service_gpu_timeline
         service_tl = service_gpu_timeline.GPUTimelineService(timeline_file)
         instance.register_endpoint(service_tl)
 
     if profile_dir:
+        # Import late to avoid pulling in transitive deps when unused
+        from lglpy.comms import service_gpu_profile
         service_prof = service_gpu_profile.GPUProfileService(profile_dir)
         instance.register_endpoint(service_prof)
 
