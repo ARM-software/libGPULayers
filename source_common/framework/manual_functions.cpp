@@ -29,7 +29,7 @@
  * implemented as library code which can be swapped for alternative
  * implementations on a per-layer basis if needed.
  */
-
+#include <cstring>
 #include <vulkan/utility/vk_struct_helper.hpp>
 
 #include "framework/manual_functions.hpp"
@@ -621,15 +621,44 @@ VkResult layer_vkEnumerateInstanceExtensionProperties<default_tag>(const char* p
 {
     LAYER_TRACE(__func__);
 
-    UNUSED(pProperties);
-
-    if (!pLayerName || strcmp(pLayerName, layerProps[0].layerName))
+    // Query for a layer
+    if (pLayerName)
     {
-        return VK_ERROR_LAYER_NOT_PRESENT;
+        // ... but not this layer
+        if(strcmp(pLayerName, layerProps[0].layerName))
+        {
+            return VK_ERROR_LAYER_NOT_PRESENT;
+        }
+
+        size_t count = Instance::injectedInstanceExtensions.size();
+
+        // Size query
+        if (!pProperties)
+        {
+            *pPropertyCount = static_cast<uint32_t>(count);
+            return VK_SUCCESS;
+        }
+
+        // Property query, clamped to size of user array if smaller
+        size_t emitCount = std::min(count, static_cast<size_t>(*pPropertyCount));
+        for (size_t i = 0; i < emitCount; i++)
+        {
+            const auto& ref = Instance::injectedInstanceExtensions[i];
+            std::strcpy(pProperties[i].extensionName, ref.first.c_str());
+            pProperties[i].specVersion = ref.second;
+        }
+
+        *pPropertyCount = static_cast<uint32_t>(emitCount);
+
+        if (count > emitCount)
+        {
+            return VK_INCOMPLETE;
+        }
+
+        return VK_SUCCESS;
     }
 
-    *pPropertyCount = 0;
-    return VK_SUCCESS;
+    return VK_ERROR_LAYER_NOT_PRESENT;
 }
 
 /** See Vulkan API for documentation. */
@@ -641,23 +670,50 @@ VkResult layer_vkEnumerateDeviceExtensionProperties<default_tag>(VkPhysicalDevic
 {
     LAYER_TRACE(__func__);
 
-    UNUSED(pProperties);
-
-    // Android layer enumeration will always pass a nullptr for the device
-    if (!gpu)
+    // Query for a layer
+    if (pLayerName)
     {
-        if (!pLayerName || strcmp(pLayerName, layerProps[0].layerName))
+        // ... but not this layer
+        if(strcmp(pLayerName, layerProps[0].layerName))
         {
             return VK_ERROR_LAYER_NOT_PRESENT;
         }
 
-        *pPropertyCount = 0;
+        size_t count = Instance::injectedDeviceExtensions.size();
+
+        // Size query
+        if (!pProperties)
+        {
+            *pPropertyCount = static_cast<uint32_t>(count);
+            return VK_SUCCESS;
+        }
+
+        // Property query, clamped to size of user array if smaller
+        size_t emitCount = std::min(count, static_cast<size_t>(*pPropertyCount));
+        for (size_t i = 0; i < emitCount; i++)
+        {
+            const auto& ref = Instance::injectedDeviceExtensions[i];
+            std::strcpy(pProperties[i].extensionName, ref.first.c_str());
+            pProperties[i].specVersion = ref.second;
+        }
+
+        *pPropertyCount = static_cast<uint32_t>(emitCount);
+
+        if (count > emitCount)
+        {
+            return VK_INCOMPLETE;
+        }
+
         return VK_SUCCESS;
     }
 
+    // Query for a device, but on Android discovery may pass a null device
+    if (!gpu)
+    {
+        return VK_ERROR_LAYER_NOT_PRESENT;
+    }
+
     // For other cases forward to the driver to handle it
-    assert(!pLayerName);
-    assert(gpu);
 
     // Hold the lock to access layer-wide global store
     std::unique_lock<std::mutex> lock {g_vulkanLock};
@@ -674,20 +730,26 @@ VkResult layer_vkEnumerateInstanceLayerProperties<default_tag>(uint32_t* pProper
 {
     LAYER_TRACE(__func__);
 
-    if (pProperties)
-    {
-        size_t count = std::min(layerProps.size(), static_cast<size_t>(*pPropertyCount));
-        if (count < layerProps.size())
-        {
-            return VK_INCOMPLETE;
-        }
+    size_t count = layerProps.size();
 
-        memcpy(pProperties, layerProps.data(), count * sizeof(VkLayerProperties));
-        *pPropertyCount = count;
+    // Size query
+    if (!pProperties)
+    {
+        *pPropertyCount = static_cast<uint32_t>(count);
         return VK_SUCCESS;
     }
 
-    *pPropertyCount = layerProps.size();
+    // Property query, clamped to size of user array if smaller
+    size_t emitCount = std::min(count, static_cast<size_t>(*pPropertyCount));
+
+    std::memcpy(pProperties, layerProps.data(), emitCount * sizeof(VkLayerProperties));
+    *pPropertyCount = static_cast<uint32_t>(emitCount);
+
+    if (count > emitCount)
+    {
+        return VK_INCOMPLETE;
+    }
+
     return VK_SUCCESS;
 }
 
@@ -701,20 +763,26 @@ VkResult layer_vkEnumerateDeviceLayerProperties<default_tag>(VkPhysicalDevice gp
 
     UNUSED(gpu);
 
-    if (pProperties)
-    {
-        size_t count = std::min(layerProps.size(), static_cast<size_t>(*pPropertyCount));
-        if (count < layerProps.size())
-        {
-            return VK_INCOMPLETE;
-        }
+    size_t count = layerProps.size();
 
-        memcpy(pProperties, layerProps.data(), count * sizeof(VkLayerProperties));
-        *pPropertyCount = count;
+    // Size query
+    if (!pProperties)
+    {
+        *pPropertyCount = static_cast<uint32_t>(count);
         return VK_SUCCESS;
     }
 
-    *pPropertyCount = layerProps.size();
+    // Property query, clamped to size of user array if smaller
+    size_t emitCount = std::min(count, static_cast<size_t>(*pPropertyCount));
+
+    std::memcpy(pProperties, layerProps.data(), emitCount * sizeof(VkLayerProperties));
+    *pPropertyCount = static_cast<uint32_t>(emitCount);
+
+    if (count > emitCount)
+    {
+        return VK_INCOMPLETE;
+    }
+
     return VK_SUCCESS;
 }
 
