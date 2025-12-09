@@ -381,7 +381,9 @@ std::vector<const char*> cloneExtensionList(uint32_t extensionCount, const char*
 static void enableInstanceVkExtDebugUtils(vku::safe_VkInstanceCreateInfo& createInfo,
                                           const std::vector<std::string>& supported)
 {
-    static const std::string target {VK_EXT_DEBUG_UTILS_EXTENSION_NAME};
+    static const std::string target {
+        VK_EXT_DEBUG_UTILS_EXTENSION_NAME
+    };
 
     // Test if the desired extension is supported. If supported list is
     // empty then we didn't query and assume extension is supported.
@@ -411,7 +413,9 @@ void enableDeviceVkKhrTimelineSemaphore(Instance& instance,
     UNUSED(instance);
     UNUSED(physicalDevice);
 
-    static const std::string target {VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME};
+    static const std::string target {
+        VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME
+    };
 
     // We know we can const-cast here because createInfo is a safe-struct clone
     void* pNextBase = const_cast<void*>(createInfo.pNext);
@@ -766,7 +770,7 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateInstance<default_tag>(const VkInsta
     newCreateInfoSafe.pApplicationInfo->apiVersion = VK_MAKE_API_VERSION(0, newVersion.first, newVersion.second, 0);
 
     // Enable extra extensions
-    for (const auto& newExt : Instance::extraExtensions)
+    for (const auto& newExt : Instance::requiredDriverExtensions)
     {
         if (newExt == VK_EXT_DEBUG_UTILS_EXTENSION_NAME)
         {
