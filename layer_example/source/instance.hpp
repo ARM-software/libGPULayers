@@ -153,9 +153,10 @@ public:
     /**
      * @brief Additional device extensions injected by the layer.
      *
-     * The layer will expose these even if the driver does not.
+     * The layer will expose these even if the driver does not. Items are
+     * removed from the list if the driver already exposes the extension.
      */
-    static const std::vector<std::pair<std::string, uint32_t>> injectedDeviceExtensions;
+    static std::vector<std::pair<std::string, uint32_t>> injectedDeviceExtensions;
 
     /**
      * @brief Additional API functions that are injected by the layer.

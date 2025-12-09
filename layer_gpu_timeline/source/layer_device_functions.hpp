@@ -504,3 +504,11 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit2KHR<user_tag>(VkQueue queue,
                                                                  uint32_t submitCount,
                                                                  const VkSubmitInfo2* pSubmits,
                                                                  VkFence fence);
+
+/* See Vulkan API for documentation. */
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueBindSparse<user_tag>(
+    VkQueue queue,
+    uint32_t bindInfoCount,
+    const VkBindSparseInfo* pBindInfo,
+    VkFence fence);

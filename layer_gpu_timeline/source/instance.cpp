@@ -46,7 +46,9 @@ const std::vector<std::string> Instance::requiredDriverExtensions {
 const std::vector<std::pair<std::string, uint32_t>> Instance::injectedInstanceExtensions {};
 
 /* See header for documentation. */
-const std::vector<std::pair<std::string, uint32_t>> Instance::injectedDeviceExtensions {};
+std::vector<std::pair<std::string, uint32_t>> Instance::injectedDeviceExtensions {
+    {VK_EXT_FRAME_BOUNDARY_EXTENSION_NAME, VK_EXT_FRAME_BOUNDARY_SPEC_VERSION}
+};
 
 /* See header for documentation. */
 const std::vector<std::string> Instance::injectedAPIFunctions {};

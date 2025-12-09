@@ -29,8 +29,11 @@
  * implemented as library code which can be swapped for alternative
  * implementations on a per-layer basis if needed.
  */
-
+#include <cstring>
+#include <string>
+#include <vector>
 #include <vulkan/utility/vk_struct_helper.hpp>
+#include <vulkan/vk_layer.h>
 
 #include "framework/manual_functions.hpp"
 #include "utils/misc.hpp"
@@ -527,6 +530,42 @@ void enableDeviceVkExtImageCompressionControl(Instance& instance,
     }
 }
 
+/* See header for documentation. */
+void emulateDeviceVkExtFrameBoundary(Instance& instance,
+                                     VkPhysicalDevice physicalDevice,
+                                     vku::safe_VkDeviceCreateInfo& createInfo,
+                                     std::vector<std::string>& supported)
+{
+    UNUSED(instance);
+    UNUSED(physicalDevice);
+    UNUSED(supported);
+
+    static const std::string target {VK_EXT_FRAME_BOUNDARY_EXTENSION_NAME};
+
+    // We only need to hide it if driver does not support it
+    bool isEmulated = false;
+    for (auto& ext : instance.injectedDeviceExtensions)
+    {
+        if (ext.first == target)
+        {
+            isEmulated = true;
+            break;
+        }
+    }
+
+    if (!isEmulated)
+    {
+        return;
+    }
+
+    // Mask extension if layer is emulating it
+    bool removed = vku::RemoveFromPnext(createInfo, VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAME_BOUNDARY_FEATURES_EXT);
+    if (removed)
+    {
+        LAYER_LOG("Device extension masked: %s", target.c_str());
+    }
+}
+
 /** See Vulkan API for documentation. */
 template <>
 PFN_vkVoidFunction layer_vkGetInstanceProcAddr<default_tag>(VkInstance instance, const char* pName)
@@ -621,15 +660,130 @@ VkResult layer_vkEnumerateInstanceExtensionProperties<default_tag>(const char* p
 {
     LAYER_TRACE(__func__);
 
-    UNUSED(pProperties);
-
-    if (!pLayerName || strcmp(pLayerName, layerProps[0].layerName))
+    // Query for a layer
+    if (pLayerName)
     {
-        return VK_ERROR_LAYER_NOT_PRESENT;
+        // ... but not this layer
+        if(strcmp(pLayerName, layerProps[0].layerName))
+        {
+            return VK_ERROR_LAYER_NOT_PRESENT;
+        }
+
+        size_t count = Instance::injectedInstanceExtensions.size();
+
+        // Size query
+        if (!pProperties)
+        {
+            *pPropertyCount = static_cast<uint32_t>(count);
+            return VK_SUCCESS;
+        }
+
+        // Property query, clamped to size of user array if smaller
+        size_t emitCount = std::min(count, static_cast<size_t>(*pPropertyCount));
+        for (size_t i = 0; i < emitCount; i++)
+        {
+            const auto& ref = Instance::injectedInstanceExtensions[i];
+            std::strcpy(pProperties[i].extensionName, ref.first.c_str());
+            pProperties[i].specVersion = ref.second;
+        }
+
+        *pPropertyCount = static_cast<uint32_t>(emitCount);
+
+        if (count > emitCount)
+        {
+            return VK_INCOMPLETE;
+        }
+
+        return VK_SUCCESS;
     }
 
-    *pPropertyCount = 0;
-    return VK_SUCCESS;
+    // Note that unlike device extensions, there is no layering for this
+    // query, as we have no way of knowing what's beneath us
+
+    return VK_ERROR_LAYER_NOT_PRESENT;
+}
+
+static std::vector<VkExtensionProperties> get_driver_device_extensions(
+    Instance& layer,
+    VkPhysicalDevice gpu
+) {
+    uint32_t queryCount = 0;
+    std::vector<VkExtensionProperties> query;
+
+    // Query how many extensions to allocate for
+    auto err = layer.driver.vkEnumerateDeviceExtensionProperties(gpu, nullptr, &queryCount, nullptr);
+    if (err != VK_SUCCESS)
+    {
+        return {};
+    }
+
+    // Allocate storage
+    query.resize(queryCount);
+
+    // Query
+    err = layer.driver.vkEnumerateDeviceExtensionProperties(gpu, nullptr, &queryCount, query.data());
+    if (err != VK_SUCCESS)
+    {
+        return {};
+    }
+
+    return query;
+}
+
+static void get_extended_device_extensions(
+    Instance& layer,
+    std::vector<VkExtensionProperties>& extensions
+) {
+    std::vector<std::string> passthroughExtensions;
+
+    // For each extension in our extension list ...
+    for (auto& injectedExtension : layer.injectedDeviceExtensions)
+    {
+        const std::string& name = injectedExtension.first;
+        // Is it in the list already?
+        bool found = false;
+        for (const auto& driverExtension : extensions)
+        {
+            if (name == driverExtension.extensionName)
+            {
+                passthroughExtensions.emplace_back(name);
+                found = true;
+                break;
+            }
+        }
+
+        // If not then add it to the list
+        if (!found)
+        {
+            LAYER_LOG("Injecting device extension: %s", name.c_str());
+            VkExtensionProperties prop {};
+
+            // Populate the string, and guarantee it's NUL terminated
+            std::strncpy(prop.extensionName, name.c_str(), VK_MAX_EXTENSION_NAME_SIZE - 1);
+            prop.extensionName[VK_MAX_EXTENSION_NAME_SIZE - 1] = '\0';
+            prop.specVersion = injectedExtension.second;
+            extensions.emplace_back(prop);
+        }
+        else
+        {
+            LAYER_LOG("Not injecting device extension: %s", name.c_str());
+        }
+    }
+
+    // Remove any found extensions from the injected list so that we can tell
+    // that the driver supports it and we didn't need to inject it
+    for (auto& ref : passthroughExtensions)
+    {
+        auto& tgt = layer.injectedDeviceExtensions;
+        for (auto it = tgt.begin(); it != tgt.end(); it++)
+        {
+            if (ref == it->first)
+            {
+                tgt.erase(it);
+                break;
+            }
+        }
+    }
 }
 
 /** See Vulkan API for documentation. */
@@ -641,23 +795,50 @@ VkResult layer_vkEnumerateDeviceExtensionProperties<default_tag>(VkPhysicalDevic
 {
     LAYER_TRACE(__func__);
 
-    UNUSED(pProperties);
-
-    // Android layer enumeration will always pass a nullptr for the device
-    if (!gpu)
+    // Query for a layer
+    if (pLayerName)
     {
-        if (!pLayerName || strcmp(pLayerName, layerProps[0].layerName))
+        // ... but not this layer
+        if(strcmp(pLayerName, layerProps[0].layerName))
         {
             return VK_ERROR_LAYER_NOT_PRESENT;
         }
 
-        *pPropertyCount = 0;
+        size_t count = Instance::injectedDeviceExtensions.size();
+
+        // Size query
+        if (!pProperties)
+        {
+            *pPropertyCount = static_cast<uint32_t>(count);
+            return VK_SUCCESS;
+        }
+
+        // Property query, clamped to size of user array if smaller
+        size_t emitCount = std::min(count, static_cast<size_t>(*pPropertyCount));
+        for (size_t i = 0; i < emitCount; i++)
+        {
+            const auto& ref = Instance::injectedDeviceExtensions[i];
+            std::strcpy(pProperties[i].extensionName, ref.first.c_str());
+            pProperties[i].specVersion = ref.second;
+        }
+
+        *pPropertyCount = static_cast<uint32_t>(emitCount);
+
+        if (count > emitCount)
+        {
+            return VK_INCOMPLETE;
+        }
+
         return VK_SUCCESS;
     }
 
+    // Query for a device, but on Android discovery may pass a null device
+    if (!gpu)
+    {
+        return VK_ERROR_LAYER_NOT_PRESENT;
+    }
+
     // For other cases forward to the driver to handle it
-    assert(!pLayerName);
-    assert(gpu);
 
     // Hold the lock to access layer-wide global store
     std::unique_lock<std::mutex> lock {g_vulkanLock};
@@ -665,7 +846,38 @@ VkResult layer_vkEnumerateDeviceExtensionProperties<default_tag>(VkPhysicalDevic
 
     // Release the lock to call into the driver
     lock.unlock();
-    return layer->driver.vkEnumerateDeviceExtensionProperties(gpu, pLayerName, pPropertyCount, pProperties);
+    auto our_extensions = get_driver_device_extensions(*layer, gpu);
+
+    // Lock again because we patch a shared structure based on driver response
+    lock.lock();
+    get_extended_device_extensions(*layer, our_extensions);
+    lock.unlock();
+
+    // Size query
+    if (!pProperties)
+    {
+        *pPropertyCount = static_cast<uint32_t>(our_extensions.size());
+        return VK_SUCCESS;
+    }
+
+    // Property query, clamped to size of user array if smaller
+    size_t count2 = our_extensions.size();
+    size_t emitCount2 = std::min(count2, static_cast<size_t>(*pPropertyCount));
+    for (size_t i = 0; i < emitCount2; i++)
+    {
+        const auto& ref = our_extensions[i];
+        std::strcpy(pProperties[i].extensionName, ref.extensionName);
+        pProperties[i].specVersion = ref.specVersion;
+    }
+
+    *pPropertyCount = static_cast<uint32_t>(emitCount2);
+
+    if (count2 > emitCount2)
+    {
+        return VK_INCOMPLETE;
+    }
+
+    return VK_SUCCESS;
 }
 
 /** See Vulkan API for documentation. */
@@ -674,20 +886,25 @@ VkResult layer_vkEnumerateInstanceLayerProperties<default_tag>(uint32_t* pProper
 {
     LAYER_TRACE(__func__);
 
-    if (pProperties)
-    {
-        size_t count = std::min(layerProps.size(), static_cast<size_t>(*pPropertyCount));
-        if (count < layerProps.size())
-        {
-            return VK_INCOMPLETE;
-        }
+    size_t count = layerProps.size();
 
-        memcpy(pProperties, layerProps.data(), count * sizeof(VkLayerProperties));
-        *pPropertyCount = count;
+    // Size query
+    if (!pProperties)
+    {
+        *pPropertyCount = static_cast<uint32_t>(count);
         return VK_SUCCESS;
     }
 
-    *pPropertyCount = layerProps.size();
+    // Property query, clamped to size of user array if smaller
+    size_t emitCount = std::min(count, static_cast<size_t>(*pPropertyCount));
+    std::memcpy(pProperties, layerProps.data(), emitCount * sizeof(VkLayerProperties));
+    *pPropertyCount = static_cast<uint32_t>(emitCount);
+
+    if (count > emitCount)
+    {
+        return VK_INCOMPLETE;
+    }
+
     return VK_SUCCESS;
 }
 
@@ -701,20 +918,25 @@ VkResult layer_vkEnumerateDeviceLayerProperties<default_tag>(VkPhysicalDevice gp
 
     UNUSED(gpu);
 
-    if (pProperties)
-    {
-        size_t count = std::min(layerProps.size(), static_cast<size_t>(*pPropertyCount));
-        if (count < layerProps.size())
-        {
-            return VK_INCOMPLETE;
-        }
+    size_t count = layerProps.size();
 
-        memcpy(pProperties, layerProps.data(), count * sizeof(VkLayerProperties));
-        *pPropertyCount = count;
+    // Size query
+    if (!pProperties)
+    {
+        *pPropertyCount = static_cast<uint32_t>(count);
         return VK_SUCCESS;
     }
 
-    *pPropertyCount = layerProps.size();
+    // Property query, clamped to size of user array if smaller
+    size_t emitCount = std::min(count, static_cast<size_t>(*pPropertyCount));
+    std::memcpy(pProperties, layerProps.data(), emitCount * sizeof(VkLayerProperties));
+    *pPropertyCount = static_cast<uint32_t>(emitCount);
+
+    if (count > emitCount)
+    {
+        return VK_INCOMPLETE;
+    }
+
     return VK_SUCCESS;
 }
 
@@ -763,18 +985,18 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateInstance<default_tag>(const VkInsta
     }
 
     // Create modifiable structures we can patch
-    vku::safe_VkInstanceCreateInfo newCreateInfoSafe(pCreateInfo);
-    auto* newCreateInfo = reinterpret_cast<VkInstanceCreateInfo*>(&newCreateInfoSafe);
+    vku::safe_VkInstanceCreateInfo safeCreateInfo(pCreateInfo);
+    auto* newCreateInfo = reinterpret_cast<VkInstanceCreateInfo*>(&safeCreateInfo);
 
     // Patch updated application info
-    newCreateInfoSafe.pApplicationInfo->apiVersion = VK_MAKE_API_VERSION(0, newVersion.first, newVersion.second, 0);
+    safeCreateInfo.pApplicationInfo->apiVersion = VK_MAKE_API_VERSION(0, newVersion.first, newVersion.second, 0);
 
     // Enable extra extensions
     for (const auto& newExt : Instance::requiredDriverExtensions)
     {
         if (newExt == VK_EXT_DEBUG_UTILS_EXTENSION_NAME)
         {
-            enableInstanceVkExtDebugUtils(newCreateInfoSafe, supportedExtensions);
+            enableInstanceVkExtDebugUtils(safeCreateInfo, supportedExtensions);
         }
         else
         {
@@ -857,13 +1079,13 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDevice<default_tag>(VkPhysicalDevic
     LAYER_LOG("Device API version %u.%u", apiVersion.first, apiVersion.second);
 
     // Create a modifiable structure we can patch
-    vku::safe_VkDeviceCreateInfo newCreateInfoSafe(pCreateInfo);
-    auto* newCreateInfo = reinterpret_cast<VkDeviceCreateInfo*>(&newCreateInfoSafe);
+    vku::safe_VkDeviceCreateInfo safeCreateInfo(pCreateInfo);
+    auto* newCreateInfo = reinterpret_cast<VkDeviceCreateInfo*>(&safeCreateInfo);
 
     // Apply all required patches to the VkDeviceCreateInfo
     for (const auto patch : Device::createInfoPatches)
     {
-        patch(*layer, physicalDevice, newCreateInfoSafe, supportedExtensions);
+        patch(*layer, physicalDevice, safeCreateInfo, supportedExtensions);
     }
 
     // Log extensions after patching for debug purposes

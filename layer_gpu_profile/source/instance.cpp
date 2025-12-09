@@ -46,7 +46,7 @@ const std::vector<std::string> Instance::requiredDriverExtensions {
 const std::vector<std::pair<std::string, uint32_t>> Instance::injectedInstanceExtensions {};
 
 /* See header for documentation. */
-const std::vector<std::pair<std::string, uint32_t>> Instance::injectedDeviceExtensions {};
+std::vector<std::pair<std::string, uint32_t>> Instance::injectedDeviceExtensions {};
 
 /* See header for documentation. */
 const std::vector<std::string> Instance::injectedAPIFunctions {};
