@@ -143,7 +143,34 @@ public:
     static const APIVersion minAPIVersion;
 
     /**
-     * @brief The minimum set of instance extensions needed by this layer.
+     * @brief Required extensions from the driver.
+     *
+     * The layer will attempt to enable these even if the application does not.
      */
-    static const std::vector<std::string> extraExtensions;
+    static const std::vector<std::string> requiredDriverExtensions;
+
+    /**
+     * @brief Additional instance  extensions injected by the layer.
+     *
+     * The layer will expose these even if the driver does not.
+     */
+    static const std::vector<std::pair<std::string, uint32_t>> injectedInstanceExtensions;
+
+    /**
+     * @brief Additional device extensions injected by the layer.
+     *
+     * The layer will expose these even if the driver does not.
+     */
+    static const std::vector<std::pair<std::string, uint32_t>> injectedDeviceExtensions;
+
+    /**
+     * @brief Additional API functions that are injected by the layer.
+     *
+     * This list must include both instance and device functions, because
+     * vkGetInstanceProcAddr can (inefficiently) be used to return device
+     * functions.
+     *
+     * The layer will expose these even if the driver does not.
+     */
+    static const std::vector<std::string> injectedAPIFunctions;
 };
