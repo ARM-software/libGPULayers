@@ -8,9 +8,13 @@ on:
       - main
     tags:
       - '*'
+    paths-ignore:
+      - '**/*.md'
   pull_request:
     branches:
       - main
+    paths-ignore:
+      - '**/*.md'
 
 jobs:
   python-test:
