@@ -1,14 +1,14 @@
 # Layer: GPU Profile
 
-This layer is a frame profiler that can capture per workload performance
-counters for selected frames running on an Arm GPU.
+This layer is a frame profiler that captures per workload performance counters
+for selected frames running on an Arm GPU.
 
 ## What devices are supported?
 
 This layer requires Vulkan 1.0 and an Arm GPU because it uses an Arm-specific
 performance counter sampling library.
 
-## What data can be collected?
+## What data is collected?
 
 The layer serializes workloads for instrumented frames and injects counter
 samples between them, allowing the layer to measure the hardware metrics for
@@ -36,7 +36,7 @@ unaffected by the addition of serialization.
 
 Arm GPUs provide a wide range of performance counters covering many different
 aspects of hardware performance. The layer will collect a standard set of
-counters by default but, with source modification, can collect any of the
+counters by default but, with source modification, might collect any of the
 hardware counters and derived expressions supported by the
 [libGPUCounters][LGC] library that Arm provides on GitHub.
 
@@ -44,15 +44,15 @@ hardware counters and derived expressions supported by the
 
 ### GPU clock frequency impact
 
-The GPU idle time waiting for the CPU to take a counter sample can cause the
+The GPU idle time waiting for the CPU to take a counter sample might cause the
 system DVFS power governor to decide that the GPU is not busy. In production
 devices we commonly see that the GPU will be down-clocked during the
-instrumented frame, which may have an impact on a some of the available
-performance counters. For example, GPU memory latency may appear lower than
+instrumented frame, which might have an impact on some of the available
+performance counters. For example, GPU memory latency might appear lower than
 normal if the reduction in GPU clock makes the memory system look faster in
 comparison.
 
-When running on a pre-production device you can minimize the impacts of these
+When running on a pre-production device you minimize the impacts of these
 effects by pinning CPU, GPU, and bus clock frequencies. This is not usually
 possible on a production device.
 
@@ -72,7 +72,7 @@ Application setup steps:
 * Build a debuggable build of your application and install it on the Android
   device.
 
-Tooling setup steps
+Tooling setup steps:
 
 * Install the Android platform tools and ensure `adb` is on your `PATH`
   environment variable.
@@ -88,7 +88,7 @@ sections in the [Build documentation](../docs/building.md).
 
 ### Running using the layer
 
-You can configure a device to run a profile by using the Android helper utility
+You configure a device to run a profile by using the Android helper utility
 found in the root directory to configure the layer and manage the application.
 You must enable the profile layer, and provide a configuration file to
 parameterize it.
@@ -98,8 +98,9 @@ python3 lgl_android_install.py --layer layer_gpu_profile --config <your.json>  -
 ```
 
 The [`layer_config.json`](layer_config.json) file in this directory is a
-template configuration file you can start from. It defaults to periodic
-sampling every 600 frames, but you can modify this to suit your needs.
+template configuration file you can use as a starting point. It defaults to
+periodic sampling every 600 frames, but you should modify this to suit your
+needs.
 
 The `--profile` option specifies an output directory on the host to contain
 the CSV files written by the tool. One CSV is written for each frame, each CSV

@@ -1,10 +1,10 @@
 # Layer: GPU Support
 
-This layer is a tech support trick box that is designed to help diagnose causes
-of functional and performance issues in applications. It works by letting you
-quickly test your application with a set of API behavior overrides applied,
-which can help to identify likely problem areas in the application if an
-override causes an issue to disappear.
+This layer is a tech support trick box that is designed to help diagnose
+causes of functional and performance issues in applications. It works by
+letting you quickly test your application with a set of API behavior overrides
+applied, which might help to identify likely problem areas in the application
+if an override causes an issue to disappear.
 
 ## What devices are supported?
 
@@ -43,9 +43,9 @@ sections in the [Build documentation](../docs/building.md).
 
 ### Running using the layer
 
-You can configure a device to run support experiments by using the Android
-helper utility found in the root directory to configure the layer and manage
-the application. You must enable the support layer, and provide a configuration
+You configure a device to run support experiments by using the Android helper
+utility found in the root directory to configure the layer and manage the
+application. You must enable the support layer, and provide a configuration
 file to parameterize it.
 
 ```sh
@@ -53,11 +53,11 @@ python3 lgl_android_install.py --layer layer_gpu_support --config <your.json>
 ```
 
 The [`layer_config.json`](layer_config.json) file in this directory is a
-template configuration file you can start from. It does not enable any
+template configuration file you should start from. It does not enable any
 overrides by default, so running the layer using this configuration "as is"
 will not do anything useful. Take a copy and modify it to enable the options
 you want to try. Details of the configuration options in each override group
-are document in the _Behavior overrides_ section below.
+are documented in the _Behavior overrides_ section below.
 
 The Android helper utility contains many other options for configuring the
 application under test and the capture process. For full instructions see the
@@ -65,16 +65,16 @@ application under test and the capture process. For full instructions see the
 
 ## Behavior overrides
 
-The current override groups are supported:
+The following override groups are supported:
 
-* **Feature:** control use of optional Vulkan features that can impact
+* **Feature:** control use of optional Vulkan features that might impact
   correctness and performance.
 * **Serialization:** control serialization of GPU workload scheduling to
   diagnose issues caused by missing queue or command stream synchronization.
 * **Shaders and Pipelines:** control shader pipeline compilation to diagnose
   issues caused by shader precision issues.
 * **Framebuffers:** control use of lossy and lossless image compression for
-  uncompressed images that may be used as framebuffer attachments.
+  uncompressed images that could be used as framebuffer attachments.
 
 ### Features
 
@@ -99,8 +99,8 @@ avoid ambiguous settings.
 
 The serialization overrides allow forceful serialization of submitted
 workloads, ensuring that they run in queue submit order. The synchronization
-can be configured per workload type, allowing control over where serialization
-is added to command buffers and queues.
+is configured per workload type, allowing control over where serialization is
+added to command buffers and queues.
 
 #### Configuration options
 
@@ -162,7 +162,7 @@ compiler handles compilation tasks.
 
 ## Framebuffers
 
-The framebuffer overrides allows some control over how the framebuffers are
+The framebuffer overrides allow some control over how the framebuffers are
 allocated and handled by the driver.
 
 * If the `disable_compression` option is `true` then compression is always

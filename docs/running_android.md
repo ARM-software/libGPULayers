@@ -1,15 +1,16 @@
 # Running using a layer on Android
 
 To make it easy to install and configure layers for Android, we provide an
-installation script which can automatically configure one or more layers.
+installation script which automatically configures a device to use one or more
+layers.
 
-These instruction assume that you have already built the layers that you want
-to install. See the [Building a new layer](./building.md) page for build
-instructions.
+These instructions assume that you have already built the layers that you want
+to install. See the [Building a layer](./building.md) page, or the per-layer
+README files, for build instructions.
 
 ## Script configuration
 
-From the root directory of the GitHub project run the Android installation
+From the root directory of the project checkout, run the Android installation
 utility, specifying the directory containing the layer that you want to
 install:
 
@@ -20,13 +21,17 @@ python3 lgl_android_install.py --layer layer_gpu_example
 By default the script will automatically search to find connected Android
 devices, and debuggable packages on the chosen device. If there are multiple
 options the script will present a menu and prompt you for a selection. You
-can avoid this by manually specifying the device (`--device`/`-D`) and package
-(`--package`/`-P`) to instrument.
+avoid the interactive prompt by manually specifying the device
+(`--device`/`-D`) and package (`--package`/`-P`) to instrument.
 
-Wait for the layer to be installed and configured. The script will notify you
-when this has been done. You can now perform your development work. When you
-are finished, return to the script and press a key to notify it that it can
-clean up the device and remove the layers.
+Once you have selected a device and package, wait for the layer to be installed
+and configured. The script will notify you when this has been done.
+
+You can now perform you work by running the target application. The layer
+will be loaded automatically.
+
+After you are finished, return to the script and press a key to notify it that
+you have finished. It will clean up the device and remove the layers.
 
 ### Package launch and configuration
 
@@ -39,12 +44,12 @@ application after the layers are configured and stop the application when you
 finish profiling.
 
 Auto-start will default to using the main launchable activity for the package,
-but you can override this using `--package-activity` to specify the name of
+but you might override this using `--package-activity` to specify the name of
 another activity to launch.
 
-You can pass in additional activity command line arguments by using the
+You optionally pass in additional activity command line arguments by using the
 `--package-arguments` option to specify the argument string to pass to
-`am start`. This string will often contain spaces, so ensure that is quoted
+`am start`. This string will often contain spaces, so ensure that it is quoted
 correctly on the host shell. For example:
 
 ```sh
@@ -55,28 +60,28 @@ correctly on the host shell. For example:
 
 Some layers require a configuration file to control their behavior. Most
 layers that need a configuration file ship with a default config,
-`layer_config.json`, in their layer directory. Users can override this with
-a custom config by using the `--config`/`-C` option to specify a custom
+`layer_config.json`, in their layer directory. Users override this with a
+custom config by using the `--config`/`-C` option to specify a custom
 config file.
 
 **NOTE:** The layer that each config file applies to is specified in the config
-file itself, and is not implied by command line order.
+file itself, and is not implied by order of the command line options.
 
 ### Multi-layer installation
 
-The script can install multiple layers in a stack. Specify the `--layer`/`-L`
-option multiple times, once per layer. Layers are stacked in command line
-order, with the first layer specified being the top of the stack closest to the
-application.
+The script is able to install multiple layers in a stack. Specify the
+`--layer`/`-L` option multiple times, once per layer. Layers are stacked in
+command line order, with the first layer specified being the top of the stack
+closest to the application.
 
 ### Khronos validation layer installation
 
-The script can install the Khronos validation layer. A dummy layer directory ,
-`layer_khronos_validation`, is provided. Download the the latest binary release
-from the [Vulkan-ValidationLayers/releases][1] GitHub, and place the binaries
-into dummy build tree at the correct location.
+The script supports installing the Khronos validation layer. A dummy layer
+directory, `layer_khronos_validation`, is provided. Download the latest binary
+release from the [Vulkan-ValidationLayers/releases][1] GitHub, and place the
+binaries into the dummy build tree at the correct location.
 
-Once this is done you can install the validation layer like any other.
+Once this is done you install the validation layer like any other.
 
 **NOTE:** When installing the Khronos validation layer you need to decide where
 to install it in the layer stack. If you install it as the first layer in the

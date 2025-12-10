@@ -7,32 +7,29 @@ Some answers to commonly asked questions.
 ### Will you accept contributions for other platforms?
 
 We are very willing to accept platform support contributions for the layer
-skeleton generator.
+generator and common code.
 
 ### Will you accept new layer drivers?
 
-We are currently not able to accept contributions for new pre-built layers, as
-we have no way to test and maintain them. We encourage developers to share
-their layer creations as new open-source projects.
+We are not able to accept contributions for new pre-built layers, as we have no
+way to test and maintain them. We encourage developers to share their layer
+creations as new open-source projects.
 
 We'd love to hear what you build, so let us know what you get up to!
 
-### Will you add an Android OpenGL ES layer generation?
+### Will you add support for Android OpenGL ES layer generation?
 
-Yes, this is on our backlog.
-
-### Will you add Arm Linux support for Vulkan layer generation?
-
-Yes, this is on our backlog.
+No, this is no longer planned.
 
 ## Layer functionality
 
 ### Is there a way to select what gets intercepted?
 
-You can do this by modifying the interception table in the generated code to
-remove functions you do not want to intercept. There is currently no support
-in the generator for specifying a user-provided function list.
+By default only essential entrypoints required by the layer framework, or
+specific entrypoints implemented as `user_tag` specializations in a layer
+project, are intercepted. Unused entrypoints are not intercepted unless the
+`LGL_CONFIG_OPTIMIZE_DISPATCH` option is disabled.
 
 - - -
 
-_Copyright © 2024, Arm Limited and contributors._
+_Copyright © 2024-2025, Arm Limited and contributors._

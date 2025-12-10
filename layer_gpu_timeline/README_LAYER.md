@@ -1,16 +1,16 @@
 # Layer: GPU Timeline
 
-This layer is used with Arm GPU tooling that can show the scheduling of
-workloads on to the GPU hardware. The layer provides additional semantic
+This layer is used with Arm GPU tooling that show the scheduling of workloads
+on to the GPU hardware queues. The layer provides additional semantic
 annotation, extending the scheduling data from the Android Perfetto render
 stages telemetry with useful API-aware context.
 
 ![Timeline visualization](./docs/visualize.png)
 
-Visualizations generated using this tooling show the execution of each workload
-event, grouping events by the hardware scheduling stream used. These streams
-can run in parallel on the GPU, and the visualization shows the level of
-parallelization achieved.
+Visualizations generated using this tooling show the execution of each
+workload event, grouping events by the hardware scheduling stream used. These
+streams might run in parallel on the GPU, and the visualization shows the
+level of parallelization achieved.
 
 ## What devices are supported?
 
@@ -42,12 +42,10 @@ Tooling setup steps
   environment variable.
 * Install the Android NDK and set the `ANDROID_NDK_HOME` environment variable
   to its installation path.
-* The viewer uses Python 3.10 or newer, which can be downloaded from the
-  official Python website: https://www.python.org.
-* The viewer uses PyGTK, and requires the native GTK3 libraries and PyGTK to be
-  installed. GTK installation instructions can be found on the official GTK
-  website: https://www.gtk.org/docs/installations.
-* Python dependencies can be installed using the Python 3 `pip` package
+* The viewer uses Python 3.10 or newer. See https://www.python.org.
+* The viewer uses PyGTK, and requires the native GTK3 libraries and PyGTK to
+  be installed. See https://www.gtk.org/docs/installations.
+* Python dependencies might be installed using the Python 3 `pip` package
   manager.
 
 ```
@@ -63,7 +61,7 @@ instructions see the _Build an Android layer_ section in the
 
 ### Layer run
 
-You can record a timeline by using the Android helper utility found in the root
+You record a timeline by using the Android helper utility found in the root
 directory to configure the layer and manage the capture process. You must
 enable the timeline layer, and the base name of the output files that will
 contain the final timeline data.
@@ -73,8 +71,8 @@ python3 lgl_android_install.py --layer layer_gpu_timeline --timeline <out>
 ```
 
 The timeline data files will be saved as `<out>.perfetto` and `<out>.metadata`.
-If you want to use different file names for each, you can alternatively specify
-a full file path for each file using `--timeline-perfetto` and
+If you want to use different file names for each, you might alternatively
+specify a full file path for each file using `--timeline-perfetto` and
 `--timeline-metadata`.
 
 The Android helper utility contains many other options for configuring the
@@ -83,8 +81,8 @@ application under test and the capture process. For full instructions see the
 
 ## Timeline visualization
 
-This project includes an experimental Python viewer which can parse and
-visualize the data in the two data files captured earlier.
+This project includes an experimental Python viewer which parses and
+visualizes the data in the two data files captured earlier.
 
 Run the following command to start the tool:
 
@@ -107,9 +105,9 @@ Event boxes show:
 
 ### Controls
 
-The viewer consists of two main areas - the Timeline canvas that shows the
-events, and the Information panel that can show a summary of the current
-active events and time range.
+The viewer consists of two main areas. The Timeline canvas that shows the
+events, and the Information panel that shows a summary of the current active
+events and time range.
 
 Navigation uses the mouse:
 
@@ -143,7 +141,7 @@ Selecting an active time range:
 
 ## What workloads are supported?
 
-The Arm GPU scheduler event trace can generate timing events for each
+The Arm GPU scheduler event trace might generate timing events for each
 atomically schedulable workload submitted to the GPU scheduler.
 
 Most workloads submitted to a Vulkan queue by the application are a single
@@ -191,20 +189,20 @@ captured and reported, but with unknown workload dimensions.
 
 The current implementation reports the size of a compute workload as the
 number of work groups, because this is the parameter used by the API. We
-eventually want to report this as the number of work items, but the parsing
-of the SPIR-V and pipeline parameters has not yet been implemented.
+eventually want to report this as the number of work items, but the parsing of
+the SPIR-V and pipeline parameters has not yet been implemented.
 
 ### Limitation: Dynamic render passes split over multiple command buffers
 
 The label containing the `tagID` is recorded into the application command
 buffer when the command buffer is recorded. The workload-to-metadata mapping
-requires that every use of a `tagID` has the same properties, or we will
-be unable to associate the correct metadata with its matching workload.
+requires that every use of a `tagID` has the same properties, or we will be
+unable to associate the correct metadata with its matching workload.
 
-Content that splits a render pass over multiple command buffers that
-are not one-time-submit violates this requirement. Multiple submits of a render
-pass with a single `tagID` may have different numbers of draw calls, depending
-on the number of draws that occur in the later command buffers that resume the
+Content that splits a render pass over multiple command buffers that are not
+one-time-submit violates this requirement. Multiple submits of a render pass
+with a single `tagID` might have different numbers of draw calls, depending on
+the number of draws that occur in the later command buffers that resume the
 render pass. When the layer detects suspended render pass in a multi-submit
 command buffer, it will still capture and report the workload, but with an
 unknown draw call count.
