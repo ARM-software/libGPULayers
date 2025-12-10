@@ -2,7 +2,7 @@
 
 There are multiple ways to install layer drivers for Linux. For our use case
 we cannot usually modify the application binary, so we install the layer and
-manifest into a user-owned directory on the target device and configure the
+manifest in to a user-owned directory on the target device and configure the
 layer driver using environment options.
 
 ## Create a manifest
@@ -49,9 +49,9 @@ env VK_LOADER_DEBUG=all \
 ```
 
 The `VK_LOADER_DEBUG=all` option enables verbose logging in the loader itself,
-and is a useful tool that can help you work out why your layer is not being
+and is a useful tool that might help you work out why your layer is not being
 loaded when you expect. Once your layer is being loaded correctly, this option
-can be removed.
+should be removed.
 
 ## Uninstall
 
@@ -61,4 +61,4 @@ the Fizzbuzz layer installed.
 
 - - -
 
-_Copyright © 2024, Arm Limited and contributors._
+_Copyright © 2024-2025, Arm Limited and contributors._
