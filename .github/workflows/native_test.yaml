@@ -10,11 +10,13 @@ on:
       - '*'
     paths-ignore:
       - 'lglpy/**'
+      - '**/*.md'
   pull_request:
     branches:
       - main
     paths-ignore:
       - 'lglpy/**'
+      - '**/*.md'
 
 jobs:
   build-ubuntu-x64-clang:
