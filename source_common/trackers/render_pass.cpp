@@ -124,7 +124,7 @@ RenderPass::RenderPass(VkRenderPass _handle, const VkRenderPassCreateInfo& creat
             auto& attachDesc = createInfo.pAttachments[attachRef.attachment];
 
             // Canonicalize read-only attachments as storeOp=NONE
-            VkAttachmentStoreOp depthStoreOp;
+            VkAttachmentStoreOp depthStoreOp = attachDesc.storeOp;
             switch (attachRef.layout)
             {
             case VK_IMAGE_LAYOUT_READ_ONLY_OPTIMAL:
@@ -136,14 +136,13 @@ RenderPass::RenderPass(VkRenderPass _handle, const VkRenderPassCreateInfo& creat
                 }
                 break;
             default:
-                depthStoreOp = attachDesc.storeOp;
                 break;
             }
 
             attachments.emplace_back(RenderPassAttachName::DEPTH, attachDesc.loadOp, depthStoreOp, false);
 
             // Canonicalize read-only attachments as storeOp=NONE
-            VkAttachmentStoreOp stencilStoreOp;
+            VkAttachmentStoreOp stencilStoreOp = attachDesc.stencilStoreOp;
             switch (attachRef.layout)
             {
             case VK_IMAGE_LAYOUT_READ_ONLY_OPTIMAL:
@@ -155,7 +154,6 @@ RenderPass::RenderPass(VkRenderPass _handle, const VkRenderPassCreateInfo& creat
                 }
                 break;
             default:
-                stencilStoreOp = attachDesc.stencilStoreOp;
                 break;
             }
 
@@ -214,7 +212,7 @@ RenderPass::RenderPass(VkRenderPass _handle, const VkRenderPassCreateInfo2& crea
             auto& attachDesc = createInfo.pAttachments[attachRef.attachment];
 
             // Canonicalize read-only attachments as storeOp=NONE
-            VkAttachmentStoreOp depthStoreOp;
+            VkAttachmentStoreOp depthStoreOp = attachDesc.storeOp;
             switch (attachRef.layout)
             {
             case VK_IMAGE_LAYOUT_READ_ONLY_OPTIMAL:
@@ -226,14 +224,13 @@ RenderPass::RenderPass(VkRenderPass _handle, const VkRenderPassCreateInfo2& crea
                 }
                 break;
             default:
-                depthStoreOp = attachDesc.storeOp;
                 break;
             }
 
             attachments.emplace_back(RenderPassAttachName::DEPTH, attachDesc.loadOp, depthStoreOp, false);
 
             // Canonicalize read-only attachments as storeOp=NONE
-            VkAttachmentStoreOp stencilStoreOp;
+            VkAttachmentStoreOp stencilStoreOp = attachDesc.stencilStoreOp;
             switch (attachRef.layout)
             {
             case VK_IMAGE_LAYOUT_READ_ONLY_OPTIMAL:
@@ -245,7 +242,6 @@ RenderPass::RenderPass(VkRenderPass _handle, const VkRenderPassCreateInfo2& crea
                 }
                 break;
             default:
-                stencilStoreOp = attachDesc.stencilStoreOp;
                 break;
             }
 
@@ -294,7 +290,7 @@ RenderPass::RenderPass(const VkRenderingInfo& createInfo)
         auto& attachRef = *createInfo.pDepthAttachment;
 
         // Canonicalize read-only attachments as storeOp=NONE
-        VkAttachmentStoreOp depthStoreOp;
+        VkAttachmentStoreOp depthStoreOp = attachRef.storeOp;
         switch (attachRef.imageLayout)
         {
         case VK_IMAGE_LAYOUT_READ_ONLY_OPTIMAL:
@@ -306,7 +302,6 @@ RenderPass::RenderPass(const VkRenderingInfo& createInfo)
             }
             break;
         default:
-            depthStoreOp = attachRef.storeOp;
             break;
         }
 
@@ -328,7 +323,7 @@ RenderPass::RenderPass(const VkRenderingInfo& createInfo)
         auto& attachRef = *createInfo.pStencilAttachment;
 
         // Canonicalize read-only attachments as storeOp=NONE
-        VkAttachmentStoreOp stencilStoreOp;
+        VkAttachmentStoreOp stencilStoreOp = attachRef.storeOp;
         switch (attachRef.imageLayout)
         {
         case VK_IMAGE_LAYOUT_READ_ONLY_OPTIMAL:
@@ -340,7 +335,6 @@ RenderPass::RenderPass(const VkRenderingInfo& createInfo)
             }
             break;
         default:
-            stencilStoreOp = attachRef.storeOp;
             break;
         }
 
