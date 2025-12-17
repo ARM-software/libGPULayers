@@ -131,37 +131,6 @@ static void checkManualFrameBoundary(
     }
 }
 
-/**
- * @brief Remove emulated frame boundaries from the pNext chain.
- *
- * @param layer             The layer context.
- * @param pSubmits          The list of user-supplied submits.
- * @param submitCount       The number of submits in the list.
- * @param safeSubmits       Storage for allocated copies if we need to patch.
- * @param pSubmitsForCall   Pointer passed to the API call.
- */
-template <typename T, typename U>
-static void stripManualFrameBoundary(
-    Device* layer,
-    const T* pSubmits,
-    uint32_t submitCount,
-    std::vector<U>& safeSubmits,
-    const T** pSubmitsForCall
-) {
-    if (layer->isEmulatingExtFrameBoundary)
-    {
-        safeSubmits.reserve(submitCount);
-
-        for (uint32_t i = 0; i < submitCount; i++)
-        {
-            safeSubmits.emplace_back(pSubmits + i);
-            vku::RemoveFromPnext(safeSubmits[i], VK_STRUCTURE_TYPE_FRAME_BOUNDARY_EXT);
-        }
-
-        *pSubmitsForCall = reinterpret_cast<T*>(safeSubmits.data());
-    }
-}
-
 /* See Vulkan API for documentation. */
 template<>
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueuePresentKHR<user_tag>(VkQueue queue, const VkPresentInfoKHR* pPresentInfo)
@@ -228,17 +197,9 @@ VKAPI_ATTR VkResult VKAPI_CALL
         checkManualFrameBoundary(layer, queue, submit.pNext, isLast, workloadVisitor);
     }
 
-    // Remove emulated frame boundaries
-    const VkSubmitInfo* newSubmits = pSubmits;
-    std::vector<vku::safe_VkSubmitInfo> safeSubmits;
-
-    stripManualFrameBoundary<VkSubmitInfo, vku::safe_VkSubmitInfo>(
-        layer, pSubmits, submitCount,
-        safeSubmits, &newSubmits);
-
     // Release the lock to call into the driver
     lock.unlock();
-    return layer->driver.vkQueueSubmit(queue, submitCount, newSubmits, fence);
+    return layer->driver.vkQueueSubmit(queue, submitCount, pSubmits, fence);
 }
 
 /* See Vulkan API for documentation. */
@@ -274,17 +235,9 @@ VKAPI_ATTR VkResult VKAPI_CALL
         checkManualFrameBoundary(layer, queue, submit.pNext, isLast, workloadVisitor);
     }
 
-    // Remove emulated frame boundaries
-    const VkSubmitInfo2* newSubmits = pSubmits;
-    std::vector<vku::safe_VkSubmitInfo2> safeSubmits;
-
-    stripManualFrameBoundary<VkSubmitInfo2, vku::safe_VkSubmitInfo2>(
-        layer, pSubmits, submitCount,
-        safeSubmits, &newSubmits);
-
     // Release the lock to call into the driver
     lock.unlock();
-    return layer->driver.vkQueueSubmit2(queue, submitCount, newSubmits, fence);
+    return layer->driver.vkQueueSubmit2(queue, submitCount, pSubmits, fence);
 }
 
 /* See Vulkan API for documentation. */
@@ -320,16 +273,9 @@ VKAPI_ATTR VkResult VKAPI_CALL
         checkManualFrameBoundary(layer, queue, submit.pNext, isLast, workloadVisitor);
     }
 
-    // Remove emulated frame boundaries
-    const VkSubmitInfo2* newSubmits = pSubmits;
-    std::vector<vku::safe_VkSubmitInfo2> safeSubmits;
-    stripManualFrameBoundary<VkSubmitInfo2, vku::safe_VkSubmitInfo2>(
-        layer, pSubmits, submitCount,
-        safeSubmits, &newSubmits);
-
     // Release the lock to call into the driver
     lock.unlock();
-    return layer->driver.vkQueueSubmit2KHR(queue, submitCount, newSubmits, fence);
+    return layer->driver.vkQueueSubmit2KHR(queue, submitCount, pSubmits, fence);
 }
 
 /**
@@ -367,14 +313,7 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueBindSparse<user_tag>(
         }
     }
 
-    // Remove emulated frame boundaries
-    const VkBindSparseInfo* newBindInfo = pBindInfo;
-    std::vector<vku::safe_VkBindSparseInfo> safeInfos;
-    stripManualFrameBoundary<VkBindSparseInfo, vku::safe_VkBindSparseInfo>(
-        layer, pBindInfo, bindInfoCount,
-        safeInfos, &newBindInfo);
-
     // Release the lock to call into the driver
     lock.unlock();
-    return layer->driver.vkQueueBindSparse(queue, bindInfoCount, newBindInfo, fence);
+    return layer->driver.vkQueueBindSparse(queue, bindInfoCount, pBindInfo, fence);
 }

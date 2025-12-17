@@ -35,10 +35,21 @@ the `injectedExtensions` list, although the layer will probably want to cache
 this check to reduce performance overhead.
 
 If the driver beneath the layer does not support the extension, the extended
-API parameters must be rewritten to remove the extension before passing down
+API parameters should be rewritten to remove the extension before passing down
 to the driver. User structure inputs to the Vulkan API are usually marked as
 `const`, so we must take a safe-struct copy which we can modify and pass
 that copy to the driver.
+
+Note that Vulkan specifies that components must ignore structures in the
+`pNext` chain that they do not understand:
+
+> Any component of the implementation (the loader, any enabled layers, and
+> drivers) must skip over, without processing (other than reading the `sType`
+> and `pNext` members) any extending structures in the chain not defined by
+> core versions or extensions supported by that component.
+
+Any extension structures can therefore be left in-situ when being emulated, but
+any other API parameter modifications must be unpicked to hide the emulation.
 
 ## Common extension notes
 

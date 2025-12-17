@@ -81,8 +81,6 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceFeatures2<user_tag>(
     layer->driver.vkGetPhysicalDeviceFeatures2(physicalDevice, pFeatures);
 
     // Patch the query response to show that it is supported
-    // TODO: We should hide this when calling down to the driver, and then
-    // copy results back to the user structure
     auto* ext = vku::FindStructInPNextChain<VkPhysicalDeviceFrameBoundaryFeaturesEXT>(pFeatures->pNext);
     if (ext)
     {
@@ -107,8 +105,6 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceFeatures2KHR<user_tag>(
     layer->driver.vkGetPhysicalDeviceFeatures2KHR(physicalDevice, pFeatures);
 
     // Patch the query response to show that it is supported
-    // TODO: We should hide this when calling down to the driver, and then
-    // copy results back to the user structure
     auto* ext = vku::FindStructInPNextChain<VkPhysicalDeviceFrameBoundaryFeaturesEXT>(pFeatures->pNext);
     if (ext)
     {
