@@ -188,7 +188,7 @@ public:
     /**
      * @brief Is this layer emulating VK_EXT_frame_boundary?
      *
-     * Set to @c true is layer is emulating on top a driver that doesn't
+     * Set to @c true if layer is emulating on top of a driver that doesn't
      * support it, @c false if layer knows driver supports it.
      */
     bool isEmulatingExtFrameBoundary { false };

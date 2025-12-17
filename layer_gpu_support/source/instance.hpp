@@ -149,7 +149,7 @@ public:
     static const std::vector<std::string> requiredDriverExtensions;
 
     /**
-     * @brief Additional instance  extensions injected by the layer.
+     * @brief Additional instance extensions injected by the layer.
      *
      * The layer will expose these even if the driver does not.
      */

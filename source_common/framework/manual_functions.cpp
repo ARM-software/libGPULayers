@@ -664,7 +664,7 @@ VkResult layer_vkEnumerateInstanceExtensionProperties<default_tag>(const char* p
     if (pLayerName)
     {
         // ... but not this layer
-        if(strcmp(pLayerName, layerProps[0].layerName))
+        if (strcmp(pLayerName, layerProps[0].layerName))
         {
             return VK_ERROR_LAYER_NOT_PRESENT;
         }
@@ -799,7 +799,7 @@ VkResult layer_vkEnumerateDeviceExtensionProperties<default_tag>(VkPhysicalDevic
     if (pLayerName)
     {
         // ... but not this layer
-        if(strcmp(pLayerName, layerProps[0].layerName))
+        if (strcmp(pLayerName, layerProps[0].layerName))
         {
             return VK_ERROR_LAYER_NOT_PRESENT;
         }

@@ -180,7 +180,7 @@ static void modifyDeviceRobustBufferAccess(Instance& instance,
     {
         if (enableRobustness)
         {
-            if(config->robustBufferAccess)
+            if (config->robustBufferAccess)
             {
                 LAYER_LOG("Device feature already enabled: robustBufferAccess");
             }
@@ -190,9 +190,10 @@ static void modifyDeviceRobustBufferAccess(Instance& instance,
                 config->robustBufferAccess = VK_TRUE;
             }
         }
+
         if (disableRobustness)
         {
-            if(!config->robustBufferAccess)
+            if (!config->robustBufferAccess)
             {
                 LAYER_LOG("Device feature already disabled: robustBufferAccess");
             }
