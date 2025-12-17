@@ -35,10 +35,18 @@
 static std::unordered_map<void*, std::unique_ptr<Instance>> g_instances;
 
 /* See header for documentation. */
-const APIVersion Instance::minAPIVersion {1, 1};
+const APIVersion Instance::minAPIVersion { 1, 1 };
 
 /* See header for documentation. */
-const std::vector<std::string> Instance::extraExtensions {VK_EXT_DEBUG_UTILS_EXTENSION_NAME};
+const std::vector<std::string> Instance::requiredDriverExtensions {
+    VK_EXT_DEBUG_UTILS_EXTENSION_NAME
+};
+
+/* See header for documentation. */
+const std::vector<std::pair<std::string, uint32_t>> Instance::injectedInstanceExtensions {};
+
+/* See header for documentation. */
+std::vector<std::pair<std::string, uint32_t>> Instance::injectedDeviceExtensions {};
 
 /* See header for documentation. */
 void Instance::store(VkInstance handle, std::unique_ptr<Instance>& instance)

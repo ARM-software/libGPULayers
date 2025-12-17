@@ -29,8 +29,8 @@
 #include "trackers/queue.hpp"
 
 #include <mutex>
-
 #include <time.h>
+#include <vulkan/utility/vk_struct_helper.hpp>
 
 extern std::mutex g_vulkanLock;
 
@@ -93,6 +93,44 @@ static void emitCommandBufferMetadata(Device& layer,
     trackQueue.runSubmitCommandStream(LCS, workloadVisitor);
 }
 
+/**
+ * @brief Check a pNext chain for a manual frame boundary marker.
+ *
+ * Emits the necessary metadata to emulate a vkQueuePresent. Note that this
+ * will generate a second metadata submit to be a container for any commands
+ * if there are submits remaining after the one tagged as end-of-frame.
+ *
+ * @param layer             The layer context.
+ * @param queue             The queue.
+ * @param pNext             The submit pNext pointer.
+ * @param isLastSubmit      Is this the last submit in the API call?
+ * @param workloadVisitor   Visitor for the protobuf encoder.
+ */
+static void checkManualFrameBoundary(
+    Device* layer,
+    VkQueue queue,
+    const void* pNext,
+    bool isLastSubmit,
+    TimelineProtobufEncoder& workloadVisitor
+) {
+    // Check for end of frame boundary
+    auto* ext = vku::FindStructInPNextChain<VkFrameBoundaryEXT>(pNext);
+    if (ext && (ext->flags & VK_FRAME_BOUNDARY_FRAME_END_BIT_EXT))
+    {
+        // Emulate a queue present to indicate end of frame
+        auto& tracker = layer->getStateTracker();
+        tracker.queuePresent();
+
+        TimelineProtobufEncoder::emitFrame(*layer, tracker.totalStats.getFrameCount(), getClockMonotonicRaw());
+
+        // Emulate a new queue submit if work remains to submit
+        if (!isLastSubmit)
+        {
+            emitQueueMetadata(queue, workloadVisitor);
+        }
+    }
+}
+
 /* See Vulkan API for documentation. */
 template<>
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueuePresentKHR<user_tag>(VkQueue queue, const VkPresentInfoKHR* pPresentInfo)
@@ -106,13 +144,24 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueuePresentKHR<user_tag>(VkQueue queue, 
     auto& tracker = layer->getStateTracker();
     tracker.queuePresent();
 
-    // This is run with the lock held to ensure that all queue submit
-    // messages are sent sequentially to the host tool
+    // Create a modifiable structure we can patch
+    vku::safe_VkPresentInfoKHR safePresentInfo(pPresentInfo);
+    auto* newPresentInfo = reinterpret_cast<VkPresentInfoKHR*>(&safePresentInfo);
+
+    // Remove emulated frame boundaries
+    if (layer->isEmulatingExtFrameBoundary)
+    {
+        vku::RemoveFromPnext(safePresentInfo, VK_STRUCTURE_TYPE_FRAME_BOUNDARY_EXT);
+    }
+
+    // Note that we assume QueuePresent is _always_ the end of a frame.
+    // This is run with the lock held to ensure that all queue submit messages
+    // are sent sequentially to the host tool
     TimelineProtobufEncoder::emitFrame(*layer, tracker.totalStats.getFrameCount(), getClockMonotonicRaw());
 
     // Release the lock to call into the driver
     lock.unlock();
-    return layer->driver.vkQueuePresentKHR(queue, pPresentInfo);
+    return layer->driver.vkQueuePresentKHR(queue, newPresentInfo);
 }
 
 /* See Vulkan API for documentation. */
@@ -142,6 +191,10 @@ VKAPI_ATTR VkResult VKAPI_CALL
             VkCommandBuffer commandBuffer = submit.pCommandBuffers[j];
             emitCommandBufferMetadata(*layer, queue, commandBuffer, workloadVisitor);
         }
+
+        // Check for end of frame boundary
+        bool isLast = i == submitCount - 1;
+        checkManualFrameBoundary(layer, queue, submit.pNext, isLast, workloadVisitor);
     }
 
     // Release the lock to call into the driver
@@ -176,6 +229,10 @@ VKAPI_ATTR VkResult VKAPI_CALL
             VkCommandBuffer commandBuffer = submit.pCommandBufferInfos[j].commandBuffer;
             emitCommandBufferMetadata(*layer, queue, commandBuffer, workloadVisitor);
         }
+
+        // Check for end of frame boundary
+        bool isLast = i == submitCount - 1;
+        checkManualFrameBoundary(layer, queue, submit.pNext, isLast, workloadVisitor);
     }
 
     // Release the lock to call into the driver
@@ -210,9 +267,53 @@ VKAPI_ATTR VkResult VKAPI_CALL
             VkCommandBuffer commandBuffer = submit.pCommandBufferInfos[j].commandBuffer;
             emitCommandBufferMetadata(*layer, queue, commandBuffer, workloadVisitor);
         }
+
+        // Check for end of frame boundary
+        bool isLast = i == submitCount - 1;
+        checkManualFrameBoundary(layer, queue, submit.pNext, isLast, workloadVisitor);
     }
 
     // Release the lock to call into the driver
     lock.unlock();
     return layer->driver.vkQueueSubmit2KHR(queue, submitCount, pSubmits, fence);
+}
+
+/**
+ * See Vulkan API for documentation.
+ *
+ * Note: Modelling of this function is only implemented to support manual frame
+ * boundaries. There is no reporting of the workload associated with bind
+ * sparse submissions in the Mali timeline driver data model.
+ */
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueBindSparse<user_tag>(
+    VkQueue queue,
+    uint32_t bindInfoCount,
+    const VkBindSparseInfo* pBindInfo,
+    VkFence fence
+) {
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
+    auto* layer = Device::retrieve(queue);
+
+    // Scan infos for frame boundaries
+    for (uint32_t i = 0; i < bindInfoCount; i++)
+    {
+        const auto& info = pBindInfo[i];
+
+        auto* ext = vku::FindStructInPNextChain<VkFrameBoundaryEXT>(info.pNext);
+        if (ext && (ext->flags & VK_FRAME_BOUNDARY_FRAME_END_BIT_EXT))
+        {
+            // Emulate a queue present to indicate end of frame
+            auto& tracker = layer->getStateTracker();
+            tracker.queuePresent();
+            TimelineProtobufEncoder::emitFrame(*layer, tracker.totalStats.getFrameCount(), getClockMonotonicRaw());
+        }
+    }
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    return layer->driver.vkQueueBindSparse(queue, bindInfoCount, pBindInfo, fence);
 }

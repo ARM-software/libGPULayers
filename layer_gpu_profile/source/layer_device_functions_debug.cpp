@@ -42,7 +42,7 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDebugMarkerBeginEXT<user_tag>(VkCommandBuf
     auto* layer = Device::retrieve(commandBuffer);
 
     // Only instrument inside active frame of interest
-    if(layer->isFrameOfInterest)
+    if (layer->isFrameOfInterest)
     {
         auto& tracker = layer->getStateTracker();
         auto& cb = tracker.getCommandBuffer(commandBuffer);
@@ -67,7 +67,7 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDebugMarkerEndEXT<user_tag>(VkCommandBuffe
     auto* layer = Device::retrieve(commandBuffer);
 
     // Only instrument inside active frame of interest
-    if(layer->isFrameOfInterest)
+    if (layer->isFrameOfInterest)
     {
         auto& tracker = layer->getStateTracker();
         auto& cb = tracker.getCommandBuffer(commandBuffer);
@@ -93,7 +93,7 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginDebugUtilsLabelEXT<user_tag>(VkComman
     auto* layer = Device::retrieve(commandBuffer);
 
     // Only instrument inside active frame of interest
-    if(layer->isFrameOfInterest)
+    if (layer->isFrameOfInterest)
     {
         auto& tracker = layer->getStateTracker();
         auto& cb = tracker.getCommandBuffer(commandBuffer);
@@ -118,7 +118,7 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndDebugUtilsLabelEXT<user_tag>(VkCommandB
     auto* layer = Device::retrieve(commandBuffer);
 
     // Only instrument inside active frame of interest
-    if(layer->isFrameOfInterest)
+    if (layer->isFrameOfInterest)
     {
         auto& tracker = layer->getStateTracker();
         auto& cb = tracker.getCommandBuffer(commandBuffer);

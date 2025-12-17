@@ -1,0 +1,113 @@
+# Extension support in a layer
+
+It might be useful for some layers to implement an extension, such as
+`VK_EXT_frame_boundary`, even if the underlying driver does not support it.
+This page explains the general approach that needs to be taken, and the
+specific API modifications that need to be applied for specific extensions.
+
+The core libGPULayers framework allows you to expose additional extensions via
+the default `vkEnumerate*ExtensionProperties()` implementation, but per-layer
+code must implement the API modifications in any other functions as needed.
+
+## Exposing a new extension
+
+New extensions are advertised to applications by adding the extension string to
+the list returned by `vkEnumerate*ExtensionProperties()`. This functionality
+is provided in the common framework default functions. Layer implementations
+add the new extension information that they want to expose to either:
+
+* `Instance::injectedInstanceExtensions` for instance extensions.
+* `Instance::injectedDeviceExtensions` for device extensions.
+
+Device extensions will be removed from this list if we can detect that the
+underlying device already supports them, which means we can just pass through
+rather than emulating support.
+
+### Handling extended API entry points
+
+All entrypoints that are touched by an extension need to be intercepted with a
+`user_tag` version of that function, which will implement the functionality
+that the layer requires.
+
+If the driver beneath the layer actually supports the extension, the extended
+API parameters can be passed down to the driver without modification. This
+scenario can be detected by checking that the extension name is no longer in
+the `injectedExtensions` list, although the layer will probably want to cache
+this check to reduce performance overhead.
+
+If the driver beneath the layer does not support the extension, the extended
+API parameters should be rewritten to remove the extension before passing down
+to the driver. User structure inputs to the Vulkan API are usually marked as
+`const`, so we must take a safe-struct copy which we can modify and then pass
+that copy to the driver.
+
+Note that Vulkan specifies that components must ignore structures in the
+`pNext` chain that they do not understand:
+
+> Any component of the implementation (the loader, any enabled layers, and
+> drivers) must skip over, without processing (other than reading the `sType`
+> and `pNext` members) any extending structures in the chain not defined by
+> core versions or extensions supported by that component.
+
+Any extension structures can therefore be left in-situ when being emulated, but
+any other API parameter modifications must be unpicked to hide the emulation.
+
+## Common extension notes
+
+This section is a set of brief notes about extensions that we have implemented,
+summarizing the changes needed and referencing where you can find an example
+of the changes if you need something similar.
+
+### VK_EXT_frame_boundary
+
+This extension allows applications to annotate arbitrary submit calls to
+indicate which frame the submitted work belongs to, instead of relying on
+`vkQueuePresent()`. This can be useful for multi-threaded applications,
+where CPU processing for frames can overlap, and for applications which
+do not have frames, but that want to use tools such as RenderDoc that
+require them.
+
+The `layer_gpu_timeline` layer is an example of a layer exposing this
+extension using emulation on devices that do not support it.
+
+#### Exposing extension
+
+Adding exposure handling:
+
+* Add `VK_EXT_frame_boundary` to device extension list.
+* Populate the `VkPhysicalDeviceFrameBoundary` in the
+  `VkPhysicalDeviceFeatures2.pNext` list returned by
+  `vkGetPhysicalDeviceFeatures2()`, forcing the value to `VK_TRUE`, if the
+  extension is "supported" but feature-disabled by the driver.
+* Query `VkPhysicalDeviceFrameBoundary` in `VkDeviceCreateInfo.pNext` to see if
+  application enabled the extension.
+
+#### Implementing extension
+
+Adding implementation handling:
+
+* Add `VkFrameBoundaryEXT` extension struct handling to:
+  * `vkQueueSubmit()`
+  * `vkQueueSubmit2()`
+  * `vkQueuePresent()`
+  * `vkQueueBindSparse()`
+
+#### Implementation notes
+
+Most applications using this that I have seen are using it to demarcate frames
+when using a single submitting render thread for off-screen rendering or
+compute use cases that do not use `vkQueuePresent()`. In these systems just
+detecting the frame boundary flag in the extension structure passed to a queue
+submit is enough, and how we would use `vkQueuePresent()` to do the same
+without this extension.
+
+It is possible for applications to have multiple concurrent frames being
+submitted in an overlapping manner, which can be handled by tagging work with
+the frame ID found in the extension structure for each `vkQueue*()` call. This
+will require downstream data handling to cope with overlapping frame
+submissions, which most of our layers do not handle, as it is rarely
+encountered.
+
+- - -
+
+_Copyright © 2025, Arm Limited and contributors._

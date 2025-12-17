@@ -137,7 +137,24 @@ public:
     static const APIVersion minAPIVersion;
 
     /**
-     * @brief The minimum set of instance extensions needed by this layer.
+     * @brief Required extensions from the driver.
+     *
+     * The layer will attempt to enable these even if the application does not.
      */
-    static const std::vector<std::string> extraExtensions;
+    static const std::vector<std::string> requiredDriverExtensions;
+
+    /**
+     * @brief Additional instance extensions injected by the layer.
+     *
+     * The layer will expose these even if the driver does not.
+     */
+    static const std::vector<std::pair<std::string, uint32_t>> injectedInstanceExtensions;
+
+    /**
+     * @brief Additional device extensions injected by the layer.
+     *
+     * The layer will expose these even if the driver does not. Items are
+     * removed from the list if the driver already exposes the extension.
+     */
+    static std::vector<std::pair<std::string, uint32_t>> injectedDeviceExtensions;
 };

@@ -23,6 +23,8 @@
  * ----------------------------------------------------------------------------
  */
 
+#pragma once
+
 /**
  * @file
  * This module exposes common functionality used by layer entrypoints,
@@ -31,7 +33,7 @@
  */
 #include <vulkan/utility/vk_safe_struct.hpp>
 
- #include "device.hpp"
+#include "device.hpp"
 #include "framework/device_dispatch_table.hpp"
 #include "framework/device_functions.hpp"
 #include "framework/instance_functions.hpp"
@@ -229,3 +231,20 @@ void enableDeviceVkExtImageCompressionControl(Instance& instance,
                                               VkPhysicalDevice physicalDevice,
                                               vku::safe_VkDeviceCreateInfo& createInfo,
                                               std::vector<std::string>& supported);
+
+/**
+ * Hide VK_EXT_frame_boundary if emulated on top of the driver.
+ *
+ * If the driver supports this already we don't need to do anything, but
+ * if the driver does not then we need to hide the support.
+ *
+ * @param instance         The layer instance we are running within.
+ * @param physicalDevice   The physical device we are creating a device for.
+ * @param createInfo       The createInfo we can search to find user config.
+ * @param supported        The list of supported extensions.
+ */
+void emulateDeviceVkExtFrameBoundary(Instance& instance,
+                                     VkPhysicalDevice physicalDevice,
+                                     vku::safe_VkDeviceCreateInfo& createInfo,
+                                     std::vector<std::string>& supported);
+

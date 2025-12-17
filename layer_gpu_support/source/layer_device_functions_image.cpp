@@ -122,10 +122,10 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateImage<user_tag>(VkDevice device,
     }
 
     // Create modifiable structures we can patch
-    vku::safe_VkImageCreateInfo newCreateInfoSafe(pCreateInfo);
-    auto* newCreateInfo = reinterpret_cast<VkImageCreateInfo*>(&newCreateInfoSafe);
+    vku::safe_VkImageCreateInfo safeCreateInfo(pCreateInfo);
+    auto* newCreateInfo = reinterpret_cast<VkImageCreateInfo*>(&safeCreateInfo);
     // We know we can const-cast here because this is a safe-struct clone
-    void* pNextBase = const_cast<void*>(newCreateInfoSafe.pNext);
+    void* pNextBase = const_cast<void*>(safeCreateInfo.pNext);
 
     // Create extra structures we can patch in
     VkImageCompressionControlEXT newCompressionControl = vku::InitStructHelper();
@@ -165,7 +165,7 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateImage<user_tag>(VkDevice device,
     // Add a config if not already configured by the application
     if (patchNeeded)
     {
-        vku::AddToPnext(newCreateInfoSafe, *compressionControl);
+        vku::AddToPnext(safeCreateInfo, *compressionControl);
     }
 
     return layer->driver.vkCreateImage(device, newCreateInfo, pAllocator, pImage);
