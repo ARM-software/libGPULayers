@@ -5,9 +5,9 @@ It might be useful for some layers to implement an extension, such as
 This page explains the general approach that needs to be taken, and the
 specific API modifications that need to be applied for specific extensions.
 
-Note that the core framework allows you to expose additional extensions via
+The core libGPULayers framework allows you to expose additional extensions via
 the default `vkEnumerate*ExtensionProperties()` implementation, but per-layer
-code must implement the API modifications to other functions as needed.
+code must implement the API modifications in any other functions as needed.
 
 ## Exposing a new extension
 
@@ -20,13 +20,14 @@ add the new extension information that they want to expose to either:
 * `Instance::injectedDeviceExtensions` for device extensions.
 
 Device extensions will be removed from this list if we can detect that the
-underlying device already supports them, which means we can just pass through.
+underlying device already supports them, which means we can just pass through
+rather than emulating support.
 
 ### Handling extended API entry points
 
-All entrypoints that are touched by an extension need to be intercepted with
-a `user_tag` version of a function, which will implement the functionality that
-the layer requires.
+All entrypoints that are touched by an extension need to be intercepted with a
+`user_tag` version of that function, which will implement the functionality
+that the layer requires.
 
 If the driver beneath the layer actually supports the extension, the extended
 API parameters can be passed down to the driver without modification. This
@@ -37,7 +38,7 @@ this check to reduce performance overhead.
 If the driver beneath the layer does not support the extension, the extended
 API parameters should be rewritten to remove the extension before passing down
 to the driver. User structure inputs to the Vulkan API are usually marked as
-`const`, so we must take a safe-struct copy which we can modify and pass
+`const`, so we must take a safe-struct copy which we can modify and then pass
 that copy to the driver.
 
 Note that Vulkan specifies that components must ignore structures in the
@@ -66,16 +67,20 @@ where CPU processing for frames can overlap, and for applications which
 do not have frames, but that want to use tools such as RenderDoc that
 require them.
 
+The `layer_gpu_timeline` layer is an example of a layer exposing this
+extension using emulation on devices that do not support it.
+
 #### Exposing extension
 
 Adding exposure handling:
 
 * Add `VK_EXT_frame_boundary` to device extension list.
-* Add `VkPhysicalDeviceFrameBoundary` to `VkPhysicalDeviceFeatures2.pNext` list
-  returned by `vkGetPhysicalDeviceFeatures2()`, or force existing structure to
-  `VK_TRUE`, if not supported by driver.
+* Populate the `VkPhysicalDeviceFrameBoundary` in the
+  `VkPhysicalDeviceFeatures2.pNext` list returned by
+  `vkGetPhysicalDeviceFeatures2()`, forcing the value to `VK_TRUE`, if the
+  extension is "supported" but feature-disabled by the driver.
 * Query `VkPhysicalDeviceFrameBoundary` in `VkDeviceCreateInfo.pNext` to see if
-  application enabled the extension. Strip if not supported by the driver.
+  application enabled the extension.
 
 #### Implementing extension
 
@@ -92,8 +97,9 @@ Adding implementation handling:
 Most applications using this that I have seen are using it to demarcate frames
 when using a single submitting render thread for off-screen rendering or
 compute use cases that do not use `vkQueuePresent()`. In these systems just
-detecting a change in frame ID is enough to indicate "frame changed", much
-how we would use `vkQueuePresent()` to do the same without this extension.
+detecting the frame boundary flag in the extension structure passed to a queue
+submit is enough, and how we would use `vkQueuePresent()` to do the same
+without this extension.
 
 It is possible for applications to have multiple concurrent frames being
 submitted in an overlapping manner, which can be handled by tagging work with
