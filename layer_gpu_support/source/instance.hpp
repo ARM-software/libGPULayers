@@ -162,15 +162,4 @@ public:
      * removed from the list if the driver already exposes the extension.
      */
     static std::vector<std::pair<std::string, uint32_t>> injectedDeviceExtensions;
-
-    /**
-     * @brief Additional API functions that are injected by the layer.
-     *
-     * This list must include both instance and device functions, because
-     * vkGetInstanceProcAddr can (inefficiently) be used to return device
-     * functions.
-     *
-     * The layer will expose these even if the driver does not.
-     */
-    static const std::vector<std::string> injectedAPIFunctions;
 };

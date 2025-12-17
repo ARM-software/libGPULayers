@@ -51,9 +51,6 @@ std::vector<std::pair<std::string, uint32_t>> Instance::injectedDeviceExtensions
 };
 
 /* See header for documentation. */
-const std::vector<std::string> Instance::injectedAPIFunctions {};
-
-/* See header for documentation. */
 void Instance::store(VkInstance handle, std::unique_ptr<Instance>& instance)
 {
     void* key = getDispatchKey(handle);
