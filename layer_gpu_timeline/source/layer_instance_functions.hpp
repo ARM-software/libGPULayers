@@ -31,14 +31,6 @@
 
 /* See Vulkan API for documentation. */
 template <>
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDevice<user_tag>(
-    VkPhysicalDevice physicalDevice,
-    const VkDeviceCreateInfo* pCreateInfo,
-    const VkAllocationCallbacks* pAllocator,
-    VkDevice* pDevice);
-
-/* See Vulkan API for documentation. */
-template <>
 VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceFeatures2<user_tag>(
     VkPhysicalDevice physicalDevice,
     VkPhysicalDeviceFeatures2* pFeatures);

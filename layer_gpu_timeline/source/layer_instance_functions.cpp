@@ -31,39 +31,6 @@
 
 extern std::mutex g_vulkanLock;
 
-/* See header for documentation. */
-template <>
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDevice<user_tag>(
-    VkPhysicalDevice physicalDevice,
-    const VkDeviceCreateInfo* pCreateInfo,
-    const VkAllocationCallbacks* pAllocator,
-    VkDevice* pDevice
-) {
-    LAYER_TRACE(__func__);
-
-    // Use the default function for the heavy-lifting
-    auto res = layer_vkCreateDevice<default_tag>(physicalDevice, pCreateInfo, pAllocator, pDevice);
-    if (res != VK_SUCCESS)
-    {
-        return res;
-    }
-
-    // Cache flags indicating extension emulation
-    std::unique_lock<std::mutex> lock {g_vulkanLock};
-    auto* layer = Device::retrieve(*pDevice);
-
-    static const std::string target { VK_EXT_FRAME_BOUNDARY_EXTENSION_NAME };
-    for (auto& ext : layer->instance->injectedDeviceExtensions)
-    {
-        if (ext.first == target)
-        {
-            layer->isEmulatingExtFrameBoundary = true;
-        }
-    }
-
-    return res;
-}
-
 /* See Vulkan API for documentation. */
 template <>
 VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceFeatures2<user_tag>(
