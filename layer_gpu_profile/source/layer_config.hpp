@@ -54,19 +54,50 @@ public:
      *
      * @param frameID   The index of the next frame.
      *
-     * @return True if profiling should be enabled, False otherwise.
+     * @return @c true if profiling should be enabled, @c false otherwise.
      */
     bool isFrameOfInterest(uint64_t frameID) const;
 
+    /**
+     * @brief Test if we are sampling workloads.
+     *
+     * @return @c true if profiling workloads, @c false otherwise.
+     */
+    bool isSamplingWorkloads() const;
+
+    /**
+     * @brief Test if we are sampling frames.
+     *
+     * @return @c true if profiling frames, @c false otherwise.
+     */
+    bool isSamplingFrames() const;
+
+    /**
+     * @brief Test if any kind of sampling is active.
+     *
+     * @return @c true if profiling, @c false otherwise.
+     */
+    bool isSamplingAny() const;
+
 private:
     /**
-     * @brief Supported sampling modes.
+     * @brief Supported frame selection modes.
      */
-    enum SamplingMode
+    enum FrameSelectionMode
     {
-        MODE_DISABLED,
-        MODE_FRAME_LIST,
-        MODE_PERIODIC_FRAME
+        FRAME_SELECTION_DISABLED,
+        FRAME_SELECTION_LIST,
+        FRAME_SELECTION_PERIODIC
+    };
+
+    /**
+     * @brief Supported counter sampling modes.
+     */
+    enum CounterSamplingMode
+    {
+        COUNTER_SAMPLING_DISABLED,
+        COUNTER_SAMPLING_WORKLOADS,
+        COUNTER_SAMPLING_FRAMES
     };
 
     /**
@@ -79,9 +110,15 @@ private:
     void parseSamplingOptions(const json& config);
 
     /**
-     * @brief The sampling mode.
+     * @brief The frame selection mode.
      */
-    SamplingMode mode {MODE_DISABLED};
+    FrameSelectionMode frameMode {FRAME_SELECTION_DISABLED};
+
+    /**
+     * @brief The counter sampling mode.
+     */
+    CounterSamplingMode samplingMode {COUNTER_SAMPLING_DISABLED};
+
 
     /**
      * @brief The sampling period in frames, or 0 if disabled.
