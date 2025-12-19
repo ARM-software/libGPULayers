@@ -68,7 +68,7 @@ cmake \
     -DCMAKE_WARN_DEPRECATED=OFF \
     ..
 
-cmake --build . -j1
+cmake --build . -j4
 
 popd
 

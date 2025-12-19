@@ -18,6 +18,9 @@ on:
       - 'lglpy/**'
       - '**/*.md'
 
+env:
+  CMAKE_BUILD_PARALLEL_LEVEL: '8'
+
 jobs:
   build-ubuntu-x64-clang:
     name: Ubuntu x64 Clang
@@ -35,7 +38,7 @@ jobs:
           mkdir layer_example/build_rel
           cd layer_example/build_rel
           cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
-          make -j4
+          cmake --build .
 
       - name: Build layer_gpu_support
         run: |
@@ -44,7 +47,7 @@ jobs:
           mkdir layer_gpu_support/build_rel
           cd layer_gpu_support/build_rel
           cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
-          make -j4
+          cmake --build .
 
       - name: Build layer_gpu_timeline
         run: |
@@ -53,7 +56,7 @@ jobs:
           mkdir layer_gpu_timeline/build_rel
           cd layer_gpu_timeline/build_rel
           cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
-          make -j4
+          cmake --build .
 
       - name: Build layer_gpu_profile
         run: |
@@ -62,7 +65,7 @@ jobs:
           mkdir layer_gpu_profile/build_rel
           cd layer_gpu_profile/build_rel
           cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
-          make -j4
+          cmake --build .
 
       - name: Build and run unit tests
         run: |
@@ -71,7 +74,7 @@ jobs:
           mkdir build_unittest
           cd build_unittest
           cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=./ ..
-          make install -j4
+          cmake --build . --target install
           ./bin/unittest_comms
 
   build-ubuntu-x64-gcc:
@@ -90,7 +93,7 @@ jobs:
           mkdir layer_example/build_rel
           cd layer_example/build_rel
           cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
-          make -j4
+          cmake --build .
 
       - name: Build layer_gpu_support
         run: |
@@ -99,7 +102,7 @@ jobs:
           mkdir layer_gpu_support/build_rel
           cd layer_gpu_support/build_rel
           cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
-          make -j4
+          cmake --build .
 
       - name: Build layer_gpu_timeline
         run: |
@@ -108,7 +111,7 @@ jobs:
           mkdir layer_gpu_timeline/build_rel
           cd layer_gpu_timeline/build_rel
           cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
-          make -j4
+          cmake --build .
 
       - name: Build layer_gpu_profile
         run: |
@@ -117,7 +120,7 @@ jobs:
           mkdir layer_gpu_profile/build_rel
           cd layer_gpu_profile/build_rel
           cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
-          make -j4
+          cmake --build .
 
   build-android:
     name: Android
@@ -163,7 +166,7 @@ jobs:
           mkdir layer_example/build_rel
           cd layer_example/build_rel
           cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
-          make -j4
+          cmake --build .
 
       - name: Check unexpected diffs
         run: |
@@ -185,4 +188,4 @@ jobs:
           mkdir layer_test/build_rel
           cd layer_test/build_rel
           cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
-          make -j4
+          cmake --build .
