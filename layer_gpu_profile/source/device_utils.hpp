@@ -58,7 +58,8 @@
     VkCommandBuffer commandBuffer
 ) {
     // Don't instrument outside of active frame of interest
-    if(!layer.isFrameOfInterest)
+    bool isEnabled = layer.instance->config.isSamplingWorkloads();
+    if(!layer.isFrameOfInterest || !isEnabled)
     {
         return;
     }

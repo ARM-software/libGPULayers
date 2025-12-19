@@ -107,7 +107,7 @@ static void emitCommandBufferMetadata(Device& layer,
  * @param workloadVisitor   Visitor for the protobuf encoder.
  */
 static void checkManualFrameBoundary(
-    Device* layer,
+    Device& layer,
     VkQueue queue,
     const void* pNext,
     bool isLastSubmit,
@@ -118,10 +118,10 @@ static void checkManualFrameBoundary(
     if (ext && (ext->flags & VK_FRAME_BOUNDARY_FRAME_END_BIT_EXT))
     {
         // Emulate a queue present to indicate end of frame
-        auto& tracker = layer->getStateTracker();
+        auto& tracker = layer.getStateTracker();
         tracker.queuePresent();
 
-        TimelineProtobufEncoder::emitFrame(*layer, tracker.totalStats.getFrameCount(), getClockMonotonicRaw());
+        TimelineProtobufEncoder::emitFrame(layer, tracker.totalStats.getFrameCount(), getClockMonotonicRaw());
 
         // Emulate a new queue submit if work remains to submit
         if (!isLastSubmit)
@@ -147,12 +147,6 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueuePresentKHR<user_tag>(VkQueue queue, 
     // Create a modifiable structure we can patch
     vku::safe_VkPresentInfoKHR safePresentInfo(pPresentInfo);
     auto* newPresentInfo = reinterpret_cast<VkPresentInfoKHR*>(&safePresentInfo);
-
-    // Remove emulated frame boundaries
-    if (layer->isEmulatingExtFrameBoundary)
-    {
-        vku::RemoveFromPnext(safePresentInfo, VK_STRUCTURE_TYPE_FRAME_BOUNDARY_EXT);
-    }
 
     // Note that we assume QueuePresent is _always_ the end of a frame.
     // This is run with the lock held to ensure that all queue submit messages
@@ -194,7 +188,7 @@ VKAPI_ATTR VkResult VKAPI_CALL
 
         // Check for end of frame boundary
         bool isLast = i == submitCount - 1;
-        checkManualFrameBoundary(layer, queue, submit.pNext, isLast, workloadVisitor);
+        checkManualFrameBoundary(*layer, queue, submit.pNext, isLast, workloadVisitor);
     }
 
     // Release the lock to call into the driver
@@ -232,7 +226,7 @@ VKAPI_ATTR VkResult VKAPI_CALL
 
         // Check for end of frame boundary
         bool isLast = i == submitCount - 1;
-        checkManualFrameBoundary(layer, queue, submit.pNext, isLast, workloadVisitor);
+        checkManualFrameBoundary(*layer, queue, submit.pNext, isLast, workloadVisitor);
     }
 
     // Release the lock to call into the driver
@@ -270,7 +264,7 @@ VKAPI_ATTR VkResult VKAPI_CALL
 
         // Check for end of frame boundary
         bool isLast = i == submitCount - 1;
-        checkManualFrameBoundary(layer, queue, submit.pNext, isLast, workloadVisitor);
+        checkManualFrameBoundary(*layer, queue, submit.pNext, isLast, workloadVisitor);
     }
 
     // Release the lock to call into the driver

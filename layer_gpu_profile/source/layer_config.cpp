@@ -43,44 +43,77 @@
 /* See header for documentation. */
 void LayerConfig::parseSamplingOptions(const json& config)
 {
-    // Decode top level options
-    std::string rawMode = config.at("sample_mode");
+    // Decode frame selection mode
+    std::string rawFrameMode = config.at("frame_mode");
 
-    if (rawMode == "disabled")
+    if (rawFrameMode == "disabled")
     {
-        mode = MODE_DISABLED;
+        frameMode = FRAME_SELECTION_DISABLED;
     }
-    else if (rawMode == "periodic_frame")
+    else if (rawFrameMode == "periodic")
     {
-        mode = MODE_PERIODIC_FRAME;
+        frameMode = FRAME_SELECTION_PERIODIC;
         periodicFrame = config.at("periodic_frame");
         periodicMinFrame = config.at("periodic_min_frame");
     }
-    else if (rawMode == "frame_list")
+    else if (rawFrameMode == "list")
     {
-        mode = MODE_FRAME_LIST;
+        frameMode = FRAME_SELECTION_LIST;
         specificFrames = config.at("frame_list").get<std::vector<uint64_t>>();
     }
     else
     {
-        LAYER_ERR("Unknown counter sample_mode: %s", rawMode.c_str());
-        rawMode = "disabled";
+        LAYER_ERR("Unknown frame_mode: %s", rawFrameMode.c_str());
+        frameMode = FRAME_SELECTION_DISABLED;
+        rawFrameMode = "disabled";
     }
+
+    // Decode counter sampling mode
+    std::string rawSampleMode = config.at("sample_mode");
+
+    if (rawSampleMode == "disabled")
+    {
+        samplingMode = COUNTER_SAMPLING_DISABLED;
+    }
+    else if (rawSampleMode == "frame")
+    {
+        samplingMode = COUNTER_SAMPLING_FRAMES;
+    }
+    else if (rawSampleMode == "workload")
+    {
+        samplingMode = COUNTER_SAMPLING_WORKLOADS;
+    }
+    else
+    {
+        LAYER_ERR("Unknown sample_mode: %s", rawSampleMode.c_str());
+        samplingMode = COUNTER_SAMPLING_DISABLED;
+        rawSampleMode = "disabled";
+    }
+
+    // Decode frame serialization mode
+    frameSerialization = config.at("frame_serialization");
 
     LAYER_LOG("Layer sampling configuration");
     LAYER_LOG("============================");
-    LAYER_LOG(" - Sample mode: %s", rawMode.c_str());
+    LAYER_LOG(" - Frame selection mode: %s", rawFrameMode.c_str());
 
-    if (mode == MODE_PERIODIC_FRAME)
+    if (frameMode == FRAME_SELECTION_PERIODIC)
     {
         LAYER_LOG(" - Frame period: %" PRIu64, periodicFrame);
         LAYER_LOG(" - Minimum frame: %" PRIu64, periodicMinFrame);
     }
-    else if (mode == MODE_FRAME_LIST)
+    else if (frameMode == FRAME_SELECTION_LIST)
     {
         std::stringstream result;
         std::copy(specificFrames.begin(), specificFrames.end(), std::ostream_iterator<uint64_t>(result, " "));
         LAYER_LOG(" - Frames: %s", result.str().c_str());
+    }
+
+    LAYER_LOG(" - Counter sampling mode: %s", rawSampleMode.c_str());
+
+    if (samplingMode == COUNTER_SAMPLING_FRAMES)
+    {
+        LAYER_LOG(" - Frame serialization: %u", frameSerialization);
     }
 }
 
@@ -131,14 +164,14 @@ LayerConfig::LayerConfig()
 bool LayerConfig::isFrameOfInterest(
     uint64_t frameID
 ) const {
-    switch(mode)
+    switch(frameMode)
     {
-    case MODE_DISABLED:
+    case FRAME_SELECTION_DISABLED:
         return false;
-    case MODE_PERIODIC_FRAME:
+    case FRAME_SELECTION_PERIODIC:
         return (frameID >= periodicMinFrame) &&
                ((frameID % periodicFrame) == 0);
-    case MODE_FRAME_LIST:
+    case FRAME_SELECTION_LIST:
         return isIn(frameID, specificFrames);
     }
 
@@ -146,3 +179,30 @@ bool LayerConfig::isFrameOfInterest(
     return false;
 }
 
+/* See header for documentation. */
+bool LayerConfig::isSamplingWorkloads() const
+{
+    return frameMode != FRAME_SELECTION_DISABLED &&
+           samplingMode == COUNTER_SAMPLING_WORKLOADS;
+}
+
+/* See header for documentation. */
+bool LayerConfig::isSamplingFrames() const
+{
+    return frameMode != FRAME_SELECTION_DISABLED &&
+           samplingMode == COUNTER_SAMPLING_FRAMES;
+}
+
+/* See header for documentation. */
+bool LayerConfig::isSamplingAny() const
+{
+    return frameMode != FRAME_SELECTION_DISABLED &&
+           samplingMode != COUNTER_SAMPLING_DISABLED;
+}
+
+/* See header for documentation. */
+bool LayerConfig::isSerializingFrames() const
+{
+    return isSamplingWorkloads() ||
+           (isSamplingFrames() && frameSerialization);
+};

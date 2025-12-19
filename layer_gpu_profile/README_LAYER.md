@@ -113,19 +113,40 @@ application under test and the capture process. For full instructions see the
 
 ## Layer configuration
 
-The current layer supports two `sampling_mode` values:
+### Setting frame selection mode
 
-* `periodic_frame`: Sample every N frames.
-* `frame_list`: Sample specific frames.
+The current layer supports the following ways to select frames to profile using
+the `frame_mode` config option:
 
-When `mode` is `periodic_frame` the integer value of the `periodic_frame` key
-defines the frame sampling period. The integer value of the
-`periodic_min_frame` key defines the first possible frame that could be
-profiled, allowing profiles to skip over any loading frames. By default frame 0
-is ignored.
+* `disabled`: Sampling is disabled.
+* `periodic`: Sample every N frames.
+* `list`: Sample specific frames.
 
-When `mode` is `frame_list` the value of the `frame_list` key defines a list
-of integers giving the specific frames to capture.
+When frame selection mode is `periodic` the integer value of the
+`periodic_frame` key defines the frame sampling period. The integer value of
+the `periodic_min_frame` key defines the first possible frame that could be
+profiled, allowing profiles to skip over any loading frames. By default frame
+0 is ignored.
+
+When frame selection mode is `list` the value of the `frame_list` key defines
+a list of integers giving the specific frames to capture.
+
+### Setting counter sampling mode
+
+The current layer supports the following ways to select how to sample counters
+to profile using the `sample_mode` config option:
+
+* `disabled`: Sampling is disabled.
+* `workload`: Sample every workload in each frame of interest.
+* `frame`: Sample at the end of each frame of interest.
+
+By default per-frame samples are isolated from other frames by inserting a
+`vkDeviceWaitIdle()` before and after the frame to ensure that workload
+in the sampled region does not overlap neighboring frames. Setting the
+`frame_serialization` config option to `false` will allow frames to overlap
+without serialization, but can add noise to the returned counter values. This
+option has no effect for per-workload sampling, which must always use
+serialization.
 
 ## Layer counters
 
