@@ -79,6 +79,13 @@ public:
      */
     bool isSamplingAny() const;
 
+    /**
+     * @brief Test if we are serializing frames.
+     *
+     * @return @c true if serializing, @c false otherwise.
+     */
+    bool isSerializingFrames() const;
+
 private:
     /**
      * @brief Supported frame selection modes.
@@ -119,6 +126,10 @@ private:
      */
     CounterSamplingMode samplingMode {COUNTER_SAMPLING_DISABLED};
 
+    /**
+     * @brief The frame sample serialization mode.
+     */
+    bool frameSerialization {true};
 
     /**
      * @brief The sampling period in frames, or 0 if disabled.

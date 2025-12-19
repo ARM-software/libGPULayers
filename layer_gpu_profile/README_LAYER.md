@@ -140,6 +140,14 @@ to profile using the `sample_mode` config option:
 * `workload`: Sample every workload in each frame of interest.
 * `frame`: Sample at the end of each frame of interest.
 
+By default per-frame samples are isolated from other frames by inserting a
+`vkDeviceWaitIdle()` before and after the frame to ensure that workload
+in the sampled region does not overlap neighboring frames. Setting the
+`frame_serialization` config option to `false` will allow frames to overlap
+without serialization, but can add noise to the returned counter values. This
+option has no effect for per-workload sampling, which must always use
+serialization.
+
 ## Layer counters
 
 The current layer uses a hard-coded set of performance counters defined in the

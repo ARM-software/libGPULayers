@@ -90,6 +90,9 @@ void LayerConfig::parseSamplingOptions(const json& config)
         rawSampleMode = "disabled";
     }
 
+    // Decode frame serialization mode
+    frameSerialization = config.at("frame_serialization");
+
     LAYER_LOG("Layer sampling configuration");
     LAYER_LOG("============================");
     LAYER_LOG(" - Frame selection mode: %s", rawFrameMode.c_str());
@@ -107,6 +110,11 @@ void LayerConfig::parseSamplingOptions(const json& config)
     }
 
     LAYER_LOG(" - Counter sampling mode: %s", rawSampleMode.c_str());
+
+    if (samplingMode == COUNTER_SAMPLING_FRAMES)
+    {
+        LAYER_LOG(" - Frame serialization: %u", frameSerialization);
+    }
 }
 
 /* See header for documentation. */
@@ -172,20 +180,29 @@ bool LayerConfig::isFrameOfInterest(
 }
 
 /* See header for documentation. */
-bool LayerConfig::isSamplingWorkloads() const {
+bool LayerConfig::isSamplingWorkloads() const
+{
     return frameMode != FRAME_SELECTION_DISABLED &&
            samplingMode == COUNTER_SAMPLING_WORKLOADS;
 }
 
 /* See header for documentation. */
-bool LayerConfig::isSamplingFrames() const {
+bool LayerConfig::isSamplingFrames() const
+{
     return frameMode != FRAME_SELECTION_DISABLED &&
            samplingMode == COUNTER_SAMPLING_FRAMES;
 }
 
 /* See header for documentation. */
-bool LayerConfig::isSamplingAny() const {
+bool LayerConfig::isSamplingAny() const
+{
     return frameMode != FRAME_SELECTION_DISABLED &&
            samplingMode != COUNTER_SAMPLING_DISABLED;
 }
 
+/* See header for documentation. */
+bool LayerConfig::isSerializingFrames() const
+{
+    return isSamplingWorkloads() ||
+           (isSamplingFrames() && frameSerialization);
+};

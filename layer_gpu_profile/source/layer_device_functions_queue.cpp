@@ -140,10 +140,16 @@ static void processFrameBoundaryPostSubmit(
     Device& layer,
     bool frameSample
 ) {
+    const auto& config = layer.instance->config;
+
     // If we are measuring performance ensure the previous frame has finished
     // and then take an initial sample to reset the counters
-    layer.driver.vkDeviceWaitIdle(layer.device);
-    workaroundDelay();
+    if (config.isSerializingFrames())
+    {
+        layer.driver.vkDeviceWaitIdle(layer.device);
+        workaroundDelay();
+    }
+
     auto ec = layer.lgcSampler->sample_now();
     if (ec)
     {

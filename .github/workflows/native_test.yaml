@@ -11,12 +11,14 @@ on:
     paths-ignore:
       - 'lglpy/**'
       - '**/*.md'
+      - '**/*.json'
   pull_request:
     branches:
       - main
     paths-ignore:
       - 'lglpy/**'
       - '**/*.md'
+      - '**/*.json'
 
 env:
   CMAKE_BUILD_PARALLEL_LEVEL: '8'
