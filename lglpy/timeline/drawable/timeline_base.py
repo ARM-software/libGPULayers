@@ -285,7 +285,7 @@ class TimelineWidgetBase:
         Args:
             old_objects: the sequence of objects to remove.
         '''
-        removed_objects = {x for x in old_objects}
+        removed_objects = set(old_objects)
         new_active_objects = self.active_objects - removed_objects
 
         # If nothing left then reset the active state
@@ -575,12 +575,12 @@ class TimelineWidgetBase:
                 return True
 
             # If 'c' modifier then append selection to highlighted region
-            elif mod == 'c':
+            if mod == 'c':
                 self.add_to_active_objects(clicked_object)
                 return True
 
             # If 's' modifier then subtract selection to highlighted region
-            elif mod == 's':
+            if mod == 's':
                 self.remove_from_active_objects(clicked_object)
                 return True
 
