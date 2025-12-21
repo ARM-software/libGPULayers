@@ -61,7 +61,7 @@ class GPUWorkload:
     PARENS = re.compile(r'(\(.*\))')
     RESOLUTION = re.compile(r'\d+x\d+')
     WHITESPACE = re.compile(r'\s\s+')
-    MEMO: dict[str, str] = dict()
+    MEMO: dict[str, str] = {}
 
     @classmethod
     def memoize(cls, string: str) -> str:
@@ -760,7 +760,7 @@ class GPUImageTransfer(GPUWorkload):
         '''
         # If indirect then show a placeholder
         if self.pixel_count == -1:
-            return f'? pixels'
+            return '? pixels'
 
         s = 's' if self.pixel_count != 1 else ''
         label = f'{self.pixel_count} pixel{s}'
@@ -844,7 +844,7 @@ class GPUBufferTransfer(GPUWorkload):
         '''
         # If indirect then show a placeholder
         if self.byte_count == -1:
-            return f'? bytes'
+            return '? bytes'
 
         s = 's' if self.byte_count != 1 else ''
         label = f'{self.byte_count} byte{s}'
@@ -933,7 +933,7 @@ class GPUASBuild(GPUWorkload):
         '''
         # If indirect then show a placeholder
         if self.primitive_count == -1:
-            return f'? primitives'
+            return '? primitives'
 
         s = 's' if self.primitive_count != 1 else ''
         label = f'{self.primitive_count} primitive{s}'
@@ -1014,7 +1014,7 @@ class GPUASTransfer(GPUWorkload):
         '''
         # If indirect then show a placeholder
         if self.byte_count == -1:
-            return f'? bytes'
+            return '? bytes'
 
         s = 's' if self.byte_count != 1 else ''
         label = f'{self.byte_count} byte{s}'

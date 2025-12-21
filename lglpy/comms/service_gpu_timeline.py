@@ -165,19 +165,22 @@ def map_renderpass_binding(type, index: int | None) -> str:
     Map the PB encoded render pass attachment type to a description.
     '''
     if type == timeline_pb2.RenderpassAttachmentType.undefined:
-        assert ((index is None) or (index == 0))
+        assert (index is None) or (index == 0)
         return "U"
-    elif type == timeline_pb2.RenderpassAttachmentType.color:
-        assert (index is not None)
+
+    if type == timeline_pb2.RenderpassAttachmentType.color:
+        assert index is not None
         return f"C{index}"
-    elif type == timeline_pb2.RenderpassAttachmentType.depth:
-        assert ((index is None) or (index == 0))
+
+    if type == timeline_pb2.RenderpassAttachmentType.depth:
+        assert (index is None) or (index == 0)
         return "D"
-    elif type == timeline_pb2.RenderpassAttachmentType.stencil:
-        assert ((index is None) or (index == 0))
+
+    if type == timeline_pb2.RenderpassAttachmentType.stencil:
+        assert (index is None) or (index == 0)
         return "S"
-    else:
-        assert False
+
+    assert False
 
 
 def map_image_transfer_type(type) -> str:
@@ -186,16 +189,20 @@ def map_image_transfer_type(type) -> str:
     '''
     if type == timeline_pb2.ImageTransferType.unknown_image_transfer:
         return "Unknown"
-    elif type == timeline_pb2.ImageTransferType.clear_image:
+
+    if type == timeline_pb2.ImageTransferType.clear_image:
         return "Clear image"
-    elif type == timeline_pb2.ImageTransferType.copy_image:
+
+    if type == timeline_pb2.ImageTransferType.copy_image:
         return "Copy image"
-    elif type == timeline_pb2.ImageTransferType.copy_buffer_to_image:
+
+    if type == timeline_pb2.ImageTransferType.copy_buffer_to_image:
         return "Copy buffer to image"
-    elif type == timeline_pb2.ImageTransferType.copy_image_to_buffer:
+
+    if type == timeline_pb2.ImageTransferType.copy_image_to_buffer:
         return "Copy image to buffer"
-    else:
-        assert False
+
+    assert False
 
 
 def map_buffer_transfer_type(type) -> str:
@@ -204,12 +211,14 @@ def map_buffer_transfer_type(type) -> str:
     '''
     if type == timeline_pb2.BufferTransferType.unknown_buffer_transfer:
         return "Unknown"
-    elif type == timeline_pb2.BufferTransferType.fill_buffer:
+
+    if type == timeline_pb2.BufferTransferType.fill_buffer:
         return "Fill buffer"
-    elif type == timeline_pb2.BufferTransferType.copy_buffer:
+
+    if type == timeline_pb2.BufferTransferType.copy_buffer:
         return "Copy buffer"
-    else:
-        assert False
+
+    assert False
 
 
 def map_as_build_type(type) -> str:
@@ -218,12 +227,14 @@ def map_as_build_type(type) -> str:
     '''
     if type == timeline_pb2.AccelerationStructureBuildType.unknown_as_build:
         return "Unknown"
-    elif type == timeline_pb2.AccelerationStructureTransferType.fast_build:
+
+    if type == timeline_pb2.AccelerationStructureTransferType.fast_build:
         return "Fast build"
-    elif type == timeline_pb2.AccelerationStructureTransferType.fast_trace:
+
+    if type == timeline_pb2.AccelerationStructureTransferType.fast_trace:
         return "Fast trace"
-    else:
-        assert False
+
+    assert False
 
 
 def map_as_transfer_type(type) -> str:
@@ -231,16 +242,20 @@ def map_as_transfer_type(type) -> str:
     Map the PB encoded acceleration structure transfer to a description.
     '''
     base_type = timeline_pb2.AccelerationStructureTransferType
+
     if type == base_type.unknown_as_transfer:
         return "Unknown"
-    elif type == base_type.struct_to_struct:
+
+    if type == base_type.struct_to_struct:
         return "Copy acceleration structure"
-    elif type == base_type.struct_to_mem:
+
+    if type == base_type.struct_to_mem:
         return "Copy acceleration structure to mem"
-    elif type == base_type.mem_to_struct:
+
+    if type == base_type.mem_to_struct:
         return "Copy mem to acceleration structure"
-    else:
-        assert False
+
+    assert False
 
 
 def map_debug_label(labels: list[str] | None) -> list[str]:
@@ -249,7 +264,8 @@ def map_debug_label(labels: list[str] | None) -> list[str]:
     '''
     if labels is None:
         return []
-    # need to convert it to a list from a RepeatedScalarContainer
+
+    # Need to convert it to a list from a RepeatedScalarContainer
     return [str(label) for label in labels]
 
 
@@ -292,7 +308,7 @@ class GPUTimelineService:
             file_path: File to write on the filesystem
             verbose: Should this use verbose logging?
         '''
-        self.devices: dict[int, GPUDeviceState] = dict()
+        self.devices: dict[int, GPUDeviceState] = {}
         self.last_submit: SubmitMetadataType | None = None
         self.last_render_pass: RenderpassMetadataType | None = None
         # pylint: disable=consider-using-with
