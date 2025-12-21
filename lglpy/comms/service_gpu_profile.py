@@ -30,7 +30,7 @@ import csv
 import enum
 import json
 import os
-from typing import Any, Optional, TypedDict, Union
+from typing import Optional, TypedDict, Union
 
 from lglpy.comms.server import Message
 
@@ -89,6 +89,7 @@ class GPUProfileService:
             dir_path: Directory to write on the filesystem
             verbose: Should this use verbose logging?
         '''
+        del verbose
         self.base_dir = dir_path
 
         # Sample mode is detected on the fly when we get our first data
@@ -137,7 +138,7 @@ class GPUProfileService:
         # Emit the CSV file
         print(f'Generating CSV for frame {self.frame_id}')
         path = os.path.join(self.base_dir, f'frame_{self.frame_id:05d}.csv')
-        with open(path, 'w', newline='') as handle:
+        with open(path, 'w', newline='', encoding='utf-8') as handle:
             writer = csv.writer(handle)
             writer.writerow(self.table_header)
             writer.writerows(self.table_data)
@@ -249,8 +250,8 @@ class GPUProfileService:
         self.create_frame_data(message)
 
         print(f'Updating CSV for frame {self.frame_id}')
-        path = os.path.join(self.base_dir, f'capture.csv')
-        with open(path, 'w', newline='') as handle:
+        path = os.path.join(self.base_dir, 'capture.csv')
+        with open(path, 'w', newline='', encoding='utf-8') as handle:
             writer = csv.writer(handle)
             writer.writerow(self.table_header)
             writer.writerows(self.table_data)

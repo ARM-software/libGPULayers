@@ -22,19 +22,23 @@
 # -----------------------------------------------------------------------------
 
 '''
-This module implements the server-side communications module that can accept
-client connections from a layer driver, and dispatch messages to registered
-service handler in the server.
+This module implements the server-side of the communications module that can
+accept connections from client layer drivers running on the device. The
+protocol is service-based, and the server will dispatch messages to the
+registered service handler for each message channel.
 
-This module currently only accepts a single connection at a time and message
-handling is synchronous inside the server. It is therefore not possible to
-implement pseudo-host-driven event loops if the layer is using multiple
-services concurrently - this needs threads per service.
+The server is multi-threaded, allowing multiple layers to concurrently access
+networked services provided by host-side implementations. However, within each
+client connection messages are handled synchronously by a single worker thread.
+It is therefore not possible to implement pseudo-host-driven event loops if a
+layer is using multiple services concurrently - this needs threads per service
+endpoint which is not yet implemented.
 '''
 
 import enum
 import socket
 import struct
+import threading
 from typing import Any, Optional
 
 
@@ -143,7 +147,7 @@ class CommsServer:
     Class listening for client connection from a layer and handling messages.
 
     This implementation is designed to run in a thread, so has a run method
-    that will setup and listen on the server socket.q
+    that will setup and listen on the server socket.
 
     This implementation only handles a single layer connection at a time, but
     can handle multiple connections serially without restarting.
@@ -173,7 +177,6 @@ class CommsServer:
         self.register_endpoint(self)
 
         self.shutdown = False
-        self.sockd = None  # type: Optional[socket.socket]
 
         self.sockl = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sockl.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -184,6 +187,9 @@ class CommsServer:
 
         # Work out which port was assigned if not user-defined
         self.port = self.sockl.getsockname()[1]
+
+        # Pool of worker threads
+        self.workers: list[threading.Thread] = []
 
     def register_endpoint(self, endpoint: Any) -> int:
         '''
@@ -235,55 +241,60 @@ class CommsServer:
             if self.verbose:
                 print('Waiting for client connection')
             try:
-                self.sockd, _ = self.sockl.accept()
+                # Wait for a new client connection
+                sockd, _ = self.sockl.accept()
                 if self.verbose:
                     print('  + Client connected')
 
-                self.run_client()
+                # Spawn a worker thread for this client
+                thread = threading.Thread(target=self.run_client, args=(sockd,))
+                self.workers.append(thread)
+                thread.start()
 
-                if self.verbose:
-                    print('  + Client disconnected')
-                self.sockd.close()
-                self.sockd = None
-
-            except ClientDropped:
-                if self.verbose:
-                    print('  + Client disconnected')
-                if self.sockd:
-                    self.sockd.close()
-                    self.sockd = None
+                # Release old worker resources if they have completed
+                self.workers = [x for x in self.workers if x.is_alive()]
 
             except OSError:
                 continue
 
         self.sockl.close()
 
-    def run_client(self) -> None:
+    def run_client(self, sockd: socket.socket) -> None:
         '''
         Enter client message handler run loop.
 
         Raises:
             ClientDropped: The client disconnected from the socket.
         '''
-        while not self.shutdown:
-            # Read the header
-            data = self.receive_data(Message.HEADER_LEN)
-            message = Message(data)
+        try:
+            while not self.shutdown:
+                # Read the header
+                data = self.receive_data(sockd, Message.HEADER_LEN)
+                message = Message(data)
 
-            # Read the payload if there is one
-            if message.payload_size:
-                data = self.receive_data(message.payload_size)
-                message.add_payload(data)
+                # Read the payload if there is one
+                if message.payload_size:
+                    data = self.receive_data(sockd, message.payload_size)
+                    message.add_payload(data)
 
-            # Dispatch to a service handler
-            endpoint = self.endpoints[message.endpoint_id]
-            response = endpoint.handle_message(message)
+                # Dispatch to a service handler
+                endpoint = self.endpoints[message.endpoint_id]
+                response = endpoint.handle_message(message)
 
-            # Send a response for all TX_RX messages
-            if message.message_type == MessageType.TX_RX:
-                header = Response(message, response)
-                self.send_data(header.get_header())
-                self.send_data(response)
+                # Send a response for all TX_RX messages
+                if message.message_type == MessageType.TX_RX:
+                    header = Response(message, response)
+                    self.send_data(sockd, header.get_header())
+                    self.send_data(sockd, response)
+
+        except ClientDropped:
+            pass
+
+        finally:
+            if self.verbose:
+                print('  + Client disconnected')
+
+            sockd.close()
 
     def stop(self) -> None:
         '''
@@ -294,14 +305,16 @@ class CommsServer:
         if self.sockl is not None:
             self.sockl.close()
 
-        if self.sockd is not None:
-            self.sockd.shutdown(socket.SHUT_RDWR)
+        for worker in self.workers:
+            worker.join()
 
-    def receive_data(self, size: int) -> bytes:
+    @staticmethod
+    def receive_data(sockd: socket.socket, size: int) -> bytes:
         '''
         Fetch a fixed size packet from the socket.
 
         Args:
+            sockd: The data socket.
             size: The length of the packet in bytes.
 
         Returns:
@@ -310,31 +323,29 @@ class CommsServer:
         Raises:
             ClientDropped: The client disconnected from the socket.
         '''
-        assert self.sockd is not None
-
         data = b''
         while len(data) < size:
-            new_data = self.sockd.recv(size - len(data))
+            new_data = sockd.recv(size - len(data))
             if not new_data:
                 raise ClientDropped()
             data = data + new_data
 
         return data
 
-    def send_data(self, data: bytes) -> None:
+    @staticmethod
+    def send_data(sockd: socket.socket, data: bytes) -> None:
         '''
         Send a fixed size packet to the socket.
 
         Args:
+            sockd: The data socket.
             data: The binary data to send.
 
         Raises:
             ClientDropped: The client disconnected from the socket.
         '''
-        assert self.sockd is not None
-
         while len(data):
-            sent_bytes = self.sockd.send(data)
+            sent_bytes = sockd.send(data)
             if not sent_bytes:
                 raise ClientDropped()
             data = data[sent_bytes:]
