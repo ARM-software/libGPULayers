@@ -606,19 +606,23 @@ def configure_server(conn: ADBConnect,
         profile_dir: The desired output directory path for timeline. Existing
             files in the directory may be overwritten.
     '''
+    verbose = False
+
     # Create a server instance
-    instance = server.CommsServer(0)
+    instance = server.CommsServer(0, verbose)
 
     if timeline_file:
         # Import late to avoid pulling in transitive deps when unused
         from lglpy.comms import service_gpu_timeline
-        service_tl = service_gpu_timeline.GPUTimelineService(timeline_file)
+        service_tl = service_gpu_timeline.GPUTimelineService(
+            timeline_file, verbose)
         instance.register_endpoint(service_tl)
 
     if profile_dir:
         # Import late to avoid pulling in transitive deps when unused
         from lglpy.comms import service_gpu_profile
-        service_prof = service_gpu_profile.GPUProfileService(profile_dir)
+        service_prof = service_gpu_profile.GPUProfileService(
+            profile_dir, verbose)
         instance.register_endpoint(service_prof)
 
     # Start it running
