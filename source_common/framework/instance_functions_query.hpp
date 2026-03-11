@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024-2025 Arm Limited
+ * Copyright (c) 2024-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -431,6 +431,28 @@ constexpr PFN_vkEnumeratePhysicalDeviceGroupsKHR getLayerPtr_vkEnumeratePhysical
 
 /* Test for user_tag availability. */
 template <typename T>
+concept hasLayerPtr_vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM = requires(
+    VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, uint32_t* pCounterCount, VkPerformanceCounterARM* pCounters, VkPerformanceCounterDescriptionARM* pCounterDescriptions
+) {
+    layer_vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM<T>(physicalDevice, queueFamilyIndex, pCounterCount, pCounters, pCounterDescriptions);
+};
+
+/* Function pointer resolution. */
+constexpr PFN_vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM getLayerPtr_vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM()
+{
+    return [] <typename T>
+    {
+        if constexpr(hasLayerPtr_vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM<T>)
+        {
+            return layer_vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM<T>;
+        }
+
+        return layer_vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM<default_tag>;
+    }.operator()<user_tag>();
+}
+
+/* Test for user_tag availability. */
+template <typename T>
 concept hasLayerPtr_vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR = requires(
     VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, uint32_t* pCounterCount, VkPerformanceCounterKHR* pCounters, VkPerformanceCounterDescriptionKHR* pCounterDescriptions
 ) {
@@ -448,6 +470,28 @@ constexpr PFN_vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR ge
         }
 
         return layer_vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR<default_tag>;
+    }.operator()<user_tag>();
+}
+
+/* Test for user_tag availability. */
+template <typename T>
+concept hasLayerPtr_vkEnumeratePhysicalDeviceShaderInstrumentationMetricsARM = requires(
+    VkPhysicalDevice physicalDevice, uint32_t* pDescriptionCount, VkShaderInstrumentationMetricDescriptionARM* pDescriptions
+) {
+    layer_vkEnumeratePhysicalDeviceShaderInstrumentationMetricsARM<T>(physicalDevice, pDescriptionCount, pDescriptions);
+};
+
+/* Function pointer resolution. */
+constexpr PFN_vkEnumeratePhysicalDeviceShaderInstrumentationMetricsARM getLayerPtr_vkEnumeratePhysicalDeviceShaderInstrumentationMetricsARM()
+{
+    return [] <typename T>
+    {
+        if constexpr(hasLayerPtr_vkEnumeratePhysicalDeviceShaderInstrumentationMetricsARM<T>)
+        {
+            return layer_vkEnumeratePhysicalDeviceShaderInstrumentationMetricsARM<T>;
+        }
+
+        return layer_vkEnumeratePhysicalDeviceShaderInstrumentationMetricsARM<default_tag>;
     }.operator()<user_tag>();
 }
 
@@ -668,6 +712,28 @@ constexpr PFN_vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR getLayerPtr_vkGe
         }
 
         return layer_vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR<default_tag>;
+    }.operator()<user_tag>();
+}
+
+/* Test for user_tag availability. */
+template <typename T>
+concept hasLayerPtr_vkGetPhysicalDeviceDescriptorSizeEXT = requires(
+    VkPhysicalDevice physicalDevice, VkDescriptorType descriptorType
+) {
+    layer_vkGetPhysicalDeviceDescriptorSizeEXT<T>(physicalDevice, descriptorType);
+};
+
+/* Function pointer resolution. */
+constexpr PFN_vkGetPhysicalDeviceDescriptorSizeEXT getLayerPtr_vkGetPhysicalDeviceDescriptorSizeEXT()
+{
+    return [] <typename T>
+    {
+        if constexpr(hasLayerPtr_vkGetPhysicalDeviceDescriptorSizeEXT<T>)
+        {
+            return layer_vkGetPhysicalDeviceDescriptorSizeEXT<T>;
+        }
+
+        return layer_vkGetPhysicalDeviceDescriptorSizeEXT<default_tag>;
     }.operator()<user_tag>();
 }
 

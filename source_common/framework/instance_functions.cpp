@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024-2025 Arm Limited
+ * Copyright (c) 2024-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -253,6 +253,26 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkEnumeratePhysicalDeviceGroupsKHR<default_
 
 /* See Vulkan API for documentation. */
 template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM<default_tag>(
+    VkPhysicalDevice physicalDevice,
+    uint32_t queueFamilyIndex,
+    uint32_t* pCounterCount,
+    VkPerformanceCounterARM* pCounters,
+    VkPerformanceCounterDescriptionARM* pCounterDescriptions
+) {
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    auto* layer = Instance::retrieve(physicalDevice);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    return layer->driver.vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM(physicalDevice, queueFamilyIndex, pCounterCount, pCounters, pCounterDescriptions);
+}
+
+/* See Vulkan API for documentation. */
+template <>
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR<default_tag>(
     VkPhysicalDevice physicalDevice,
     uint32_t queueFamilyIndex,
@@ -269,6 +289,24 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkEnumeratePhysicalDeviceQueueFamilyPerform
     // Release the lock to call into the driver
     lock.unlock();
     return layer->driver.vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR(physicalDevice, queueFamilyIndex, pCounterCount, pCounters, pCounterDescriptions);
+}
+
+/* See Vulkan API for documentation. */
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkEnumeratePhysicalDeviceShaderInstrumentationMetricsARM<default_tag>(
+    VkPhysicalDevice physicalDevice,
+    uint32_t* pDescriptionCount,
+    VkShaderInstrumentationMetricDescriptionARM* pDescriptions
+) {
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    auto* layer = Instance::retrieve(physicalDevice);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    return layer->driver.vkEnumeratePhysicalDeviceShaderInstrumentationMetricsARM(physicalDevice, pDescriptionCount, pDescriptions);
 }
 
 /* See Vulkan API for documentation. */
@@ -435,6 +473,23 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceCooperativeMatrixPropert
     // Release the lock to call into the driver
     lock.unlock();
     return layer->driver.vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR(physicalDevice, pPropertyCount, pProperties);
+}
+
+/* See Vulkan API for documentation. */
+template <>
+VKAPI_ATTR VkDeviceSize VKAPI_CALL layer_vkGetPhysicalDeviceDescriptorSizeEXT<default_tag>(
+    VkPhysicalDevice physicalDevice,
+    VkDescriptorType descriptorType
+) {
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    auto* layer = Instance::retrieve(physicalDevice);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    return layer->driver.vkGetPhysicalDeviceDescriptorSizeEXT(physicalDevice, descriptorType);
 }
 
 /* See Vulkan API for documentation. */

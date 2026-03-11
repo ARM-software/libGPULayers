@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024-2025 Arm Limited
+ * Copyright (c) 2024-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -328,6 +328,25 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkEnumeratePhysicalDeviceGroupsKHR<default_
 /* See Vulkan API for documentation. */
 /* Delete the generic match-all */
 template <typename T>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM(
+    VkPhysicalDevice physicalDevice,
+    uint32_t queueFamilyIndex,
+    uint32_t* pCounterCount,
+    VkPerformanceCounterARM* pCounters,
+    VkPerformanceCounterDescriptionARM* pCounterDescriptions) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM<default_tag>(
+    VkPhysicalDevice physicalDevice,
+    uint32_t queueFamilyIndex,
+    uint32_t* pCounterCount,
+    VkPerformanceCounterARM* pCounters,
+    VkPerformanceCounterDescriptionARM* pCounterDescriptions);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR(
     VkPhysicalDevice physicalDevice,
     uint32_t queueFamilyIndex,
@@ -343,6 +362,21 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkEnumeratePhysicalDeviceQueueFamilyPerform
     uint32_t* pCounterCount,
     VkPerformanceCounterKHR* pCounters,
     VkPerformanceCounterDescriptionKHR* pCounterDescriptions);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkEnumeratePhysicalDeviceShaderInstrumentationMetricsARM(
+    VkPhysicalDevice physicalDevice,
+    uint32_t* pDescriptionCount,
+    VkShaderInstrumentationMetricDescriptionARM* pDescriptions) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkEnumeratePhysicalDeviceShaderInstrumentationMetricsARM<default_tag>(
+    VkPhysicalDevice physicalDevice,
+    uint32_t* pDescriptionCount,
+    VkShaderInstrumentationMetricDescriptionARM* pDescriptions);
 
 /* See Vulkan API for documentation. */
 /* Delete the generic match-all */
@@ -499,6 +533,19 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceCooperativeMatrixPropert
     VkPhysicalDevice physicalDevice,
     uint32_t* pPropertyCount,
     VkCooperativeMatrixPropertiesKHR* pProperties);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
+VKAPI_ATTR VkDeviceSize VKAPI_CALL layer_vkGetPhysicalDeviceDescriptorSizeEXT(
+    VkPhysicalDevice physicalDevice,
+    VkDescriptorType descriptorType) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR VkDeviceSize VKAPI_CALL layer_vkGetPhysicalDeviceDescriptorSizeEXT<default_tag>(
+    VkPhysicalDevice physicalDevice,
+    VkDescriptorType descriptorType);
 
 /* See Vulkan API for documentation. */
 /* Delete the generic match-all */

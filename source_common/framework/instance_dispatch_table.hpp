@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024-2025 Arm Limited
+ * Copyright (c) 2024-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -90,7 +90,9 @@ static const struct InstanceInterceptTableEntry instanceIntercepts[] = {
     ENTRY(vkEnumerateInstanceLayerProperties),
     ENTRY(vkEnumeratePhysicalDeviceGroups),
     ENTRY(vkEnumeratePhysicalDeviceGroupsKHR),
+    ENTRY(vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM),
     ENTRY(vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR),
+    ENTRY(vkEnumeratePhysicalDeviceShaderInstrumentationMetricsARM),
     ENTRY(vkEnumeratePhysicalDevices),
     ENTRY(vkGetDisplayModeProperties2KHR),
     ENTRY(vkGetDisplayModePropertiesKHR),
@@ -101,6 +103,7 @@ static const struct InstanceInterceptTableEntry instanceIntercepts[] = {
     ENTRY(vkGetPhysicalDeviceCalibrateableTimeDomainsEXT),
     ENTRY(vkGetPhysicalDeviceCalibrateableTimeDomainsKHR),
     ENTRY(vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR),
+    ENTRY(vkGetPhysicalDeviceDescriptorSizeEXT),
     ENTRY(vkGetPhysicalDeviceDisplayPlaneProperties2KHR),
     ENTRY(vkGetPhysicalDeviceDisplayPlanePropertiesKHR),
     ENTRY(vkGetPhysicalDeviceDisplayProperties2KHR),
@@ -169,7 +172,9 @@ static const struct InstanceInterceptTableEntry instanceIntercepts[] = {
     ENTRY(vkBindTensorMemoryARM),
     ENTRY(vkBuildAccelerationStructuresKHR),
     ENTRY(vkBuildMicromapsEXT),
+    ENTRY(vkClearShaderInstrumentationMetricsARM),
     ENTRY(vkCmdBeginConditionalRenderingEXT),
+    ENTRY(vkCmdBeginCustomResolveEXT),
     ENTRY(vkCmdBeginDebugUtilsLabelEXT),
     ENTRY(vkCmdBeginQuery),
     ENTRY(vkCmdBeginQueryIndexedEXT),
@@ -178,6 +183,7 @@ static const struct InstanceInterceptTableEntry instanceIntercepts[] = {
     ENTRY(vkCmdBeginRenderPass2KHR),
     ENTRY(vkCmdBeginRendering),
     ENTRY(vkCmdBeginRenderingKHR),
+    ENTRY(vkCmdBeginShaderInstrumentationARM),
     ENTRY(vkCmdBeginTransformFeedbackEXT),
     ENTRY(vkCmdBindDescriptorBufferEmbeddedSamplers2EXT),
     ENTRY(vkCmdBindDescriptorBufferEmbeddedSamplersEXT),
@@ -189,6 +195,8 @@ static const struct InstanceInterceptTableEntry instanceIntercepts[] = {
     ENTRY(vkCmdBindIndexBuffer2),
     ENTRY(vkCmdBindIndexBuffer2KHR),
     ENTRY(vkCmdBindPipeline),
+    ENTRY(vkCmdBindResourceHeapEXT),
+    ENTRY(vkCmdBindSamplerHeapEXT),
     ENTRY(vkCmdBindShadersEXT),
     ENTRY(vkCmdBindTransformFeedbackBuffersEXT),
     ENTRY(vkCmdBindVertexBuffers),
@@ -228,6 +236,8 @@ static const struct InstanceInterceptTableEntry instanceIntercepts[] = {
     ENTRY(vkCmdDebugMarkerBeginEXT),
     ENTRY(vkCmdDebugMarkerEndEXT),
     ENTRY(vkCmdDebugMarkerInsertEXT),
+    ENTRY(vkCmdDecompressMemoryEXT),
+    ENTRY(vkCmdDecompressMemoryIndirectCountEXT),
     ENTRY(vkCmdDispatch),
     ENTRY(vkCmdDispatchBase),
     ENTRY(vkCmdDispatchBaseKHR),
@@ -256,7 +266,9 @@ static const struct InstanceInterceptTableEntry instanceIntercepts[] = {
     ENTRY(vkCmdEndRenderPass2KHR),
     ENTRY(vkCmdEndRendering),
     ENTRY(vkCmdEndRendering2EXT),
+    ENTRY(vkCmdEndRendering2KHR),
     ENTRY(vkCmdEndRenderingKHR),
+    ENTRY(vkCmdEndShaderInstrumentationARM),
     ENTRY(vkCmdEndTransformFeedbackEXT),
     ENTRY(vkCmdExecuteCommands),
     ENTRY(vkCmdExecuteGeneratedCommandsEXT),
@@ -272,6 +284,7 @@ static const struct InstanceInterceptTableEntry instanceIntercepts[] = {
     ENTRY(vkCmdPushConstants),
     ENTRY(vkCmdPushConstants2),
     ENTRY(vkCmdPushConstants2KHR),
+    ENTRY(vkCmdPushDataEXT),
     ENTRY(vkCmdPushDescriptorSet),
     ENTRY(vkCmdPushDescriptorSet2),
     ENTRY(vkCmdPushDescriptorSet2KHR),
@@ -441,6 +454,7 @@ static const struct InstanceInterceptTableEntry instanceIntercepts[] = {
     ENTRY(vkCreateSamplerYcbcrConversion),
     ENTRY(vkCreateSamplerYcbcrConversionKHR),
     ENTRY(vkCreateSemaphore),
+    ENTRY(vkCreateShaderInstrumentationARM),
     ENTRY(vkCreateShaderModule),
     ENTRY(vkCreateShadersEXT),
     ENTRY(vkCreateSharedSwapchainsKHR),
@@ -483,6 +497,7 @@ static const struct InstanceInterceptTableEntry instanceIntercepts[] = {
     ENTRY(vkDestroySamplerYcbcrConversionKHR),
     ENTRY(vkDestroySemaphore),
     ENTRY(vkDestroyShaderEXT),
+    ENTRY(vkDestroyShaderInstrumentationARM),
     ENTRY(vkDestroyShaderModule),
     ENTRY(vkDestroySwapchainKHR),
     ENTRY(vkDestroyTensorARM),
@@ -550,6 +565,7 @@ static const struct InstanceInterceptTableEntry instanceIntercepts[] = {
     ENTRY(vkGetImageMemoryRequirements),
     ENTRY(vkGetImageMemoryRequirements2),
     ENTRY(vkGetImageMemoryRequirements2KHR),
+    ENTRY(vkGetImageOpaqueCaptureDataEXT),
     ENTRY(vkGetImageOpaqueCaptureDescriptorDataEXT),
     ENTRY(vkGetImageSparseMemoryRequirements),
     ENTRY(vkGetImageSparseMemoryRequirements2),
@@ -563,6 +579,7 @@ static const struct InstanceInterceptTableEntry instanceIntercepts[] = {
     ENTRY(vkGetMemoryFdPropertiesKHR),
     ENTRY(vkGetMemoryHostPointerPropertiesEXT),
     ENTRY(vkGetMicromapBuildSizesEXT),
+    ENTRY(vkGetPastPresentationTimingEXT),
     ENTRY(vkGetPipelineBinaryDataKHR),
     ENTRY(vkGetPipelineCacheData),
     ENTRY(vkGetPipelineExecutableInternalRepresentationsKHR),
@@ -584,12 +601,16 @@ static const struct InstanceInterceptTableEntry instanceIntercepts[] = {
     ENTRY(vkGetSemaphoreCounterValueKHR),
     ENTRY(vkGetSemaphoreFdKHR),
     ENTRY(vkGetShaderBinaryDataEXT),
+    ENTRY(vkGetShaderInstrumentationValuesARM),
     ENTRY(vkGetShaderModuleCreateInfoIdentifierEXT),
     ENTRY(vkGetShaderModuleIdentifierEXT),
     ENTRY(vkGetSwapchainCounterEXT),
     ENTRY(vkGetSwapchainImagesKHR),
     ENTRY(vkGetSwapchainStatusKHR),
+    ENTRY(vkGetSwapchainTimeDomainPropertiesEXT),
+    ENTRY(vkGetSwapchainTimingPropertiesEXT),
     ENTRY(vkGetTensorMemoryRequirementsARM),
+    ENTRY(vkGetTensorOpaqueCaptureDataARM),
     ENTRY(vkGetTensorOpaqueCaptureDescriptorDataARM),
     ENTRY(vkGetTensorViewOpaqueCaptureDescriptorDataARM),
     ENTRY(vkGetValidationCacheDataEXT),
@@ -610,6 +631,7 @@ static const struct InstanceInterceptTableEntry instanceIntercepts[] = {
     ENTRY(vkQueueSubmit2),
     ENTRY(vkQueueSubmit2KHR),
     ENTRY(vkQueueWaitIdle),
+    ENTRY(vkRegisterCustomBorderColorEXT),
     ENTRY(vkRegisterDeviceEventEXT),
     ENTRY(vkRegisterDisplayEventEXT),
     ENTRY(vkReleaseCapturedPipelineDataKHR),
@@ -630,6 +652,7 @@ static const struct InstanceInterceptTableEntry instanceIntercepts[] = {
     ENTRY(vkSetHdrMetadataEXT),
     ENTRY(vkSetPrivateData),
     ENTRY(vkSetPrivateDataEXT),
+    ENTRY(vkSetSwapchainPresentTimingQueueSizeEXT),
     ENTRY(vkSignalSemaphore),
     ENTRY(vkSignalSemaphoreKHR),
     ENTRY(vkTransitionImageLayout),
@@ -639,6 +662,7 @@ static const struct InstanceInterceptTableEntry instanceIntercepts[] = {
     ENTRY(vkUnmapMemory),
     ENTRY(vkUnmapMemory2),
     ENTRY(vkUnmapMemory2KHR),
+    ENTRY(vkUnregisterCustomBorderColorEXT),
     ENTRY(vkUpdateDescriptorSetWithTemplate),
     ENTRY(vkUpdateDescriptorSetWithTemplateKHR),
     ENTRY(vkUpdateDescriptorSets),
@@ -651,6 +675,8 @@ static const struct InstanceInterceptTableEntry instanceIntercepts[] = {
     ENTRY(vkWaitSemaphoresKHR),
     ENTRY(vkWriteAccelerationStructuresPropertiesKHR),
     ENTRY(vkWriteMicromapsPropertiesEXT),
+    ENTRY(vkWriteResourceDescriptorsEXT),
+    ENTRY(vkWriteSamplerDescriptorsEXT),
 };
 
 #undef ENTRY
@@ -678,7 +704,9 @@ struct InstanceDispatchTable {
     PFN_vkEnumerateInstanceLayerProperties vkEnumerateInstanceLayerProperties;
     PFN_vkEnumeratePhysicalDeviceGroups vkEnumeratePhysicalDeviceGroups;
     PFN_vkEnumeratePhysicalDeviceGroupsKHR vkEnumeratePhysicalDeviceGroupsKHR;
+    PFN_vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM;
     PFN_vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR;
+    PFN_vkEnumeratePhysicalDeviceShaderInstrumentationMetricsARM vkEnumeratePhysicalDeviceShaderInstrumentationMetricsARM;
     PFN_vkEnumeratePhysicalDevices vkEnumeratePhysicalDevices;
     PFN_vkGetDisplayModeProperties2KHR vkGetDisplayModeProperties2KHR;
     PFN_vkGetDisplayModePropertiesKHR vkGetDisplayModePropertiesKHR;
@@ -688,6 +716,7 @@ struct InstanceDispatchTable {
     PFN_vkGetPhysicalDeviceCalibrateableTimeDomainsEXT vkGetPhysicalDeviceCalibrateableTimeDomainsEXT;
     PFN_vkGetPhysicalDeviceCalibrateableTimeDomainsKHR vkGetPhysicalDeviceCalibrateableTimeDomainsKHR;
     PFN_vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR;
+    PFN_vkGetPhysicalDeviceDescriptorSizeEXT vkGetPhysicalDeviceDescriptorSizeEXT;
     PFN_vkGetPhysicalDeviceDisplayPlaneProperties2KHR vkGetPhysicalDeviceDisplayPlaneProperties2KHR;
     PFN_vkGetPhysicalDeviceDisplayPlanePropertiesKHR vkGetPhysicalDeviceDisplayPlanePropertiesKHR;
     PFN_vkGetPhysicalDeviceDisplayProperties2KHR vkGetPhysicalDeviceDisplayProperties2KHR;
@@ -772,7 +801,9 @@ static inline void initDriverInstanceDispatchTable(
     ENTRY(vkEnumerateInstanceLayerProperties);
     ENTRY(vkEnumeratePhysicalDeviceGroups);
     ENTRY(vkEnumeratePhysicalDeviceGroupsKHR);
+    ENTRY(vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM);
     ENTRY(vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR);
+    ENTRY(vkEnumeratePhysicalDeviceShaderInstrumentationMetricsARM);
     ENTRY(vkEnumeratePhysicalDevices);
     ENTRY(vkGetDisplayModeProperties2KHR);
     ENTRY(vkGetDisplayModePropertiesKHR);
@@ -782,6 +813,7 @@ static inline void initDriverInstanceDispatchTable(
     ENTRY(vkGetPhysicalDeviceCalibrateableTimeDomainsEXT);
     ENTRY(vkGetPhysicalDeviceCalibrateableTimeDomainsKHR);
     ENTRY(vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR);
+    ENTRY(vkGetPhysicalDeviceDescriptorSizeEXT);
     ENTRY(vkGetPhysicalDeviceDisplayPlaneProperties2KHR);
     ENTRY(vkGetPhysicalDeviceDisplayPlanePropertiesKHR);
     ENTRY(vkGetPhysicalDeviceDisplayProperties2KHR);
