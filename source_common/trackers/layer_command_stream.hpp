@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024-2025 Arm Limited
+ * Copyright (c) 2024-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -344,6 +344,7 @@ public:
         copy_image,
         copy_buffer_to_image,
         copy_image_to_buffer,
+        copy_memory_to_image,
     };
 
     /**
@@ -390,6 +391,7 @@ public:
         unknown,
         fill_buffer,
         copy_buffer,
+        copy_memory,
     };
 
     /**

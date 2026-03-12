@@ -109,6 +109,8 @@ std::string LCSImageTransfer::getTransferTypeStr() const
         return "Copy buffer to image";
     case Type::copy_image_to_buffer:
         return "Copy image to buffer";
+    case Type::copy_memory_to_image:
+        return "Copy memory to image";
     default:
         assert(false && "Unexpected LCSImageTransfer::Type");
         return "<invalid>";
@@ -134,6 +136,8 @@ std::string LCSBufferTransfer::getTransferTypeStr() const
         return "Fill buffer";
     case Type::copy_buffer:
         return "Copy buffer";
+    case Type::copy_memory:
+        return "Copy memory";
     default:
         assert(false && "Unexpected LCSBufferTransfer::Type");
         return "<invalid>";

@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2025 Arm Limited
+ * Copyright (c) 2025-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -174,6 +174,7 @@ enum class ImageTransferType
     copy_image = 2,
     copy_buffer_to_image = 3,
     copy_image_to_buffer = 4,
+    copy_memory_to_image = 5,
 };
 
 /* An image transfer submission */
@@ -193,6 +194,7 @@ enum class BufferTransferType
     unknown_buffer_transfer = 0,
     fill_buffer = 1,
     copy_buffer = 2,
+    copy_memory = 3,
 };
 
 /* An buffer transfer submission */
@@ -382,6 +384,8 @@ constexpr BufferTransferType mapBufferTransferType(Tracker::LCSBufferTransfer::T
         return BufferTransferType::fill_buffer;
     case Tracker::LCSBufferTransfer::Type::copy_buffer:
         return BufferTransferType::copy_buffer;
+    case Tracker::LCSBufferTransfer::Type::copy_memory:
+        return BufferTransferType::copy_memory;
     default:
         assert(false && "Unexpected LCSBufferTransfer::Type");
         return BufferTransferType::unknown_buffer_transfer;
@@ -413,6 +417,8 @@ constexpr ImageTransferType mapImageTransferType(Tracker::LCSImageTransfer::Type
         return ImageTransferType::copy_buffer_to_image;
     case Tracker::LCSImageTransfer::Type::copy_image_to_buffer:
         return ImageTransferType::copy_image_to_buffer;
+    case Tracker::LCSImageTransfer::Type::copy_memory_to_image:
+        return ImageTransferType::copy_memory_to_image;
     default:
         assert(false && "Unexpected LCSImageTransfer::Type");
         return ImageTransferType::unknown_image_transfer;

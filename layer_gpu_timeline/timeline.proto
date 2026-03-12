@@ -236,6 +236,7 @@ enum ImageTransferType {
     copy_image = 2;
     copy_buffer_to_image = 3;
     copy_image_to_buffer = 4;
+    copy_memory_to_image = 5;
 }
 
 /* An image transfer submission */
@@ -250,12 +251,12 @@ message ImageTransfer {
     repeated string debug_label = 4;
 }
 
-
 /* Enumerates possible buffer transfer types */
 enum BufferTransferType {
     unknown_buffer_transfer = 0;
     fill_buffer = 1;
     copy_buffer = 2;
+    copy_memory = 3;
 }
 
 /* A buffer transfer submission */
