@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2025 Arm Limited
+ * Copyright (c) 2025-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -107,7 +107,7 @@ enum HeaderVersionNo {
 
 /* The connection header message sent to identify the version of the timeline protocol used. This should be sent exactly once per connection */
 message Header {
-    /* The only mandatory field of this message. This identifys the version. Any subsequent fields are versioned based on this.
+    /* The only mandatory field of this message. This identifies the version. Any subsequent fields are versioned based on this.
      * All additional fields must be optional and additive (no removals) */
     HeaderVersionNo version_no = 1;
 }
@@ -170,30 +170,30 @@ message RenderpassAttachment {
     bool resolved = 5;
 }
 
-/* Start a new renderpass */
+/* Start a new render pass */
 message BeginRenderpass {
-    /* The unique identifier for this new renderpass */
+    /* The unique identifier for this new render pass */
     uint64 tag_id = 1;
-    /* The dimensions of the renderpass' attachments */
+    /* The dimensions of the render pass' attachments */
     uint32 width = 2;
     uint32 height = 3;
-    /* The number of drawcalls in the renderpass */
+    /* The number of draw calls in the render pass */
     uint32 draw_call_count = 4;
     /* The subpass count */
     uint32 subpass_count = 5;
-    /* Any user defined debug labels associated with the renderpass */
+    /* Any user defined debug labels associated with the render pass */
     repeated string debug_label = 6;
-    /* Any attachments associated with the renderpass */
+    /* Any attachments associated with the render pass */
     repeated RenderpassAttachment attachments = 7;
 }
 
-/* Continue a split renderpass */
+/* Continue a split render pass */
 message ContinueRenderpass {
-    /* The unique identifier for the renderpass that is being continued */
+    /* The unique identifier for the render pass that is being continued */
     uint64 tag_id = 1;
-    /* The number of drawcalls to add to the total in the renderpass */
+    /* The number of draw calls to add to the total in the render pass */
     uint32 draw_call_count = 2;
-    /* Any user defined debug labels to add to the renderpass */
+    /* Any user defined debug labels to add to the render pass */
     repeated string debug_label = 3;
 }
 
@@ -242,7 +242,7 @@ enum ImageTransferType {
 message ImageTransfer {
     /* The unique identifier for this operation */
     uint64 tag_id = 1;
-    /* The number of pixels being transfered */
+    /* The number of pixels being transferred */
     int64 pixel_count = 2;
     /* The image type */
     ImageTransferType transfer_type = 3;
