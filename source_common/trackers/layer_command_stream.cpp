@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024-2025 Arm Limited
+ * Copyright (c) 2024-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -192,6 +192,12 @@ std::string LCSAccelerationStructureTransfer::getTransferTypeStr() const
         return "Copy acceleration structure to memory";
     case Type::mem_to_struct:
         return "Copy memory to acceleration structure";
+    case Type::micromap_to_micromap:
+        return "Copy micromap";
+    case Type::micromap_to_mem:
+        return "Copy micromap to memory";
+    case Type::mem_to_micromap:
+        return "Copy memory to micromap";
     default:
         assert(false && "Unexpected LCSAccelerationStructureTransfer::Type");
         return "<invalid>";

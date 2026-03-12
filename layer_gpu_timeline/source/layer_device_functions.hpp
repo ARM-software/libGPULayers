@@ -475,6 +475,24 @@ VKAPI_ATTR void VKAPI_CALL
         VkCommandBuffer commandBuffer,
         const VkCopyMemoryToImageIndirectInfoKHR* pCopyMemoryToImageIndirectInfo);
 
+/* See Vulkan API for documentation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMemoryToMicromapEXT<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkCopyMemoryToMicromapInfoEXT* pInfo);
+
+/* See Vulkan API for documentation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMicromapEXT<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkCopyMicromapInfoEXT* pInfo);
+
+/* See Vulkan API for documentation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMicromapToMemoryEXT<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkCopyMicromapToMemoryInfoEXT* pInfo);
+
 // Functions for debug
 
 /* See Vulkan API for documentation. */

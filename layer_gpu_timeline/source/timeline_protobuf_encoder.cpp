@@ -234,6 +234,9 @@ enum class AccelerationStructureTransferType
     struct_to_struct = 1,
     struct_to_mem = 2,
     mem_to_struct = 3,
+    micromap_to_micromap = 4,
+    micromap_to_mem = 5,
+    mem_to_micromap = 6,
 };
 
 /* An acceleration structure transfer submission */
@@ -448,8 +451,14 @@ constexpr AccelerationStructureTransferType mapASTransferType(Tracker::LCSAccele
         return AccelerationStructureTransferType::struct_to_mem;
     case Tracker::LCSAccelerationStructureTransfer::Type::mem_to_struct:
         return AccelerationStructureTransferType::mem_to_struct;
+    case Tracker::LCSAccelerationStructureTransfer::Type::micromap_to_micromap:
+        return AccelerationStructureTransferType::micromap_to_micromap;
+    case Tracker::LCSAccelerationStructureTransfer::Type::micromap_to_mem:
+        return AccelerationStructureTransferType::micromap_to_mem;
+    case Tracker::LCSAccelerationStructureTransfer::Type::mem_to_micromap:
+        return AccelerationStructureTransferType::mem_to_micromap;
     default:
-        assert(false && "Unexpected LCSBufferTransfer::Type");
+        assert(false && "Unexpected LCSAccelerationStructureTransfer::Type");
         return AccelerationStructureTransferType::unknown_as_transfer;
     }
 }
