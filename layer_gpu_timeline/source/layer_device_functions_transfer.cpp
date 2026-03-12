@@ -718,3 +718,79 @@ VKAPI_ATTR void VKAPI_CALL
     layer->driver.vkCmdCopyMemoryToAccelerationStructureKHR(commandBuffer, pInfo);
     emitEndTag(layer, commandBuffer);
 }
+
+/* See Vulkan API for documentation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMemoryToMicromapEXT<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkCopyMemoryToMicromapInfoEXT* pInfo
+) {
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    auto* layer = Device::retrieve(commandBuffer);
+
+    uint64_t tagID =
+        registerAccelerationStructureTransfer(layer,
+                                              commandBuffer,
+                                              Tracker::LCSAccelerationStructureTransfer::Type::mem_to_micromap,
+                                              -1);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    emitStartTag(layer, commandBuffer, tagID);
+    layer->driver.vkCmdCopyMemoryToMicromapEXT(commandBuffer, pInfo);
+    emitEndTag(layer, commandBuffer);
+}
+
+/* See Vulkan API for documentation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMicromapEXT<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkCopyMicromapInfoEXT* pInfo
+) {
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    auto* layer = Device::retrieve(commandBuffer);
+
+    uint64_t tagID =
+        registerAccelerationStructureTransfer(layer,
+                                              commandBuffer,
+                                              Tracker::LCSAccelerationStructureTransfer::Type::micromap_to_micromap,
+                                              -1);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    emitStartTag(layer, commandBuffer, tagID);
+    layer->driver.vkCmdCopyMicromapEXT(commandBuffer, pInfo);
+    emitEndTag(layer, commandBuffer);
+}
+
+/* See Vulkan API for documentation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMicromapToMemoryEXT<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkCopyMicromapToMemoryInfoEXT* pInfo
+) {
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    auto* layer = Device::retrieve(commandBuffer);
+
+    uint64_t tagID =
+        registerAccelerationStructureTransfer(layer,
+                                              commandBuffer,
+                                              Tracker::LCSAccelerationStructureTransfer::Type::micromap_to_mem,
+                                              -1);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    emitStartTag(layer, commandBuffer, tagID);
+    layer->driver.vkCmdCopyMicromapToMemoryEXT(commandBuffer, pInfo);
+    emitEndTag(layer, commandBuffer);
+}
+

@@ -486,6 +486,9 @@ public:
         struct_to_struct,
         struct_to_mem,
         mem_to_struct,
+        micromap_to_micromap,
+        mem_to_micromap,
+        micromap_to_mem
     };
 
     /**
