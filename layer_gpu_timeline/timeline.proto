@@ -257,6 +257,7 @@ enum BufferTransferType {
     fill_buffer = 1;
     copy_buffer = 2;
     copy_memory = 3;
+    copy_tensor = 4;
 }
 
 /* A buffer transfer submission */

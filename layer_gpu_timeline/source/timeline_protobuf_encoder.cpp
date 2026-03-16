@@ -195,6 +195,7 @@ enum class BufferTransferType
     fill_buffer = 1,
     copy_buffer = 2,
     copy_memory = 3,
+    copy_tensor = 4,
 };
 
 /* An buffer transfer submission */
@@ -389,6 +390,8 @@ constexpr BufferTransferType mapBufferTransferType(Tracker::LCSBufferTransfer::T
         return BufferTransferType::copy_buffer;
     case Tracker::LCSBufferTransfer::Type::copy_memory:
         return BufferTransferType::copy_memory;
+    case Tracker::LCSBufferTransfer::Type::copy_tensor:
+        return BufferTransferType::copy_tensor;
     default:
         assert(false && "Unexpected LCSBufferTransfer::Type");
         return BufferTransferType::unknown_buffer_transfer;

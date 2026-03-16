@@ -794,3 +794,25 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMicromapToMemoryEXT<user_tag>(
     emitEndTag(layer, commandBuffer);
 }
 
+/* See Vulkan API for documentation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyTensorARM<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkCopyTensorInfoARM* pCopyTensorInfo
+) {
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    auto* layer = Device::retrieve(commandBuffer);
+
+    // TODO: Parameters define size in elements, rather than bytes, and we
+    // currently don't track tensor data type to convert to bytes
+    uint64_t tagID = registerBufferTransfer(layer, commandBuffer, Tracker::LCSBufferTransfer::Type::copy_tensor, -1);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    emitStartTag(layer, commandBuffer, tagID);
+    layer->driver.vkCmdCopyTensorARM(commandBuffer, pCopyTensorInfo);
+    emitEndTag(layer, commandBuffer);
+}
