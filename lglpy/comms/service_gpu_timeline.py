@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: MIT
 # -----------------------------------------------------------------------------
-# Copyright (c) 2024-2025 Arm Limited
+# Copyright (c) 2024-2026 Arm Limited
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the 'Software'), to
@@ -202,6 +202,9 @@ def map_image_transfer_type(type) -> str:
     if type == timeline_pb2.ImageTransferType.copy_image_to_buffer:
         return "Copy image to buffer"
 
+    if type == timeline_pb2.ImageTransferType.copy_memory_to_image:
+        return "Copy memory to image"
+
     assert False
 
 
@@ -218,6 +221,12 @@ def map_buffer_transfer_type(type) -> str:
     if type == timeline_pb2.BufferTransferType.copy_buffer:
         return "Copy buffer"
 
+    if type == timeline_pb2.BufferTransferType.copy_memory:
+        return "Copy memory"
+
+    if type == timeline_pb2.BufferTransferType.copy_tensor:
+        return "Copy tensor"
+
     assert False
 
 
@@ -228,10 +237,10 @@ def map_as_build_type(type) -> str:
     if type == timeline_pb2.AccelerationStructureBuildType.unknown_as_build:
         return "Unknown"
 
-    if type == timeline_pb2.AccelerationStructureTransferType.fast_build:
+    if type == timeline_pb2.AccelerationStructureBuildType.fast_build:
         return "Fast build"
 
-    if type == timeline_pb2.AccelerationStructureTransferType.fast_trace:
+    if type == timeline_pb2.AccelerationStructureBuildType.fast_trace:
         return "Fast trace"
 
     assert False
@@ -250,10 +259,19 @@ def map_as_transfer_type(type) -> str:
         return "Copy acceleration structure"
 
     if type == base_type.struct_to_mem:
-        return "Copy acceleration structure to mem"
+        return "Copy acceleration structure to memory"
 
     if type == base_type.mem_to_struct:
-        return "Copy mem to acceleration structure"
+        return "Copy memory to acceleration structure"
+
+    if type == base_type.micromap_to_micromap:
+        return "Copy micromap"
+
+    if type == base_type.micromap_to_mem:
+        return "Copy micromap to memory"
+
+    if type == base_type.mem_to_micromap:
+        return "Copy memory to micromap"
 
     assert False
 
