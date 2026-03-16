@@ -493,6 +493,12 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMicromapToMemoryEXT<user_tag>(
     VkCommandBuffer commandBuffer,
     const VkCopyMicromapToMemoryInfoEXT* pInfo);
 
+/* See Vulkan API for documentation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyTensorARM<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkCopyTensorInfoARM* pCopyTensorInfo);
+
 // Functions for debug
 
 /* See Vulkan API for documentation. */

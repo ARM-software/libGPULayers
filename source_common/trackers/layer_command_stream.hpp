@@ -392,6 +392,7 @@ public:
         fill_buffer,
         copy_buffer,
         copy_memory,
+        copy_tensor
     };
 
     /**

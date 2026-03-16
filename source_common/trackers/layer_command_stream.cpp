@@ -138,6 +138,8 @@ std::string LCSBufferTransfer::getTransferTypeStr() const
         return "Copy buffer";
     case Type::copy_memory:
         return "Copy memory";
+    case Type::copy_tensor:
+        return "Copy tensor";
     default:
         assert(false && "Unexpected LCSBufferTransfer::Type");
         return "<invalid>";
