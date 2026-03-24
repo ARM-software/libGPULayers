@@ -316,6 +316,19 @@ VKAPI_ATTR void VKAPI_CALL layer_vkClearShaderInstrumentationMetricsARM<default_
 /* See Vulkan API for documentation. */
 /* Delete the generic match-all */
 template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginConditionalRendering2EXT(
+    VkCommandBuffer commandBuffer,
+    const VkConditionalRenderingBeginInfo2EXT* pConditionalRenderingBegin) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginConditionalRendering2EXT<default_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkConditionalRenderingBeginInfo2EXT* pConditionalRenderingBegin);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginConditionalRenderingEXT(
     VkCommandBuffer commandBuffer,
     const VkConditionalRenderingBeginInfoEXT* pConditionalRenderingBegin) = delete;
@@ -471,6 +484,23 @@ template <>
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginShaderInstrumentationARM<default_tag>(
     VkCommandBuffer commandBuffer,
     VkShaderInstrumentationARM instrumentation);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginTransformFeedback2EXT(
+    VkCommandBuffer commandBuffer,
+    uint32_t firstCounterRange,
+    uint32_t counterRangeCount,
+    const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfos) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginTransformFeedback2EXT<default_tag>(
+    VkCommandBuffer commandBuffer,
+    uint32_t firstCounterRange,
+    uint32_t counterRangeCount,
+    const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfos);
 
 /* See Vulkan API for documentation. */
 /* Delete the generic match-all */
@@ -645,6 +675,19 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindIndexBuffer2KHR<default_tag>(
 /* See Vulkan API for documentation. */
 /* Delete the generic match-all */
 template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindIndexBuffer3KHR(
+    VkCommandBuffer commandBuffer,
+    const VkBindIndexBuffer3InfoKHR* pInfo) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindIndexBuffer3KHR<default_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkBindIndexBuffer3InfoKHR* pInfo);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindPipeline(
     VkCommandBuffer commandBuffer,
     VkPipelineBindPoint pipelineBindPoint,
@@ -699,6 +742,23 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindShadersEXT<default_tag>(
     uint32_t stageCount,
     const VkShaderStageFlagBits* pStages,
     const VkShaderEXT* pShaders);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindTransformFeedbackBuffers2EXT(
+    VkCommandBuffer commandBuffer,
+    uint32_t firstBinding,
+    uint32_t bindingCount,
+    const VkBindTransformFeedbackBuffer2InfoEXT* pBindingInfos) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindTransformFeedbackBuffers2EXT<default_tag>(
+    VkCommandBuffer commandBuffer,
+    uint32_t firstBinding,
+    uint32_t bindingCount,
+    const VkBindTransformFeedbackBuffer2InfoEXT* pBindingInfos);
 
 /* See Vulkan API for documentation. */
 /* Delete the generic match-all */
@@ -785,6 +845,23 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindVertexBuffers2EXT<default_tag>(
     const VkDeviceSize* pOffsets,
     const VkDeviceSize* pSizes,
     const VkDeviceSize* pStrides);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindVertexBuffers3KHR(
+    VkCommandBuffer commandBuffer,
+    uint32_t firstBinding,
+    uint32_t bindingCount,
+    const VkBindVertexBuffer3InfoKHR* pBindingInfos) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBindVertexBuffers3KHR<default_tag>(
+    VkCommandBuffer commandBuffer,
+    uint32_t firstBinding,
+    uint32_t bindingCount,
+    const VkBindVertexBuffer3InfoKHR* pBindingInfos);
 
 /* See Vulkan API for documentation. */
 /* Delete the generic match-all */
@@ -1168,6 +1245,19 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImageToBuffer2KHR<default_tag>(
 /* See Vulkan API for documentation. */
 /* Delete the generic match-all */
 template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImageToMemoryKHR(
+    VkCommandBuffer commandBuffer,
+    const VkCopyDeviceMemoryImageInfoKHR* pCopyMemoryInfo) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImageToMemoryKHR<default_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkCopyDeviceMemoryImageInfoKHR* pCopyMemoryInfo);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMemoryIndirectKHR(
     VkCommandBuffer commandBuffer,
     const VkCopyMemoryIndirectInfoKHR* pCopyMemoryIndirectInfo) = delete;
@@ -1177,6 +1267,19 @@ template <>
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMemoryIndirectKHR<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkCopyMemoryIndirectInfoKHR* pCopyMemoryIndirectInfo);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMemoryKHR(
+    VkCommandBuffer commandBuffer,
+    const VkCopyDeviceMemoryInfoKHR* pCopyMemoryInfo) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMemoryKHR<default_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkCopyDeviceMemoryInfoKHR* pCopyMemoryInfo);
 
 /* See Vulkan API for documentation. */
 /* Delete the generic match-all */
@@ -1203,6 +1306,19 @@ template <>
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMemoryToImageIndirectKHR<default_tag>(
     VkCommandBuffer commandBuffer,
     const VkCopyMemoryToImageIndirectInfoKHR* pCopyMemoryToImageIndirectInfo);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMemoryToImageKHR(
+    VkCommandBuffer commandBuffer,
+    const VkCopyDeviceMemoryImageInfoKHR* pCopyMemoryInfo) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMemoryToImageKHR<default_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkCopyDeviceMemoryImageInfoKHR* pCopyMemoryInfo);
 
 /* See Vulkan API for documentation. */
 /* Delete the generic match-all */
@@ -1267,6 +1383,29 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyQueryPoolResults<default_tag>(
     VkDeviceSize dstOffset,
     VkDeviceSize stride,
     VkQueryResultFlags flags);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyQueryPoolResultsToMemoryKHR(
+    VkCommandBuffer commandBuffer,
+    VkQueryPool queryPool,
+    uint32_t firstQuery,
+    uint32_t queryCount,
+    const VkStridedDeviceAddressRangeKHR* pDstRange,
+    VkAddressCommandFlagsKHR dstFlags,
+    VkQueryResultFlags queryResultFlags) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyQueryPoolResultsToMemoryKHR<default_tag>(
+    VkCommandBuffer commandBuffer,
+    VkQueryPool queryPool,
+    uint32_t firstQuery,
+    uint32_t queryCount,
+    const VkStridedDeviceAddressRangeKHR* pDstRange,
+    VkAddressCommandFlagsKHR dstFlags,
+    VkQueryResultFlags queryResultFlags);
 
 /* See Vulkan API for documentation. */
 /* Delete the generic match-all */
@@ -1448,6 +1587,19 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchIndirect<default_tag>(
 /* See Vulkan API for documentation. */
 /* Delete the generic match-all */
 template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchIndirect2KHR(
+    VkCommandBuffer commandBuffer,
+    const VkDispatchIndirect2InfoKHR* pInfo) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchIndirect2KHR<default_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkDispatchIndirect2InfoKHR* pInfo);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdDraw(
     VkCommandBuffer commandBuffer,
     uint32_t vertexCount,
@@ -1507,6 +1659,19 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndexedIndirect<default_tag>(
 /* See Vulkan API for documentation. */
 /* Delete the generic match-all */
 template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndexedIndirect2KHR(
+    VkCommandBuffer commandBuffer,
+    const VkDrawIndirect2InfoKHR* pInfo) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndexedIndirect2KHR<default_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkDrawIndirect2InfoKHR* pInfo);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndexedIndirectCount(
     VkCommandBuffer commandBuffer,
     VkBuffer buffer,
@@ -1526,6 +1691,19 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndexedIndirectCount<default_tag>(
     VkDeviceSize countBufferOffset,
     uint32_t maxDrawCount,
     uint32_t stride);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndexedIndirectCount2KHR(
+    VkCommandBuffer commandBuffer,
+    const VkDrawIndirectCount2InfoKHR* pInfo) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndexedIndirectCount2KHR<default_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkDrawIndirectCount2InfoKHR* pInfo);
 
 /* See Vulkan API for documentation. */
 /* Delete the generic match-all */
@@ -1568,6 +1746,40 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirect<default_tag>(
     VkDeviceSize offset,
     uint32_t drawCount,
     uint32_t stride);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirect2KHR(
+    VkCommandBuffer commandBuffer,
+    const VkDrawIndirect2InfoKHR* pInfo) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirect2KHR<default_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkDrawIndirect2InfoKHR* pInfo);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirectByteCount2EXT(
+    VkCommandBuffer commandBuffer,
+    uint32_t instanceCount,
+    uint32_t firstInstance,
+    const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfo,
+    uint32_t counterOffset,
+    uint32_t vertexStride) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirectByteCount2EXT<default_tag>(
+    VkCommandBuffer commandBuffer,
+    uint32_t instanceCount,
+    uint32_t firstInstance,
+    const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfo,
+    uint32_t counterOffset,
+    uint32_t vertexStride);
 
 /* See Vulkan API for documentation. */
 /* Delete the generic match-all */
@@ -1618,6 +1830,19 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirectCount<default_tag>(
 /* See Vulkan API for documentation. */
 /* Delete the generic match-all */
 template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirectCount2KHR(
+    VkCommandBuffer commandBuffer,
+    const VkDrawIndirectCount2InfoKHR* pInfo) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirectCount2KHR<default_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkDrawIndirectCount2InfoKHR* pInfo);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirectCountKHR(
     VkCommandBuffer commandBuffer,
     VkBuffer buffer,
@@ -1654,6 +1879,32 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawMeshTasksEXT<default_tag>(
     uint32_t groupCountX,
     uint32_t groupCountY,
     uint32_t groupCountZ);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawMeshTasksIndirect2EXT(
+    VkCommandBuffer commandBuffer,
+    const VkDrawIndirect2InfoKHR* pInfo) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawMeshTasksIndirect2EXT<default_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkDrawIndirect2InfoKHR* pInfo);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawMeshTasksIndirectCount2EXT(
+    VkCommandBuffer commandBuffer,
+    const VkDrawIndirectCount2InfoKHR* pInfo) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawMeshTasksIndirectCount2EXT<default_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkDrawIndirectCount2InfoKHR* pInfo);
 
 /* See Vulkan API for documentation. */
 /* Delete the generic match-all */
@@ -1894,6 +2145,23 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndShaderInstrumentationARM<default_tag>(
 /* See Vulkan API for documentation. */
 /* Delete the generic match-all */
 template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndTransformFeedback2EXT(
+    VkCommandBuffer commandBuffer,
+    uint32_t firstCounterRange,
+    uint32_t counterRangeCount,
+    const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfos) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndTransformFeedback2EXT<default_tag>(
+    VkCommandBuffer commandBuffer,
+    uint32_t firstCounterRange,
+    uint32_t counterRangeCount,
+    const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfos);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndTransformFeedbackEXT(
     VkCommandBuffer commandBuffer,
     uint32_t firstCounterBuffer,
@@ -1957,6 +2225,23 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdFillBuffer<default_tag>(
     VkBuffer dstBuffer,
     VkDeviceSize dstOffset,
     VkDeviceSize size,
+    uint32_t data);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdFillMemoryKHR(
+    VkCommandBuffer commandBuffer,
+    const VkDeviceAddressRangeKHR* pDstRange,
+    VkAddressCommandFlagsKHR dstFlags,
+    uint32_t data) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdFillMemoryKHR<default_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkDeviceAddressRangeKHR* pDstRange,
+    VkAddressCommandFlagsKHR dstFlags,
     uint32_t data);
 
 /* See Vulkan API for documentation. */
@@ -3810,6 +4095,25 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdUpdateBuffer<default_tag>(
 /* See Vulkan API for documentation. */
 /* Delete the generic match-all */
 template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdUpdateMemoryKHR(
+    VkCommandBuffer commandBuffer,
+    const VkDeviceAddressRangeKHR* pDstRange,
+    VkAddressCommandFlagsKHR dstFlags,
+    VkDeviceSize dataSize,
+    const void* pData) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdUpdateMemoryKHR<default_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkDeviceAddressRangeKHR* pDstRange,
+    VkAddressCommandFlagsKHR dstFlags,
+    VkDeviceSize dataSize,
+    const void* pData);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdWaitEvents(
     VkCommandBuffer commandBuffer,
     uint32_t eventCount,
@@ -3892,6 +4196,38 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdWriteAccelerationStructuresPropertiesKHR<d
     VkQueryType queryType,
     VkQueryPool queryPool,
     uint32_t firstQuery);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdWriteBufferMarker2AMD(
+    VkCommandBuffer commandBuffer,
+    VkPipelineStageFlags2 stage,
+    VkBuffer dstBuffer,
+    VkDeviceSize dstOffset,
+    uint32_t marker) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdWriteBufferMarker2AMD<default_tag>(
+    VkCommandBuffer commandBuffer,
+    VkPipelineStageFlags2 stage,
+    VkBuffer dstBuffer,
+    VkDeviceSize dstOffset,
+    uint32_t marker);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdWriteMarkerToMemoryAMD(
+    VkCommandBuffer commandBuffer,
+    const VkMemoryMarkerInfoAMD* pInfo) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdWriteMarkerToMemoryAMD<default_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkMemoryMarkerInfoAMD* pInfo);
 
 /* See Vulkan API for documentation. */
 /* Delete the generic match-all */
@@ -4132,6 +4468,23 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCopyMicromapToMemoryEXT<default_tag>(
     VkDevice device,
     VkDeferredOperationKHR deferredOperation,
     const VkCopyMicromapToMemoryInfoEXT* pInfo);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateAccelerationStructure2KHR(
+    VkDevice device,
+    const VkAccelerationStructureCreateInfo2KHR* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkAccelerationStructureKHR* pAccelerationStructure) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateAccelerationStructure2KHR<default_tag>(
+    VkDevice device,
+    const VkAccelerationStructureCreateInfo2KHR* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkAccelerationStructureKHR* pAccelerationStructure);
 
 /* See Vulkan API for documentation. */
 /* Delete the generic match-all */
@@ -6023,6 +6376,19 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceBufferMemoryRequirementsKHR<default_
 /* See Vulkan API for documentation. */
 /* Delete the generic match-all */
 template <typename T>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetDeviceFaultDebugInfoKHR(
+    VkDevice device,
+    VkDeviceFaultDebugInfoKHR* pDebugInfo) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetDeviceFaultDebugInfoKHR<default_tag>(
+    VkDevice device,
+    VkDeviceFaultDebugInfoKHR* pDebugInfo);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetDeviceFaultInfoEXT(
     VkDevice device,
     VkDeviceFaultCountsEXT* pFaultCounts,
@@ -6034,6 +6400,23 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetDeviceFaultInfoEXT<default_tag>(
     VkDevice device,
     VkDeviceFaultCountsEXT* pFaultCounts,
     VkDeviceFaultInfoEXT* pFaultInfo);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetDeviceFaultReportsKHR(
+    VkDevice device,
+    uint64_t timeout,
+    uint32_t* pFaultCounts,
+    VkDeviceFaultInfoKHR* pFaultInfo) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetDeviceFaultReportsKHR<default_tag>(
+    VkDevice device,
+    uint64_t timeout,
+    uint32_t* pFaultCounts,
+    VkDeviceFaultInfoKHR* pFaultInfo);
 
 /* See Vulkan API for documentation. */
 /* Delete the generic match-all */
