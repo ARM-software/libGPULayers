@@ -85,6 +85,7 @@ static const struct DeviceInterceptTableEntry deviceIntercepts[] = {
     ENTRY(vkBuildAccelerationStructuresKHR),
     ENTRY(vkBuildMicromapsEXT),
     ENTRY(vkClearShaderInstrumentationMetricsARM),
+    ENTRY(vkCmdBeginConditionalRendering2EXT),
     ENTRY(vkCmdBeginConditionalRenderingEXT),
     ENTRY(vkCmdBeginCustomResolveEXT),
     ENTRY(vkCmdBeginDebugUtilsLabelEXT),
@@ -96,6 +97,7 @@ static const struct DeviceInterceptTableEntry deviceIntercepts[] = {
     ENTRY(vkCmdBeginRendering),
     ENTRY(vkCmdBeginRenderingKHR),
     ENTRY(vkCmdBeginShaderInstrumentationARM),
+    ENTRY(vkCmdBeginTransformFeedback2EXT),
     ENTRY(vkCmdBeginTransformFeedbackEXT),
     ENTRY(vkCmdBindDescriptorBufferEmbeddedSamplers2EXT),
     ENTRY(vkCmdBindDescriptorBufferEmbeddedSamplersEXT),
@@ -106,14 +108,17 @@ static const struct DeviceInterceptTableEntry deviceIntercepts[] = {
     ENTRY(vkCmdBindIndexBuffer),
     ENTRY(vkCmdBindIndexBuffer2),
     ENTRY(vkCmdBindIndexBuffer2KHR),
+    ENTRY(vkCmdBindIndexBuffer3KHR),
     ENTRY(vkCmdBindPipeline),
     ENTRY(vkCmdBindResourceHeapEXT),
     ENTRY(vkCmdBindSamplerHeapEXT),
     ENTRY(vkCmdBindShadersEXT),
+    ENTRY(vkCmdBindTransformFeedbackBuffers2EXT),
     ENTRY(vkCmdBindTransformFeedbackBuffersEXT),
     ENTRY(vkCmdBindVertexBuffers),
     ENTRY(vkCmdBindVertexBuffers2),
     ENTRY(vkCmdBindVertexBuffers2EXT),
+    ENTRY(vkCmdBindVertexBuffers3KHR),
     ENTRY(vkCmdBlitImage),
     ENTRY(vkCmdBlitImage2),
     ENTRY(vkCmdBlitImage2KHR),
@@ -137,13 +142,17 @@ static const struct DeviceInterceptTableEntry deviceIntercepts[] = {
     ENTRY(vkCmdCopyImageToBuffer),
     ENTRY(vkCmdCopyImageToBuffer2),
     ENTRY(vkCmdCopyImageToBuffer2KHR),
+    ENTRY(vkCmdCopyImageToMemoryKHR),
     ENTRY(vkCmdCopyMemoryIndirectKHR),
+    ENTRY(vkCmdCopyMemoryKHR),
     ENTRY(vkCmdCopyMemoryToAccelerationStructureKHR),
     ENTRY(vkCmdCopyMemoryToImageIndirectKHR),
+    ENTRY(vkCmdCopyMemoryToImageKHR),
     ENTRY(vkCmdCopyMemoryToMicromapEXT),
     ENTRY(vkCmdCopyMicromapEXT),
     ENTRY(vkCmdCopyMicromapToMemoryEXT),
     ENTRY(vkCmdCopyQueryPoolResults),
+    ENTRY(vkCmdCopyQueryPoolResultsToMemoryKHR),
     ENTRY(vkCmdCopyTensorARM),
     ENTRY(vkCmdDebugMarkerBeginEXT),
     ENTRY(vkCmdDebugMarkerEndEXT),
@@ -155,16 +164,24 @@ static const struct DeviceInterceptTableEntry deviceIntercepts[] = {
     ENTRY(vkCmdDispatchBaseKHR),
     ENTRY(vkCmdDispatchDataGraphARM),
     ENTRY(vkCmdDispatchIndirect),
+    ENTRY(vkCmdDispatchIndirect2KHR),
     ENTRY(vkCmdDraw),
     ENTRY(vkCmdDrawIndexed),
     ENTRY(vkCmdDrawIndexedIndirect),
+    ENTRY(vkCmdDrawIndexedIndirect2KHR),
     ENTRY(vkCmdDrawIndexedIndirectCount),
+    ENTRY(vkCmdDrawIndexedIndirectCount2KHR),
     ENTRY(vkCmdDrawIndexedIndirectCountKHR),
     ENTRY(vkCmdDrawIndirect),
+    ENTRY(vkCmdDrawIndirect2KHR),
+    ENTRY(vkCmdDrawIndirectByteCount2EXT),
     ENTRY(vkCmdDrawIndirectByteCountEXT),
     ENTRY(vkCmdDrawIndirectCount),
+    ENTRY(vkCmdDrawIndirectCount2KHR),
     ENTRY(vkCmdDrawIndirectCountKHR),
     ENTRY(vkCmdDrawMeshTasksEXT),
+    ENTRY(vkCmdDrawMeshTasksIndirect2EXT),
+    ENTRY(vkCmdDrawMeshTasksIndirectCount2EXT),
     ENTRY(vkCmdDrawMeshTasksIndirectCountEXT),
     ENTRY(vkCmdDrawMeshTasksIndirectEXT),
     ENTRY(vkCmdDrawMultiEXT),
@@ -181,10 +198,12 @@ static const struct DeviceInterceptTableEntry deviceIntercepts[] = {
     ENTRY(vkCmdEndRendering2KHR),
     ENTRY(vkCmdEndRenderingKHR),
     ENTRY(vkCmdEndShaderInstrumentationARM),
+    ENTRY(vkCmdEndTransformFeedback2EXT),
     ENTRY(vkCmdEndTransformFeedbackEXT),
     ENTRY(vkCmdExecuteCommands),
     ENTRY(vkCmdExecuteGeneratedCommandsEXT),
     ENTRY(vkCmdFillBuffer),
+    ENTRY(vkCmdFillMemoryKHR),
     ENTRY(vkCmdInsertDebugUtilsLabelEXT),
     ENTRY(vkCmdNextSubpass),
     ENTRY(vkCmdNextSubpass2),
@@ -311,10 +330,13 @@ static const struct DeviceInterceptTableEntry deviceIntercepts[] = {
     ENTRY(vkCmdTraceRaysIndirectKHR),
     ENTRY(vkCmdTraceRaysKHR),
     ENTRY(vkCmdUpdateBuffer),
+    ENTRY(vkCmdUpdateMemoryKHR),
     ENTRY(vkCmdWaitEvents),
     ENTRY(vkCmdWaitEvents2),
     ENTRY(vkCmdWaitEvents2KHR),
     ENTRY(vkCmdWriteAccelerationStructuresPropertiesKHR),
+    ENTRY(vkCmdWriteBufferMarker2AMD),
+    ENTRY(vkCmdWriteMarkerToMemoryAMD),
     ENTRY(vkCmdWriteMicromapsPropertiesEXT),
     ENTRY(vkCmdWriteTimestamp),
     ENTRY(vkCmdWriteTimestamp2),
@@ -331,6 +353,7 @@ static const struct DeviceInterceptTableEntry deviceIntercepts[] = {
     ENTRY(vkCopyMemoryToMicromapEXT),
     ENTRY(vkCopyMicromapEXT),
     ENTRY(vkCopyMicromapToMemoryEXT),
+    ENTRY(vkCreateAccelerationStructure2KHR),
     ENTRY(vkCreateAccelerationStructureKHR),
     ENTRY(vkCreateBuffer),
     ENTRY(vkCreateBufferView),
@@ -450,7 +473,9 @@ static const struct DeviceInterceptTableEntry deviceIntercepts[] = {
     ENTRY(vkGetDeviceAccelerationStructureCompatibilityKHR),
     ENTRY(vkGetDeviceBufferMemoryRequirements),
     ENTRY(vkGetDeviceBufferMemoryRequirementsKHR),
+    ENTRY(vkGetDeviceFaultDebugInfoKHR),
     ENTRY(vkGetDeviceFaultInfoEXT),
+    ENTRY(vkGetDeviceFaultReportsKHR),
     ENTRY(vkGetDeviceGroupPeerMemoryFeatures),
     ENTRY(vkGetDeviceGroupPeerMemoryFeaturesKHR),
     ENTRY(vkGetDeviceGroupPresentCapabilitiesKHR),
@@ -615,6 +640,7 @@ struct DeviceDispatchTable {
     PFN_vkBuildAccelerationStructuresKHR vkBuildAccelerationStructuresKHR;
     PFN_vkBuildMicromapsEXT vkBuildMicromapsEXT;
     PFN_vkClearShaderInstrumentationMetricsARM vkClearShaderInstrumentationMetricsARM;
+    PFN_vkCmdBeginConditionalRendering2EXT vkCmdBeginConditionalRendering2EXT;
     PFN_vkCmdBeginConditionalRenderingEXT vkCmdBeginConditionalRenderingEXT;
     PFN_vkCmdBeginCustomResolveEXT vkCmdBeginCustomResolveEXT;
     PFN_vkCmdBeginDebugUtilsLabelEXT vkCmdBeginDebugUtilsLabelEXT;
@@ -626,6 +652,7 @@ struct DeviceDispatchTable {
     PFN_vkCmdBeginRendering vkCmdBeginRendering;
     PFN_vkCmdBeginRenderingKHR vkCmdBeginRenderingKHR;
     PFN_vkCmdBeginShaderInstrumentationARM vkCmdBeginShaderInstrumentationARM;
+    PFN_vkCmdBeginTransformFeedback2EXT vkCmdBeginTransformFeedback2EXT;
     PFN_vkCmdBeginTransformFeedbackEXT vkCmdBeginTransformFeedbackEXT;
     PFN_vkCmdBindDescriptorBufferEmbeddedSamplers2EXT vkCmdBindDescriptorBufferEmbeddedSamplers2EXT;
     PFN_vkCmdBindDescriptorBufferEmbeddedSamplersEXT vkCmdBindDescriptorBufferEmbeddedSamplersEXT;
@@ -636,14 +663,17 @@ struct DeviceDispatchTable {
     PFN_vkCmdBindIndexBuffer vkCmdBindIndexBuffer;
     PFN_vkCmdBindIndexBuffer2 vkCmdBindIndexBuffer2;
     PFN_vkCmdBindIndexBuffer2KHR vkCmdBindIndexBuffer2KHR;
+    PFN_vkCmdBindIndexBuffer3KHR vkCmdBindIndexBuffer3KHR;
     PFN_vkCmdBindPipeline vkCmdBindPipeline;
     PFN_vkCmdBindResourceHeapEXT vkCmdBindResourceHeapEXT;
     PFN_vkCmdBindSamplerHeapEXT vkCmdBindSamplerHeapEXT;
     PFN_vkCmdBindShadersEXT vkCmdBindShadersEXT;
+    PFN_vkCmdBindTransformFeedbackBuffers2EXT vkCmdBindTransformFeedbackBuffers2EXT;
     PFN_vkCmdBindTransformFeedbackBuffersEXT vkCmdBindTransformFeedbackBuffersEXT;
     PFN_vkCmdBindVertexBuffers vkCmdBindVertexBuffers;
     PFN_vkCmdBindVertexBuffers2 vkCmdBindVertexBuffers2;
     PFN_vkCmdBindVertexBuffers2EXT vkCmdBindVertexBuffers2EXT;
+    PFN_vkCmdBindVertexBuffers3KHR vkCmdBindVertexBuffers3KHR;
     PFN_vkCmdBlitImage vkCmdBlitImage;
     PFN_vkCmdBlitImage2 vkCmdBlitImage2;
     PFN_vkCmdBlitImage2KHR vkCmdBlitImage2KHR;
@@ -667,13 +697,17 @@ struct DeviceDispatchTable {
     PFN_vkCmdCopyImageToBuffer vkCmdCopyImageToBuffer;
     PFN_vkCmdCopyImageToBuffer2 vkCmdCopyImageToBuffer2;
     PFN_vkCmdCopyImageToBuffer2KHR vkCmdCopyImageToBuffer2KHR;
+    PFN_vkCmdCopyImageToMemoryKHR vkCmdCopyImageToMemoryKHR;
     PFN_vkCmdCopyMemoryIndirectKHR vkCmdCopyMemoryIndirectKHR;
+    PFN_vkCmdCopyMemoryKHR vkCmdCopyMemoryKHR;
     PFN_vkCmdCopyMemoryToAccelerationStructureKHR vkCmdCopyMemoryToAccelerationStructureKHR;
     PFN_vkCmdCopyMemoryToImageIndirectKHR vkCmdCopyMemoryToImageIndirectKHR;
+    PFN_vkCmdCopyMemoryToImageKHR vkCmdCopyMemoryToImageKHR;
     PFN_vkCmdCopyMemoryToMicromapEXT vkCmdCopyMemoryToMicromapEXT;
     PFN_vkCmdCopyMicromapEXT vkCmdCopyMicromapEXT;
     PFN_vkCmdCopyMicromapToMemoryEXT vkCmdCopyMicromapToMemoryEXT;
     PFN_vkCmdCopyQueryPoolResults vkCmdCopyQueryPoolResults;
+    PFN_vkCmdCopyQueryPoolResultsToMemoryKHR vkCmdCopyQueryPoolResultsToMemoryKHR;
     PFN_vkCmdCopyTensorARM vkCmdCopyTensorARM;
     PFN_vkCmdDebugMarkerBeginEXT vkCmdDebugMarkerBeginEXT;
     PFN_vkCmdDebugMarkerEndEXT vkCmdDebugMarkerEndEXT;
@@ -685,16 +719,24 @@ struct DeviceDispatchTable {
     PFN_vkCmdDispatchBaseKHR vkCmdDispatchBaseKHR;
     PFN_vkCmdDispatchDataGraphARM vkCmdDispatchDataGraphARM;
     PFN_vkCmdDispatchIndirect vkCmdDispatchIndirect;
+    PFN_vkCmdDispatchIndirect2KHR vkCmdDispatchIndirect2KHR;
     PFN_vkCmdDraw vkCmdDraw;
     PFN_vkCmdDrawIndexed vkCmdDrawIndexed;
     PFN_vkCmdDrawIndexedIndirect vkCmdDrawIndexedIndirect;
+    PFN_vkCmdDrawIndexedIndirect2KHR vkCmdDrawIndexedIndirect2KHR;
     PFN_vkCmdDrawIndexedIndirectCount vkCmdDrawIndexedIndirectCount;
+    PFN_vkCmdDrawIndexedIndirectCount2KHR vkCmdDrawIndexedIndirectCount2KHR;
     PFN_vkCmdDrawIndexedIndirectCountKHR vkCmdDrawIndexedIndirectCountKHR;
     PFN_vkCmdDrawIndirect vkCmdDrawIndirect;
+    PFN_vkCmdDrawIndirect2KHR vkCmdDrawIndirect2KHR;
+    PFN_vkCmdDrawIndirectByteCount2EXT vkCmdDrawIndirectByteCount2EXT;
     PFN_vkCmdDrawIndirectByteCountEXT vkCmdDrawIndirectByteCountEXT;
     PFN_vkCmdDrawIndirectCount vkCmdDrawIndirectCount;
+    PFN_vkCmdDrawIndirectCount2KHR vkCmdDrawIndirectCount2KHR;
     PFN_vkCmdDrawIndirectCountKHR vkCmdDrawIndirectCountKHR;
     PFN_vkCmdDrawMeshTasksEXT vkCmdDrawMeshTasksEXT;
+    PFN_vkCmdDrawMeshTasksIndirect2EXT vkCmdDrawMeshTasksIndirect2EXT;
+    PFN_vkCmdDrawMeshTasksIndirectCount2EXT vkCmdDrawMeshTasksIndirectCount2EXT;
     PFN_vkCmdDrawMeshTasksIndirectCountEXT vkCmdDrawMeshTasksIndirectCountEXT;
     PFN_vkCmdDrawMeshTasksIndirectEXT vkCmdDrawMeshTasksIndirectEXT;
     PFN_vkCmdDrawMultiEXT vkCmdDrawMultiEXT;
@@ -711,10 +753,12 @@ struct DeviceDispatchTable {
     PFN_vkCmdEndRendering2KHR vkCmdEndRendering2KHR;
     PFN_vkCmdEndRenderingKHR vkCmdEndRenderingKHR;
     PFN_vkCmdEndShaderInstrumentationARM vkCmdEndShaderInstrumentationARM;
+    PFN_vkCmdEndTransformFeedback2EXT vkCmdEndTransformFeedback2EXT;
     PFN_vkCmdEndTransformFeedbackEXT vkCmdEndTransformFeedbackEXT;
     PFN_vkCmdExecuteCommands vkCmdExecuteCommands;
     PFN_vkCmdExecuteGeneratedCommandsEXT vkCmdExecuteGeneratedCommandsEXT;
     PFN_vkCmdFillBuffer vkCmdFillBuffer;
+    PFN_vkCmdFillMemoryKHR vkCmdFillMemoryKHR;
     PFN_vkCmdInsertDebugUtilsLabelEXT vkCmdInsertDebugUtilsLabelEXT;
     PFN_vkCmdNextSubpass vkCmdNextSubpass;
     PFN_vkCmdNextSubpass2 vkCmdNextSubpass2;
@@ -841,10 +885,13 @@ struct DeviceDispatchTable {
     PFN_vkCmdTraceRaysIndirectKHR vkCmdTraceRaysIndirectKHR;
     PFN_vkCmdTraceRaysKHR vkCmdTraceRaysKHR;
     PFN_vkCmdUpdateBuffer vkCmdUpdateBuffer;
+    PFN_vkCmdUpdateMemoryKHR vkCmdUpdateMemoryKHR;
     PFN_vkCmdWaitEvents vkCmdWaitEvents;
     PFN_vkCmdWaitEvents2 vkCmdWaitEvents2;
     PFN_vkCmdWaitEvents2KHR vkCmdWaitEvents2KHR;
     PFN_vkCmdWriteAccelerationStructuresPropertiesKHR vkCmdWriteAccelerationStructuresPropertiesKHR;
+    PFN_vkCmdWriteBufferMarker2AMD vkCmdWriteBufferMarker2AMD;
+    PFN_vkCmdWriteMarkerToMemoryAMD vkCmdWriteMarkerToMemoryAMD;
     PFN_vkCmdWriteMicromapsPropertiesEXT vkCmdWriteMicromapsPropertiesEXT;
     PFN_vkCmdWriteTimestamp vkCmdWriteTimestamp;
     PFN_vkCmdWriteTimestamp2 vkCmdWriteTimestamp2;
@@ -861,6 +908,7 @@ struct DeviceDispatchTable {
     PFN_vkCopyMemoryToMicromapEXT vkCopyMemoryToMicromapEXT;
     PFN_vkCopyMicromapEXT vkCopyMicromapEXT;
     PFN_vkCopyMicromapToMemoryEXT vkCopyMicromapToMemoryEXT;
+    PFN_vkCreateAccelerationStructure2KHR vkCreateAccelerationStructure2KHR;
     PFN_vkCreateAccelerationStructureKHR vkCreateAccelerationStructureKHR;
     PFN_vkCreateBuffer vkCreateBuffer;
     PFN_vkCreateBufferView vkCreateBufferView;
@@ -980,7 +1028,9 @@ struct DeviceDispatchTable {
     PFN_vkGetDeviceAccelerationStructureCompatibilityKHR vkGetDeviceAccelerationStructureCompatibilityKHR;
     PFN_vkGetDeviceBufferMemoryRequirements vkGetDeviceBufferMemoryRequirements;
     PFN_vkGetDeviceBufferMemoryRequirementsKHR vkGetDeviceBufferMemoryRequirementsKHR;
+    PFN_vkGetDeviceFaultDebugInfoKHR vkGetDeviceFaultDebugInfoKHR;
     PFN_vkGetDeviceFaultInfoEXT vkGetDeviceFaultInfoEXT;
+    PFN_vkGetDeviceFaultReportsKHR vkGetDeviceFaultReportsKHR;
     PFN_vkGetDeviceGroupPeerMemoryFeatures vkGetDeviceGroupPeerMemoryFeatures;
     PFN_vkGetDeviceGroupPeerMemoryFeaturesKHR vkGetDeviceGroupPeerMemoryFeaturesKHR;
     PFN_vkGetDeviceGroupPresentCapabilitiesKHR vkGetDeviceGroupPresentCapabilitiesKHR;
@@ -1154,6 +1204,7 @@ static inline void initDriverDeviceDispatchTable(
     ENTRY(vkBuildAccelerationStructuresKHR);
     ENTRY(vkBuildMicromapsEXT);
     ENTRY(vkClearShaderInstrumentationMetricsARM);
+    ENTRY(vkCmdBeginConditionalRendering2EXT);
     ENTRY(vkCmdBeginConditionalRenderingEXT);
     ENTRY(vkCmdBeginCustomResolveEXT);
     ENTRY(vkCmdBeginDebugUtilsLabelEXT);
@@ -1165,6 +1216,7 @@ static inline void initDriverDeviceDispatchTable(
     ENTRY(vkCmdBeginRendering);
     ENTRY(vkCmdBeginRenderingKHR);
     ENTRY(vkCmdBeginShaderInstrumentationARM);
+    ENTRY(vkCmdBeginTransformFeedback2EXT);
     ENTRY(vkCmdBeginTransformFeedbackEXT);
     ENTRY(vkCmdBindDescriptorBufferEmbeddedSamplers2EXT);
     ENTRY(vkCmdBindDescriptorBufferEmbeddedSamplersEXT);
@@ -1175,14 +1227,17 @@ static inline void initDriverDeviceDispatchTable(
     ENTRY(vkCmdBindIndexBuffer);
     ENTRY(vkCmdBindIndexBuffer2);
     ENTRY(vkCmdBindIndexBuffer2KHR);
+    ENTRY(vkCmdBindIndexBuffer3KHR);
     ENTRY(vkCmdBindPipeline);
     ENTRY(vkCmdBindResourceHeapEXT);
     ENTRY(vkCmdBindSamplerHeapEXT);
     ENTRY(vkCmdBindShadersEXT);
+    ENTRY(vkCmdBindTransformFeedbackBuffers2EXT);
     ENTRY(vkCmdBindTransformFeedbackBuffersEXT);
     ENTRY(vkCmdBindVertexBuffers);
     ENTRY(vkCmdBindVertexBuffers2);
     ENTRY(vkCmdBindVertexBuffers2EXT);
+    ENTRY(vkCmdBindVertexBuffers3KHR);
     ENTRY(vkCmdBlitImage);
     ENTRY(vkCmdBlitImage2);
     ENTRY(vkCmdBlitImage2KHR);
@@ -1206,13 +1261,17 @@ static inline void initDriverDeviceDispatchTable(
     ENTRY(vkCmdCopyImageToBuffer);
     ENTRY(vkCmdCopyImageToBuffer2);
     ENTRY(vkCmdCopyImageToBuffer2KHR);
+    ENTRY(vkCmdCopyImageToMemoryKHR);
     ENTRY(vkCmdCopyMemoryIndirectKHR);
+    ENTRY(vkCmdCopyMemoryKHR);
     ENTRY(vkCmdCopyMemoryToAccelerationStructureKHR);
     ENTRY(vkCmdCopyMemoryToImageIndirectKHR);
+    ENTRY(vkCmdCopyMemoryToImageKHR);
     ENTRY(vkCmdCopyMemoryToMicromapEXT);
     ENTRY(vkCmdCopyMicromapEXT);
     ENTRY(vkCmdCopyMicromapToMemoryEXT);
     ENTRY(vkCmdCopyQueryPoolResults);
+    ENTRY(vkCmdCopyQueryPoolResultsToMemoryKHR);
     ENTRY(vkCmdCopyTensorARM);
     ENTRY(vkCmdDebugMarkerBeginEXT);
     ENTRY(vkCmdDebugMarkerEndEXT);
@@ -1224,16 +1283,24 @@ static inline void initDriverDeviceDispatchTable(
     ENTRY(vkCmdDispatchBaseKHR);
     ENTRY(vkCmdDispatchDataGraphARM);
     ENTRY(vkCmdDispatchIndirect);
+    ENTRY(vkCmdDispatchIndirect2KHR);
     ENTRY(vkCmdDraw);
     ENTRY(vkCmdDrawIndexed);
     ENTRY(vkCmdDrawIndexedIndirect);
+    ENTRY(vkCmdDrawIndexedIndirect2KHR);
     ENTRY(vkCmdDrawIndexedIndirectCount);
+    ENTRY(vkCmdDrawIndexedIndirectCount2KHR);
     ENTRY(vkCmdDrawIndexedIndirectCountKHR);
     ENTRY(vkCmdDrawIndirect);
+    ENTRY(vkCmdDrawIndirect2KHR);
+    ENTRY(vkCmdDrawIndirectByteCount2EXT);
     ENTRY(vkCmdDrawIndirectByteCountEXT);
     ENTRY(vkCmdDrawIndirectCount);
+    ENTRY(vkCmdDrawIndirectCount2KHR);
     ENTRY(vkCmdDrawIndirectCountKHR);
     ENTRY(vkCmdDrawMeshTasksEXT);
+    ENTRY(vkCmdDrawMeshTasksIndirect2EXT);
+    ENTRY(vkCmdDrawMeshTasksIndirectCount2EXT);
     ENTRY(vkCmdDrawMeshTasksIndirectCountEXT);
     ENTRY(vkCmdDrawMeshTasksIndirectEXT);
     ENTRY(vkCmdDrawMultiEXT);
@@ -1250,10 +1317,12 @@ static inline void initDriverDeviceDispatchTable(
     ENTRY(vkCmdEndRendering2KHR);
     ENTRY(vkCmdEndRenderingKHR);
     ENTRY(vkCmdEndShaderInstrumentationARM);
+    ENTRY(vkCmdEndTransformFeedback2EXT);
     ENTRY(vkCmdEndTransformFeedbackEXT);
     ENTRY(vkCmdExecuteCommands);
     ENTRY(vkCmdExecuteGeneratedCommandsEXT);
     ENTRY(vkCmdFillBuffer);
+    ENTRY(vkCmdFillMemoryKHR);
     ENTRY(vkCmdInsertDebugUtilsLabelEXT);
     ENTRY(vkCmdNextSubpass);
     ENTRY(vkCmdNextSubpass2);
@@ -1380,10 +1449,13 @@ static inline void initDriverDeviceDispatchTable(
     ENTRY(vkCmdTraceRaysIndirectKHR);
     ENTRY(vkCmdTraceRaysKHR);
     ENTRY(vkCmdUpdateBuffer);
+    ENTRY(vkCmdUpdateMemoryKHR);
     ENTRY(vkCmdWaitEvents);
     ENTRY(vkCmdWaitEvents2);
     ENTRY(vkCmdWaitEvents2KHR);
     ENTRY(vkCmdWriteAccelerationStructuresPropertiesKHR);
+    ENTRY(vkCmdWriteBufferMarker2AMD);
+    ENTRY(vkCmdWriteMarkerToMemoryAMD);
     ENTRY(vkCmdWriteMicromapsPropertiesEXT);
     ENTRY(vkCmdWriteTimestamp);
     ENTRY(vkCmdWriteTimestamp2);
@@ -1400,6 +1472,7 @@ static inline void initDriverDeviceDispatchTable(
     ENTRY(vkCopyMemoryToMicromapEXT);
     ENTRY(vkCopyMicromapEXT);
     ENTRY(vkCopyMicromapToMemoryEXT);
+    ENTRY(vkCreateAccelerationStructure2KHR);
     ENTRY(vkCreateAccelerationStructureKHR);
     ENTRY(vkCreateBuffer);
     ENTRY(vkCreateBufferView);
@@ -1519,7 +1592,9 @@ static inline void initDriverDeviceDispatchTable(
     ENTRY(vkGetDeviceAccelerationStructureCompatibilityKHR);
     ENTRY(vkGetDeviceBufferMemoryRequirements);
     ENTRY(vkGetDeviceBufferMemoryRequirementsKHR);
+    ENTRY(vkGetDeviceFaultDebugInfoKHR);
     ENTRY(vkGetDeviceFaultInfoEXT);
+    ENTRY(vkGetDeviceFaultReportsKHR);
     ENTRY(vkGetDeviceGroupPeerMemoryFeatures);
     ENTRY(vkGetDeviceGroupPeerMemoryFeaturesKHR);
     ENTRY(vkGetDeviceGroupPresentCapabilitiesKHR);
