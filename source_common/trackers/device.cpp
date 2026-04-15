@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2022-2024 Arm Limited
+ * Copyright (c) 2022-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -46,6 +46,15 @@ CommandPool& Device::getCommandPool(VkCommandPool commandPool)
 /* See header for documentation. */
 void Device::destroyCommandPool(VkCommandPool commandPool)
 {
+    auto& pool = getCommandPool(commandPool);
+
+    // Release command buffer trackers for command buffers still allocated
+    for (auto& cb : pool.getCommandBuffers())
+    {
+        commandBuffers.erase(cb.first);
+    }
+
+    // Release the pool itself
     commandPools.erase(commandPool);
 }
 

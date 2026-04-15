@@ -163,7 +163,7 @@ static inline bool isInExtensionList(
     uint32_t extensionCount,
     const char* const* extensionList
 ) {
-    for(uint32_t i = 0; i < extensionCount; i++)
+    for (uint32_t i = 0; i < extensionCount; i++)
     {
         if (target == extensionList[i])
         {

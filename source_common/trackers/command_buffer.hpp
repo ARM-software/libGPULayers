@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2022-2024 Arm Limited
+ * Copyright (c) 2022-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -240,6 +240,8 @@ private:
  */
 class CommandPool
 {
+    using CommandBufferMap = std::unordered_map<VkCommandBuffer, std::unique_ptr<CommandBuffer>>;
+
 public:
     /**
      * @brief Construct a new command pool wrapping a Vulkan allocation.
@@ -265,6 +267,16 @@ public:
     void freeCommandBuffer(VkCommandBuffer commandBuffer);
 
     /**
+     * @brief Return view onto the allocated command buffers in the pool.
+     *
+     * @return A read-only view of the command buffer mapping.
+     */
+    const CommandBufferMap& getCommandBuffers()
+    {
+        return commandBuffers;
+    }
+
+    /**
      * @brief Reset all allocated command buffers into the @a Initial state.
      */
     void reset();
@@ -278,7 +290,7 @@ private:
     /**
      * @brief The command buffers currently allocated in this command pool.
      */
-    std::unordered_map<VkCommandBuffer, std::unique_ptr<CommandBuffer>> commandBuffers;
+    CommandBufferMap commandBuffers;
 };
 
 }
