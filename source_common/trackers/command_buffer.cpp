@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2022-2025 Arm Limited
+ * Copyright (c) 2022-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -42,6 +42,7 @@ void CommandBuffer::reset()
 {
     oneTimeSubmit = false;
     stats.reset();
+    currentRenderPass.reset();
     workloadCommandStream.clear();
 }
 
