@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: MIT
 # -----------------------------------------------------------------------------
-# Copyright (c) 2024-2025 Arm Limited
+# Copyright (c) 2024-2026 Arm Limited
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the 'Software'), to
@@ -280,7 +280,7 @@ class TimelineWidgetBase:
 
     def remove_multiple_from_active_objects(self, old_objects):
         '''
-        Remove an sequence of objects from the set of active objects.
+        Remove a sequence of objects from the set of active objects.
 
         Args:
             old_objects: the sequence of objects to remove.

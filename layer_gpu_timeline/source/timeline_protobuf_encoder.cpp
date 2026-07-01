@@ -48,7 +48,7 @@ enum class HeaderVersionNo
 /* The connection header message sent to identify the version of the timeline protocol used. This should be sent exactly
  * once per connection */
 using Header = pp::message<
-    /* The only mandatory field of this message. This identifys the version. Any subsequent fields are
+    /* The only mandatory field of this message. This identifies the version. Any subsequent fields are
      * versioned based on this. All additional fields must be optional and additive (no removals) */
     pp::enum_field<"version_no", 1, HeaderVersionNo>>;
 
@@ -198,7 +198,7 @@ enum class BufferTransferType
     copy_tensor = 4,
 };
 
-/* An buffer transfer submission */
+/* A buffer transfer submission */
 using BufferTransfer = pp::message<
     /* The unique identifier for this operation */
     pp::uint64_field<"tag_id", 1>,

@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: MIT
 # -----------------------------------------------------------------------------
-# Copyright (c) 2024-2025 Arm Limited
+# Copyright (c) 2024-2026 Arm Limited
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the 'Software'), to
@@ -21,8 +21,8 @@
 # SOFTWARE.
 # -----------------------------------------------------------------------------
 '''
-This module contains a utility to popup a synchronous dialog with basic a
-text entry prompt.
+This module contains a utility to popup a synchronous dialog with a basic text
+entry prompt.
 '''
 
 import gi

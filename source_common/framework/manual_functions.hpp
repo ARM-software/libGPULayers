@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024-2025 Arm Limited
+ * Copyright (c) 2024-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -161,7 +161,7 @@ APIVersion increaseAPIVersion(const APIVersion& userVersion,
  *
  * WARNING: This function only works on Android and only works for the bottom
  * layer in a stack. Layers higher up the stack are likely to crash, and there
- * is no workaround because the the Android loader doesn't implement chainable
+ * is no workaround because the Android loader doesn't implement chainable
  * queries for pre-instance functions.
  *
  * @param pCreateInfo   The instance creation data from the loader.

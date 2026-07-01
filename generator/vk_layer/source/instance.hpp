@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024-2025 Arm Limited
+ * Copyright (c) 2024-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -36,7 +36,7 @@
  * instance commands all take some form of dispatchable handle that can be
  * resolved into a unique per-instance key. For the driver this key would
  * simply be a pointer directly to the driver-internal instance object, but for
- * our layer we use a instance dispatch key as an index in to the map to find
+ * our layer we use an instance dispatch key as an index in to the map to find
  * the layer's instance object.
  *
  * Key properties

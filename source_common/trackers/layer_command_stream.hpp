@@ -135,8 +135,8 @@ protected:
     /**
      * @brief The number of draw calls in the render pass.
      *
-     * Note: This is updated by ther command buffer tracker when the render
-     * pass is suspended or ended.
+     * Note: This is updated by the command buffer tracker when the render pass
+     * is suspended or ended.
      */
     uint64_t drawCallCount {0};
 
@@ -616,7 +616,7 @@ using LCSInstruction = std::variant<
     LCSInstructionWorkload<LCSImageTransfer>,
     // The instruction represents a buffer transfer workload operation
     LCSInstructionWorkload<LCSBufferTransfer>,
-    // The instruction represents an acceleration structure buildworkload operation
+    // The instruction represents an acceleration structure build workload operation
     LCSInstructionWorkload<LCSAccelerationStructureBuild>,
     // The instruction represents an acceleration structure transfer workload operation
     LCSInstructionWorkload<LCSAccelerationStructureTransfer>>;

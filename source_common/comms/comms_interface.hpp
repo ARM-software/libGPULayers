@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024-2025 Arm Limited
+ * Copyright (c) 2024-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -53,7 +53,7 @@ using MessageData = std::vector<uint8_t>;
  * @brief A type used for service endpoint addresses in the host.
  *
  * Note that this hides the built-in registry service, which uses endpoint
- * zero, because a normaluser should not be calling it.
+ * zero, because a normal user should not be calling it.
  */
 static const EndpointID NO_ENDPOINT {0};
 
