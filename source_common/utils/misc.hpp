@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2022-2025 Arm Limited
+ * Copyright (c) 2022-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -179,7 +179,7 @@ static inline bool isInExtensionList(
  *
  * On 64-bit Arm systems this strips the MTE tag in the top byte, which means
  * that the pointer cannot be converted back into a usable pointer without
- * triggering an MTE tag violation, so the returns value is for cosmetic use
+ * triggering an MTE tag violation, so the returned value is for cosmetic use
  * only.
  *
  * @param pointer   The pointer to display.

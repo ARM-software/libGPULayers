@@ -1,7 +1,7 @@
 #!/bin/env python3
 # SPDX-License-Identifier: MIT
 # -----------------------------------------------------------------------------
-# Copyright (c) 2024-2025 Arm Limited
+# Copyright (c) 2024-2026 Arm Limited
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the 'Software'), to
@@ -63,7 +63,7 @@ def parse_cli() -> argparse.Namespace:
 
     parser.add_argument(
         '--timeline', '-T', type=str, default=None,
-        help='file path to save timeline metadata to to after a run')
+        help='file path to save timeline metadata to after a run')
 
     return parser.parse_args()
 

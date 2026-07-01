@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: MIT
 # -----------------------------------------------------------------------------
-# Copyright (c) 2024-2025 Arm Limited
+# Copyright (c) 2024-2026 Arm Limited
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the 'Software'), to
@@ -400,7 +400,7 @@ class CSSFont(tuple):
 
 class CSSDash(list):
     '''
-    An Cairo dash definition, stored as a list of mark-space values or `none`
+    A Cairo dash definition, stored as a list of mark-space values or None
     if a solid line is desired.
 
     TODO: Do these have to be lists, or can we use tuples?

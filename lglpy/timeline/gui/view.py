@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: MIT
 # -----------------------------------------------------------------------------
-# Copyright (c) 2024-2025 Arm Limited
+# Copyright (c) 2024-2026 Arm Limited
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the 'Software'), to
@@ -67,7 +67,7 @@ class View:
             automatically updated on window resize.
         menu_item: The GTK menu related to this view.
         css: The CSS-ish stylesheet instance for styling the GUI.
-        background_color:q The view background color.
+        background_color: The view background color.
     '''
 
     MENU_NAME = "<<SubclassMe>>"
@@ -119,12 +119,12 @@ class View:
 
         This function does nothing in the base class, but subclasses can use it
         to implement deferred behavior which is only triggered when the view is
-        activated, rather than when it is initialized or data or loaded.
+        activated, rather than when it is initialized or data is loaded.
         '''
 
     def deactivate(self) -> None:
         '''
-        Turn this view into an deactivated view.
+        Turn this view into a deactivated view.
 
         This function does nothing in the base class, but subclasses can use it
         to implement behavior which is triggered when the user switches away

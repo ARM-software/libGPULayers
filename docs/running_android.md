@@ -27,7 +27,7 @@ avoid the interactive prompt by manually specifying the device
 Once you have selected a device and package, wait for the layer to be installed
 and configured. The script will notify you when this has been done.
 
-You can now perform you work by running the target application. The layer
+You can now perform your work by running the target application. The layer
 will be loaded automatically.
 
 After you are finished, return to the script and press a key to notify it that
@@ -143,6 +143,6 @@ adb shell settings delete global gpu_debug_layer_app
 
 - - -
 
-_Copyright © 2024-2025, Arm Limited and contributors._
+_Copyright © 2024-2026, Arm Limited and contributors._
 
 [1]: https://github.com/KhronosGroup/Vulkan-ValidationLayers/releases/
