@@ -76,4 +76,11 @@ macro(lgl_set_build_options BUILD_TARGET_NAME)
             CONFIG_LOG=$<BOOL:${LGL_CONFIG_LOG}>
             CONFIG_OPTIMIZE_DISPATCH=$<BOOL:${LGL_CONFIG_OPTIMIZE_DISPATCH}>)
 
+    # Force 16KB section alignment for compatibility with modern Android devices
+    # See https://developer.android.com/guide/practices/page-sizes
+    target_link_options(
+        ${BUILD_TARGET_NAME} PRIVATE
+            $<$<PLATFORM_ID:Android>:-Wl,-z,max-page-size=16384>
+            $<$<PLATFORM_ID:Android>:-Wl,-z,common-page-size=16384>)
+
 endmacro()
