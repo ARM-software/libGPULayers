@@ -522,6 +522,23 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceCalibrateableTimeDomains
 /* See Vulkan API for documentation. */
 /* Delete the generic match-all */
 template <typename T>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceCooperativeMatrixProperties2EXT(
+    VkPhysicalDevice physicalDevice,
+    const VkPhysicalDeviceCooperativeMatrixInfo2EXT* pCooperativeMatrixInfo,
+    uint32_t* pPropertyCount,
+    VkCooperativeMatrixProperties2EXT* pProperties) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceCooperativeMatrixProperties2EXT<default_tag>(
+    VkPhysicalDevice physicalDevice,
+    const VkPhysicalDeviceCooperativeMatrixInfo2EXT* pCooperativeMatrixInfo,
+    uint32_t* pPropertyCount,
+    VkCooperativeMatrixProperties2EXT* pProperties);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR(
     VkPhysicalDevice physicalDevice,
     uint32_t* pPropertyCount,
@@ -973,6 +990,44 @@ template <>
 VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceProperties2KHR<default_tag>(
     VkPhysicalDevice physicalDevice,
     VkPhysicalDeviceProperties2* pProperties);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceQueueFamilyDataGraphEngineOperationPropertiesARM(
+    VkPhysicalDevice physicalDevice,
+    uint32_t queueFamilyIndex,
+    const VkQueueFamilyDataGraphPropertiesARM* pQueueFamilyDataGraphProperties,
+    VkBaseOutStructure* pProperties) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceQueueFamilyDataGraphEngineOperationPropertiesARM<default_tag>(
+    VkPhysicalDevice physicalDevice,
+    uint32_t queueFamilyIndex,
+    const VkQueueFamilyDataGraphPropertiesARM* pQueueFamilyDataGraphProperties,
+    VkBaseOutStructure* pProperties);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM(
+    VkPhysicalDevice physicalDevice,
+    uint32_t queueFamilyIndex,
+    const VkQueueFamilyDataGraphPropertiesARM* pQueueFamilyDataGraphProperties,
+    const VkDataGraphOpticalFlowImageFormatInfoARM* pOpticalFlowImageFormatInfo,
+    uint32_t* pFormatCount,
+    VkDataGraphOpticalFlowImageFormatPropertiesARM* pImageFormatProperties) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM<default_tag>(
+    VkPhysicalDevice physicalDevice,
+    uint32_t queueFamilyIndex,
+    const VkQueueFamilyDataGraphPropertiesARM* pQueueFamilyDataGraphProperties,
+    const VkDataGraphOpticalFlowImageFormatInfoARM* pOpticalFlowImageFormatInfo,
+    uint32_t* pFormatCount,
+    VkDataGraphOpticalFlowImageFormatPropertiesARM* pImageFormatProperties);
 
 /* See Vulkan API for documentation. */
 /* Delete the generic match-all */

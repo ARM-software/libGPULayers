@@ -3264,6 +3264,19 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDiscardRectangleModeEXT<default_tag>(
 /* See Vulkan API for documentation. */
 /* Delete the generic match-all */
 template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDispatchParametersARM(
+    VkCommandBuffer commandBuffer,
+    const VkDispatchParametersARM* pDispatchParameters) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDispatchParametersARM<default_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkDispatchParametersARM* pDispatchParameters);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetEvent(
     VkCommandBuffer commandBuffer,
     VkEvent event,
@@ -3521,6 +3534,19 @@ template <>
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetPrimitiveRestartEnableEXT<default_tag>(
     VkCommandBuffer commandBuffer,
     VkBool32 primitiveRestartEnable);
+
+/* See Vulkan API for documentation. */
+/* Delete the generic match-all */
+template <typename T>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetPrimitiveRestartIndexEXT(
+    VkCommandBuffer commandBuffer,
+    uint32_t primitiveRestartIndex) = delete;
+
+/* Default common code implementation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetPrimitiveRestartIndexEXT<default_tag>(
+    VkCommandBuffer commandBuffer,
+    uint32_t primitiveRestartIndex);
 
 /* See Vulkan API for documentation. */
 /* Delete the generic match-all */
@@ -7164,14 +7190,14 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPipelineKeyKHR<default_tag>(
 template <typename T>
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPipelinePropertiesEXT(
     VkDevice device,
-    const VkPipelineInfoEXT* pPipelineInfo,
+    const VkPipelineInfoKHR* pPipelineInfo,
     VkBaseOutStructure* pPipelineProperties) = delete;
 
 /* Default common code implementation. */
 template <>
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPipelinePropertiesEXT<default_tag>(
     VkDevice device,
-    const VkPipelineInfoEXT* pPipelineInfo,
+    const VkPipelineInfoKHR* pPipelineInfo,
     VkBaseOutStructure* pPipelineProperties);
 
 /* See Vulkan API for documentation. */

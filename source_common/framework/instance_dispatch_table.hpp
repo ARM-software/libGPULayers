@@ -102,6 +102,7 @@ static const struct InstanceInterceptTableEntry instanceIntercepts[] = {
     ENTRY(vkGetInstanceProcAddr),
     ENTRY(vkGetPhysicalDeviceCalibrateableTimeDomainsEXT),
     ENTRY(vkGetPhysicalDeviceCalibrateableTimeDomainsKHR),
+    ENTRY(vkGetPhysicalDeviceCooperativeMatrixProperties2EXT),
     ENTRY(vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR),
     ENTRY(vkGetPhysicalDeviceDescriptorSizeEXT),
     ENTRY(vkGetPhysicalDeviceDisplayPlaneProperties2KHR),
@@ -133,6 +134,8 @@ static const struct InstanceInterceptTableEntry instanceIntercepts[] = {
     ENTRY(vkGetPhysicalDeviceProperties),
     ENTRY(vkGetPhysicalDeviceProperties2),
     ENTRY(vkGetPhysicalDeviceProperties2KHR),
+    ENTRY(vkGetPhysicalDeviceQueueFamilyDataGraphEngineOperationPropertiesARM),
+    ENTRY(vkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM),
     ENTRY(vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM),
     ENTRY(vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM),
     ENTRY(vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR),
@@ -361,6 +364,7 @@ static const struct InstanceInterceptTableEntry instanceIntercepts[] = {
     ENTRY(vkCmdSetDiscardRectangleEXT),
     ENTRY(vkCmdSetDiscardRectangleEnableEXT),
     ENTRY(vkCmdSetDiscardRectangleModeEXT),
+    ENTRY(vkCmdSetDispatchParametersARM),
     ENTRY(vkCmdSetEvent),
     ENTRY(vkCmdSetEvent2),
     ENTRY(vkCmdSetEvent2KHR),
@@ -380,6 +384,7 @@ static const struct InstanceInterceptTableEntry instanceIntercepts[] = {
     ENTRY(vkCmdSetPolygonModeEXT),
     ENTRY(vkCmdSetPrimitiveRestartEnable),
     ENTRY(vkCmdSetPrimitiveRestartEnableEXT),
+    ENTRY(vkCmdSetPrimitiveRestartIndexEXT),
     ENTRY(vkCmdSetPrimitiveTopology),
     ENTRY(vkCmdSetPrimitiveTopologyEXT),
     ENTRY(vkCmdSetProvokingVertexModeEXT),
@@ -740,6 +745,7 @@ struct InstanceDispatchTable {
     PFN_vkGetDisplayPlaneSupportedDisplaysKHR vkGetDisplayPlaneSupportedDisplaysKHR;
     PFN_vkGetPhysicalDeviceCalibrateableTimeDomainsEXT vkGetPhysicalDeviceCalibrateableTimeDomainsEXT;
     PFN_vkGetPhysicalDeviceCalibrateableTimeDomainsKHR vkGetPhysicalDeviceCalibrateableTimeDomainsKHR;
+    PFN_vkGetPhysicalDeviceCooperativeMatrixProperties2EXT vkGetPhysicalDeviceCooperativeMatrixProperties2EXT;
     PFN_vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR;
     PFN_vkGetPhysicalDeviceDescriptorSizeEXT vkGetPhysicalDeviceDescriptorSizeEXT;
     PFN_vkGetPhysicalDeviceDisplayPlaneProperties2KHR vkGetPhysicalDeviceDisplayPlaneProperties2KHR;
@@ -771,6 +777,8 @@ struct InstanceDispatchTable {
     PFN_vkGetPhysicalDeviceProperties vkGetPhysicalDeviceProperties;
     PFN_vkGetPhysicalDeviceProperties2 vkGetPhysicalDeviceProperties2;
     PFN_vkGetPhysicalDeviceProperties2KHR vkGetPhysicalDeviceProperties2KHR;
+    PFN_vkGetPhysicalDeviceQueueFamilyDataGraphEngineOperationPropertiesARM vkGetPhysicalDeviceQueueFamilyDataGraphEngineOperationPropertiesARM;
+    PFN_vkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM vkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM;
     PFN_vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM;
     PFN_vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM;
     PFN_vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR;
@@ -837,6 +845,7 @@ static inline void initDriverInstanceDispatchTable(
     ENTRY(vkGetDisplayPlaneSupportedDisplaysKHR);
     ENTRY(vkGetPhysicalDeviceCalibrateableTimeDomainsEXT);
     ENTRY(vkGetPhysicalDeviceCalibrateableTimeDomainsKHR);
+    ENTRY(vkGetPhysicalDeviceCooperativeMatrixProperties2EXT);
     ENTRY(vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR);
     ENTRY(vkGetPhysicalDeviceDescriptorSizeEXT);
     ENTRY(vkGetPhysicalDeviceDisplayPlaneProperties2KHR);
@@ -868,6 +877,8 @@ static inline void initDriverInstanceDispatchTable(
     ENTRY(vkGetPhysicalDeviceProperties);
     ENTRY(vkGetPhysicalDeviceProperties2);
     ENTRY(vkGetPhysicalDeviceProperties2KHR);
+    ENTRY(vkGetPhysicalDeviceQueueFamilyDataGraphEngineOperationPropertiesARM);
+    ENTRY(vkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM);
     ENTRY(vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM);
     ENTRY(vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM);
     ENTRY(vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR);
