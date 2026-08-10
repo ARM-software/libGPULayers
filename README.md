@@ -64,6 +64,7 @@ Common documentation
 
 * [Building a layer](./docs/building.md)
 * [Creating a new layer](./docs/creating.md)
+* [Updating an existing layer](./docs/updating.md)
 * [Running using a layer on Android](./docs/running_android.md)
 * [Running using a layer on Linux](./docs/running_linux.md)
 * [About layers design notes](./docs/about_layers.md)
@@ -86,7 +87,7 @@ or general mobile graphics development or technology, please submit them on the
 
 - - -
 
-_Copyright © 2024-2025, Arm Limited and contributors._
+_Copyright © 2024-2026, Arm Limited and contributors._
 
 [1]: https://community.arm.com/support-forums/f/graphics-gaming-and-vr-forum/
 [2]: https://developer.arm.com/Tools%20and%20Software/Arm%20Performance%20Studio
