@@ -3816,6 +3816,23 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDiscardRectangleModeEXT<default_tag>(
 
 /* See Vulkan API for documentation. */
 template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetDispatchParametersARM<default_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkDispatchParametersARM* pDispatchParameters
+) {
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    auto* layer = Device::retrieve(commandBuffer);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    layer->driver.vkCmdSetDispatchParametersARM(commandBuffer, pDispatchParameters);
+}
+
+/* See Vulkan API for documentation. */
+template <>
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetEvent<default_tag>(
     VkCommandBuffer commandBuffer,
     VkEvent event,
@@ -4142,6 +4159,23 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetPrimitiveRestartEnableEXT<default_tag>(
     // Release the lock to call into the driver
     lock.unlock();
     layer->driver.vkCmdSetPrimitiveRestartEnableEXT(commandBuffer, primitiveRestartEnable);
+}
+
+/* See Vulkan API for documentation. */
+template <>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdSetPrimitiveRestartIndexEXT<default_tag>(
+    VkCommandBuffer commandBuffer,
+    uint32_t primitiveRestartIndex
+) {
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    auto* layer = Device::retrieve(commandBuffer);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    layer->driver.vkCmdSetPrimitiveRestartIndexEXT(commandBuffer, primitiveRestartIndex);
 }
 
 /* See Vulkan API for documentation. */
@@ -8340,7 +8374,7 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPipelineKeyKHR<default_tag>(
 template <>
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPipelinePropertiesEXT<default_tag>(
     VkDevice device,
-    const VkPipelineInfoEXT* pPipelineInfo,
+    const VkPipelineInfoKHR* pPipelineInfo,
     VkBaseOutStructure* pPipelineProperties
 ) {
     LAYER_TRACE(__func__);

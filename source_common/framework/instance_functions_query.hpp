@@ -695,6 +695,28 @@ constexpr PFN_vkGetPhysicalDeviceCalibrateableTimeDomainsKHR getLayerPtr_vkGetPh
 
 /* Test for user_tag availability. */
 template <typename T>
+concept hasLayerPtr_vkGetPhysicalDeviceCooperativeMatrixProperties2EXT = requires(
+    VkPhysicalDevice physicalDevice, const VkPhysicalDeviceCooperativeMatrixInfo2EXT* pCooperativeMatrixInfo, uint32_t* pPropertyCount, VkCooperativeMatrixProperties2EXT* pProperties
+) {
+    layer_vkGetPhysicalDeviceCooperativeMatrixProperties2EXT<T>(physicalDevice, pCooperativeMatrixInfo, pPropertyCount, pProperties);
+};
+
+/* Function pointer resolution. */
+constexpr PFN_vkGetPhysicalDeviceCooperativeMatrixProperties2EXT getLayerPtr_vkGetPhysicalDeviceCooperativeMatrixProperties2EXT()
+{
+    return [] <typename T>
+    {
+        if constexpr(hasLayerPtr_vkGetPhysicalDeviceCooperativeMatrixProperties2EXT<T>)
+        {
+            return layer_vkGetPhysicalDeviceCooperativeMatrixProperties2EXT<T>;
+        }
+
+        return layer_vkGetPhysicalDeviceCooperativeMatrixProperties2EXT<default_tag>;
+    }.operator()<user_tag>();
+}
+
+/* Test for user_tag availability. */
+template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR = requires(
     VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkCooperativeMatrixPropertiesKHR* pProperties
 ) {
@@ -1372,6 +1394,50 @@ constexpr PFN_vkGetPhysicalDeviceProperties2KHR getLayerPtr_vkGetPhysicalDeviceP
         }
 
         return layer_vkGetPhysicalDeviceProperties2KHR<default_tag>;
+    }.operator()<user_tag>();
+}
+
+/* Test for user_tag availability. */
+template <typename T>
+concept hasLayerPtr_vkGetPhysicalDeviceQueueFamilyDataGraphEngineOperationPropertiesARM = requires(
+    VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, const VkQueueFamilyDataGraphPropertiesARM* pQueueFamilyDataGraphProperties, VkBaseOutStructure* pProperties
+) {
+    layer_vkGetPhysicalDeviceQueueFamilyDataGraphEngineOperationPropertiesARM<T>(physicalDevice, queueFamilyIndex, pQueueFamilyDataGraphProperties, pProperties);
+};
+
+/* Function pointer resolution. */
+constexpr PFN_vkGetPhysicalDeviceQueueFamilyDataGraphEngineOperationPropertiesARM getLayerPtr_vkGetPhysicalDeviceQueueFamilyDataGraphEngineOperationPropertiesARM()
+{
+    return [] <typename T>
+    {
+        if constexpr(hasLayerPtr_vkGetPhysicalDeviceQueueFamilyDataGraphEngineOperationPropertiesARM<T>)
+        {
+            return layer_vkGetPhysicalDeviceQueueFamilyDataGraphEngineOperationPropertiesARM<T>;
+        }
+
+        return layer_vkGetPhysicalDeviceQueueFamilyDataGraphEngineOperationPropertiesARM<default_tag>;
+    }.operator()<user_tag>();
+}
+
+/* Test for user_tag availability. */
+template <typename T>
+concept hasLayerPtr_vkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM = requires(
+    VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, const VkQueueFamilyDataGraphPropertiesARM* pQueueFamilyDataGraphProperties, const VkDataGraphOpticalFlowImageFormatInfoARM* pOpticalFlowImageFormatInfo, uint32_t* pFormatCount, VkDataGraphOpticalFlowImageFormatPropertiesARM* pImageFormatProperties
+) {
+    layer_vkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM<T>(physicalDevice, queueFamilyIndex, pQueueFamilyDataGraphProperties, pOpticalFlowImageFormatInfo, pFormatCount, pImageFormatProperties);
+};
+
+/* Function pointer resolution. */
+constexpr PFN_vkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM getLayerPtr_vkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM()
+{
+    return [] <typename T>
+    {
+        if constexpr(hasLayerPtr_vkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM<T>)
+        {
+            return layer_vkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM<T>;
+        }
+
+        return layer_vkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM<default_tag>;
     }.operator()<user_tag>();
 }
 

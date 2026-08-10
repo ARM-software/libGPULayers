@@ -4565,6 +4565,28 @@ constexpr PFN_vkCmdSetDiscardRectangleModeEXT getLayerPtr_vkCmdSetDiscardRectang
 
 /* Test for user_tag availability. */
 template <typename T>
+concept hasLayerPtr_vkCmdSetDispatchParametersARM = requires(
+    VkCommandBuffer commandBuffer, const VkDispatchParametersARM* pDispatchParameters
+) {
+    layer_vkCmdSetDispatchParametersARM<T>(commandBuffer, pDispatchParameters);
+};
+
+/* Function pointer resolution. */
+constexpr PFN_vkCmdSetDispatchParametersARM getLayerPtr_vkCmdSetDispatchParametersARM()
+{
+    return [] <typename T>
+    {
+        if constexpr(hasLayerPtr_vkCmdSetDispatchParametersARM<T>)
+        {
+            return layer_vkCmdSetDispatchParametersARM<T>;
+        }
+
+        return layer_vkCmdSetDispatchParametersARM<default_tag>;
+    }.operator()<user_tag>();
+}
+
+/* Test for user_tag availability. */
+template <typename T>
 concept hasLayerPtr_vkCmdSetEvent = requires(
     VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask
 ) {
@@ -4978,6 +5000,28 @@ constexpr PFN_vkCmdSetPrimitiveRestartEnableEXT getLayerPtr_vkCmdSetPrimitiveRes
         }
 
         return layer_vkCmdSetPrimitiveRestartEnableEXT<default_tag>;
+    }.operator()<user_tag>();
+}
+
+/* Test for user_tag availability. */
+template <typename T>
+concept hasLayerPtr_vkCmdSetPrimitiveRestartIndexEXT = requires(
+    VkCommandBuffer commandBuffer, uint32_t primitiveRestartIndex
+) {
+    layer_vkCmdSetPrimitiveRestartIndexEXT<T>(commandBuffer, primitiveRestartIndex);
+};
+
+/* Function pointer resolution. */
+constexpr PFN_vkCmdSetPrimitiveRestartIndexEXT getLayerPtr_vkCmdSetPrimitiveRestartIndexEXT()
+{
+    return [] <typename T>
+    {
+        if constexpr(hasLayerPtr_vkCmdSetPrimitiveRestartIndexEXT<T>)
+        {
+            return layer_vkCmdSetPrimitiveRestartIndexEXT<T>;
+        }
+
+        return layer_vkCmdSetPrimitiveRestartIndexEXT<default_tag>;
     }.operator()<user_tag>();
 }
 
@@ -10066,7 +10110,7 @@ constexpr PFN_vkGetPipelineKeyKHR getLayerPtr_vkGetPipelineKeyKHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPipelinePropertiesEXT = requires(
-    VkDevice device, const VkPipelineInfoEXT* pPipelineInfo, VkBaseOutStructure* pPipelineProperties
+    VkDevice device, const VkPipelineInfoKHR* pPipelineInfo, VkBaseOutStructure* pPipelineProperties
 ) {
     layer_vkGetPipelinePropertiesEXT<T>(device, pPipelineInfo, pPipelineProperties);
 };

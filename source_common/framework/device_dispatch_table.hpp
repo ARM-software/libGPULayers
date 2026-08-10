@@ -273,6 +273,7 @@ static const struct DeviceInterceptTableEntry deviceIntercepts[] = {
     ENTRY(vkCmdSetDiscardRectangleEXT),
     ENTRY(vkCmdSetDiscardRectangleEnableEXT),
     ENTRY(vkCmdSetDiscardRectangleModeEXT),
+    ENTRY(vkCmdSetDispatchParametersARM),
     ENTRY(vkCmdSetEvent),
     ENTRY(vkCmdSetEvent2),
     ENTRY(vkCmdSetEvent2KHR),
@@ -292,6 +293,7 @@ static const struct DeviceInterceptTableEntry deviceIntercepts[] = {
     ENTRY(vkCmdSetPolygonModeEXT),
     ENTRY(vkCmdSetPrimitiveRestartEnable),
     ENTRY(vkCmdSetPrimitiveRestartEnableEXT),
+    ENTRY(vkCmdSetPrimitiveRestartIndexEXT),
     ENTRY(vkCmdSetPrimitiveTopology),
     ENTRY(vkCmdSetPrimitiveTopologyEXT),
     ENTRY(vkCmdSetProvokingVertexModeEXT),
@@ -828,6 +830,7 @@ struct DeviceDispatchTable {
     PFN_vkCmdSetDiscardRectangleEXT vkCmdSetDiscardRectangleEXT;
     PFN_vkCmdSetDiscardRectangleEnableEXT vkCmdSetDiscardRectangleEnableEXT;
     PFN_vkCmdSetDiscardRectangleModeEXT vkCmdSetDiscardRectangleModeEXT;
+    PFN_vkCmdSetDispatchParametersARM vkCmdSetDispatchParametersARM;
     PFN_vkCmdSetEvent vkCmdSetEvent;
     PFN_vkCmdSetEvent2 vkCmdSetEvent2;
     PFN_vkCmdSetEvent2KHR vkCmdSetEvent2KHR;
@@ -847,6 +850,7 @@ struct DeviceDispatchTable {
     PFN_vkCmdSetPolygonModeEXT vkCmdSetPolygonModeEXT;
     PFN_vkCmdSetPrimitiveRestartEnable vkCmdSetPrimitiveRestartEnable;
     PFN_vkCmdSetPrimitiveRestartEnableEXT vkCmdSetPrimitiveRestartEnableEXT;
+    PFN_vkCmdSetPrimitiveRestartIndexEXT vkCmdSetPrimitiveRestartIndexEXT;
     PFN_vkCmdSetPrimitiveTopology vkCmdSetPrimitiveTopology;
     PFN_vkCmdSetPrimitiveTopologyEXT vkCmdSetPrimitiveTopologyEXT;
     PFN_vkCmdSetProvokingVertexModeEXT vkCmdSetProvokingVertexModeEXT;
@@ -1392,6 +1396,7 @@ static inline void initDriverDeviceDispatchTable(
     ENTRY(vkCmdSetDiscardRectangleEXT);
     ENTRY(vkCmdSetDiscardRectangleEnableEXT);
     ENTRY(vkCmdSetDiscardRectangleModeEXT);
+    ENTRY(vkCmdSetDispatchParametersARM);
     ENTRY(vkCmdSetEvent);
     ENTRY(vkCmdSetEvent2);
     ENTRY(vkCmdSetEvent2KHR);
@@ -1411,6 +1416,7 @@ static inline void initDriverDeviceDispatchTable(
     ENTRY(vkCmdSetPolygonModeEXT);
     ENTRY(vkCmdSetPrimitiveRestartEnable);
     ENTRY(vkCmdSetPrimitiveRestartEnableEXT);
+    ENTRY(vkCmdSetPrimitiveRestartIndexEXT);
     ENTRY(vkCmdSetPrimitiveTopology);
     ENTRY(vkCmdSetPrimitiveTopologyEXT);
     ENTRY(vkCmdSetProvokingVertexModeEXT);

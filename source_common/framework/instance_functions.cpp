@@ -459,6 +459,25 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceCalibrateableTimeDomains
 
 /* See Vulkan API for documentation. */
 template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceCooperativeMatrixProperties2EXT<default_tag>(
+    VkPhysicalDevice physicalDevice,
+    const VkPhysicalDeviceCooperativeMatrixInfo2EXT* pCooperativeMatrixInfo,
+    uint32_t* pPropertyCount,
+    VkCooperativeMatrixProperties2EXT* pProperties
+) {
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    auto* layer = Instance::retrieve(physicalDevice);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    return layer->driver.vkGetPhysicalDeviceCooperativeMatrixProperties2EXT(physicalDevice, pCooperativeMatrixInfo, pPropertyCount, pProperties);
+}
+
+/* See Vulkan API for documentation. */
+template <>
 VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR<default_tag>(
     VkPhysicalDevice physicalDevice,
     uint32_t* pPropertyCount,
@@ -1008,6 +1027,46 @@ VKAPI_ATTR void VKAPI_CALL layer_vkGetPhysicalDeviceProperties2KHR<default_tag>(
     // Release the lock to call into the driver
     lock.unlock();
     layer->driver.vkGetPhysicalDeviceProperties2KHR(physicalDevice, pProperties);
+}
+
+/* See Vulkan API for documentation. */
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceQueueFamilyDataGraphEngineOperationPropertiesARM<default_tag>(
+    VkPhysicalDevice physicalDevice,
+    uint32_t queueFamilyIndex,
+    const VkQueueFamilyDataGraphPropertiesARM* pQueueFamilyDataGraphProperties,
+    VkBaseOutStructure* pProperties
+) {
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    auto* layer = Instance::retrieve(physicalDevice);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    return layer->driver.vkGetPhysicalDeviceQueueFamilyDataGraphEngineOperationPropertiesARM(physicalDevice, queueFamilyIndex, pQueueFamilyDataGraphProperties, pProperties);
+}
+
+/* See Vulkan API for documentation. */
+template <>
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM<default_tag>(
+    VkPhysicalDevice physicalDevice,
+    uint32_t queueFamilyIndex,
+    const VkQueueFamilyDataGraphPropertiesARM* pQueueFamilyDataGraphProperties,
+    const VkDataGraphOpticalFlowImageFormatInfoARM* pOpticalFlowImageFormatInfo,
+    uint32_t* pFormatCount,
+    VkDataGraphOpticalFlowImageFormatPropertiesARM* pImageFormatProperties
+) {
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock { g_vulkanLock };
+    auto* layer = Instance::retrieve(physicalDevice);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    return layer->driver.vkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM(physicalDevice, queueFamilyIndex, pQueueFamilyDataGraphProperties, pOpticalFlowImageFormatInfo, pFormatCount, pImageFormatProperties);
 }
 
 /* See Vulkan API for documentation. */
