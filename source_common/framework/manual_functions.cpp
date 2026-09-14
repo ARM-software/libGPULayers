@@ -30,6 +30,7 @@
  * implementations on a per-layer basis if needed.
  */
 #include <cstring>
+#include <new>
 #include <string>
 #include <vector>
 #include <vulkan/utility/vk_struct_helper.hpp>
@@ -226,7 +227,11 @@ APIVersion getInstanceAPIVersion(PFN_vkGetInstanceProcAddr fpGetProcAddr)
 /* See header for documentation. */
 APIVersion getApplicationAPIVersion(const VkInstanceCreateInfo* pCreateInfo)
 {
-    uint32_t apiVersion = pCreateInfo->pApplicationInfo->apiVersion;
+    uint32_t apiVersion = pCreateInfo->pApplicationInfo ? pCreateInfo->pApplicationInfo->apiVersion : 0;
+    if (apiVersion == 0)
+    {
+        apiVersion = VK_API_VERSION_1_0;
+    }
     uint32_t major = VK_API_VERSION_MAJOR(apiVersion);
     uint32_t minor = VK_API_VERSION_MINOR(apiVersion);
     return {major, minor};
@@ -988,7 +993,11 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateInstance<default_tag>(const VkInsta
     vku::safe_VkInstanceCreateInfo safeCreateInfo(pCreateInfo);
     auto* newCreateInfo = reinterpret_cast<VkInstanceCreateInfo*>(&safeCreateInfo);
 
-    // Patch updated application info
+    // Patch only the owned copy; Vulkan permits the application info to be absent.
+    if (!safeCreateInfo.pApplicationInfo)
+    {
+        safeCreateInfo.pApplicationInfo = new vku::safe_VkApplicationInfo();
+    }
     safeCreateInfo.pApplicationInfo->apiVersion = VK_MAKE_API_VERSION(0, newVersion.first, newVersion.second, 0);
 
     // Enable extra extensions
@@ -1115,13 +1124,44 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDevice<default_tag>(VkPhysicalDevic
         return res;
     }
 
-    auto device = std::make_unique<Device>(layer, physicalDevice, *pDevice, fpGetDeviceProcAddr, *newCreateInfo);
+    std::unique_ptr<Device> device;
+    VkResult publicationResult = VK_SUCCESS;
+    try
+    {
+        device = std::make_unique<Device>(layer, physicalDevice, *pDevice, fpGetDeviceProcAddr, *newCreateInfo);
 
-    // Retake the lock to access layer-wide global store
-    lock.lock();
-    Device::store(*pDevice, std::move(device));
+        // Retake the lock to access layer-wide global store.
+        lock.lock();
+        Device::store(*pDevice, std::move(device));
+        return VK_SUCCESS;
+    }
+    catch (const std::bad_alloc&)
+    {
+        publicationResult = VK_ERROR_OUT_OF_HOST_MEMORY;
+    }
+    catch (...)
+    {
+        publicationResult = VK_ERROR_INITIALIZATION_FAILED;
+    }
 
-    return VK_SUCCESS;
+    // The downstream device exists, but no usable layer device was published.
+    // Release local state and call the driver without holding the tracking lock.
+    if (lock.owns_lock())
+    {
+        lock.unlock();
+    }
+    device.reset();
+    auto fpDestroyDevice = reinterpret_cast<PFN_vkDestroyDevice>(fpGetDeviceProcAddr(*pDevice, "vkDestroyDevice"));
+    if (fpDestroyDevice)
+    {
+        fpDestroyDevice(*pDevice, pAllocator);
+    }
+    else
+    {
+        LAYER_ERR("Cannot destroy an unpublished device: vkDestroyDevice is unavailable");
+    }
+    *pDevice = VK_NULL_HANDLE;
+    return publicationResult;
 }
 
 /* See Vulkan API for documentation. */
