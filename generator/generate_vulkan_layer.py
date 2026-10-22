@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: MIT
 # -----------------------------------------------------------------------------
-# Copyright (c) 2024-2025 Arm Limited
+# Copyright (c) 2024-2026 Arm Limited
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to
@@ -26,11 +26,33 @@ A generator for Vulkan layers.
 '''
 
 import argparse
-import os
 import re
 import shutil
 import sys
+from pathlib import Path
 from typing import TextIO
+
+
+COMMON_DIRECTORIES = (
+    'cmake',
+    'generator',
+    'lglpy',
+    'source_common',
+    'source_third_party',
+)
+
+COMMON_FILES = (
+    'CMakeLists.txt',
+    'lgl_android_install.py',
+    'lgl_host_server.py',
+    'LICENSE.txt',
+)
+
+COPY_IGNORE_PATTERNS = (
+    '.git',
+    '__pycache__',
+    '*.pyc',
+)
 
 
 def load_template(path: str) -> str:
@@ -43,11 +65,11 @@ def load_template(path: str) -> str:
     Returns:
         The loaded text template.
     '''
-    base_dir = os.path.dirname(__file__)
-    template_file = os.path.join(base_dir, 'vk_codegen', path)
+    base_dir = Path(__file__).parent
+    template_file = base_dir / 'vk_codegen' / path
 
     # Load the data from the file
-    with open(template_file, 'r', encoding='utf-8') as handle:
+    with template_file.open('r', encoding='utf-8') as handle:
         data = handle.read()
 
     return data
@@ -165,7 +187,7 @@ def generate_install_manifest(file: TextIO, vendor: str, layer: str) -> None:
     file.write(data)
 
 
-def copy_resource(src_dir: str, dst_dir: str) -> None:
+def copy_resource(src_dir: Path, dst_dir: Path) -> None:
     '''
     Copy a directory of resources to another location.
 
@@ -173,9 +195,32 @@ def copy_resource(src_dir: str, dst_dir: str) -> None:
         src_dir: The source directory location.
         out_dir: The destination directory location.
     '''
-    dst_dir = os.path.abspath(dst_dir)
-    os.makedirs(dst_dir, exist_ok=True)
-    shutil.copytree(src_dir, dst_dir, dirs_exist_ok=True)
+    dst_dir = dst_dir.resolve()
+    dst_dir.mkdir(parents=True, exist_ok=True)
+    shutil.copytree(
+        src_dir,
+        dst_dir,
+        dirs_exist_ok=True,
+        ignore=shutil.ignore_patterns(*COPY_IGNORE_PATTERNS))
+
+
+def copy_common_resources(src_dir: Path, dst_dir: Path) -> None:
+    '''
+    Copy common project resources for a standalone layer project.
+
+    Args:
+        src_dir: The source project root directory.
+        dst_dir: The destination project root directory.
+    '''
+    for directory in COMMON_DIRECTORIES:
+        source = src_dir / directory
+        destination = dst_dir / directory
+        copy_resource(source, destination)
+
+    for filename in COMMON_FILES:
+        source = src_dir / filename
+        destination = dst_dir / filename
+        shutil.copy2(source, destination)
 
 
 def parse_command_line() -> argparse.Namespace:
@@ -196,8 +241,11 @@ def parse_command_line() -> argparse.Namespace:
     parser.add_argument('--layer-name', default=None,
                         help='layer name (optional)')
 
-    parser.add_argument('--output', metavar='DIR', required=True,
-                        help='output directory for layer project')
+    parser.add_argument('--root-dir', metavar='DIR',
+                        help='project root directory (optional)')
+
+    parser.add_argument('--layer-dir', metavar='DIR', required=True,
+                        help='layer directory within the project root')
 
     parser.add_argument('--overwrite', action='store_true', default=False,
                         help='overwrite an existing output directory')
@@ -225,33 +273,64 @@ def main() -> int:
         print(f'ERROR: Layer name "{args.layer_name}" must start with VkLayer')
         return 1
 
+    base_dir = Path(__file__).parent
+    project_dir = base_dir.parent.resolve()
+
+    # A root outside this checkout creates a standalone project. If no root is
+    # specified, or this checkout is specified, generate a local layer.
+    if args.root_dir:
+        root_dir = Path(args.root_dir).resolve()
+    else:
+        root_dir = project_dir
+
+    standalone = root_dir != project_dir
+    if standalone and root_dir.is_relative_to(project_dir):
+        print('ERROR: Standalone root dir must not be inside current project')
+        return 1
+
+    layer_dir = Path(args.layer_dir)
+    if layer_dir.is_absolute():
+        outdir = layer_dir.resolve()
+    else:
+        outdir = (root_dir / layer_dir).resolve()
+
+    if outdir.parent != root_dir:
+        print('ERROR: Layer dir must be a direct child of the root')
+        return 1
+
+    chk_dir = root_dir if standalone else outdir
+    chk_dir_t = 'Root' if standalone else 'Layer'
+
     # Check that output directory is either empty or over-writable
-    outdir = args.output
-    if os.path.exists(outdir):
-        if not os.path.isdir(outdir):
-            print(f'ERROR: Output location "{outdir}" is not a directory')
+    if chk_dir.exists():
+        if not chk_dir.is_dir():
+            print(f'ERROR: {chk_dir_t} location "{chk_dir}" is not a dir')
             return 1
 
-        if len(os.listdir(outdir)) != 0 and not args.overwrite:
-            print(f'ERROR: Output directory "{outdir}" is not empty')
+        if any(chk_dir.iterdir()) and not args.overwrite:
+            print(f'ERROR: {chk_dir_t} dir "{chk_dir}" is not empty')
             return 1
+
+    # Copy project-wide resources for standalone output.
+    if standalone:
+        root_dir.mkdir(parents=True, exist_ok=True)
+        copy_common_resources(project_dir, root_dir)
 
     # Generate static resources
-    base_dir = os.path.dirname(__file__)
-    source_dir = os.path.join(base_dir, 'vk_layer')
+    source_dir = base_dir / 'vk_layer'
     copy_resource(source_dir, outdir)
 
     # Generate templated resources
-    outfile = os.path.join(outdir, 'CMakeLists.txt')
-    with open(outfile, 'w', encoding='utf-8', newline='\n') as handle:
+    outfile = outdir / 'CMakeLists.txt'
+    with outfile.open('w', encoding='utf-8', newline='\n') as handle:
         generate_root_cmake(handle, args.project_name, args.layer_name)
 
-    outfile = os.path.join(outdir, 'source/CMakeLists.txt')
-    with open(outfile, 'w', encoding='utf-8', newline='\n') as handle:
+    outfile = outdir / 'source' / 'CMakeLists.txt'
+    with outfile.open('w', encoding='utf-8', newline='\n') as handle:
         generate_source_cmake(handle, args.vendor_name, args.layer_name)
 
-    outfile = os.path.join(outdir, 'manifest.json')
-    with open(outfile, 'w', encoding='utf-8', newline='\n') as handle:
+    outfile = outdir / 'manifest.json'
+    with outfile.open('w', encoding='utf-8', newline='\n') as handle:
         generate_install_manifest(handle, args.vendor_name, args.layer_name)
 
     return 0

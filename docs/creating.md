@@ -15,14 +15,14 @@ git clone https://github.com/ARM-software/libGPUlayers ./
 git submodule update --init
 ```
 
-## Generate the new layer project
+## Generate a new layer in this project
 
-Create your new layer, using a Python script to generate the project
-directory containing the layer code. Replace the placeholder "Demo" with your
-layer name.
+You can create a new layer as a component of this project, sharing common code with the other layers in this repository. Create your layer using the generator Python script, which will populate the layer directory with a bare-bones layer and build system that you can start extending to add your desired functionality.
+
+Replace the placeholder "Demo" in the instructions below with your desired layer name.
 
 ```sh
-python3 ./generator/generate_vulkan_layer.py --project-name VkLayerDemo --output layer_demo
+python3 ./generator/generate_vulkan_layer.py --project-name VkLayerDemo --layer-dir layer_demo
 ```
 
 * The Vulkan layer name must start with `VkLayer` and have a title-case name,
@@ -34,7 +34,22 @@ python3 ./generator/generate_vulkan_layer.py --project-name VkLayerDemo --output
 
 You now have a complete layer that is ready to use! This layer does nothing
 useful yet, but it is functional and is deployable. You must now edit the layer
-code to make it do something useful.
+code to implement your desired behavior.
+
+### Generate a standalone project
+
+Alternatively, you can create a standalone layer that does not depend on the original project checkout. Create your new project, including a new layer, using the generator Python script. Specify both the project root directory and a layer directory:
+
+```sh
+python3 ./generator/generate_vulkan_layer.py --project-name VkLayerDemo --root-dir ../standalone_demo --layer-dir layer_demo
+```
+
+The new project root must not be a descendant of the original project. The new layer directory must be a direct child of the new project root. The generator
+copies the common source code and supporting tools into the new project root,
+and generates the new layer in the named layer directory.
+
+> [!IMPORTANT]
+> The new project will be populated with a copy of the code from the `source_third_party` directory. It is important that the submodules in this directory are initialized before you perform the standalone layer generation.
 
 ### Generate the common code (optional)
 
@@ -146,4 +161,4 @@ implementations are found in `source_common/framework/manual_functions.cpp`.
 
 - - -
 
-_Copyright © 2024-2025, Arm Limited and contributors._
+_Copyright © 2024-2026, Arm Limited and contributors._
