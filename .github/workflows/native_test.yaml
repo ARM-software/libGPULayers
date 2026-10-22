@@ -174,8 +174,8 @@ jobs:
         run: |
           git diff --exit-code
 
-  build-ubuntu-x64-clang-new-project:
-    name: Ubuntu x64 generate new layer
+  build-ubuntu-x64-clang-new-layer:
+    name: Ubuntu x64 generate new in-tree layer
     runs-on: ubuntu-22.04
     steps:
       - name: Git checkout
@@ -186,8 +186,25 @@ jobs:
       - name: Generate layer_test
         run: |
           python3 ./generator/generate_vulkan_common.py
-          python3 ./generator/generate_vulkan_layer.py --project-name Test --layer-name VkLayerTest --output layer_test
+          python3 ./generator/generate_vulkan_layer.py --project-name Test --layer-name VkLayerTest --layer-dir layer_test
           mkdir layer_test/build_rel
           cd layer_test/build_rel
           cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
           cmake --build .
+
+  build-ubuntu-x64-new-standalone-layer:
+    name: Ubuntu x64 generate new standalone layer
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v6
+        with:
+          submodules: 'true'
+
+      - name: Generate and build standalone example layer
+        run: |
+          root_dir="${RUNNER_TEMP}/standalone_project"
+          layer_dir="${root_dir}/layer_example"
+          python3 ./generator/generate_vulkan_layer.py --project-name Example --layer-name VkLayerExample --root-dir "${root_dir}" --layer-dir layer_example
+          cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -S "${layer_dir}" -B "${layer_dir}/build_rel"
+          cmake --build "${layer_dir}/build_rel"

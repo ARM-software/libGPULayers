@@ -3,11 +3,13 @@
 libGPULayers provides tooling to create new Vulkan layer drivers, allowing
 you to quickly generate new layers suitable for creation of new developer tools
 or for ad hoc experiments during development.
+<!-- #if !defined(standalone) -->
 
 In addition, we provide a number of pre-built layers that have been built
 using this framework. These layers might be used as standalone tools in their
 own right, or might be used alongside other Arm tools such as
 [Arm Performance Studio][2].
+<!-- #endif -->
 
 ## What are layer drivers?
 
@@ -23,6 +25,7 @@ Layer drivers are designed in to the Vulkan API, and they are the mechanism
 for common workflows such as error checking using the Vulkan Validation Layer
 (VVL), but they are also a general purpose mechanism suitable for all kinds of
 developer tooling.
+<!-- #if !defined(standalone) -->
 
 ## What is the purpose of this project?
 
@@ -51,6 +54,7 @@ which you use to quickly create a new layer that is ready to deploy.
 This library is currently tested on devices running Android or Linux, and using
 Arm® Immortalis™ and Arm Mali™ GPUs. Contributions adding support for other
 platforms are welcome.
+<!-- #endif -->
 
 # License
 
@@ -69,6 +73,7 @@ Common documentation
 * [Running using a layer on Linux](./docs/running_linux.md)
 * [About layers design notes](./docs/about_layers.md)
 * [Frequently asked questions](./docs/faq.md)
+<!-- #if !defined(standalone) -->
 
 Layer documentation
 
@@ -84,10 +89,13 @@ raise them in the project's GitHub issue tracker.
 If you have any questions about Arm GPUs, application development for Arm GPUs,
 or general mobile graphics development or technology, please submit them on the
 [Arm Community graphics forums][1].
+<!-- #endif -->
 
 - - -
 
 _Copyright © 2024-2026, Arm Limited and contributors._
+<!-- #if !defined(standalone) -->
 
 [1]: https://community.arm.com/support-forums/f/graphics-gaming-and-vr-forum/
 [2]: https://developer.arm.com/Tools%20and%20Software/Arm%20Performance%20Studio
+<!-- #endif -->
