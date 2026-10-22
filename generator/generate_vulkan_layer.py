@@ -35,6 +35,7 @@ from typing import TextIO
 
 COMMON_DIRECTORIES = (
     'cmake',
+    'docs',
     'generator',
     'lglpy',
     'source_common',
@@ -50,6 +51,7 @@ COMMON_FILES = (
     'lgl_android_install.py',
     'lgl_host_server.py',
     'LICENSE.txt',
+    'README.md',
 )
 
 COPY_IGNORE_PATTERNS = (
@@ -57,6 +59,9 @@ COPY_IGNORE_PATTERNS = (
     '__pycache__',
     '*.pyc',
 )
+
+STANDALONE_EXCLUDE_START = '<!-- #if !defined(standalone) -->'
+STANDALONE_EXCLUDE_END = '<!-- #endif -->'
 
 
 def load_template(path: str) -> str:
@@ -208,6 +213,38 @@ def copy_resource(src_dir: Path, dst_dir: Path) -> None:
         ignore=shutil.ignore_patterns(*COPY_IGNORE_PATTERNS))
 
 
+def copy_standalone_readme(src_file: Path, dst_file: Path) -> None:
+    '''
+    Copy the project README, excluding non-standalone content blocks.
+
+    Args:
+        src_file: The source README file.
+        dst_file: The destination README file.
+    '''
+    output = []
+    excluding = False
+
+    with src_file.open('r', encoding='utf-8') as handle:
+        for line in handle:
+            marker = line.strip()
+            if marker == STANDALONE_EXCLUDE_START:
+                if excluding:
+                    raise ValueError('Nested standalone exclusion block')
+                excluding = True
+            elif marker == STANDALONE_EXCLUDE_END:
+                if not excluding:
+                    raise ValueError('Unmatched standalone exclusion end')
+                excluding = False
+            elif not excluding:
+                output.append(line)
+
+    if excluding:
+        raise ValueError('Unterminated standalone exclusion block')
+
+    with dst_file.open('w', encoding='utf-8', newline='\n') as handle:
+        handle.writelines(output)
+
+
 def copy_common_resources(src_dir: Path, dst_dir: Path) -> None:
     '''
     Copy common project resources for a standalone layer project.
@@ -229,7 +266,10 @@ def copy_common_resources(src_dir: Path, dst_dir: Path) -> None:
     for filename in COMMON_FILES:
         source = src_dir / filename
         destination = dst_dir / filename
-        shutil.copy2(source, destination)
+        if filename == 'README.md':
+            copy_standalone_readme(source, destination)
+        else:
+            shutil.copy2(source, destination)
 
 
 def parse_command_line() -> argparse.Namespace:
