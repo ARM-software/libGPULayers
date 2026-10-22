@@ -38,7 +38,11 @@ COMMON_DIRECTORIES = (
     'generator',
     'lglpy',
     'source_common',
-    'source_third_party',
+)
+
+THIRD_PARTY_DIRECTORIES = (
+    'gtest',
+    'khronos',
 )
 
 COMMON_FILES = (
@@ -215,6 +219,11 @@ def copy_common_resources(src_dir: Path, dst_dir: Path) -> None:
     for directory in COMMON_DIRECTORIES:
         source = src_dir / directory
         destination = dst_dir / directory
+        copy_resource(source, destination)
+
+    for directory in THIRD_PARTY_DIRECTORIES:
+        source = src_dir / 'source_third_party' / directory
+        destination = dst_dir / 'source_third_party' / directory
         copy_resource(source, destination)
 
     for filename in COMMON_FILES:

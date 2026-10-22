@@ -49,7 +49,9 @@ copies the common source code and supporting tools into the new project root,
 and generates the new layer in the named layer directory.
 
 > [!IMPORTANT]
-> The new project will be populated with a copy of the code from the `source_third_party` directory. It is important that the submodules in this directory are initialized before you perform the standalone layer generation.
+> The new project will include copies of the `gtest` and `khronos` directories
+> from `source_third_party`. Ensure the submodules in these directories are
+> initialized before generating the standalone layer.
 
 ### Generate the common code (optional)
 
