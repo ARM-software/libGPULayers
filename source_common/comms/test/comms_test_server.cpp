@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024-2025 Arm Limited
+ * Copyright (c) 2024-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -43,8 +43,9 @@ namespace CommsTest
 {
 
 /* See header for documentation. */
-CommsTestServer::CommsTestServer(const std::string& domainAddress)
-{
+CommsTestServer::CommsTestServer(
+    const std::string& domainAddress
+) {
     int pipeErr = pipe(stopRequestPipe);
     if (pipeErr)
     {
@@ -97,8 +98,9 @@ CommsTestServer::CommsTestServer(const std::string& domainAddress)
 }
 
 /* See header for documentation. */
-CommsTestServer::CommsTestServer(int port)
-{
+CommsTestServer::CommsTestServer(
+    int port
+) {
     int pipeErr = pipe(stopRequestPipe);
     if (pipeErr)
     {
@@ -251,8 +253,11 @@ void CommsTestServer::runServer()
 }
 
 /* See header for documentation. */
-bool CommsTestServer::receiveData(int sockfd, uint8_t* data, size_t dataSize)
-{
+bool CommsTestServer::receiveData(
+    int sockfd,
+    uint8_t* data,
+    size_t dataSize
+) {
     int pipefd = stopRequestPipe[0];
     int maxfd = std::max(sockfd, pipefd);
 
@@ -294,8 +299,11 @@ bool CommsTestServer::receiveData(int sockfd, uint8_t* data, size_t dataSize)
 }
 
 /* See header for documentation. */
-void CommsTestServer::send_data(int sockfd, uint8_t* data, size_t dataSize)
-{
+void CommsTestServer::send_data(
+    int sockfd,
+    uint8_t* data,
+    size_t dataSize
+) {
     while (dataSize)
     {
         ssize_t sentSize = send(sockfd, data, dataSize, 0);

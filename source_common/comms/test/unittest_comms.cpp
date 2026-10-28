@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024 Arm Limited
+ * Copyright (c) 2024-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -40,20 +40,23 @@
 
 using namespace CommsTest;
 
-std::unique_ptr<Comms::MessageData> makeTestPayload(const std::string& str)
-{
+std::unique_ptr<Comms::MessageData> makeTestPayload(
+    const std::string& str
+) {
     auto data = std::make_unique<Comms::MessageData>(str.begin(), str.end());
     return data;
 }
 
-std::string decodeTestPayload(std::unique_ptr<Comms::MessageData> data)
-{
+std::string decodeTestPayload(
+    std::unique_ptr<Comms::MessageData> data
+) {
     std::string str(data->begin(), data->end());
     return str;
 }
 
-std::string decodeTestPayload(TestMessage& msg)
-{
+std::string decodeTestPayload(
+    TestMessage& msg
+) {
     std::string str(msg.data->begin(), msg.data->end());
     return str;
 }

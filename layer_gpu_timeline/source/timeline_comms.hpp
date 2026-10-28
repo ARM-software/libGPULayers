@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024-2025 Arm Limited
+ * Copyright (c) 2024-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -42,14 +42,16 @@ public:
      *
      * @param comms   The common comms module used by all services.
      */
-    TimelineComms(Comms::CommsInterface& comms);
+    TimelineComms(
+        Comms::CommsInterface& comms);
 
     /**
      * @brief Send a message to the GPU timeline endpoint service.
      *
      * @param message   The message to send.
      */
-    void txMessage(Comms::MessageData&& message);
+    void txMessage(
+        Comms::MessageData&& message);
 
 private:
     /**

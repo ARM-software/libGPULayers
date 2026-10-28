@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024 Arm Limited
+ * Copyright (c) 2024-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -40,8 +40,10 @@ namespace Comms
 {
 
 /* See header for documentation. */
-Transmitter::Transmitter(CommsModule& _parent)
-    : parent(_parent)
+Transmitter::Transmitter(
+    CommsModule& _parent
+) :
+    parent(_parent)
 {
     // Create and start a worker thread
     worker = std::thread(&Transmitter::runTransmitter, this);
@@ -104,8 +106,9 @@ void Transmitter::stop()
 }
 
 /* See header for documentation. */
-void Transmitter::sendMessage(const Message& message)
-{
+void Transmitter::sendMessage(
+    const Message& message
+) {
     uint8_t* data = message.transmitData->data();
     size_t dataSize = message.transmitData->size();
 
@@ -124,8 +127,10 @@ void Transmitter::sendMessage(const Message& message)
 }
 
 /* See header for documentation. */
-void Transmitter::sendData(uint8_t* data, size_t dataSize)
-{
+void Transmitter::sendData(
+    uint8_t* data,
+    size_t dataSize
+) {
     while (dataSize)
     {
         ssize_t sentSize = send(parent.sockfd, data, dataSize, 0);

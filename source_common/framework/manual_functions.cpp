@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024-2025 Arm Limited
+ * Copyright (c) 2024-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -78,8 +78,9 @@ struct DispatchTableEntry
     }
 
 /* See header for documentation. */
-VkLayerInstanceCreateInfo* getChainInfo(const VkInstanceCreateInfo* pCreateInfo)
-{
+VkLayerInstanceCreateInfo* getChainInfo(
+    const VkInstanceCreateInfo* pCreateInfo
+) {
     auto* info = static_cast<const VkLayerInstanceCreateInfo*>(pCreateInfo->pNext);
     while (info)
     {
@@ -97,8 +98,9 @@ VkLayerInstanceCreateInfo* getChainInfo(const VkInstanceCreateInfo* pCreateInfo)
 }
 
 /* See header for documentation. */
-VkLayerDeviceCreateInfo* getChainInfo(const VkDeviceCreateInfo* pCreateInfo)
-{
+VkLayerDeviceCreateInfo* getChainInfo(
+    const VkDeviceCreateInfo* pCreateInfo
+) {
     auto* info = static_cast<const VkLayerDeviceCreateInfo*>(pCreateInfo->pNext);
     while (info)
     {
@@ -116,8 +118,9 @@ VkLayerDeviceCreateInfo* getChainInfo(const VkDeviceCreateInfo* pCreateInfo)
 }
 
 /* See header for documentation. */
-bool isFunctionAlwaysExported(const char* name)
-{
+bool isFunctionAlwaysExported(
+    const char* name
+) {
     const std::array<const char*, 11> alwaysExportedFunctions {
         "vkGetInstanceProcAddr",
         "vkGetDeviceProcAddr",
@@ -144,8 +147,9 @@ bool isFunctionAlwaysExported(const char* name)
 }
 
 /* See header for documentation. */
-std::tuple<bool, PFN_vkVoidFunction, bool> getInstanceLayerFunction(const char* name)
-{
+std::tuple<bool, PFN_vkVoidFunction, bool> getInstanceLayerFunction(
+    const char* name
+) {
     const std::array<const char*, 5> globalFunctions {
         // Supported since Vulkan 1.0
         "vkCreateInstance",
@@ -179,8 +183,9 @@ std::tuple<bool, PFN_vkVoidFunction, bool> getInstanceLayerFunction(const char* 
 }
 
 /* See header for documentation. */
-std::pair<PFN_vkVoidFunction, bool> getDeviceLayerFunction(const char* name)
-{
+std::pair<PFN_vkVoidFunction, bool> getDeviceLayerFunction(
+    const char* name
+) {
     for (auto& function : deviceIntercepts)
     {
         if (!strcmp(function.name, name))
@@ -193,8 +198,9 @@ std::pair<PFN_vkVoidFunction, bool> getDeviceLayerFunction(const char* name)
 }
 
 /* See header for documentation. */
-APIVersion getInstanceAPIVersion(PFN_vkGetInstanceProcAddr fpGetProcAddr)
-{
+APIVersion getInstanceAPIVersion(
+    PFN_vkGetInstanceProcAddr fpGetProcAddr
+) {
     // TODO: This will crash in Khronos validation if we try to use this
     // with the validation layer beneath us due to Android loader v0 protocol.
 #if 0
@@ -225,8 +231,9 @@ APIVersion getInstanceAPIVersion(PFN_vkGetInstanceProcAddr fpGetProcAddr)
 }
 
 /* See header for documentation. */
-APIVersion getApplicationAPIVersion(const VkInstanceCreateInfo* pCreateInfo)
-{
+APIVersion getApplicationAPIVersion(
+    const VkInstanceCreateInfo* pCreateInfo
+) {
     uint32_t apiVersion = pCreateInfo->pApplicationInfo ? pCreateInfo->pApplicationInfo->apiVersion : 0;
     if (apiVersion == 0)
     {
@@ -238,9 +245,10 @@ APIVersion getApplicationAPIVersion(const VkInstanceCreateInfo* pCreateInfo)
 }
 
 /* See header for documentation. */
-APIVersion getDeviceAPIVersion(Instance& instance,
-                               VkPhysicalDevice physicalDevice)
-{
+APIVersion getDeviceAPIVersion(
+    Instance& instance,
+    VkPhysicalDevice physicalDevice
+) {
     VkPhysicalDeviceProperties properties {};
     instance.driver.vkGetPhysicalDeviceProperties(physicalDevice, &properties);
 
@@ -252,8 +260,10 @@ APIVersion getDeviceAPIVersion(Instance& instance,
 /**
  * @brief Is version A >= version B.
  */
-static bool isVersionGreaterEqual(const APIVersion& a, const APIVersion& b)
-{
+static bool isVersionGreaterEqual(
+    const APIVersion& a,
+    const APIVersion& b
+) {
     // Different major version
     if (a.first != b.first)
     {
@@ -267,8 +277,10 @@ static bool isVersionGreaterEqual(const APIVersion& a, const APIVersion& b)
 /**
  * @brief Is version A > version B.
  */
-static bool isVersionGreater(const APIVersion& a, const APIVersion& b)
-{
+static bool isVersionGreater(
+    const APIVersion& a,
+    const APIVersion& b
+) {
     // Different major version
     if (a.first != b.first)
     {
@@ -280,10 +292,11 @@ static bool isVersionGreater(const APIVersion& a, const APIVersion& b)
 }
 
 /* See header for documentation. */
-APIVersion increaseAPIVersion(const APIVersion& userVersion,
-                              const APIVersion& maxVersion,
-                              const APIVersion& requiredVersion)
-{
+APIVersion increaseAPIVersion(
+    const APIVersion& userVersion,
+    const APIVersion& maxVersion,
+    const APIVersion& requiredVersion
+) {
     // User version is good enough to support the layer, so stick with that
     if (isVersionGreaterEqual(userVersion, requiredVersion))
     {
@@ -309,8 +322,9 @@ APIVersion increaseAPIVersion(const APIVersion& userVersion,
 }
 
 /* See header for documentation. */
-std::vector<std::string> getInstanceExtensionList(const VkInstanceCreateInfo* pCreateInfo)
-{
+std::vector<std::string> getInstanceExtensionList(
+    const VkInstanceCreateInfo* pCreateInfo
+) {
     std::vector<std::string> foundExtensions;
 
     // Fetch the functions needed to query extensions availability
@@ -342,9 +356,10 @@ std::vector<std::string> getInstanceExtensionList(const VkInstanceCreateInfo* pC
 }
 
 /* See header for documentation. */
-std::vector<std::string> getDeviceExtensionList(Instance& instance,
-                                                VkPhysicalDevice physicalDevice)
-{
+std::vector<std::string> getDeviceExtensionList(
+    Instance& instance,
+    VkPhysicalDevice physicalDevice
+) {
     // Query number of extensions
     uint32_t count;
     instance.driver.vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &count, nullptr);
@@ -366,8 +381,10 @@ std::vector<std::string> getDeviceExtensionList(Instance& instance,
 }
 
 /* See header for documentation. */
-std::vector<const char*> cloneExtensionList(uint32_t extensionCount, const char* const* extensionList)
-{
+std::vector<const char*> cloneExtensionList(
+    uint32_t extensionCount,
+    const char* const* extensionList
+) {
     std::vector<const char*> data;
     data.reserve(extensionCount);
     for (uint32_t i = 0; i < extensionCount; i++)
@@ -386,9 +403,10 @@ std::vector<const char*> cloneExtensionList(uint32_t extensionCount, const char*
  * @param createInfo   The createInfo we can search to find user config.
  * @param supported    The list of supported extension, or empty if unknown.
  */
-static void enableInstanceVkExtDebugUtils(vku::safe_VkInstanceCreateInfo& createInfo,
-                                          const std::vector<std::string>& supported)
-{
+static void enableInstanceVkExtDebugUtils(
+    vku::safe_VkInstanceCreateInfo& createInfo,
+    const std::vector<std::string>& supported
+) {
     static const std::string target {
         VK_EXT_DEBUG_UTILS_EXTENSION_NAME
     };
@@ -413,11 +431,12 @@ static void enableInstanceVkExtDebugUtils(vku::safe_VkInstanceCreateInfo& create
 }
 
 /* See header for documentation. */
-void enableDeviceVkKhrTimelineSemaphore(Instance& instance,
-                                        VkPhysicalDevice physicalDevice,
-                                        vku::safe_VkDeviceCreateInfo& createInfo,
-                                        std::vector<std::string>& supported)
-{
+void enableDeviceVkKhrTimelineSemaphore(
+    Instance& instance,
+    VkPhysicalDevice physicalDevice,
+    vku::safe_VkDeviceCreateInfo& createInfo,
+    std::vector<std::string>& supported
+) {
     UNUSED(instance);
     UNUSED(physicalDevice);
 
@@ -483,11 +502,12 @@ void enableDeviceVkKhrTimelineSemaphore(Instance& instance,
 }
 
 /* See header for documentation. */
-void enableDeviceVkExtImageCompressionControl(Instance& instance,
-                                              VkPhysicalDevice physicalDevice,
-                                              vku::safe_VkDeviceCreateInfo& createInfo,
-                                              std::vector<std::string>& supported)
-{
+void enableDeviceVkExtImageCompressionControl(
+    Instance& instance,
+    VkPhysicalDevice physicalDevice,
+    vku::safe_VkDeviceCreateInfo& createInfo,
+    std::vector<std::string>& supported
+) {
     UNUSED(instance);
     UNUSED(physicalDevice);
 
@@ -536,11 +556,12 @@ void enableDeviceVkExtImageCompressionControl(Instance& instance,
 }
 
 /* See header for documentation. */
-void emulateDeviceVkExtFrameBoundary(Instance& instance,
-                                     VkPhysicalDevice physicalDevice,
-                                     vku::safe_VkDeviceCreateInfo& createInfo,
-                                     std::vector<std::string>& supported)
-{
+void emulateDeviceVkExtFrameBoundary(
+    Instance& instance,
+    VkPhysicalDevice physicalDevice,
+    vku::safe_VkDeviceCreateInfo& createInfo,
+    std::vector<std::string>& supported
+) {
     UNUSED(instance);
     UNUSED(physicalDevice);
     UNUSED(supported);
@@ -573,8 +594,10 @@ void emulateDeviceVkExtFrameBoundary(Instance& instance,
 
 /** See Vulkan API for documentation. */
 template <>
-PFN_vkVoidFunction layer_vkGetInstanceProcAddr<default_tag>(VkInstance instance, const char* pName)
-{
+PFN_vkVoidFunction layer_vkGetInstanceProcAddr<default_tag>(
+    VkInstance instance,
+    const char* pName
+) {
     auto [isGlobal, layerFunction, hasSpecialization] = getInstanceLayerFunction(pName);
 
     // Global functions must be exposed and do not require the caller to pass
@@ -623,8 +646,10 @@ PFN_vkVoidFunction layer_vkGetInstanceProcAddr<default_tag>(VkInstance instance,
 
 /** See Vulkan API for documentation. */
 template <>
-PFN_vkVoidFunction layer_vkGetDeviceProcAddr<default_tag>(VkDevice device, const char* pName)
-{
+PFN_vkVoidFunction layer_vkGetDeviceProcAddr<default_tag>(
+    VkDevice device,
+    const char* pName
+) {
     // Hold the lock to access layer-wide global store
     std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(device);
@@ -659,10 +684,11 @@ PFN_vkVoidFunction layer_vkGetDeviceProcAddr<default_tag>(VkDevice device, const
 
 /** See Vulkan API for documentation. */
 template <>
-VkResult layer_vkEnumerateInstanceExtensionProperties<default_tag>(const char* pLayerName,
-                                                                   uint32_t* pPropertyCount,
-                                                                   VkExtensionProperties* pProperties)
-{
+VkResult layer_vkEnumerateInstanceExtensionProperties<default_tag>(
+    const char* pLayerName,
+    uint32_t* pPropertyCount,
+    VkExtensionProperties* pProperties
+) {
     LAYER_TRACE(__func__);
 
     // Query for a layer
@@ -793,11 +819,12 @@ static void get_extended_device_extensions(
 
 /** See Vulkan API for documentation. */
 template <>
-VkResult layer_vkEnumerateDeviceExtensionProperties<default_tag>(VkPhysicalDevice gpu,
-                                                                 const char* pLayerName,
-                                                                 uint32_t* pPropertyCount,
-                                                                 VkExtensionProperties* pProperties)
-{
+VkResult layer_vkEnumerateDeviceExtensionProperties<default_tag>(
+    VkPhysicalDevice gpu,
+    const char* pLayerName,
+    uint32_t* pPropertyCount,
+    VkExtensionProperties* pProperties
+) {
     LAYER_TRACE(__func__);
 
     // Query for a layer
@@ -887,8 +914,10 @@ VkResult layer_vkEnumerateDeviceExtensionProperties<default_tag>(VkPhysicalDevic
 
 /** See Vulkan API for documentation. */
 template <>
-VkResult layer_vkEnumerateInstanceLayerProperties<default_tag>(uint32_t* pPropertyCount, VkLayerProperties* pProperties)
-{
+VkResult layer_vkEnumerateInstanceLayerProperties<default_tag>(
+    uint32_t* pPropertyCount,
+    VkLayerProperties* pProperties
+) {
     LAYER_TRACE(__func__);
 
     size_t count = layerProps.size();
@@ -915,10 +944,11 @@ VkResult layer_vkEnumerateInstanceLayerProperties<default_tag>(uint32_t* pProper
 
 /** See Vulkan API for documentation. */
 template <>
-VkResult layer_vkEnumerateDeviceLayerProperties<default_tag>(VkPhysicalDevice gpu,
-                                                             uint32_t* pPropertyCount,
-                                                             VkLayerProperties* pProperties)
-{
+VkResult layer_vkEnumerateDeviceLayerProperties<default_tag>(
+    VkPhysicalDevice gpu,
+    uint32_t* pPropertyCount,
+    VkLayerProperties* pProperties
+) {
     LAYER_TRACE(__func__);
 
     UNUSED(gpu);
@@ -947,10 +977,11 @@ VkResult layer_vkEnumerateDeviceLayerProperties<default_tag>(VkPhysicalDevice gp
 
 /* See Vulkan API for documentation. */
 template <>
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateInstance<default_tag>(const VkInstanceCreateInfo* pCreateInfo,
-                                                                   const VkAllocationCallbacks* pAllocator,
-                                                                   VkInstance* pInstance)
-{
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateInstance<default_tag>(
+    const VkInstanceCreateInfo* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkInstance* pInstance
+) {
     LAYER_TRACE(__func__);
 
     // We cannot reliably query the available instance extensions on Android if multiple layers are
@@ -1043,9 +1074,10 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateInstance<default_tag>(const VkInsta
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroyInstance<default_tag>(VkInstance instance,
-                                                                const VkAllocationCallbacks* pAllocator)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyInstance<default_tag>(
+    VkInstance instance,
+    const VkAllocationCallbacks* pAllocator
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -1061,11 +1093,12 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyInstance<default_tag>(VkInstance insta
 
 /* See Vulkan API for documentation. */
 template <>
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDevice<default_tag>(VkPhysicalDevice physicalDevice,
-                                                                 const VkDeviceCreateInfo* pCreateInfo,
-                                                                 const VkAllocationCallbacks* pAllocator,
-                                                                 VkDevice* pDevice)
-{
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDevice<default_tag>(
+    VkPhysicalDevice physicalDevice,
+    const VkDeviceCreateInfo* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkDevice* pDevice
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -1166,8 +1199,10 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateDevice<default_tag>(VkPhysicalDevic
 
 /* See Vulkan API for documentation. */
 template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroyDevice<default_tag>(VkDevice device, const VkAllocationCallbacks* pAllocator)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyDevice<default_tag>(
+    VkDevice device,
+    const VkAllocationCallbacks* pAllocator
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -1183,10 +1218,11 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyDevice<default_tag>(VkDevice device, c
 
 /* See Vulkan API for documentation. */
 template <>
-VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceImageMemoryRequirementsKHR<default_tag>(VkDevice device,
-                                                                                    const VkDeviceImageMemoryRequirements* pInfo,
-                                                                                    VkMemoryRequirements2* pMemoryRequirements)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkGetDeviceImageMemoryRequirementsKHR<default_tag>(
+    VkDevice device,
+    const VkDeviceImageMemoryRequirements* pInfo,
+    VkMemoryRequirements2* pMemoryRequirements
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store

@@ -25,8 +25,6 @@
 
 #pragma once
 
-// clang-format off
-
 #include <vulkan/vulkan.h>
 
 #include "framework/utils.hpp"
@@ -34,7 +32,9 @@
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkAcquireNextImage2KHR = requires(
-    VkDevice device, const VkAcquireNextImageInfoKHR* pAcquireInfo, uint32_t* pImageIndex
+    VkDevice device,
+    const VkAcquireNextImageInfoKHR* pAcquireInfo,
+    uint32_t* pImageIndex
 ) {
     layer_vkAcquireNextImage2KHR<T>(device, pAcquireInfo, pImageIndex);
 };
@@ -56,7 +56,12 @@ constexpr PFN_vkAcquireNextImage2KHR getLayerPtr_vkAcquireNextImage2KHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkAcquireNextImageKHR = requires(
-    VkDevice device, VkSwapchainKHR swapchain, uint64_t timeout, VkSemaphore semaphore, VkFence fence, uint32_t* pImageIndex
+    VkDevice device,
+    VkSwapchainKHR swapchain,
+    uint64_t timeout,
+    VkSemaphore semaphore,
+    VkFence fence,
+    uint32_t* pImageIndex
 ) {
     layer_vkAcquireNextImageKHR<T>(device, swapchain, timeout, semaphore, fence, pImageIndex);
 };
@@ -78,7 +83,8 @@ constexpr PFN_vkAcquireNextImageKHR getLayerPtr_vkAcquireNextImageKHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkAcquireProfilingLockKHR = requires(
-    VkDevice device, const VkAcquireProfilingLockInfoKHR* pInfo
+    VkDevice device,
+    const VkAcquireProfilingLockInfoKHR* pInfo
 ) {
     layer_vkAcquireProfilingLockKHR<T>(device, pInfo);
 };
@@ -100,7 +106,9 @@ constexpr PFN_vkAcquireProfilingLockKHR getLayerPtr_vkAcquireProfilingLockKHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkAllocateCommandBuffers = requires(
-    VkDevice device, const VkCommandBufferAllocateInfo* pAllocateInfo, VkCommandBuffer* pCommandBuffers
+    VkDevice device,
+    const VkCommandBufferAllocateInfo* pAllocateInfo,
+    VkCommandBuffer* pCommandBuffers
 ) {
     layer_vkAllocateCommandBuffers<T>(device, pAllocateInfo, pCommandBuffers);
 };
@@ -122,7 +130,9 @@ constexpr PFN_vkAllocateCommandBuffers getLayerPtr_vkAllocateCommandBuffers()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkAllocateDescriptorSets = requires(
-    VkDevice device, const VkDescriptorSetAllocateInfo* pAllocateInfo, VkDescriptorSet* pDescriptorSets
+    VkDevice device,
+    const VkDescriptorSetAllocateInfo* pAllocateInfo,
+    VkDescriptorSet* pDescriptorSets
 ) {
     layer_vkAllocateDescriptorSets<T>(device, pAllocateInfo, pDescriptorSets);
 };
@@ -144,7 +154,10 @@ constexpr PFN_vkAllocateDescriptorSets getLayerPtr_vkAllocateDescriptorSets()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkAllocateMemory = requires(
-    VkDevice device, const VkMemoryAllocateInfo* pAllocateInfo, const VkAllocationCallbacks* pAllocator, VkDeviceMemory* pMemory
+    VkDevice device,
+    const VkMemoryAllocateInfo* pAllocateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkDeviceMemory* pMemory
 ) {
     layer_vkAllocateMemory<T>(device, pAllocateInfo, pAllocator, pMemory);
 };
@@ -166,7 +179,8 @@ constexpr PFN_vkAllocateMemory getLayerPtr_vkAllocateMemory()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkBeginCommandBuffer = requires(
-    VkCommandBuffer commandBuffer, const VkCommandBufferBeginInfo* pBeginInfo
+    VkCommandBuffer commandBuffer,
+    const VkCommandBufferBeginInfo* pBeginInfo
 ) {
     layer_vkBeginCommandBuffer<T>(commandBuffer, pBeginInfo);
 };
@@ -188,7 +202,10 @@ constexpr PFN_vkBeginCommandBuffer getLayerPtr_vkBeginCommandBuffer()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkBindBufferMemory = requires(
-    VkDevice device, VkBuffer buffer, VkDeviceMemory memory, VkDeviceSize memoryOffset
+    VkDevice device,
+    VkBuffer buffer,
+    VkDeviceMemory memory,
+    VkDeviceSize memoryOffset
 ) {
     layer_vkBindBufferMemory<T>(device, buffer, memory, memoryOffset);
 };
@@ -210,7 +227,9 @@ constexpr PFN_vkBindBufferMemory getLayerPtr_vkBindBufferMemory()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkBindBufferMemory2 = requires(
-    VkDevice device, uint32_t bindInfoCount, const VkBindBufferMemoryInfo* pBindInfos
+    VkDevice device,
+    uint32_t bindInfoCount,
+    const VkBindBufferMemoryInfo* pBindInfos
 ) {
     layer_vkBindBufferMemory2<T>(device, bindInfoCount, pBindInfos);
 };
@@ -232,7 +251,9 @@ constexpr PFN_vkBindBufferMemory2 getLayerPtr_vkBindBufferMemory2()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkBindBufferMemory2KHR = requires(
-    VkDevice device, uint32_t bindInfoCount, const VkBindBufferMemoryInfo* pBindInfos
+    VkDevice device,
+    uint32_t bindInfoCount,
+    const VkBindBufferMemoryInfo* pBindInfos
 ) {
     layer_vkBindBufferMemory2KHR<T>(device, bindInfoCount, pBindInfos);
 };
@@ -254,7 +275,9 @@ constexpr PFN_vkBindBufferMemory2KHR getLayerPtr_vkBindBufferMemory2KHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkBindDataGraphPipelineSessionMemoryARM = requires(
-    VkDevice device, uint32_t bindInfoCount, const VkBindDataGraphPipelineSessionMemoryInfoARM* pBindInfos
+    VkDevice device,
+    uint32_t bindInfoCount,
+    const VkBindDataGraphPipelineSessionMemoryInfoARM* pBindInfos
 ) {
     layer_vkBindDataGraphPipelineSessionMemoryARM<T>(device, bindInfoCount, pBindInfos);
 };
@@ -276,7 +299,10 @@ constexpr PFN_vkBindDataGraphPipelineSessionMemoryARM getLayerPtr_vkBindDataGrap
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkBindImageMemory = requires(
-    VkDevice device, VkImage image, VkDeviceMemory memory, VkDeviceSize memoryOffset
+    VkDevice device,
+    VkImage image,
+    VkDeviceMemory memory,
+    VkDeviceSize memoryOffset
 ) {
     layer_vkBindImageMemory<T>(device, image, memory, memoryOffset);
 };
@@ -298,7 +324,9 @@ constexpr PFN_vkBindImageMemory getLayerPtr_vkBindImageMemory()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkBindImageMemory2 = requires(
-    VkDevice device, uint32_t bindInfoCount, const VkBindImageMemoryInfo* pBindInfos
+    VkDevice device,
+    uint32_t bindInfoCount,
+    const VkBindImageMemoryInfo* pBindInfos
 ) {
     layer_vkBindImageMemory2<T>(device, bindInfoCount, pBindInfos);
 };
@@ -320,7 +348,9 @@ constexpr PFN_vkBindImageMemory2 getLayerPtr_vkBindImageMemory2()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkBindImageMemory2KHR = requires(
-    VkDevice device, uint32_t bindInfoCount, const VkBindImageMemoryInfo* pBindInfos
+    VkDevice device,
+    uint32_t bindInfoCount,
+    const VkBindImageMemoryInfo* pBindInfos
 ) {
     layer_vkBindImageMemory2KHR<T>(device, bindInfoCount, pBindInfos);
 };
@@ -342,7 +372,9 @@ constexpr PFN_vkBindImageMemory2KHR getLayerPtr_vkBindImageMemory2KHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkBindTensorMemoryARM = requires(
-    VkDevice device, uint32_t bindInfoCount, const VkBindTensorMemoryInfoARM* pBindInfos
+    VkDevice device,
+    uint32_t bindInfoCount,
+    const VkBindTensorMemoryInfoARM* pBindInfos
 ) {
     layer_vkBindTensorMemoryARM<T>(device, bindInfoCount, pBindInfos);
 };
@@ -364,7 +396,11 @@ constexpr PFN_vkBindTensorMemoryARM getLayerPtr_vkBindTensorMemoryARM()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkBuildAccelerationStructuresKHR = requires(
-    VkDevice device, VkDeferredOperationKHR deferredOperation, uint32_t infoCount, const VkAccelerationStructureBuildGeometryInfoKHR* pInfos, const VkAccelerationStructureBuildRangeInfoKHR* const* ppBuildRangeInfos
+    VkDevice device,
+    VkDeferredOperationKHR deferredOperation,
+    uint32_t infoCount,
+    const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,
+    const VkAccelerationStructureBuildRangeInfoKHR* const* ppBuildRangeInfos
 ) {
     layer_vkBuildAccelerationStructuresKHR<T>(device, deferredOperation, infoCount, pInfos, ppBuildRangeInfos);
 };
@@ -386,7 +422,10 @@ constexpr PFN_vkBuildAccelerationStructuresKHR getLayerPtr_vkBuildAccelerationSt
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkBuildMicromapsEXT = requires(
-    VkDevice device, VkDeferredOperationKHR deferredOperation, uint32_t infoCount, const VkMicromapBuildInfoEXT* pInfos
+    VkDevice device,
+    VkDeferredOperationKHR deferredOperation,
+    uint32_t infoCount,
+    const VkMicromapBuildInfoEXT* pInfos
 ) {
     layer_vkBuildMicromapsEXT<T>(device, deferredOperation, infoCount, pInfos);
 };
@@ -408,7 +447,8 @@ constexpr PFN_vkBuildMicromapsEXT getLayerPtr_vkBuildMicromapsEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkClearShaderInstrumentationMetricsARM = requires(
-    VkDevice device, VkShaderInstrumentationARM instrumentation
+    VkDevice device,
+    VkShaderInstrumentationARM instrumentation
 ) {
     layer_vkClearShaderInstrumentationMetricsARM<T>(device, instrumentation);
 };
@@ -430,7 +470,8 @@ constexpr PFN_vkClearShaderInstrumentationMetricsARM getLayerPtr_vkClearShaderIn
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdBeginConditionalRendering2EXT = requires(
-    VkCommandBuffer commandBuffer, const VkConditionalRenderingBeginInfo2EXT* pConditionalRenderingBegin
+    VkCommandBuffer commandBuffer,
+    const VkConditionalRenderingBeginInfo2EXT* pConditionalRenderingBegin
 ) {
     layer_vkCmdBeginConditionalRendering2EXT<T>(commandBuffer, pConditionalRenderingBegin);
 };
@@ -452,7 +493,8 @@ constexpr PFN_vkCmdBeginConditionalRendering2EXT getLayerPtr_vkCmdBeginCondition
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdBeginConditionalRenderingEXT = requires(
-    VkCommandBuffer commandBuffer, const VkConditionalRenderingBeginInfoEXT* pConditionalRenderingBegin
+    VkCommandBuffer commandBuffer,
+    const VkConditionalRenderingBeginInfoEXT* pConditionalRenderingBegin
 ) {
     layer_vkCmdBeginConditionalRenderingEXT<T>(commandBuffer, pConditionalRenderingBegin);
 };
@@ -474,7 +516,8 @@ constexpr PFN_vkCmdBeginConditionalRenderingEXT getLayerPtr_vkCmdBeginConditiona
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdBeginCustomResolveEXT = requires(
-    VkCommandBuffer commandBuffer, const VkBeginCustomResolveInfoEXT* pBeginCustomResolveInfo
+    VkCommandBuffer commandBuffer,
+    const VkBeginCustomResolveInfoEXT* pBeginCustomResolveInfo
 ) {
     layer_vkCmdBeginCustomResolveEXT<T>(commandBuffer, pBeginCustomResolveInfo);
 };
@@ -496,7 +539,8 @@ constexpr PFN_vkCmdBeginCustomResolveEXT getLayerPtr_vkCmdBeginCustomResolveEXT(
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdBeginDebugUtilsLabelEXT = requires(
-    VkCommandBuffer commandBuffer, const VkDebugUtilsLabelEXT* pLabelInfo
+    VkCommandBuffer commandBuffer,
+    const VkDebugUtilsLabelEXT* pLabelInfo
 ) {
     layer_vkCmdBeginDebugUtilsLabelEXT<T>(commandBuffer, pLabelInfo);
 };
@@ -518,7 +562,10 @@ constexpr PFN_vkCmdBeginDebugUtilsLabelEXT getLayerPtr_vkCmdBeginDebugUtilsLabel
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdBeginQuery = requires(
-    VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query, VkQueryControlFlags flags
+    VkCommandBuffer commandBuffer,
+    VkQueryPool queryPool,
+    uint32_t query,
+    VkQueryControlFlags flags
 ) {
     layer_vkCmdBeginQuery<T>(commandBuffer, queryPool, query, flags);
 };
@@ -540,7 +587,11 @@ constexpr PFN_vkCmdBeginQuery getLayerPtr_vkCmdBeginQuery()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdBeginQueryIndexedEXT = requires(
-    VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query, VkQueryControlFlags flags, uint32_t index
+    VkCommandBuffer commandBuffer,
+    VkQueryPool queryPool,
+    uint32_t query,
+    VkQueryControlFlags flags,
+    uint32_t index
 ) {
     layer_vkCmdBeginQueryIndexedEXT<T>(commandBuffer, queryPool, query, flags, index);
 };
@@ -562,7 +613,9 @@ constexpr PFN_vkCmdBeginQueryIndexedEXT getLayerPtr_vkCmdBeginQueryIndexedEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdBeginRenderPass = requires(
-    VkCommandBuffer commandBuffer, const VkRenderPassBeginInfo* pRenderPassBegin, VkSubpassContents contents
+    VkCommandBuffer commandBuffer,
+    const VkRenderPassBeginInfo* pRenderPassBegin,
+    VkSubpassContents contents
 ) {
     layer_vkCmdBeginRenderPass<T>(commandBuffer, pRenderPassBegin, contents);
 };
@@ -584,7 +637,9 @@ constexpr PFN_vkCmdBeginRenderPass getLayerPtr_vkCmdBeginRenderPass()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdBeginRenderPass2 = requires(
-    VkCommandBuffer commandBuffer, const VkRenderPassBeginInfo* pRenderPassBegin, const VkSubpassBeginInfo* pSubpassBeginInfo
+    VkCommandBuffer commandBuffer,
+    const VkRenderPassBeginInfo* pRenderPassBegin,
+    const VkSubpassBeginInfo* pSubpassBeginInfo
 ) {
     layer_vkCmdBeginRenderPass2<T>(commandBuffer, pRenderPassBegin, pSubpassBeginInfo);
 };
@@ -606,7 +661,9 @@ constexpr PFN_vkCmdBeginRenderPass2 getLayerPtr_vkCmdBeginRenderPass2()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdBeginRenderPass2KHR = requires(
-    VkCommandBuffer commandBuffer, const VkRenderPassBeginInfo* pRenderPassBegin, const VkSubpassBeginInfo* pSubpassBeginInfo
+    VkCommandBuffer commandBuffer,
+    const VkRenderPassBeginInfo* pRenderPassBegin,
+    const VkSubpassBeginInfo* pSubpassBeginInfo
 ) {
     layer_vkCmdBeginRenderPass2KHR<T>(commandBuffer, pRenderPassBegin, pSubpassBeginInfo);
 };
@@ -628,7 +685,8 @@ constexpr PFN_vkCmdBeginRenderPass2KHR getLayerPtr_vkCmdBeginRenderPass2KHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdBeginRendering = requires(
-    VkCommandBuffer commandBuffer, const VkRenderingInfo* pRenderingInfo
+    VkCommandBuffer commandBuffer,
+    const VkRenderingInfo* pRenderingInfo
 ) {
     layer_vkCmdBeginRendering<T>(commandBuffer, pRenderingInfo);
 };
@@ -650,7 +708,8 @@ constexpr PFN_vkCmdBeginRendering getLayerPtr_vkCmdBeginRendering()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdBeginRenderingKHR = requires(
-    VkCommandBuffer commandBuffer, const VkRenderingInfo* pRenderingInfo
+    VkCommandBuffer commandBuffer,
+    const VkRenderingInfo* pRenderingInfo
 ) {
     layer_vkCmdBeginRenderingKHR<T>(commandBuffer, pRenderingInfo);
 };
@@ -672,7 +731,8 @@ constexpr PFN_vkCmdBeginRenderingKHR getLayerPtr_vkCmdBeginRenderingKHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdBeginShaderInstrumentationARM = requires(
-    VkCommandBuffer commandBuffer, VkShaderInstrumentationARM instrumentation
+    VkCommandBuffer commandBuffer,
+    VkShaderInstrumentationARM instrumentation
 ) {
     layer_vkCmdBeginShaderInstrumentationARM<T>(commandBuffer, instrumentation);
 };
@@ -694,7 +754,10 @@ constexpr PFN_vkCmdBeginShaderInstrumentationARM getLayerPtr_vkCmdBeginShaderIns
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdBeginTransformFeedback2EXT = requires(
-    VkCommandBuffer commandBuffer, uint32_t firstCounterRange, uint32_t counterRangeCount, const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfos
+    VkCommandBuffer commandBuffer,
+    uint32_t firstCounterRange,
+    uint32_t counterRangeCount,
+    const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfos
 ) {
     layer_vkCmdBeginTransformFeedback2EXT<T>(commandBuffer, firstCounterRange, counterRangeCount, pCounterInfos);
 };
@@ -716,7 +779,11 @@ constexpr PFN_vkCmdBeginTransformFeedback2EXT getLayerPtr_vkCmdBeginTransformFee
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdBeginTransformFeedbackEXT = requires(
-    VkCommandBuffer commandBuffer, uint32_t firstCounterBuffer, uint32_t counterBufferCount, const VkBuffer* pCounterBuffers, const VkDeviceSize* pCounterBufferOffsets
+    VkCommandBuffer commandBuffer,
+    uint32_t firstCounterBuffer,
+    uint32_t counterBufferCount,
+    const VkBuffer* pCounterBuffers,
+    const VkDeviceSize* pCounterBufferOffsets
 ) {
     layer_vkCmdBeginTransformFeedbackEXT<T>(commandBuffer, firstCounterBuffer, counterBufferCount, pCounterBuffers, pCounterBufferOffsets);
 };
@@ -738,7 +805,8 @@ constexpr PFN_vkCmdBeginTransformFeedbackEXT getLayerPtr_vkCmdBeginTransformFeed
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdBindDescriptorBufferEmbeddedSamplers2EXT = requires(
-    VkCommandBuffer commandBuffer, const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* pBindDescriptorBufferEmbeddedSamplersInfo
+    VkCommandBuffer commandBuffer,
+    const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* pBindDescriptorBufferEmbeddedSamplersInfo
 ) {
     layer_vkCmdBindDescriptorBufferEmbeddedSamplers2EXT<T>(commandBuffer, pBindDescriptorBufferEmbeddedSamplersInfo);
 };
@@ -760,7 +828,10 @@ constexpr PFN_vkCmdBindDescriptorBufferEmbeddedSamplers2EXT getLayerPtr_vkCmdBin
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdBindDescriptorBufferEmbeddedSamplersEXT = requires(
-    VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t set
+    VkCommandBuffer commandBuffer,
+    VkPipelineBindPoint pipelineBindPoint,
+    VkPipelineLayout layout,
+    uint32_t set
 ) {
     layer_vkCmdBindDescriptorBufferEmbeddedSamplersEXT<T>(commandBuffer, pipelineBindPoint, layout, set);
 };
@@ -782,7 +853,9 @@ constexpr PFN_vkCmdBindDescriptorBufferEmbeddedSamplersEXT getLayerPtr_vkCmdBind
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdBindDescriptorBuffersEXT = requires(
-    VkCommandBuffer commandBuffer, uint32_t bufferCount, const VkDescriptorBufferBindingInfoEXT* pBindingInfos
+    VkCommandBuffer commandBuffer,
+    uint32_t bufferCount,
+    const VkDescriptorBufferBindingInfoEXT* pBindingInfos
 ) {
     layer_vkCmdBindDescriptorBuffersEXT<T>(commandBuffer, bufferCount, pBindingInfos);
 };
@@ -804,7 +877,14 @@ constexpr PFN_vkCmdBindDescriptorBuffersEXT getLayerPtr_vkCmdBindDescriptorBuffe
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdBindDescriptorSets = requires(
-    VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t firstSet, uint32_t descriptorSetCount, const VkDescriptorSet* pDescriptorSets, uint32_t dynamicOffsetCount, const uint32_t* pDynamicOffsets
+    VkCommandBuffer commandBuffer,
+    VkPipelineBindPoint pipelineBindPoint,
+    VkPipelineLayout layout,
+    uint32_t firstSet,
+    uint32_t descriptorSetCount,
+    const VkDescriptorSet* pDescriptorSets,
+    uint32_t dynamicOffsetCount,
+    const uint32_t* pDynamicOffsets
 ) {
     layer_vkCmdBindDescriptorSets<T>(commandBuffer, pipelineBindPoint, layout, firstSet, descriptorSetCount, pDescriptorSets, dynamicOffsetCount, pDynamicOffsets);
 };
@@ -826,7 +906,8 @@ constexpr PFN_vkCmdBindDescriptorSets getLayerPtr_vkCmdBindDescriptorSets()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdBindDescriptorSets2 = requires(
-    VkCommandBuffer commandBuffer, const VkBindDescriptorSetsInfo* pBindDescriptorSetsInfo
+    VkCommandBuffer commandBuffer,
+    const VkBindDescriptorSetsInfo* pBindDescriptorSetsInfo
 ) {
     layer_vkCmdBindDescriptorSets2<T>(commandBuffer, pBindDescriptorSetsInfo);
 };
@@ -848,7 +929,8 @@ constexpr PFN_vkCmdBindDescriptorSets2 getLayerPtr_vkCmdBindDescriptorSets2()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdBindDescriptorSets2KHR = requires(
-    VkCommandBuffer commandBuffer, const VkBindDescriptorSetsInfo* pBindDescriptorSetsInfo
+    VkCommandBuffer commandBuffer,
+    const VkBindDescriptorSetsInfo* pBindDescriptorSetsInfo
 ) {
     layer_vkCmdBindDescriptorSets2KHR<T>(commandBuffer, pBindDescriptorSetsInfo);
 };
@@ -870,7 +952,10 @@ constexpr PFN_vkCmdBindDescriptorSets2KHR getLayerPtr_vkCmdBindDescriptorSets2KH
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdBindIndexBuffer = requires(
-    VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkIndexType indexType
+    VkCommandBuffer commandBuffer,
+    VkBuffer buffer,
+    VkDeviceSize offset,
+    VkIndexType indexType
 ) {
     layer_vkCmdBindIndexBuffer<T>(commandBuffer, buffer, offset, indexType);
 };
@@ -892,7 +977,11 @@ constexpr PFN_vkCmdBindIndexBuffer getLayerPtr_vkCmdBindIndexBuffer()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdBindIndexBuffer2 = requires(
-    VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkDeviceSize size, VkIndexType indexType
+    VkCommandBuffer commandBuffer,
+    VkBuffer buffer,
+    VkDeviceSize offset,
+    VkDeviceSize size,
+    VkIndexType indexType
 ) {
     layer_vkCmdBindIndexBuffer2<T>(commandBuffer, buffer, offset, size, indexType);
 };
@@ -914,7 +1003,11 @@ constexpr PFN_vkCmdBindIndexBuffer2 getLayerPtr_vkCmdBindIndexBuffer2()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdBindIndexBuffer2KHR = requires(
-    VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkDeviceSize size, VkIndexType indexType
+    VkCommandBuffer commandBuffer,
+    VkBuffer buffer,
+    VkDeviceSize offset,
+    VkDeviceSize size,
+    VkIndexType indexType
 ) {
     layer_vkCmdBindIndexBuffer2KHR<T>(commandBuffer, buffer, offset, size, indexType);
 };
@@ -936,7 +1029,8 @@ constexpr PFN_vkCmdBindIndexBuffer2KHR getLayerPtr_vkCmdBindIndexBuffer2KHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdBindIndexBuffer3KHR = requires(
-    VkCommandBuffer commandBuffer, const VkBindIndexBuffer3InfoKHR* pInfo
+    VkCommandBuffer commandBuffer,
+    const VkBindIndexBuffer3InfoKHR* pInfo
 ) {
     layer_vkCmdBindIndexBuffer3KHR<T>(commandBuffer, pInfo);
 };
@@ -958,7 +1052,9 @@ constexpr PFN_vkCmdBindIndexBuffer3KHR getLayerPtr_vkCmdBindIndexBuffer3KHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdBindPipeline = requires(
-    VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipeline pipeline
+    VkCommandBuffer commandBuffer,
+    VkPipelineBindPoint pipelineBindPoint,
+    VkPipeline pipeline
 ) {
     layer_vkCmdBindPipeline<T>(commandBuffer, pipelineBindPoint, pipeline);
 };
@@ -980,7 +1076,8 @@ constexpr PFN_vkCmdBindPipeline getLayerPtr_vkCmdBindPipeline()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdBindResourceHeapEXT = requires(
-    VkCommandBuffer commandBuffer, const VkBindHeapInfoEXT* pBindInfo
+    VkCommandBuffer commandBuffer,
+    const VkBindHeapInfoEXT* pBindInfo
 ) {
     layer_vkCmdBindResourceHeapEXT<T>(commandBuffer, pBindInfo);
 };
@@ -1002,7 +1099,8 @@ constexpr PFN_vkCmdBindResourceHeapEXT getLayerPtr_vkCmdBindResourceHeapEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdBindSamplerHeapEXT = requires(
-    VkCommandBuffer commandBuffer, const VkBindHeapInfoEXT* pBindInfo
+    VkCommandBuffer commandBuffer,
+    const VkBindHeapInfoEXT* pBindInfo
 ) {
     layer_vkCmdBindSamplerHeapEXT<T>(commandBuffer, pBindInfo);
 };
@@ -1024,7 +1122,10 @@ constexpr PFN_vkCmdBindSamplerHeapEXT getLayerPtr_vkCmdBindSamplerHeapEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdBindShadersEXT = requires(
-    VkCommandBuffer commandBuffer, uint32_t stageCount, const VkShaderStageFlagBits* pStages, const VkShaderEXT* pShaders
+    VkCommandBuffer commandBuffer,
+    uint32_t stageCount,
+    const VkShaderStageFlagBits* pStages,
+    const VkShaderEXT* pShaders
 ) {
     layer_vkCmdBindShadersEXT<T>(commandBuffer, stageCount, pStages, pShaders);
 };
@@ -1046,7 +1147,10 @@ constexpr PFN_vkCmdBindShadersEXT getLayerPtr_vkCmdBindShadersEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdBindTransformFeedbackBuffers2EXT = requires(
-    VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount, const VkBindTransformFeedbackBuffer2InfoEXT* pBindingInfos
+    VkCommandBuffer commandBuffer,
+    uint32_t firstBinding,
+    uint32_t bindingCount,
+    const VkBindTransformFeedbackBuffer2InfoEXT* pBindingInfos
 ) {
     layer_vkCmdBindTransformFeedbackBuffers2EXT<T>(commandBuffer, firstBinding, bindingCount, pBindingInfos);
 };
@@ -1068,7 +1172,12 @@ constexpr PFN_vkCmdBindTransformFeedbackBuffers2EXT getLayerPtr_vkCmdBindTransfo
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdBindTransformFeedbackBuffersEXT = requires(
-    VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount, const VkBuffer* pBuffers, const VkDeviceSize* pOffsets, const VkDeviceSize* pSizes
+    VkCommandBuffer commandBuffer,
+    uint32_t firstBinding,
+    uint32_t bindingCount,
+    const VkBuffer* pBuffers,
+    const VkDeviceSize* pOffsets,
+    const VkDeviceSize* pSizes
 ) {
     layer_vkCmdBindTransformFeedbackBuffersEXT<T>(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets, pSizes);
 };
@@ -1090,7 +1199,11 @@ constexpr PFN_vkCmdBindTransformFeedbackBuffersEXT getLayerPtr_vkCmdBindTransfor
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdBindVertexBuffers = requires(
-    VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount, const VkBuffer* pBuffers, const VkDeviceSize* pOffsets
+    VkCommandBuffer commandBuffer,
+    uint32_t firstBinding,
+    uint32_t bindingCount,
+    const VkBuffer* pBuffers,
+    const VkDeviceSize* pOffsets
 ) {
     layer_vkCmdBindVertexBuffers<T>(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets);
 };
@@ -1112,7 +1225,13 @@ constexpr PFN_vkCmdBindVertexBuffers getLayerPtr_vkCmdBindVertexBuffers()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdBindVertexBuffers2 = requires(
-    VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount, const VkBuffer* pBuffers, const VkDeviceSize* pOffsets, const VkDeviceSize* pSizes, const VkDeviceSize* pStrides
+    VkCommandBuffer commandBuffer,
+    uint32_t firstBinding,
+    uint32_t bindingCount,
+    const VkBuffer* pBuffers,
+    const VkDeviceSize* pOffsets,
+    const VkDeviceSize* pSizes,
+    const VkDeviceSize* pStrides
 ) {
     layer_vkCmdBindVertexBuffers2<T>(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets, pSizes, pStrides);
 };
@@ -1134,7 +1253,13 @@ constexpr PFN_vkCmdBindVertexBuffers2 getLayerPtr_vkCmdBindVertexBuffers2()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdBindVertexBuffers2EXT = requires(
-    VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount, const VkBuffer* pBuffers, const VkDeviceSize* pOffsets, const VkDeviceSize* pSizes, const VkDeviceSize* pStrides
+    VkCommandBuffer commandBuffer,
+    uint32_t firstBinding,
+    uint32_t bindingCount,
+    const VkBuffer* pBuffers,
+    const VkDeviceSize* pOffsets,
+    const VkDeviceSize* pSizes,
+    const VkDeviceSize* pStrides
 ) {
     layer_vkCmdBindVertexBuffers2EXT<T>(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets, pSizes, pStrides);
 };
@@ -1156,7 +1281,10 @@ constexpr PFN_vkCmdBindVertexBuffers2EXT getLayerPtr_vkCmdBindVertexBuffers2EXT(
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdBindVertexBuffers3KHR = requires(
-    VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount, const VkBindVertexBuffer3InfoKHR* pBindingInfos
+    VkCommandBuffer commandBuffer,
+    uint32_t firstBinding,
+    uint32_t bindingCount,
+    const VkBindVertexBuffer3InfoKHR* pBindingInfos
 ) {
     layer_vkCmdBindVertexBuffers3KHR<T>(commandBuffer, firstBinding, bindingCount, pBindingInfos);
 };
@@ -1178,7 +1306,14 @@ constexpr PFN_vkCmdBindVertexBuffers3KHR getLayerPtr_vkCmdBindVertexBuffers3KHR(
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdBlitImage = requires(
-    VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount, const VkImageBlit* pRegions, VkFilter filter
+    VkCommandBuffer commandBuffer,
+    VkImage srcImage,
+    VkImageLayout srcImageLayout,
+    VkImage dstImage,
+    VkImageLayout dstImageLayout,
+    uint32_t regionCount,
+    const VkImageBlit* pRegions,
+    VkFilter filter
 ) {
     layer_vkCmdBlitImage<T>(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions, filter);
 };
@@ -1200,7 +1335,8 @@ constexpr PFN_vkCmdBlitImage getLayerPtr_vkCmdBlitImage()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdBlitImage2 = requires(
-    VkCommandBuffer commandBuffer, const VkBlitImageInfo2* pBlitImageInfo
+    VkCommandBuffer commandBuffer,
+    const VkBlitImageInfo2* pBlitImageInfo
 ) {
     layer_vkCmdBlitImage2<T>(commandBuffer, pBlitImageInfo);
 };
@@ -1222,7 +1358,8 @@ constexpr PFN_vkCmdBlitImage2 getLayerPtr_vkCmdBlitImage2()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdBlitImage2KHR = requires(
-    VkCommandBuffer commandBuffer, const VkBlitImageInfo2* pBlitImageInfo
+    VkCommandBuffer commandBuffer,
+    const VkBlitImageInfo2* pBlitImageInfo
 ) {
     layer_vkCmdBlitImage2KHR<T>(commandBuffer, pBlitImageInfo);
 };
@@ -1244,7 +1381,12 @@ constexpr PFN_vkCmdBlitImage2KHR getLayerPtr_vkCmdBlitImage2KHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdBuildAccelerationStructuresIndirectKHR = requires(
-    VkCommandBuffer commandBuffer, uint32_t infoCount, const VkAccelerationStructureBuildGeometryInfoKHR* pInfos, const VkDeviceAddress* pIndirectDeviceAddresses, const uint32_t* pIndirectStrides, const uint32_t* const* ppMaxPrimitiveCounts
+    VkCommandBuffer commandBuffer,
+    uint32_t infoCount,
+    const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,
+    const VkDeviceAddress* pIndirectDeviceAddresses,
+    const uint32_t* pIndirectStrides,
+    const uint32_t* const* ppMaxPrimitiveCounts
 ) {
     layer_vkCmdBuildAccelerationStructuresIndirectKHR<T>(commandBuffer, infoCount, pInfos, pIndirectDeviceAddresses, pIndirectStrides, ppMaxPrimitiveCounts);
 };
@@ -1266,7 +1408,10 @@ constexpr PFN_vkCmdBuildAccelerationStructuresIndirectKHR getLayerPtr_vkCmdBuild
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdBuildAccelerationStructuresKHR = requires(
-    VkCommandBuffer commandBuffer, uint32_t infoCount, const VkAccelerationStructureBuildGeometryInfoKHR* pInfos, const VkAccelerationStructureBuildRangeInfoKHR* const* ppBuildRangeInfos
+    VkCommandBuffer commandBuffer,
+    uint32_t infoCount,
+    const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,
+    const VkAccelerationStructureBuildRangeInfoKHR* const* ppBuildRangeInfos
 ) {
     layer_vkCmdBuildAccelerationStructuresKHR<T>(commandBuffer, infoCount, pInfos, ppBuildRangeInfos);
 };
@@ -1288,7 +1433,9 @@ constexpr PFN_vkCmdBuildAccelerationStructuresKHR getLayerPtr_vkCmdBuildAccelera
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdBuildMicromapsEXT = requires(
-    VkCommandBuffer commandBuffer, uint32_t infoCount, const VkMicromapBuildInfoEXT* pInfos
+    VkCommandBuffer commandBuffer,
+    uint32_t infoCount,
+    const VkMicromapBuildInfoEXT* pInfos
 ) {
     layer_vkCmdBuildMicromapsEXT<T>(commandBuffer, infoCount, pInfos);
 };
@@ -1310,7 +1457,11 @@ constexpr PFN_vkCmdBuildMicromapsEXT getLayerPtr_vkCmdBuildMicromapsEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdClearAttachments = requires(
-    VkCommandBuffer commandBuffer, uint32_t attachmentCount, const VkClearAttachment* pAttachments, uint32_t rectCount, const VkClearRect* pRects
+    VkCommandBuffer commandBuffer,
+    uint32_t attachmentCount,
+    const VkClearAttachment* pAttachments,
+    uint32_t rectCount,
+    const VkClearRect* pRects
 ) {
     layer_vkCmdClearAttachments<T>(commandBuffer, attachmentCount, pAttachments, rectCount, pRects);
 };
@@ -1332,7 +1483,12 @@ constexpr PFN_vkCmdClearAttachments getLayerPtr_vkCmdClearAttachments()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdClearColorImage = requires(
-    VkCommandBuffer commandBuffer, VkImage image, VkImageLayout imageLayout, const VkClearColorValue* pColor, uint32_t rangeCount, const VkImageSubresourceRange* pRanges
+    VkCommandBuffer commandBuffer,
+    VkImage image,
+    VkImageLayout imageLayout,
+    const VkClearColorValue* pColor,
+    uint32_t rangeCount,
+    const VkImageSubresourceRange* pRanges
 ) {
     layer_vkCmdClearColorImage<T>(commandBuffer, image, imageLayout, pColor, rangeCount, pRanges);
 };
@@ -1354,7 +1510,12 @@ constexpr PFN_vkCmdClearColorImage getLayerPtr_vkCmdClearColorImage()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdClearDepthStencilImage = requires(
-    VkCommandBuffer commandBuffer, VkImage image, VkImageLayout imageLayout, const VkClearDepthStencilValue* pDepthStencil, uint32_t rangeCount, const VkImageSubresourceRange* pRanges
+    VkCommandBuffer commandBuffer,
+    VkImage image,
+    VkImageLayout imageLayout,
+    const VkClearDepthStencilValue* pDepthStencil,
+    uint32_t rangeCount,
+    const VkImageSubresourceRange* pRanges
 ) {
     layer_vkCmdClearDepthStencilImage<T>(commandBuffer, image, imageLayout, pDepthStencil, rangeCount, pRanges);
 };
@@ -1376,7 +1537,8 @@ constexpr PFN_vkCmdClearDepthStencilImage getLayerPtr_vkCmdClearDepthStencilImag
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdCopyAccelerationStructureKHR = requires(
-    VkCommandBuffer commandBuffer, const VkCopyAccelerationStructureInfoKHR* pInfo
+    VkCommandBuffer commandBuffer,
+    const VkCopyAccelerationStructureInfoKHR* pInfo
 ) {
     layer_vkCmdCopyAccelerationStructureKHR<T>(commandBuffer, pInfo);
 };
@@ -1398,7 +1560,8 @@ constexpr PFN_vkCmdCopyAccelerationStructureKHR getLayerPtr_vkCmdCopyAcceleratio
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdCopyAccelerationStructureToMemoryKHR = requires(
-    VkCommandBuffer commandBuffer, const VkCopyAccelerationStructureToMemoryInfoKHR* pInfo
+    VkCommandBuffer commandBuffer,
+    const VkCopyAccelerationStructureToMemoryInfoKHR* pInfo
 ) {
     layer_vkCmdCopyAccelerationStructureToMemoryKHR<T>(commandBuffer, pInfo);
 };
@@ -1420,7 +1583,11 @@ constexpr PFN_vkCmdCopyAccelerationStructureToMemoryKHR getLayerPtr_vkCmdCopyAcc
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdCopyBuffer = requires(
-    VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkBuffer dstBuffer, uint32_t regionCount, const VkBufferCopy* pRegions
+    VkCommandBuffer commandBuffer,
+    VkBuffer srcBuffer,
+    VkBuffer dstBuffer,
+    uint32_t regionCount,
+    const VkBufferCopy* pRegions
 ) {
     layer_vkCmdCopyBuffer<T>(commandBuffer, srcBuffer, dstBuffer, regionCount, pRegions);
 };
@@ -1442,7 +1609,8 @@ constexpr PFN_vkCmdCopyBuffer getLayerPtr_vkCmdCopyBuffer()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdCopyBuffer2 = requires(
-    VkCommandBuffer commandBuffer, const VkCopyBufferInfo2* pCopyBufferInfo
+    VkCommandBuffer commandBuffer,
+    const VkCopyBufferInfo2* pCopyBufferInfo
 ) {
     layer_vkCmdCopyBuffer2<T>(commandBuffer, pCopyBufferInfo);
 };
@@ -1464,7 +1632,8 @@ constexpr PFN_vkCmdCopyBuffer2 getLayerPtr_vkCmdCopyBuffer2()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdCopyBuffer2KHR = requires(
-    VkCommandBuffer commandBuffer, const VkCopyBufferInfo2* pCopyBufferInfo
+    VkCommandBuffer commandBuffer,
+    const VkCopyBufferInfo2* pCopyBufferInfo
 ) {
     layer_vkCmdCopyBuffer2KHR<T>(commandBuffer, pCopyBufferInfo);
 };
@@ -1486,7 +1655,12 @@ constexpr PFN_vkCmdCopyBuffer2KHR getLayerPtr_vkCmdCopyBuffer2KHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdCopyBufferToImage = requires(
-    VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount, const VkBufferImageCopy* pRegions
+    VkCommandBuffer commandBuffer,
+    VkBuffer srcBuffer,
+    VkImage dstImage,
+    VkImageLayout dstImageLayout,
+    uint32_t regionCount,
+    const VkBufferImageCopy* pRegions
 ) {
     layer_vkCmdCopyBufferToImage<T>(commandBuffer, srcBuffer, dstImage, dstImageLayout, regionCount, pRegions);
 };
@@ -1508,7 +1682,8 @@ constexpr PFN_vkCmdCopyBufferToImage getLayerPtr_vkCmdCopyBufferToImage()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdCopyBufferToImage2 = requires(
-    VkCommandBuffer commandBuffer, const VkCopyBufferToImageInfo2* pCopyBufferToImageInfo
+    VkCommandBuffer commandBuffer,
+    const VkCopyBufferToImageInfo2* pCopyBufferToImageInfo
 ) {
     layer_vkCmdCopyBufferToImage2<T>(commandBuffer, pCopyBufferToImageInfo);
 };
@@ -1530,7 +1705,8 @@ constexpr PFN_vkCmdCopyBufferToImage2 getLayerPtr_vkCmdCopyBufferToImage2()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdCopyBufferToImage2KHR = requires(
-    VkCommandBuffer commandBuffer, const VkCopyBufferToImageInfo2* pCopyBufferToImageInfo
+    VkCommandBuffer commandBuffer,
+    const VkCopyBufferToImageInfo2* pCopyBufferToImageInfo
 ) {
     layer_vkCmdCopyBufferToImage2KHR<T>(commandBuffer, pCopyBufferToImageInfo);
 };
@@ -1552,7 +1728,13 @@ constexpr PFN_vkCmdCopyBufferToImage2KHR getLayerPtr_vkCmdCopyBufferToImage2KHR(
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdCopyImage = requires(
-    VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount, const VkImageCopy* pRegions
+    VkCommandBuffer commandBuffer,
+    VkImage srcImage,
+    VkImageLayout srcImageLayout,
+    VkImage dstImage,
+    VkImageLayout dstImageLayout,
+    uint32_t regionCount,
+    const VkImageCopy* pRegions
 ) {
     layer_vkCmdCopyImage<T>(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
 };
@@ -1574,7 +1756,8 @@ constexpr PFN_vkCmdCopyImage getLayerPtr_vkCmdCopyImage()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdCopyImage2 = requires(
-    VkCommandBuffer commandBuffer, const VkCopyImageInfo2* pCopyImageInfo
+    VkCommandBuffer commandBuffer,
+    const VkCopyImageInfo2* pCopyImageInfo
 ) {
     layer_vkCmdCopyImage2<T>(commandBuffer, pCopyImageInfo);
 };
@@ -1596,7 +1779,8 @@ constexpr PFN_vkCmdCopyImage2 getLayerPtr_vkCmdCopyImage2()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdCopyImage2KHR = requires(
-    VkCommandBuffer commandBuffer, const VkCopyImageInfo2* pCopyImageInfo
+    VkCommandBuffer commandBuffer,
+    const VkCopyImageInfo2* pCopyImageInfo
 ) {
     layer_vkCmdCopyImage2KHR<T>(commandBuffer, pCopyImageInfo);
 };
@@ -1618,7 +1802,12 @@ constexpr PFN_vkCmdCopyImage2KHR getLayerPtr_vkCmdCopyImage2KHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdCopyImageToBuffer = requires(
-    VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkBuffer dstBuffer, uint32_t regionCount, const VkBufferImageCopy* pRegions
+    VkCommandBuffer commandBuffer,
+    VkImage srcImage,
+    VkImageLayout srcImageLayout,
+    VkBuffer dstBuffer,
+    uint32_t regionCount,
+    const VkBufferImageCopy* pRegions
 ) {
     layer_vkCmdCopyImageToBuffer<T>(commandBuffer, srcImage, srcImageLayout, dstBuffer, regionCount, pRegions);
 };
@@ -1640,7 +1829,8 @@ constexpr PFN_vkCmdCopyImageToBuffer getLayerPtr_vkCmdCopyImageToBuffer()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdCopyImageToBuffer2 = requires(
-    VkCommandBuffer commandBuffer, const VkCopyImageToBufferInfo2* pCopyImageToBufferInfo
+    VkCommandBuffer commandBuffer,
+    const VkCopyImageToBufferInfo2* pCopyImageToBufferInfo
 ) {
     layer_vkCmdCopyImageToBuffer2<T>(commandBuffer, pCopyImageToBufferInfo);
 };
@@ -1662,7 +1852,8 @@ constexpr PFN_vkCmdCopyImageToBuffer2 getLayerPtr_vkCmdCopyImageToBuffer2()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdCopyImageToBuffer2KHR = requires(
-    VkCommandBuffer commandBuffer, const VkCopyImageToBufferInfo2* pCopyImageToBufferInfo
+    VkCommandBuffer commandBuffer,
+    const VkCopyImageToBufferInfo2* pCopyImageToBufferInfo
 ) {
     layer_vkCmdCopyImageToBuffer2KHR<T>(commandBuffer, pCopyImageToBufferInfo);
 };
@@ -1684,7 +1875,8 @@ constexpr PFN_vkCmdCopyImageToBuffer2KHR getLayerPtr_vkCmdCopyImageToBuffer2KHR(
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdCopyImageToMemoryKHR = requires(
-    VkCommandBuffer commandBuffer, const VkCopyDeviceMemoryImageInfoKHR* pCopyMemoryInfo
+    VkCommandBuffer commandBuffer,
+    const VkCopyDeviceMemoryImageInfoKHR* pCopyMemoryInfo
 ) {
     layer_vkCmdCopyImageToMemoryKHR<T>(commandBuffer, pCopyMemoryInfo);
 };
@@ -1706,7 +1898,8 @@ constexpr PFN_vkCmdCopyImageToMemoryKHR getLayerPtr_vkCmdCopyImageToMemoryKHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdCopyMemoryIndirectKHR = requires(
-    VkCommandBuffer commandBuffer, const VkCopyMemoryIndirectInfoKHR* pCopyMemoryIndirectInfo
+    VkCommandBuffer commandBuffer,
+    const VkCopyMemoryIndirectInfoKHR* pCopyMemoryIndirectInfo
 ) {
     layer_vkCmdCopyMemoryIndirectKHR<T>(commandBuffer, pCopyMemoryIndirectInfo);
 };
@@ -1728,7 +1921,8 @@ constexpr PFN_vkCmdCopyMemoryIndirectKHR getLayerPtr_vkCmdCopyMemoryIndirectKHR(
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdCopyMemoryKHR = requires(
-    VkCommandBuffer commandBuffer, const VkCopyDeviceMemoryInfoKHR* pCopyMemoryInfo
+    VkCommandBuffer commandBuffer,
+    const VkCopyDeviceMemoryInfoKHR* pCopyMemoryInfo
 ) {
     layer_vkCmdCopyMemoryKHR<T>(commandBuffer, pCopyMemoryInfo);
 };
@@ -1750,7 +1944,8 @@ constexpr PFN_vkCmdCopyMemoryKHR getLayerPtr_vkCmdCopyMemoryKHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdCopyMemoryToAccelerationStructureKHR = requires(
-    VkCommandBuffer commandBuffer, const VkCopyMemoryToAccelerationStructureInfoKHR* pInfo
+    VkCommandBuffer commandBuffer,
+    const VkCopyMemoryToAccelerationStructureInfoKHR* pInfo
 ) {
     layer_vkCmdCopyMemoryToAccelerationStructureKHR<T>(commandBuffer, pInfo);
 };
@@ -1772,7 +1967,8 @@ constexpr PFN_vkCmdCopyMemoryToAccelerationStructureKHR getLayerPtr_vkCmdCopyMem
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdCopyMemoryToImageIndirectKHR = requires(
-    VkCommandBuffer commandBuffer, const VkCopyMemoryToImageIndirectInfoKHR* pCopyMemoryToImageIndirectInfo
+    VkCommandBuffer commandBuffer,
+    const VkCopyMemoryToImageIndirectInfoKHR* pCopyMemoryToImageIndirectInfo
 ) {
     layer_vkCmdCopyMemoryToImageIndirectKHR<T>(commandBuffer, pCopyMemoryToImageIndirectInfo);
 };
@@ -1794,7 +1990,8 @@ constexpr PFN_vkCmdCopyMemoryToImageIndirectKHR getLayerPtr_vkCmdCopyMemoryToIma
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdCopyMemoryToImageKHR = requires(
-    VkCommandBuffer commandBuffer, const VkCopyDeviceMemoryImageInfoKHR* pCopyMemoryInfo
+    VkCommandBuffer commandBuffer,
+    const VkCopyDeviceMemoryImageInfoKHR* pCopyMemoryInfo
 ) {
     layer_vkCmdCopyMemoryToImageKHR<T>(commandBuffer, pCopyMemoryInfo);
 };
@@ -1816,7 +2013,8 @@ constexpr PFN_vkCmdCopyMemoryToImageKHR getLayerPtr_vkCmdCopyMemoryToImageKHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdCopyMemoryToMicromapEXT = requires(
-    VkCommandBuffer commandBuffer, const VkCopyMemoryToMicromapInfoEXT* pInfo
+    VkCommandBuffer commandBuffer,
+    const VkCopyMemoryToMicromapInfoEXT* pInfo
 ) {
     layer_vkCmdCopyMemoryToMicromapEXT<T>(commandBuffer, pInfo);
 };
@@ -1838,7 +2036,8 @@ constexpr PFN_vkCmdCopyMemoryToMicromapEXT getLayerPtr_vkCmdCopyMemoryToMicromap
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdCopyMicromapEXT = requires(
-    VkCommandBuffer commandBuffer, const VkCopyMicromapInfoEXT* pInfo
+    VkCommandBuffer commandBuffer,
+    const VkCopyMicromapInfoEXT* pInfo
 ) {
     layer_vkCmdCopyMicromapEXT<T>(commandBuffer, pInfo);
 };
@@ -1860,7 +2059,8 @@ constexpr PFN_vkCmdCopyMicromapEXT getLayerPtr_vkCmdCopyMicromapEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdCopyMicromapToMemoryEXT = requires(
-    VkCommandBuffer commandBuffer, const VkCopyMicromapToMemoryInfoEXT* pInfo
+    VkCommandBuffer commandBuffer,
+    const VkCopyMicromapToMemoryInfoEXT* pInfo
 ) {
     layer_vkCmdCopyMicromapToMemoryEXT<T>(commandBuffer, pInfo);
 };
@@ -1882,7 +2082,14 @@ constexpr PFN_vkCmdCopyMicromapToMemoryEXT getLayerPtr_vkCmdCopyMicromapToMemory
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdCopyQueryPoolResults = requires(
-    VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount, VkBuffer dstBuffer, VkDeviceSize dstOffset, VkDeviceSize stride, VkQueryResultFlags flags
+    VkCommandBuffer commandBuffer,
+    VkQueryPool queryPool,
+    uint32_t firstQuery,
+    uint32_t queryCount,
+    VkBuffer dstBuffer,
+    VkDeviceSize dstOffset,
+    VkDeviceSize stride,
+    VkQueryResultFlags flags
 ) {
     layer_vkCmdCopyQueryPoolResults<T>(commandBuffer, queryPool, firstQuery, queryCount, dstBuffer, dstOffset, stride, flags);
 };
@@ -1904,7 +2111,13 @@ constexpr PFN_vkCmdCopyQueryPoolResults getLayerPtr_vkCmdCopyQueryPoolResults()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdCopyQueryPoolResultsToMemoryKHR = requires(
-    VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount, const VkStridedDeviceAddressRangeKHR* pDstRange, VkAddressCommandFlagsKHR dstFlags, VkQueryResultFlags queryResultFlags
+    VkCommandBuffer commandBuffer,
+    VkQueryPool queryPool,
+    uint32_t firstQuery,
+    uint32_t queryCount,
+    const VkStridedDeviceAddressRangeKHR* pDstRange,
+    VkAddressCommandFlagsKHR dstFlags,
+    VkQueryResultFlags queryResultFlags
 ) {
     layer_vkCmdCopyQueryPoolResultsToMemoryKHR<T>(commandBuffer, queryPool, firstQuery, queryCount, pDstRange, dstFlags, queryResultFlags);
 };
@@ -1926,7 +2139,8 @@ constexpr PFN_vkCmdCopyQueryPoolResultsToMemoryKHR getLayerPtr_vkCmdCopyQueryPoo
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdCopyTensorARM = requires(
-    VkCommandBuffer commandBuffer, const VkCopyTensorInfoARM* pCopyTensorInfo
+    VkCommandBuffer commandBuffer,
+    const VkCopyTensorInfoARM* pCopyTensorInfo
 ) {
     layer_vkCmdCopyTensorARM<T>(commandBuffer, pCopyTensorInfo);
 };
@@ -1948,7 +2162,8 @@ constexpr PFN_vkCmdCopyTensorARM getLayerPtr_vkCmdCopyTensorARM()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdDebugMarkerBeginEXT = requires(
-    VkCommandBuffer commandBuffer, const VkDebugMarkerMarkerInfoEXT* pMarkerInfo
+    VkCommandBuffer commandBuffer,
+    const VkDebugMarkerMarkerInfoEXT* pMarkerInfo
 ) {
     layer_vkCmdDebugMarkerBeginEXT<T>(commandBuffer, pMarkerInfo);
 };
@@ -1992,7 +2207,8 @@ constexpr PFN_vkCmdDebugMarkerEndEXT getLayerPtr_vkCmdDebugMarkerEndEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdDebugMarkerInsertEXT = requires(
-    VkCommandBuffer commandBuffer, const VkDebugMarkerMarkerInfoEXT* pMarkerInfo
+    VkCommandBuffer commandBuffer,
+    const VkDebugMarkerMarkerInfoEXT* pMarkerInfo
 ) {
     layer_vkCmdDebugMarkerInsertEXT<T>(commandBuffer, pMarkerInfo);
 };
@@ -2014,7 +2230,8 @@ constexpr PFN_vkCmdDebugMarkerInsertEXT getLayerPtr_vkCmdDebugMarkerInsertEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdDecompressMemoryEXT = requires(
-    VkCommandBuffer commandBuffer, const VkDecompressMemoryInfoEXT* pDecompressMemoryInfoEXT
+    VkCommandBuffer commandBuffer,
+    const VkDecompressMemoryInfoEXT* pDecompressMemoryInfoEXT
 ) {
     layer_vkCmdDecompressMemoryEXT<T>(commandBuffer, pDecompressMemoryInfoEXT);
 };
@@ -2036,7 +2253,12 @@ constexpr PFN_vkCmdDecompressMemoryEXT getLayerPtr_vkCmdDecompressMemoryEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdDecompressMemoryIndirectCountEXT = requires(
-    VkCommandBuffer commandBuffer, VkMemoryDecompressionMethodFlagsEXT decompressionMethod, VkDeviceAddress indirectCommandsAddress, VkDeviceAddress indirectCommandsCountAddress, uint32_t maxDecompressionCount, uint32_t stride
+    VkCommandBuffer commandBuffer,
+    VkMemoryDecompressionMethodFlagsEXT decompressionMethod,
+    VkDeviceAddress indirectCommandsAddress,
+    VkDeviceAddress indirectCommandsCountAddress,
+    uint32_t maxDecompressionCount,
+    uint32_t stride
 ) {
     layer_vkCmdDecompressMemoryIndirectCountEXT<T>(commandBuffer, decompressionMethod, indirectCommandsAddress, indirectCommandsCountAddress, maxDecompressionCount, stride);
 };
@@ -2058,7 +2280,10 @@ constexpr PFN_vkCmdDecompressMemoryIndirectCountEXT getLayerPtr_vkCmdDecompressM
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdDispatch = requires(
-    VkCommandBuffer commandBuffer, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ
+    VkCommandBuffer commandBuffer,
+    uint32_t groupCountX,
+    uint32_t groupCountY,
+    uint32_t groupCountZ
 ) {
     layer_vkCmdDispatch<T>(commandBuffer, groupCountX, groupCountY, groupCountZ);
 };
@@ -2080,7 +2305,13 @@ constexpr PFN_vkCmdDispatch getLayerPtr_vkCmdDispatch()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdDispatchBase = requires(
-    VkCommandBuffer commandBuffer, uint32_t baseGroupX, uint32_t baseGroupY, uint32_t baseGroupZ, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ
+    VkCommandBuffer commandBuffer,
+    uint32_t baseGroupX,
+    uint32_t baseGroupY,
+    uint32_t baseGroupZ,
+    uint32_t groupCountX,
+    uint32_t groupCountY,
+    uint32_t groupCountZ
 ) {
     layer_vkCmdDispatchBase<T>(commandBuffer, baseGroupX, baseGroupY, baseGroupZ, groupCountX, groupCountY, groupCountZ);
 };
@@ -2102,7 +2333,13 @@ constexpr PFN_vkCmdDispatchBase getLayerPtr_vkCmdDispatchBase()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdDispatchBaseKHR = requires(
-    VkCommandBuffer commandBuffer, uint32_t baseGroupX, uint32_t baseGroupY, uint32_t baseGroupZ, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ
+    VkCommandBuffer commandBuffer,
+    uint32_t baseGroupX,
+    uint32_t baseGroupY,
+    uint32_t baseGroupZ,
+    uint32_t groupCountX,
+    uint32_t groupCountY,
+    uint32_t groupCountZ
 ) {
     layer_vkCmdDispatchBaseKHR<T>(commandBuffer, baseGroupX, baseGroupY, baseGroupZ, groupCountX, groupCountY, groupCountZ);
 };
@@ -2124,7 +2361,9 @@ constexpr PFN_vkCmdDispatchBaseKHR getLayerPtr_vkCmdDispatchBaseKHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdDispatchDataGraphARM = requires(
-    VkCommandBuffer commandBuffer, VkDataGraphPipelineSessionARM session, const VkDataGraphPipelineDispatchInfoARM* pInfo
+    VkCommandBuffer commandBuffer,
+    VkDataGraphPipelineSessionARM session,
+    const VkDataGraphPipelineDispatchInfoARM* pInfo
 ) {
     layer_vkCmdDispatchDataGraphARM<T>(commandBuffer, session, pInfo);
 };
@@ -2146,7 +2385,9 @@ constexpr PFN_vkCmdDispatchDataGraphARM getLayerPtr_vkCmdDispatchDataGraphARM()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdDispatchIndirect = requires(
-    VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset
+    VkCommandBuffer commandBuffer,
+    VkBuffer buffer,
+    VkDeviceSize offset
 ) {
     layer_vkCmdDispatchIndirect<T>(commandBuffer, buffer, offset);
 };
@@ -2168,7 +2409,8 @@ constexpr PFN_vkCmdDispatchIndirect getLayerPtr_vkCmdDispatchIndirect()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdDispatchIndirect2KHR = requires(
-    VkCommandBuffer commandBuffer, const VkDispatchIndirect2InfoKHR* pInfo
+    VkCommandBuffer commandBuffer,
+    const VkDispatchIndirect2InfoKHR* pInfo
 ) {
     layer_vkCmdDispatchIndirect2KHR<T>(commandBuffer, pInfo);
 };
@@ -2190,7 +2432,11 @@ constexpr PFN_vkCmdDispatchIndirect2KHR getLayerPtr_vkCmdDispatchIndirect2KHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdDraw = requires(
-    VkCommandBuffer commandBuffer, uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance
+    VkCommandBuffer commandBuffer,
+    uint32_t vertexCount,
+    uint32_t instanceCount,
+    uint32_t firstVertex,
+    uint32_t firstInstance
 ) {
     layer_vkCmdDraw<T>(commandBuffer, vertexCount, instanceCount, firstVertex, firstInstance);
 };
@@ -2212,7 +2458,12 @@ constexpr PFN_vkCmdDraw getLayerPtr_vkCmdDraw()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdDrawIndexed = requires(
-    VkCommandBuffer commandBuffer, uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t vertexOffset, uint32_t firstInstance
+    VkCommandBuffer commandBuffer,
+    uint32_t indexCount,
+    uint32_t instanceCount,
+    uint32_t firstIndex,
+    int32_t vertexOffset,
+    uint32_t firstInstance
 ) {
     layer_vkCmdDrawIndexed<T>(commandBuffer, indexCount, instanceCount, firstIndex, vertexOffset, firstInstance);
 };
@@ -2234,7 +2485,11 @@ constexpr PFN_vkCmdDrawIndexed getLayerPtr_vkCmdDrawIndexed()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdDrawIndexedIndirect = requires(
-    VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, uint32_t drawCount, uint32_t stride
+    VkCommandBuffer commandBuffer,
+    VkBuffer buffer,
+    VkDeviceSize offset,
+    uint32_t drawCount,
+    uint32_t stride
 ) {
     layer_vkCmdDrawIndexedIndirect<T>(commandBuffer, buffer, offset, drawCount, stride);
 };
@@ -2256,7 +2511,8 @@ constexpr PFN_vkCmdDrawIndexedIndirect getLayerPtr_vkCmdDrawIndexedIndirect()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdDrawIndexedIndirect2KHR = requires(
-    VkCommandBuffer commandBuffer, const VkDrawIndirect2InfoKHR* pInfo
+    VkCommandBuffer commandBuffer,
+    const VkDrawIndirect2InfoKHR* pInfo
 ) {
     layer_vkCmdDrawIndexedIndirect2KHR<T>(commandBuffer, pInfo);
 };
@@ -2278,7 +2534,13 @@ constexpr PFN_vkCmdDrawIndexedIndirect2KHR getLayerPtr_vkCmdDrawIndexedIndirect2
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdDrawIndexedIndirectCount = requires(
-    VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride
+    VkCommandBuffer commandBuffer,
+    VkBuffer buffer,
+    VkDeviceSize offset,
+    VkBuffer countBuffer,
+    VkDeviceSize countBufferOffset,
+    uint32_t maxDrawCount,
+    uint32_t stride
 ) {
     layer_vkCmdDrawIndexedIndirectCount<T>(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 };
@@ -2300,7 +2562,8 @@ constexpr PFN_vkCmdDrawIndexedIndirectCount getLayerPtr_vkCmdDrawIndexedIndirect
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdDrawIndexedIndirectCount2KHR = requires(
-    VkCommandBuffer commandBuffer, const VkDrawIndirectCount2InfoKHR* pInfo
+    VkCommandBuffer commandBuffer,
+    const VkDrawIndirectCount2InfoKHR* pInfo
 ) {
     layer_vkCmdDrawIndexedIndirectCount2KHR<T>(commandBuffer, pInfo);
 };
@@ -2322,7 +2585,13 @@ constexpr PFN_vkCmdDrawIndexedIndirectCount2KHR getLayerPtr_vkCmdDrawIndexedIndi
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdDrawIndexedIndirectCountKHR = requires(
-    VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride
+    VkCommandBuffer commandBuffer,
+    VkBuffer buffer,
+    VkDeviceSize offset,
+    VkBuffer countBuffer,
+    VkDeviceSize countBufferOffset,
+    uint32_t maxDrawCount,
+    uint32_t stride
 ) {
     layer_vkCmdDrawIndexedIndirectCountKHR<T>(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 };
@@ -2344,7 +2613,11 @@ constexpr PFN_vkCmdDrawIndexedIndirectCountKHR getLayerPtr_vkCmdDrawIndexedIndir
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdDrawIndirect = requires(
-    VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, uint32_t drawCount, uint32_t stride
+    VkCommandBuffer commandBuffer,
+    VkBuffer buffer,
+    VkDeviceSize offset,
+    uint32_t drawCount,
+    uint32_t stride
 ) {
     layer_vkCmdDrawIndirect<T>(commandBuffer, buffer, offset, drawCount, stride);
 };
@@ -2366,7 +2639,8 @@ constexpr PFN_vkCmdDrawIndirect getLayerPtr_vkCmdDrawIndirect()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdDrawIndirect2KHR = requires(
-    VkCommandBuffer commandBuffer, const VkDrawIndirect2InfoKHR* pInfo
+    VkCommandBuffer commandBuffer,
+    const VkDrawIndirect2InfoKHR* pInfo
 ) {
     layer_vkCmdDrawIndirect2KHR<T>(commandBuffer, pInfo);
 };
@@ -2388,7 +2662,12 @@ constexpr PFN_vkCmdDrawIndirect2KHR getLayerPtr_vkCmdDrawIndirect2KHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdDrawIndirectByteCount2EXT = requires(
-    VkCommandBuffer commandBuffer, uint32_t instanceCount, uint32_t firstInstance, const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfo, uint32_t counterOffset, uint32_t vertexStride
+    VkCommandBuffer commandBuffer,
+    uint32_t instanceCount,
+    uint32_t firstInstance,
+    const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfo,
+    uint32_t counterOffset,
+    uint32_t vertexStride
 ) {
     layer_vkCmdDrawIndirectByteCount2EXT<T>(commandBuffer, instanceCount, firstInstance, pCounterInfo, counterOffset, vertexStride);
 };
@@ -2410,7 +2689,13 @@ constexpr PFN_vkCmdDrawIndirectByteCount2EXT getLayerPtr_vkCmdDrawIndirectByteCo
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdDrawIndirectByteCountEXT = requires(
-    VkCommandBuffer commandBuffer, uint32_t instanceCount, uint32_t firstInstance, VkBuffer counterBuffer, VkDeviceSize counterBufferOffset, uint32_t counterOffset, uint32_t vertexStride
+    VkCommandBuffer commandBuffer,
+    uint32_t instanceCount,
+    uint32_t firstInstance,
+    VkBuffer counterBuffer,
+    VkDeviceSize counterBufferOffset,
+    uint32_t counterOffset,
+    uint32_t vertexStride
 ) {
     layer_vkCmdDrawIndirectByteCountEXT<T>(commandBuffer, instanceCount, firstInstance, counterBuffer, counterBufferOffset, counterOffset, vertexStride);
 };
@@ -2432,7 +2717,13 @@ constexpr PFN_vkCmdDrawIndirectByteCountEXT getLayerPtr_vkCmdDrawIndirectByteCou
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdDrawIndirectCount = requires(
-    VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride
+    VkCommandBuffer commandBuffer,
+    VkBuffer buffer,
+    VkDeviceSize offset,
+    VkBuffer countBuffer,
+    VkDeviceSize countBufferOffset,
+    uint32_t maxDrawCount,
+    uint32_t stride
 ) {
     layer_vkCmdDrawIndirectCount<T>(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 };
@@ -2454,7 +2745,8 @@ constexpr PFN_vkCmdDrawIndirectCount getLayerPtr_vkCmdDrawIndirectCount()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdDrawIndirectCount2KHR = requires(
-    VkCommandBuffer commandBuffer, const VkDrawIndirectCount2InfoKHR* pInfo
+    VkCommandBuffer commandBuffer,
+    const VkDrawIndirectCount2InfoKHR* pInfo
 ) {
     layer_vkCmdDrawIndirectCount2KHR<T>(commandBuffer, pInfo);
 };
@@ -2476,7 +2768,13 @@ constexpr PFN_vkCmdDrawIndirectCount2KHR getLayerPtr_vkCmdDrawIndirectCount2KHR(
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdDrawIndirectCountKHR = requires(
-    VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride
+    VkCommandBuffer commandBuffer,
+    VkBuffer buffer,
+    VkDeviceSize offset,
+    VkBuffer countBuffer,
+    VkDeviceSize countBufferOffset,
+    uint32_t maxDrawCount,
+    uint32_t stride
 ) {
     layer_vkCmdDrawIndirectCountKHR<T>(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 };
@@ -2498,7 +2796,10 @@ constexpr PFN_vkCmdDrawIndirectCountKHR getLayerPtr_vkCmdDrawIndirectCountKHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdDrawMeshTasksEXT = requires(
-    VkCommandBuffer commandBuffer, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ
+    VkCommandBuffer commandBuffer,
+    uint32_t groupCountX,
+    uint32_t groupCountY,
+    uint32_t groupCountZ
 ) {
     layer_vkCmdDrawMeshTasksEXT<T>(commandBuffer, groupCountX, groupCountY, groupCountZ);
 };
@@ -2520,7 +2821,8 @@ constexpr PFN_vkCmdDrawMeshTasksEXT getLayerPtr_vkCmdDrawMeshTasksEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdDrawMeshTasksIndirect2EXT = requires(
-    VkCommandBuffer commandBuffer, const VkDrawIndirect2InfoKHR* pInfo
+    VkCommandBuffer commandBuffer,
+    const VkDrawIndirect2InfoKHR* pInfo
 ) {
     layer_vkCmdDrawMeshTasksIndirect2EXT<T>(commandBuffer, pInfo);
 };
@@ -2542,7 +2844,8 @@ constexpr PFN_vkCmdDrawMeshTasksIndirect2EXT getLayerPtr_vkCmdDrawMeshTasksIndir
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdDrawMeshTasksIndirectCount2EXT = requires(
-    VkCommandBuffer commandBuffer, const VkDrawIndirectCount2InfoKHR* pInfo
+    VkCommandBuffer commandBuffer,
+    const VkDrawIndirectCount2InfoKHR* pInfo
 ) {
     layer_vkCmdDrawMeshTasksIndirectCount2EXT<T>(commandBuffer, pInfo);
 };
@@ -2564,7 +2867,13 @@ constexpr PFN_vkCmdDrawMeshTasksIndirectCount2EXT getLayerPtr_vkCmdDrawMeshTasks
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdDrawMeshTasksIndirectCountEXT = requires(
-    VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride
+    VkCommandBuffer commandBuffer,
+    VkBuffer buffer,
+    VkDeviceSize offset,
+    VkBuffer countBuffer,
+    VkDeviceSize countBufferOffset,
+    uint32_t maxDrawCount,
+    uint32_t stride
 ) {
     layer_vkCmdDrawMeshTasksIndirectCountEXT<T>(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 };
@@ -2586,7 +2895,11 @@ constexpr PFN_vkCmdDrawMeshTasksIndirectCountEXT getLayerPtr_vkCmdDrawMeshTasksI
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdDrawMeshTasksIndirectEXT = requires(
-    VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, uint32_t drawCount, uint32_t stride
+    VkCommandBuffer commandBuffer,
+    VkBuffer buffer,
+    VkDeviceSize offset,
+    uint32_t drawCount,
+    uint32_t stride
 ) {
     layer_vkCmdDrawMeshTasksIndirectEXT<T>(commandBuffer, buffer, offset, drawCount, stride);
 };
@@ -2608,7 +2921,12 @@ constexpr PFN_vkCmdDrawMeshTasksIndirectEXT getLayerPtr_vkCmdDrawMeshTasksIndire
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdDrawMultiEXT = requires(
-    VkCommandBuffer commandBuffer, uint32_t drawCount, const VkMultiDrawInfoEXT* pVertexInfo, uint32_t instanceCount, uint32_t firstInstance, uint32_t stride
+    VkCommandBuffer commandBuffer,
+    uint32_t drawCount,
+    const VkMultiDrawInfoEXT* pVertexInfo,
+    uint32_t instanceCount,
+    uint32_t firstInstance,
+    uint32_t stride
 ) {
     layer_vkCmdDrawMultiEXT<T>(commandBuffer, drawCount, pVertexInfo, instanceCount, firstInstance, stride);
 };
@@ -2630,7 +2948,13 @@ constexpr PFN_vkCmdDrawMultiEXT getLayerPtr_vkCmdDrawMultiEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdDrawMultiIndexedEXT = requires(
-    VkCommandBuffer commandBuffer, uint32_t drawCount, const VkMultiDrawIndexedInfoEXT* pIndexInfo, uint32_t instanceCount, uint32_t firstInstance, uint32_t stride, const int32_t* pVertexOffset
+    VkCommandBuffer commandBuffer,
+    uint32_t drawCount,
+    const VkMultiDrawIndexedInfoEXT* pIndexInfo,
+    uint32_t instanceCount,
+    uint32_t firstInstance,
+    uint32_t stride,
+    const int32_t* pVertexOffset
 ) {
     layer_vkCmdDrawMultiIndexedEXT<T>(commandBuffer, drawCount, pIndexInfo, instanceCount, firstInstance, stride, pVertexOffset);
 };
@@ -2696,7 +3020,9 @@ constexpr PFN_vkCmdEndDebugUtilsLabelEXT getLayerPtr_vkCmdEndDebugUtilsLabelEXT(
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdEndQuery = requires(
-    VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query
+    VkCommandBuffer commandBuffer,
+    VkQueryPool queryPool,
+    uint32_t query
 ) {
     layer_vkCmdEndQuery<T>(commandBuffer, queryPool, query);
 };
@@ -2718,7 +3044,10 @@ constexpr PFN_vkCmdEndQuery getLayerPtr_vkCmdEndQuery()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdEndQueryIndexedEXT = requires(
-    VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query, uint32_t index
+    VkCommandBuffer commandBuffer,
+    VkQueryPool queryPool,
+    uint32_t query,
+    uint32_t index
 ) {
     layer_vkCmdEndQueryIndexedEXT<T>(commandBuffer, queryPool, query, index);
 };
@@ -2762,7 +3091,8 @@ constexpr PFN_vkCmdEndRenderPass getLayerPtr_vkCmdEndRenderPass()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdEndRenderPass2 = requires(
-    VkCommandBuffer commandBuffer, const VkSubpassEndInfo* pSubpassEndInfo
+    VkCommandBuffer commandBuffer,
+    const VkSubpassEndInfo* pSubpassEndInfo
 ) {
     layer_vkCmdEndRenderPass2<T>(commandBuffer, pSubpassEndInfo);
 };
@@ -2784,7 +3114,8 @@ constexpr PFN_vkCmdEndRenderPass2 getLayerPtr_vkCmdEndRenderPass2()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdEndRenderPass2KHR = requires(
-    VkCommandBuffer commandBuffer, const VkSubpassEndInfo* pSubpassEndInfo
+    VkCommandBuffer commandBuffer,
+    const VkSubpassEndInfo* pSubpassEndInfo
 ) {
     layer_vkCmdEndRenderPass2KHR<T>(commandBuffer, pSubpassEndInfo);
 };
@@ -2828,7 +3159,8 @@ constexpr PFN_vkCmdEndRendering getLayerPtr_vkCmdEndRendering()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdEndRendering2EXT = requires(
-    VkCommandBuffer commandBuffer, const VkRenderingEndInfoKHR* pRenderingEndInfo
+    VkCommandBuffer commandBuffer,
+    const VkRenderingEndInfoKHR* pRenderingEndInfo
 ) {
     layer_vkCmdEndRendering2EXT<T>(commandBuffer, pRenderingEndInfo);
 };
@@ -2850,7 +3182,8 @@ constexpr PFN_vkCmdEndRendering2EXT getLayerPtr_vkCmdEndRendering2EXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdEndRendering2KHR = requires(
-    VkCommandBuffer commandBuffer, const VkRenderingEndInfoKHR* pRenderingEndInfo
+    VkCommandBuffer commandBuffer,
+    const VkRenderingEndInfoKHR* pRenderingEndInfo
 ) {
     layer_vkCmdEndRendering2KHR<T>(commandBuffer, pRenderingEndInfo);
 };
@@ -2916,7 +3249,10 @@ constexpr PFN_vkCmdEndShaderInstrumentationARM getLayerPtr_vkCmdEndShaderInstrum
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdEndTransformFeedback2EXT = requires(
-    VkCommandBuffer commandBuffer, uint32_t firstCounterRange, uint32_t counterRangeCount, const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfos
+    VkCommandBuffer commandBuffer,
+    uint32_t firstCounterRange,
+    uint32_t counterRangeCount,
+    const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfos
 ) {
     layer_vkCmdEndTransformFeedback2EXT<T>(commandBuffer, firstCounterRange, counterRangeCount, pCounterInfos);
 };
@@ -2938,7 +3274,11 @@ constexpr PFN_vkCmdEndTransformFeedback2EXT getLayerPtr_vkCmdEndTransformFeedbac
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdEndTransformFeedbackEXT = requires(
-    VkCommandBuffer commandBuffer, uint32_t firstCounterBuffer, uint32_t counterBufferCount, const VkBuffer* pCounterBuffers, const VkDeviceSize* pCounterBufferOffsets
+    VkCommandBuffer commandBuffer,
+    uint32_t firstCounterBuffer,
+    uint32_t counterBufferCount,
+    const VkBuffer* pCounterBuffers,
+    const VkDeviceSize* pCounterBufferOffsets
 ) {
     layer_vkCmdEndTransformFeedbackEXT<T>(commandBuffer, firstCounterBuffer, counterBufferCount, pCounterBuffers, pCounterBufferOffsets);
 };
@@ -2960,7 +3300,9 @@ constexpr PFN_vkCmdEndTransformFeedbackEXT getLayerPtr_vkCmdEndTransformFeedback
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdExecuteCommands = requires(
-    VkCommandBuffer commandBuffer, uint32_t commandBufferCount, const VkCommandBuffer* pCommandBuffers
+    VkCommandBuffer commandBuffer,
+    uint32_t commandBufferCount,
+    const VkCommandBuffer* pCommandBuffers
 ) {
     layer_vkCmdExecuteCommands<T>(commandBuffer, commandBufferCount, pCommandBuffers);
 };
@@ -2982,7 +3324,9 @@ constexpr PFN_vkCmdExecuteCommands getLayerPtr_vkCmdExecuteCommands()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdExecuteGeneratedCommandsEXT = requires(
-    VkCommandBuffer commandBuffer, VkBool32 isPreprocessed, const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo
+    VkCommandBuffer commandBuffer,
+    VkBool32 isPreprocessed,
+    const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo
 ) {
     layer_vkCmdExecuteGeneratedCommandsEXT<T>(commandBuffer, isPreprocessed, pGeneratedCommandsInfo);
 };
@@ -3004,7 +3348,11 @@ constexpr PFN_vkCmdExecuteGeneratedCommandsEXT getLayerPtr_vkCmdExecuteGenerated
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdFillBuffer = requires(
-    VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset, VkDeviceSize size, uint32_t data
+    VkCommandBuffer commandBuffer,
+    VkBuffer dstBuffer,
+    VkDeviceSize dstOffset,
+    VkDeviceSize size,
+    uint32_t data
 ) {
     layer_vkCmdFillBuffer<T>(commandBuffer, dstBuffer, dstOffset, size, data);
 };
@@ -3026,7 +3374,10 @@ constexpr PFN_vkCmdFillBuffer getLayerPtr_vkCmdFillBuffer()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdFillMemoryKHR = requires(
-    VkCommandBuffer commandBuffer, const VkDeviceAddressRangeKHR* pDstRange, VkAddressCommandFlagsKHR dstFlags, uint32_t data
+    VkCommandBuffer commandBuffer,
+    const VkDeviceAddressRangeKHR* pDstRange,
+    VkAddressCommandFlagsKHR dstFlags,
+    uint32_t data
 ) {
     layer_vkCmdFillMemoryKHR<T>(commandBuffer, pDstRange, dstFlags, data);
 };
@@ -3048,7 +3399,8 @@ constexpr PFN_vkCmdFillMemoryKHR getLayerPtr_vkCmdFillMemoryKHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdInsertDebugUtilsLabelEXT = requires(
-    VkCommandBuffer commandBuffer, const VkDebugUtilsLabelEXT* pLabelInfo
+    VkCommandBuffer commandBuffer,
+    const VkDebugUtilsLabelEXT* pLabelInfo
 ) {
     layer_vkCmdInsertDebugUtilsLabelEXT<T>(commandBuffer, pLabelInfo);
 };
@@ -3070,7 +3422,8 @@ constexpr PFN_vkCmdInsertDebugUtilsLabelEXT getLayerPtr_vkCmdInsertDebugUtilsLab
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdNextSubpass = requires(
-    VkCommandBuffer commandBuffer, VkSubpassContents contents
+    VkCommandBuffer commandBuffer,
+    VkSubpassContents contents
 ) {
     layer_vkCmdNextSubpass<T>(commandBuffer, contents);
 };
@@ -3092,7 +3445,9 @@ constexpr PFN_vkCmdNextSubpass getLayerPtr_vkCmdNextSubpass()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdNextSubpass2 = requires(
-    VkCommandBuffer commandBuffer, const VkSubpassBeginInfo* pSubpassBeginInfo, const VkSubpassEndInfo* pSubpassEndInfo
+    VkCommandBuffer commandBuffer,
+    const VkSubpassBeginInfo* pSubpassBeginInfo,
+    const VkSubpassEndInfo* pSubpassEndInfo
 ) {
     layer_vkCmdNextSubpass2<T>(commandBuffer, pSubpassBeginInfo, pSubpassEndInfo);
 };
@@ -3114,7 +3469,9 @@ constexpr PFN_vkCmdNextSubpass2 getLayerPtr_vkCmdNextSubpass2()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdNextSubpass2KHR = requires(
-    VkCommandBuffer commandBuffer, const VkSubpassBeginInfo* pSubpassBeginInfo, const VkSubpassEndInfo* pSubpassEndInfo
+    VkCommandBuffer commandBuffer,
+    const VkSubpassBeginInfo* pSubpassBeginInfo,
+    const VkSubpassEndInfo* pSubpassEndInfo
 ) {
     layer_vkCmdNextSubpass2KHR<T>(commandBuffer, pSubpassBeginInfo, pSubpassEndInfo);
 };
@@ -3136,7 +3493,16 @@ constexpr PFN_vkCmdNextSubpass2KHR getLayerPtr_vkCmdNextSubpass2KHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdPipelineBarrier = requires(
-    VkCommandBuffer commandBuffer, VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, VkDependencyFlags dependencyFlags, uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers, uint32_t bufferMemoryBarrierCount, const VkBufferMemoryBarrier* pBufferMemoryBarriers, uint32_t imageMemoryBarrierCount, const VkImageMemoryBarrier* pImageMemoryBarriers
+    VkCommandBuffer commandBuffer,
+    VkPipelineStageFlags srcStageMask,
+    VkPipelineStageFlags dstStageMask,
+    VkDependencyFlags dependencyFlags,
+    uint32_t memoryBarrierCount,
+    const VkMemoryBarrier* pMemoryBarriers,
+    uint32_t bufferMemoryBarrierCount,
+    const VkBufferMemoryBarrier* pBufferMemoryBarriers,
+    uint32_t imageMemoryBarrierCount,
+    const VkImageMemoryBarrier* pImageMemoryBarriers
 ) {
     layer_vkCmdPipelineBarrier<T>(commandBuffer, srcStageMask, dstStageMask, dependencyFlags, memoryBarrierCount, pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
 };
@@ -3158,7 +3524,8 @@ constexpr PFN_vkCmdPipelineBarrier getLayerPtr_vkCmdPipelineBarrier()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdPipelineBarrier2 = requires(
-    VkCommandBuffer commandBuffer, const VkDependencyInfo* pDependencyInfo
+    VkCommandBuffer commandBuffer,
+    const VkDependencyInfo* pDependencyInfo
 ) {
     layer_vkCmdPipelineBarrier2<T>(commandBuffer, pDependencyInfo);
 };
@@ -3180,7 +3547,8 @@ constexpr PFN_vkCmdPipelineBarrier2 getLayerPtr_vkCmdPipelineBarrier2()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdPipelineBarrier2KHR = requires(
-    VkCommandBuffer commandBuffer, const VkDependencyInfo* pDependencyInfo
+    VkCommandBuffer commandBuffer,
+    const VkDependencyInfo* pDependencyInfo
 ) {
     layer_vkCmdPipelineBarrier2KHR<T>(commandBuffer, pDependencyInfo);
 };
@@ -3202,7 +3570,9 @@ constexpr PFN_vkCmdPipelineBarrier2KHR getLayerPtr_vkCmdPipelineBarrier2KHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdPreprocessGeneratedCommandsEXT = requires(
-    VkCommandBuffer commandBuffer, const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo, VkCommandBuffer stateCommandBuffer
+    VkCommandBuffer commandBuffer,
+    const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo,
+    VkCommandBuffer stateCommandBuffer
 ) {
     layer_vkCmdPreprocessGeneratedCommandsEXT<T>(commandBuffer, pGeneratedCommandsInfo, stateCommandBuffer);
 };
@@ -3224,7 +3594,12 @@ constexpr PFN_vkCmdPreprocessGeneratedCommandsEXT getLayerPtr_vkCmdPreprocessGen
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdPushConstants = requires(
-    VkCommandBuffer commandBuffer, VkPipelineLayout layout, VkShaderStageFlags stageFlags, uint32_t offset, uint32_t size, const void* pValues
+    VkCommandBuffer commandBuffer,
+    VkPipelineLayout layout,
+    VkShaderStageFlags stageFlags,
+    uint32_t offset,
+    uint32_t size,
+    const void* pValues
 ) {
     layer_vkCmdPushConstants<T>(commandBuffer, layout, stageFlags, offset, size, pValues);
 };
@@ -3246,7 +3621,8 @@ constexpr PFN_vkCmdPushConstants getLayerPtr_vkCmdPushConstants()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdPushConstants2 = requires(
-    VkCommandBuffer commandBuffer, const VkPushConstantsInfo* pPushConstantsInfo
+    VkCommandBuffer commandBuffer,
+    const VkPushConstantsInfo* pPushConstantsInfo
 ) {
     layer_vkCmdPushConstants2<T>(commandBuffer, pPushConstantsInfo);
 };
@@ -3268,7 +3644,8 @@ constexpr PFN_vkCmdPushConstants2 getLayerPtr_vkCmdPushConstants2()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdPushConstants2KHR = requires(
-    VkCommandBuffer commandBuffer, const VkPushConstantsInfo* pPushConstantsInfo
+    VkCommandBuffer commandBuffer,
+    const VkPushConstantsInfo* pPushConstantsInfo
 ) {
     layer_vkCmdPushConstants2KHR<T>(commandBuffer, pPushConstantsInfo);
 };
@@ -3290,7 +3667,8 @@ constexpr PFN_vkCmdPushConstants2KHR getLayerPtr_vkCmdPushConstants2KHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdPushDataEXT = requires(
-    VkCommandBuffer commandBuffer, const VkPushDataInfoEXT* pPushDataInfo
+    VkCommandBuffer commandBuffer,
+    const VkPushDataInfoEXT* pPushDataInfo
 ) {
     layer_vkCmdPushDataEXT<T>(commandBuffer, pPushDataInfo);
 };
@@ -3312,7 +3690,12 @@ constexpr PFN_vkCmdPushDataEXT getLayerPtr_vkCmdPushDataEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdPushDescriptorSet = requires(
-    VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t set, uint32_t descriptorWriteCount, const VkWriteDescriptorSet* pDescriptorWrites
+    VkCommandBuffer commandBuffer,
+    VkPipelineBindPoint pipelineBindPoint,
+    VkPipelineLayout layout,
+    uint32_t set,
+    uint32_t descriptorWriteCount,
+    const VkWriteDescriptorSet* pDescriptorWrites
 ) {
     layer_vkCmdPushDescriptorSet<T>(commandBuffer, pipelineBindPoint, layout, set, descriptorWriteCount, pDescriptorWrites);
 };
@@ -3334,7 +3717,8 @@ constexpr PFN_vkCmdPushDescriptorSet getLayerPtr_vkCmdPushDescriptorSet()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdPushDescriptorSet2 = requires(
-    VkCommandBuffer commandBuffer, const VkPushDescriptorSetInfo* pPushDescriptorSetInfo
+    VkCommandBuffer commandBuffer,
+    const VkPushDescriptorSetInfo* pPushDescriptorSetInfo
 ) {
     layer_vkCmdPushDescriptorSet2<T>(commandBuffer, pPushDescriptorSetInfo);
 };
@@ -3356,7 +3740,8 @@ constexpr PFN_vkCmdPushDescriptorSet2 getLayerPtr_vkCmdPushDescriptorSet2()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdPushDescriptorSet2KHR = requires(
-    VkCommandBuffer commandBuffer, const VkPushDescriptorSetInfo* pPushDescriptorSetInfo
+    VkCommandBuffer commandBuffer,
+    const VkPushDescriptorSetInfo* pPushDescriptorSetInfo
 ) {
     layer_vkCmdPushDescriptorSet2KHR<T>(commandBuffer, pPushDescriptorSetInfo);
 };
@@ -3378,7 +3763,12 @@ constexpr PFN_vkCmdPushDescriptorSet2KHR getLayerPtr_vkCmdPushDescriptorSet2KHR(
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdPushDescriptorSetKHR = requires(
-    VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t set, uint32_t descriptorWriteCount, const VkWriteDescriptorSet* pDescriptorWrites
+    VkCommandBuffer commandBuffer,
+    VkPipelineBindPoint pipelineBindPoint,
+    VkPipelineLayout layout,
+    uint32_t set,
+    uint32_t descriptorWriteCount,
+    const VkWriteDescriptorSet* pDescriptorWrites
 ) {
     layer_vkCmdPushDescriptorSetKHR<T>(commandBuffer, pipelineBindPoint, layout, set, descriptorWriteCount, pDescriptorWrites);
 };
@@ -3400,7 +3790,11 @@ constexpr PFN_vkCmdPushDescriptorSetKHR getLayerPtr_vkCmdPushDescriptorSetKHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdPushDescriptorSetWithTemplate = requires(
-    VkCommandBuffer commandBuffer, VkDescriptorUpdateTemplate descriptorUpdateTemplate, VkPipelineLayout layout, uint32_t set, const void* pData
+    VkCommandBuffer commandBuffer,
+    VkDescriptorUpdateTemplate descriptorUpdateTemplate,
+    VkPipelineLayout layout,
+    uint32_t set,
+    const void* pData
 ) {
     layer_vkCmdPushDescriptorSetWithTemplate<T>(commandBuffer, descriptorUpdateTemplate, layout, set, pData);
 };
@@ -3422,7 +3816,8 @@ constexpr PFN_vkCmdPushDescriptorSetWithTemplate getLayerPtr_vkCmdPushDescriptor
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdPushDescriptorSetWithTemplate2 = requires(
-    VkCommandBuffer commandBuffer, const VkPushDescriptorSetWithTemplateInfo* pPushDescriptorSetWithTemplateInfo
+    VkCommandBuffer commandBuffer,
+    const VkPushDescriptorSetWithTemplateInfo* pPushDescriptorSetWithTemplateInfo
 ) {
     layer_vkCmdPushDescriptorSetWithTemplate2<T>(commandBuffer, pPushDescriptorSetWithTemplateInfo);
 };
@@ -3444,7 +3839,8 @@ constexpr PFN_vkCmdPushDescriptorSetWithTemplate2 getLayerPtr_vkCmdPushDescripto
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdPushDescriptorSetWithTemplate2KHR = requires(
-    VkCommandBuffer commandBuffer, const VkPushDescriptorSetWithTemplateInfo* pPushDescriptorSetWithTemplateInfo
+    VkCommandBuffer commandBuffer,
+    const VkPushDescriptorSetWithTemplateInfo* pPushDescriptorSetWithTemplateInfo
 ) {
     layer_vkCmdPushDescriptorSetWithTemplate2KHR<T>(commandBuffer, pPushDescriptorSetWithTemplateInfo);
 };
@@ -3466,7 +3862,11 @@ constexpr PFN_vkCmdPushDescriptorSetWithTemplate2KHR getLayerPtr_vkCmdPushDescri
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdPushDescriptorSetWithTemplateKHR = requires(
-    VkCommandBuffer commandBuffer, VkDescriptorUpdateTemplate descriptorUpdateTemplate, VkPipelineLayout layout, uint32_t set, const void* pData
+    VkCommandBuffer commandBuffer,
+    VkDescriptorUpdateTemplate descriptorUpdateTemplate,
+    VkPipelineLayout layout,
+    uint32_t set,
+    const void* pData
 ) {
     layer_vkCmdPushDescriptorSetWithTemplateKHR<T>(commandBuffer, descriptorUpdateTemplate, layout, set, pData);
 };
@@ -3488,7 +3888,9 @@ constexpr PFN_vkCmdPushDescriptorSetWithTemplateKHR getLayerPtr_vkCmdPushDescrip
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdResetEvent = requires(
-    VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask
+    VkCommandBuffer commandBuffer,
+    VkEvent event,
+    VkPipelineStageFlags stageMask
 ) {
     layer_vkCmdResetEvent<T>(commandBuffer, event, stageMask);
 };
@@ -3510,7 +3912,9 @@ constexpr PFN_vkCmdResetEvent getLayerPtr_vkCmdResetEvent()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdResetEvent2 = requires(
-    VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags2 stageMask
+    VkCommandBuffer commandBuffer,
+    VkEvent event,
+    VkPipelineStageFlags2 stageMask
 ) {
     layer_vkCmdResetEvent2<T>(commandBuffer, event, stageMask);
 };
@@ -3532,7 +3936,9 @@ constexpr PFN_vkCmdResetEvent2 getLayerPtr_vkCmdResetEvent2()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdResetEvent2KHR = requires(
-    VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags2 stageMask
+    VkCommandBuffer commandBuffer,
+    VkEvent event,
+    VkPipelineStageFlags2 stageMask
 ) {
     layer_vkCmdResetEvent2KHR<T>(commandBuffer, event, stageMask);
 };
@@ -3554,7 +3960,10 @@ constexpr PFN_vkCmdResetEvent2KHR getLayerPtr_vkCmdResetEvent2KHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdResetQueryPool = requires(
-    VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount
+    VkCommandBuffer commandBuffer,
+    VkQueryPool queryPool,
+    uint32_t firstQuery,
+    uint32_t queryCount
 ) {
     layer_vkCmdResetQueryPool<T>(commandBuffer, queryPool, firstQuery, queryCount);
 };
@@ -3576,7 +3985,13 @@ constexpr PFN_vkCmdResetQueryPool getLayerPtr_vkCmdResetQueryPool()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdResolveImage = requires(
-    VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount, const VkImageResolve* pRegions
+    VkCommandBuffer commandBuffer,
+    VkImage srcImage,
+    VkImageLayout srcImageLayout,
+    VkImage dstImage,
+    VkImageLayout dstImageLayout,
+    uint32_t regionCount,
+    const VkImageResolve* pRegions
 ) {
     layer_vkCmdResolveImage<T>(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
 };
@@ -3598,7 +4013,8 @@ constexpr PFN_vkCmdResolveImage getLayerPtr_vkCmdResolveImage()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdResolveImage2 = requires(
-    VkCommandBuffer commandBuffer, const VkResolveImageInfo2* pResolveImageInfo
+    VkCommandBuffer commandBuffer,
+    const VkResolveImageInfo2* pResolveImageInfo
 ) {
     layer_vkCmdResolveImage2<T>(commandBuffer, pResolveImageInfo);
 };
@@ -3620,7 +4036,8 @@ constexpr PFN_vkCmdResolveImage2 getLayerPtr_vkCmdResolveImage2()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdResolveImage2KHR = requires(
-    VkCommandBuffer commandBuffer, const VkResolveImageInfo2* pResolveImageInfo
+    VkCommandBuffer commandBuffer,
+    const VkResolveImageInfo2* pResolveImageInfo
 ) {
     layer_vkCmdResolveImage2KHR<T>(commandBuffer, pResolveImageInfo);
 };
@@ -3642,7 +4059,8 @@ constexpr PFN_vkCmdResolveImage2KHR getLayerPtr_vkCmdResolveImage2KHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetAlphaToCoverageEnableEXT = requires(
-    VkCommandBuffer commandBuffer, VkBool32 alphaToCoverageEnable
+    VkCommandBuffer commandBuffer,
+    VkBool32 alphaToCoverageEnable
 ) {
     layer_vkCmdSetAlphaToCoverageEnableEXT<T>(commandBuffer, alphaToCoverageEnable);
 };
@@ -3664,7 +4082,8 @@ constexpr PFN_vkCmdSetAlphaToCoverageEnableEXT getLayerPtr_vkCmdSetAlphaToCovera
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetAlphaToOneEnableEXT = requires(
-    VkCommandBuffer commandBuffer, VkBool32 alphaToOneEnable
+    VkCommandBuffer commandBuffer,
+    VkBool32 alphaToOneEnable
 ) {
     layer_vkCmdSetAlphaToOneEnableEXT<T>(commandBuffer, alphaToOneEnable);
 };
@@ -3686,7 +4105,8 @@ constexpr PFN_vkCmdSetAlphaToOneEnableEXT getLayerPtr_vkCmdSetAlphaToOneEnableEX
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetAttachmentFeedbackLoopEnableEXT = requires(
-    VkCommandBuffer commandBuffer, VkImageAspectFlags aspectMask
+    VkCommandBuffer commandBuffer,
+    VkImageAspectFlags aspectMask
 ) {
     layer_vkCmdSetAttachmentFeedbackLoopEnableEXT<T>(commandBuffer, aspectMask);
 };
@@ -3708,7 +4128,8 @@ constexpr PFN_vkCmdSetAttachmentFeedbackLoopEnableEXT getLayerPtr_vkCmdSetAttach
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetBlendConstants = requires(
-    VkCommandBuffer commandBuffer, const float blendConstants[4]
+    VkCommandBuffer commandBuffer,
+    const float blendConstants[4]
 ) {
     layer_vkCmdSetBlendConstants<T>(commandBuffer, blendConstants);
 };
@@ -3730,7 +4151,10 @@ constexpr PFN_vkCmdSetBlendConstants getLayerPtr_vkCmdSetBlendConstants()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetColorBlendAdvancedEXT = requires(
-    VkCommandBuffer commandBuffer, uint32_t firstAttachment, uint32_t attachmentCount, const VkColorBlendAdvancedEXT* pColorBlendAdvanced
+    VkCommandBuffer commandBuffer,
+    uint32_t firstAttachment,
+    uint32_t attachmentCount,
+    const VkColorBlendAdvancedEXT* pColorBlendAdvanced
 ) {
     layer_vkCmdSetColorBlendAdvancedEXT<T>(commandBuffer, firstAttachment, attachmentCount, pColorBlendAdvanced);
 };
@@ -3752,7 +4176,10 @@ constexpr PFN_vkCmdSetColorBlendAdvancedEXT getLayerPtr_vkCmdSetColorBlendAdvanc
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetColorBlendEnableEXT = requires(
-    VkCommandBuffer commandBuffer, uint32_t firstAttachment, uint32_t attachmentCount, const VkBool32* pColorBlendEnables
+    VkCommandBuffer commandBuffer,
+    uint32_t firstAttachment,
+    uint32_t attachmentCount,
+    const VkBool32* pColorBlendEnables
 ) {
     layer_vkCmdSetColorBlendEnableEXT<T>(commandBuffer, firstAttachment, attachmentCount, pColorBlendEnables);
 };
@@ -3774,7 +4201,10 @@ constexpr PFN_vkCmdSetColorBlendEnableEXT getLayerPtr_vkCmdSetColorBlendEnableEX
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetColorBlendEquationEXT = requires(
-    VkCommandBuffer commandBuffer, uint32_t firstAttachment, uint32_t attachmentCount, const VkColorBlendEquationEXT* pColorBlendEquations
+    VkCommandBuffer commandBuffer,
+    uint32_t firstAttachment,
+    uint32_t attachmentCount,
+    const VkColorBlendEquationEXT* pColorBlendEquations
 ) {
     layer_vkCmdSetColorBlendEquationEXT<T>(commandBuffer, firstAttachment, attachmentCount, pColorBlendEquations);
 };
@@ -3796,7 +4226,9 @@ constexpr PFN_vkCmdSetColorBlendEquationEXT getLayerPtr_vkCmdSetColorBlendEquati
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetColorWriteEnableEXT = requires(
-    VkCommandBuffer commandBuffer, uint32_t attachmentCount, const VkBool32* pColorWriteEnables
+    VkCommandBuffer commandBuffer,
+    uint32_t attachmentCount,
+    const VkBool32* pColorWriteEnables
 ) {
     layer_vkCmdSetColorWriteEnableEXT<T>(commandBuffer, attachmentCount, pColorWriteEnables);
 };
@@ -3818,7 +4250,10 @@ constexpr PFN_vkCmdSetColorWriteEnableEXT getLayerPtr_vkCmdSetColorWriteEnableEX
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetColorWriteMaskEXT = requires(
-    VkCommandBuffer commandBuffer, uint32_t firstAttachment, uint32_t attachmentCount, const VkColorComponentFlags* pColorWriteMasks
+    VkCommandBuffer commandBuffer,
+    uint32_t firstAttachment,
+    uint32_t attachmentCount,
+    const VkColorComponentFlags* pColorWriteMasks
 ) {
     layer_vkCmdSetColorWriteMaskEXT<T>(commandBuffer, firstAttachment, attachmentCount, pColorWriteMasks);
 };
@@ -3840,7 +4275,8 @@ constexpr PFN_vkCmdSetColorWriteMaskEXT getLayerPtr_vkCmdSetColorWriteMaskEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetConservativeRasterizationModeEXT = requires(
-    VkCommandBuffer commandBuffer, VkConservativeRasterizationModeEXT conservativeRasterizationMode
+    VkCommandBuffer commandBuffer,
+    VkConservativeRasterizationModeEXT conservativeRasterizationMode
 ) {
     layer_vkCmdSetConservativeRasterizationModeEXT<T>(commandBuffer, conservativeRasterizationMode);
 };
@@ -3862,7 +4298,8 @@ constexpr PFN_vkCmdSetConservativeRasterizationModeEXT getLayerPtr_vkCmdSetConse
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetCoverageModulationModeNV = requires(
-    VkCommandBuffer commandBuffer, VkCoverageModulationModeNV coverageModulationMode
+    VkCommandBuffer commandBuffer,
+    VkCoverageModulationModeNV coverageModulationMode
 ) {
     layer_vkCmdSetCoverageModulationModeNV<T>(commandBuffer, coverageModulationMode);
 };
@@ -3884,7 +4321,8 @@ constexpr PFN_vkCmdSetCoverageModulationModeNV getLayerPtr_vkCmdSetCoverageModul
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetCoverageModulationTableEnableNV = requires(
-    VkCommandBuffer commandBuffer, VkBool32 coverageModulationTableEnable
+    VkCommandBuffer commandBuffer,
+    VkBool32 coverageModulationTableEnable
 ) {
     layer_vkCmdSetCoverageModulationTableEnableNV<T>(commandBuffer, coverageModulationTableEnable);
 };
@@ -3906,7 +4344,9 @@ constexpr PFN_vkCmdSetCoverageModulationTableEnableNV getLayerPtr_vkCmdSetCovera
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetCoverageModulationTableNV = requires(
-    VkCommandBuffer commandBuffer, uint32_t coverageModulationTableCount, const float* pCoverageModulationTable
+    VkCommandBuffer commandBuffer,
+    uint32_t coverageModulationTableCount,
+    const float* pCoverageModulationTable
 ) {
     layer_vkCmdSetCoverageModulationTableNV<T>(commandBuffer, coverageModulationTableCount, pCoverageModulationTable);
 };
@@ -3928,7 +4368,8 @@ constexpr PFN_vkCmdSetCoverageModulationTableNV getLayerPtr_vkCmdSetCoverageModu
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetCoverageReductionModeNV = requires(
-    VkCommandBuffer commandBuffer, VkCoverageReductionModeNV coverageReductionMode
+    VkCommandBuffer commandBuffer,
+    VkCoverageReductionModeNV coverageReductionMode
 ) {
     layer_vkCmdSetCoverageReductionModeNV<T>(commandBuffer, coverageReductionMode);
 };
@@ -3950,7 +4391,8 @@ constexpr PFN_vkCmdSetCoverageReductionModeNV getLayerPtr_vkCmdSetCoverageReduct
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetCoverageToColorEnableNV = requires(
-    VkCommandBuffer commandBuffer, VkBool32 coverageToColorEnable
+    VkCommandBuffer commandBuffer,
+    VkBool32 coverageToColorEnable
 ) {
     layer_vkCmdSetCoverageToColorEnableNV<T>(commandBuffer, coverageToColorEnable);
 };
@@ -3972,7 +4414,8 @@ constexpr PFN_vkCmdSetCoverageToColorEnableNV getLayerPtr_vkCmdSetCoverageToColo
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetCoverageToColorLocationNV = requires(
-    VkCommandBuffer commandBuffer, uint32_t coverageToColorLocation
+    VkCommandBuffer commandBuffer,
+    uint32_t coverageToColorLocation
 ) {
     layer_vkCmdSetCoverageToColorLocationNV<T>(commandBuffer, coverageToColorLocation);
 };
@@ -3994,7 +4437,8 @@ constexpr PFN_vkCmdSetCoverageToColorLocationNV getLayerPtr_vkCmdSetCoverageToCo
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetCullMode = requires(
-    VkCommandBuffer commandBuffer, VkCullModeFlags cullMode
+    VkCommandBuffer commandBuffer,
+    VkCullModeFlags cullMode
 ) {
     layer_vkCmdSetCullMode<T>(commandBuffer, cullMode);
 };
@@ -4016,7 +4460,8 @@ constexpr PFN_vkCmdSetCullMode getLayerPtr_vkCmdSetCullMode()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetCullModeEXT = requires(
-    VkCommandBuffer commandBuffer, VkCullModeFlags cullMode
+    VkCommandBuffer commandBuffer,
+    VkCullModeFlags cullMode
 ) {
     layer_vkCmdSetCullModeEXT<T>(commandBuffer, cullMode);
 };
@@ -4038,7 +4483,10 @@ constexpr PFN_vkCmdSetCullModeEXT getLayerPtr_vkCmdSetCullModeEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetDepthBias = requires(
-    VkCommandBuffer commandBuffer, float depthBiasConstantFactor, float depthBiasClamp, float depthBiasSlopeFactor
+    VkCommandBuffer commandBuffer,
+    float depthBiasConstantFactor,
+    float depthBiasClamp,
+    float depthBiasSlopeFactor
 ) {
     layer_vkCmdSetDepthBias<T>(commandBuffer, depthBiasConstantFactor, depthBiasClamp, depthBiasSlopeFactor);
 };
@@ -4060,7 +4508,8 @@ constexpr PFN_vkCmdSetDepthBias getLayerPtr_vkCmdSetDepthBias()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetDepthBias2EXT = requires(
-    VkCommandBuffer commandBuffer, const VkDepthBiasInfoEXT* pDepthBiasInfo
+    VkCommandBuffer commandBuffer,
+    const VkDepthBiasInfoEXT* pDepthBiasInfo
 ) {
     layer_vkCmdSetDepthBias2EXT<T>(commandBuffer, pDepthBiasInfo);
 };
@@ -4082,7 +4531,8 @@ constexpr PFN_vkCmdSetDepthBias2EXT getLayerPtr_vkCmdSetDepthBias2EXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetDepthBiasEnable = requires(
-    VkCommandBuffer commandBuffer, VkBool32 depthBiasEnable
+    VkCommandBuffer commandBuffer,
+    VkBool32 depthBiasEnable
 ) {
     layer_vkCmdSetDepthBiasEnable<T>(commandBuffer, depthBiasEnable);
 };
@@ -4104,7 +4554,8 @@ constexpr PFN_vkCmdSetDepthBiasEnable getLayerPtr_vkCmdSetDepthBiasEnable()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetDepthBiasEnableEXT = requires(
-    VkCommandBuffer commandBuffer, VkBool32 depthBiasEnable
+    VkCommandBuffer commandBuffer,
+    VkBool32 depthBiasEnable
 ) {
     layer_vkCmdSetDepthBiasEnableEXT<T>(commandBuffer, depthBiasEnable);
 };
@@ -4126,7 +4577,9 @@ constexpr PFN_vkCmdSetDepthBiasEnableEXT getLayerPtr_vkCmdSetDepthBiasEnableEXT(
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetDepthBounds = requires(
-    VkCommandBuffer commandBuffer, float minDepthBounds, float maxDepthBounds
+    VkCommandBuffer commandBuffer,
+    float minDepthBounds,
+    float maxDepthBounds
 ) {
     layer_vkCmdSetDepthBounds<T>(commandBuffer, minDepthBounds, maxDepthBounds);
 };
@@ -4148,7 +4601,8 @@ constexpr PFN_vkCmdSetDepthBounds getLayerPtr_vkCmdSetDepthBounds()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetDepthBoundsTestEnable = requires(
-    VkCommandBuffer commandBuffer, VkBool32 depthBoundsTestEnable
+    VkCommandBuffer commandBuffer,
+    VkBool32 depthBoundsTestEnable
 ) {
     layer_vkCmdSetDepthBoundsTestEnable<T>(commandBuffer, depthBoundsTestEnable);
 };
@@ -4170,7 +4624,8 @@ constexpr PFN_vkCmdSetDepthBoundsTestEnable getLayerPtr_vkCmdSetDepthBoundsTestE
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetDepthBoundsTestEnableEXT = requires(
-    VkCommandBuffer commandBuffer, VkBool32 depthBoundsTestEnable
+    VkCommandBuffer commandBuffer,
+    VkBool32 depthBoundsTestEnable
 ) {
     layer_vkCmdSetDepthBoundsTestEnableEXT<T>(commandBuffer, depthBoundsTestEnable);
 };
@@ -4192,7 +4647,8 @@ constexpr PFN_vkCmdSetDepthBoundsTestEnableEXT getLayerPtr_vkCmdSetDepthBoundsTe
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetDepthClampEnableEXT = requires(
-    VkCommandBuffer commandBuffer, VkBool32 depthClampEnable
+    VkCommandBuffer commandBuffer,
+    VkBool32 depthClampEnable
 ) {
     layer_vkCmdSetDepthClampEnableEXT<T>(commandBuffer, depthClampEnable);
 };
@@ -4214,7 +4670,9 @@ constexpr PFN_vkCmdSetDepthClampEnableEXT getLayerPtr_vkCmdSetDepthClampEnableEX
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetDepthClampRangeEXT = requires(
-    VkCommandBuffer commandBuffer, VkDepthClampModeEXT depthClampMode, const VkDepthClampRangeEXT* pDepthClampRange
+    VkCommandBuffer commandBuffer,
+    VkDepthClampModeEXT depthClampMode,
+    const VkDepthClampRangeEXT* pDepthClampRange
 ) {
     layer_vkCmdSetDepthClampRangeEXT<T>(commandBuffer, depthClampMode, pDepthClampRange);
 };
@@ -4236,7 +4694,8 @@ constexpr PFN_vkCmdSetDepthClampRangeEXT getLayerPtr_vkCmdSetDepthClampRangeEXT(
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetDepthClipEnableEXT = requires(
-    VkCommandBuffer commandBuffer, VkBool32 depthClipEnable
+    VkCommandBuffer commandBuffer,
+    VkBool32 depthClipEnable
 ) {
     layer_vkCmdSetDepthClipEnableEXT<T>(commandBuffer, depthClipEnable);
 };
@@ -4258,7 +4717,8 @@ constexpr PFN_vkCmdSetDepthClipEnableEXT getLayerPtr_vkCmdSetDepthClipEnableEXT(
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetDepthClipNegativeOneToOneEXT = requires(
-    VkCommandBuffer commandBuffer, VkBool32 negativeOneToOne
+    VkCommandBuffer commandBuffer,
+    VkBool32 negativeOneToOne
 ) {
     layer_vkCmdSetDepthClipNegativeOneToOneEXT<T>(commandBuffer, negativeOneToOne);
 };
@@ -4280,7 +4740,8 @@ constexpr PFN_vkCmdSetDepthClipNegativeOneToOneEXT getLayerPtr_vkCmdSetDepthClip
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetDepthCompareOp = requires(
-    VkCommandBuffer commandBuffer, VkCompareOp depthCompareOp
+    VkCommandBuffer commandBuffer,
+    VkCompareOp depthCompareOp
 ) {
     layer_vkCmdSetDepthCompareOp<T>(commandBuffer, depthCompareOp);
 };
@@ -4302,7 +4763,8 @@ constexpr PFN_vkCmdSetDepthCompareOp getLayerPtr_vkCmdSetDepthCompareOp()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetDepthCompareOpEXT = requires(
-    VkCommandBuffer commandBuffer, VkCompareOp depthCompareOp
+    VkCommandBuffer commandBuffer,
+    VkCompareOp depthCompareOp
 ) {
     layer_vkCmdSetDepthCompareOpEXT<T>(commandBuffer, depthCompareOp);
 };
@@ -4324,7 +4786,8 @@ constexpr PFN_vkCmdSetDepthCompareOpEXT getLayerPtr_vkCmdSetDepthCompareOpEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetDepthTestEnable = requires(
-    VkCommandBuffer commandBuffer, VkBool32 depthTestEnable
+    VkCommandBuffer commandBuffer,
+    VkBool32 depthTestEnable
 ) {
     layer_vkCmdSetDepthTestEnable<T>(commandBuffer, depthTestEnable);
 };
@@ -4346,7 +4809,8 @@ constexpr PFN_vkCmdSetDepthTestEnable getLayerPtr_vkCmdSetDepthTestEnable()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetDepthTestEnableEXT = requires(
-    VkCommandBuffer commandBuffer, VkBool32 depthTestEnable
+    VkCommandBuffer commandBuffer,
+    VkBool32 depthTestEnable
 ) {
     layer_vkCmdSetDepthTestEnableEXT<T>(commandBuffer, depthTestEnable);
 };
@@ -4368,7 +4832,8 @@ constexpr PFN_vkCmdSetDepthTestEnableEXT getLayerPtr_vkCmdSetDepthTestEnableEXT(
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetDepthWriteEnable = requires(
-    VkCommandBuffer commandBuffer, VkBool32 depthWriteEnable
+    VkCommandBuffer commandBuffer,
+    VkBool32 depthWriteEnable
 ) {
     layer_vkCmdSetDepthWriteEnable<T>(commandBuffer, depthWriteEnable);
 };
@@ -4390,7 +4855,8 @@ constexpr PFN_vkCmdSetDepthWriteEnable getLayerPtr_vkCmdSetDepthWriteEnable()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetDepthWriteEnableEXT = requires(
-    VkCommandBuffer commandBuffer, VkBool32 depthWriteEnable
+    VkCommandBuffer commandBuffer,
+    VkBool32 depthWriteEnable
 ) {
     layer_vkCmdSetDepthWriteEnableEXT<T>(commandBuffer, depthWriteEnable);
 };
@@ -4412,7 +4878,8 @@ constexpr PFN_vkCmdSetDepthWriteEnableEXT getLayerPtr_vkCmdSetDepthWriteEnableEX
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetDescriptorBufferOffsets2EXT = requires(
-    VkCommandBuffer commandBuffer, const VkSetDescriptorBufferOffsetsInfoEXT* pSetDescriptorBufferOffsetsInfo
+    VkCommandBuffer commandBuffer,
+    const VkSetDescriptorBufferOffsetsInfoEXT* pSetDescriptorBufferOffsetsInfo
 ) {
     layer_vkCmdSetDescriptorBufferOffsets2EXT<T>(commandBuffer, pSetDescriptorBufferOffsetsInfo);
 };
@@ -4434,7 +4901,13 @@ constexpr PFN_vkCmdSetDescriptorBufferOffsets2EXT getLayerPtr_vkCmdSetDescriptor
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetDescriptorBufferOffsetsEXT = requires(
-    VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t firstSet, uint32_t setCount, const uint32_t* pBufferIndices, const VkDeviceSize* pOffsets
+    VkCommandBuffer commandBuffer,
+    VkPipelineBindPoint pipelineBindPoint,
+    VkPipelineLayout layout,
+    uint32_t firstSet,
+    uint32_t setCount,
+    const uint32_t* pBufferIndices,
+    const VkDeviceSize* pOffsets
 ) {
     layer_vkCmdSetDescriptorBufferOffsetsEXT<T>(commandBuffer, pipelineBindPoint, layout, firstSet, setCount, pBufferIndices, pOffsets);
 };
@@ -4456,7 +4929,8 @@ constexpr PFN_vkCmdSetDescriptorBufferOffsetsEXT getLayerPtr_vkCmdSetDescriptorB
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetDeviceMask = requires(
-    VkCommandBuffer commandBuffer, uint32_t deviceMask
+    VkCommandBuffer commandBuffer,
+    uint32_t deviceMask
 ) {
     layer_vkCmdSetDeviceMask<T>(commandBuffer, deviceMask);
 };
@@ -4478,7 +4952,8 @@ constexpr PFN_vkCmdSetDeviceMask getLayerPtr_vkCmdSetDeviceMask()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetDeviceMaskKHR = requires(
-    VkCommandBuffer commandBuffer, uint32_t deviceMask
+    VkCommandBuffer commandBuffer,
+    uint32_t deviceMask
 ) {
     layer_vkCmdSetDeviceMaskKHR<T>(commandBuffer, deviceMask);
 };
@@ -4500,7 +4975,10 @@ constexpr PFN_vkCmdSetDeviceMaskKHR getLayerPtr_vkCmdSetDeviceMaskKHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetDiscardRectangleEXT = requires(
-    VkCommandBuffer commandBuffer, uint32_t firstDiscardRectangle, uint32_t discardRectangleCount, const VkRect2D* pDiscardRectangles
+    VkCommandBuffer commandBuffer,
+    uint32_t firstDiscardRectangle,
+    uint32_t discardRectangleCount,
+    const VkRect2D* pDiscardRectangles
 ) {
     layer_vkCmdSetDiscardRectangleEXT<T>(commandBuffer, firstDiscardRectangle, discardRectangleCount, pDiscardRectangles);
 };
@@ -4522,7 +5000,8 @@ constexpr PFN_vkCmdSetDiscardRectangleEXT getLayerPtr_vkCmdSetDiscardRectangleEX
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetDiscardRectangleEnableEXT = requires(
-    VkCommandBuffer commandBuffer, VkBool32 discardRectangleEnable
+    VkCommandBuffer commandBuffer,
+    VkBool32 discardRectangleEnable
 ) {
     layer_vkCmdSetDiscardRectangleEnableEXT<T>(commandBuffer, discardRectangleEnable);
 };
@@ -4544,7 +5023,8 @@ constexpr PFN_vkCmdSetDiscardRectangleEnableEXT getLayerPtr_vkCmdSetDiscardRecta
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetDiscardRectangleModeEXT = requires(
-    VkCommandBuffer commandBuffer, VkDiscardRectangleModeEXT discardRectangleMode
+    VkCommandBuffer commandBuffer,
+    VkDiscardRectangleModeEXT discardRectangleMode
 ) {
     layer_vkCmdSetDiscardRectangleModeEXT<T>(commandBuffer, discardRectangleMode);
 };
@@ -4566,7 +5046,8 @@ constexpr PFN_vkCmdSetDiscardRectangleModeEXT getLayerPtr_vkCmdSetDiscardRectang
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetDispatchParametersARM = requires(
-    VkCommandBuffer commandBuffer, const VkDispatchParametersARM* pDispatchParameters
+    VkCommandBuffer commandBuffer,
+    const VkDispatchParametersARM* pDispatchParameters
 ) {
     layer_vkCmdSetDispatchParametersARM<T>(commandBuffer, pDispatchParameters);
 };
@@ -4588,7 +5069,9 @@ constexpr PFN_vkCmdSetDispatchParametersARM getLayerPtr_vkCmdSetDispatchParamete
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetEvent = requires(
-    VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask
+    VkCommandBuffer commandBuffer,
+    VkEvent event,
+    VkPipelineStageFlags stageMask
 ) {
     layer_vkCmdSetEvent<T>(commandBuffer, event, stageMask);
 };
@@ -4610,7 +5093,9 @@ constexpr PFN_vkCmdSetEvent getLayerPtr_vkCmdSetEvent()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetEvent2 = requires(
-    VkCommandBuffer commandBuffer, VkEvent event, const VkDependencyInfo* pDependencyInfo
+    VkCommandBuffer commandBuffer,
+    VkEvent event,
+    const VkDependencyInfo* pDependencyInfo
 ) {
     layer_vkCmdSetEvent2<T>(commandBuffer, event, pDependencyInfo);
 };
@@ -4632,7 +5117,9 @@ constexpr PFN_vkCmdSetEvent2 getLayerPtr_vkCmdSetEvent2()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetEvent2KHR = requires(
-    VkCommandBuffer commandBuffer, VkEvent event, const VkDependencyInfo* pDependencyInfo
+    VkCommandBuffer commandBuffer,
+    VkEvent event,
+    const VkDependencyInfo* pDependencyInfo
 ) {
     layer_vkCmdSetEvent2KHR<T>(commandBuffer, event, pDependencyInfo);
 };
@@ -4654,7 +5141,8 @@ constexpr PFN_vkCmdSetEvent2KHR getLayerPtr_vkCmdSetEvent2KHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetExtraPrimitiveOverestimationSizeEXT = requires(
-    VkCommandBuffer commandBuffer, float extraPrimitiveOverestimationSize
+    VkCommandBuffer commandBuffer,
+    float extraPrimitiveOverestimationSize
 ) {
     layer_vkCmdSetExtraPrimitiveOverestimationSizeEXT<T>(commandBuffer, extraPrimitiveOverestimationSize);
 };
@@ -4676,7 +5164,9 @@ constexpr PFN_vkCmdSetExtraPrimitiveOverestimationSizeEXT getLayerPtr_vkCmdSetEx
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetFragmentShadingRateKHR = requires(
-    VkCommandBuffer commandBuffer, const VkExtent2D* pFragmentSize, const VkFragmentShadingRateCombinerOpKHR combinerOps[2]
+    VkCommandBuffer commandBuffer,
+    const VkExtent2D* pFragmentSize,
+    const VkFragmentShadingRateCombinerOpKHR combinerOps[2]
 ) {
     layer_vkCmdSetFragmentShadingRateKHR<T>(commandBuffer, pFragmentSize, combinerOps);
 };
@@ -4698,7 +5188,8 @@ constexpr PFN_vkCmdSetFragmentShadingRateKHR getLayerPtr_vkCmdSetFragmentShading
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetFrontFace = requires(
-    VkCommandBuffer commandBuffer, VkFrontFace frontFace
+    VkCommandBuffer commandBuffer,
+    VkFrontFace frontFace
 ) {
     layer_vkCmdSetFrontFace<T>(commandBuffer, frontFace);
 };
@@ -4720,7 +5211,8 @@ constexpr PFN_vkCmdSetFrontFace getLayerPtr_vkCmdSetFrontFace()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetFrontFaceEXT = requires(
-    VkCommandBuffer commandBuffer, VkFrontFace frontFace
+    VkCommandBuffer commandBuffer,
+    VkFrontFace frontFace
 ) {
     layer_vkCmdSetFrontFaceEXT<T>(commandBuffer, frontFace);
 };
@@ -4742,7 +5234,8 @@ constexpr PFN_vkCmdSetFrontFaceEXT getLayerPtr_vkCmdSetFrontFaceEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetLineRasterizationModeEXT = requires(
-    VkCommandBuffer commandBuffer, VkLineRasterizationModeEXT lineRasterizationMode
+    VkCommandBuffer commandBuffer,
+    VkLineRasterizationModeEXT lineRasterizationMode
 ) {
     layer_vkCmdSetLineRasterizationModeEXT<T>(commandBuffer, lineRasterizationMode);
 };
@@ -4764,7 +5257,9 @@ constexpr PFN_vkCmdSetLineRasterizationModeEXT getLayerPtr_vkCmdSetLineRasteriza
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetLineStipple = requires(
-    VkCommandBuffer commandBuffer, uint32_t lineStippleFactor, uint16_t lineStipplePattern
+    VkCommandBuffer commandBuffer,
+    uint32_t lineStippleFactor,
+    uint16_t lineStipplePattern
 ) {
     layer_vkCmdSetLineStipple<T>(commandBuffer, lineStippleFactor, lineStipplePattern);
 };
@@ -4786,7 +5281,9 @@ constexpr PFN_vkCmdSetLineStipple getLayerPtr_vkCmdSetLineStipple()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetLineStippleEXT = requires(
-    VkCommandBuffer commandBuffer, uint32_t lineStippleFactor, uint16_t lineStipplePattern
+    VkCommandBuffer commandBuffer,
+    uint32_t lineStippleFactor,
+    uint16_t lineStipplePattern
 ) {
     layer_vkCmdSetLineStippleEXT<T>(commandBuffer, lineStippleFactor, lineStipplePattern);
 };
@@ -4808,7 +5305,8 @@ constexpr PFN_vkCmdSetLineStippleEXT getLayerPtr_vkCmdSetLineStippleEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetLineStippleEnableEXT = requires(
-    VkCommandBuffer commandBuffer, VkBool32 stippledLineEnable
+    VkCommandBuffer commandBuffer,
+    VkBool32 stippledLineEnable
 ) {
     layer_vkCmdSetLineStippleEnableEXT<T>(commandBuffer, stippledLineEnable);
 };
@@ -4830,7 +5328,9 @@ constexpr PFN_vkCmdSetLineStippleEnableEXT getLayerPtr_vkCmdSetLineStippleEnable
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetLineStippleKHR = requires(
-    VkCommandBuffer commandBuffer, uint32_t lineStippleFactor, uint16_t lineStipplePattern
+    VkCommandBuffer commandBuffer,
+    uint32_t lineStippleFactor,
+    uint16_t lineStipplePattern
 ) {
     layer_vkCmdSetLineStippleKHR<T>(commandBuffer, lineStippleFactor, lineStipplePattern);
 };
@@ -4852,7 +5352,8 @@ constexpr PFN_vkCmdSetLineStippleKHR getLayerPtr_vkCmdSetLineStippleKHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetLineWidth = requires(
-    VkCommandBuffer commandBuffer, float lineWidth
+    VkCommandBuffer commandBuffer,
+    float lineWidth
 ) {
     layer_vkCmdSetLineWidth<T>(commandBuffer, lineWidth);
 };
@@ -4874,7 +5375,8 @@ constexpr PFN_vkCmdSetLineWidth getLayerPtr_vkCmdSetLineWidth()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetLogicOpEXT = requires(
-    VkCommandBuffer commandBuffer, VkLogicOp logicOp
+    VkCommandBuffer commandBuffer,
+    VkLogicOp logicOp
 ) {
     layer_vkCmdSetLogicOpEXT<T>(commandBuffer, logicOp);
 };
@@ -4896,7 +5398,8 @@ constexpr PFN_vkCmdSetLogicOpEXT getLayerPtr_vkCmdSetLogicOpEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetLogicOpEnableEXT = requires(
-    VkCommandBuffer commandBuffer, VkBool32 logicOpEnable
+    VkCommandBuffer commandBuffer,
+    VkBool32 logicOpEnable
 ) {
     layer_vkCmdSetLogicOpEnableEXT<T>(commandBuffer, logicOpEnable);
 };
@@ -4918,7 +5421,8 @@ constexpr PFN_vkCmdSetLogicOpEnableEXT getLayerPtr_vkCmdSetLogicOpEnableEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetPatchControlPointsEXT = requires(
-    VkCommandBuffer commandBuffer, uint32_t patchControlPoints
+    VkCommandBuffer commandBuffer,
+    uint32_t patchControlPoints
 ) {
     layer_vkCmdSetPatchControlPointsEXT<T>(commandBuffer, patchControlPoints);
 };
@@ -4940,7 +5444,8 @@ constexpr PFN_vkCmdSetPatchControlPointsEXT getLayerPtr_vkCmdSetPatchControlPoin
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetPolygonModeEXT = requires(
-    VkCommandBuffer commandBuffer, VkPolygonMode polygonMode
+    VkCommandBuffer commandBuffer,
+    VkPolygonMode polygonMode
 ) {
     layer_vkCmdSetPolygonModeEXT<T>(commandBuffer, polygonMode);
 };
@@ -4962,7 +5467,8 @@ constexpr PFN_vkCmdSetPolygonModeEXT getLayerPtr_vkCmdSetPolygonModeEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetPrimitiveRestartEnable = requires(
-    VkCommandBuffer commandBuffer, VkBool32 primitiveRestartEnable
+    VkCommandBuffer commandBuffer,
+    VkBool32 primitiveRestartEnable
 ) {
     layer_vkCmdSetPrimitiveRestartEnable<T>(commandBuffer, primitiveRestartEnable);
 };
@@ -4984,7 +5490,8 @@ constexpr PFN_vkCmdSetPrimitiveRestartEnable getLayerPtr_vkCmdSetPrimitiveRestar
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetPrimitiveRestartEnableEXT = requires(
-    VkCommandBuffer commandBuffer, VkBool32 primitiveRestartEnable
+    VkCommandBuffer commandBuffer,
+    VkBool32 primitiveRestartEnable
 ) {
     layer_vkCmdSetPrimitiveRestartEnableEXT<T>(commandBuffer, primitiveRestartEnable);
 };
@@ -5006,7 +5513,8 @@ constexpr PFN_vkCmdSetPrimitiveRestartEnableEXT getLayerPtr_vkCmdSetPrimitiveRes
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetPrimitiveRestartIndexEXT = requires(
-    VkCommandBuffer commandBuffer, uint32_t primitiveRestartIndex
+    VkCommandBuffer commandBuffer,
+    uint32_t primitiveRestartIndex
 ) {
     layer_vkCmdSetPrimitiveRestartIndexEXT<T>(commandBuffer, primitiveRestartIndex);
 };
@@ -5028,7 +5536,8 @@ constexpr PFN_vkCmdSetPrimitiveRestartIndexEXT getLayerPtr_vkCmdSetPrimitiveRest
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetPrimitiveTopology = requires(
-    VkCommandBuffer commandBuffer, VkPrimitiveTopology primitiveTopology
+    VkCommandBuffer commandBuffer,
+    VkPrimitiveTopology primitiveTopology
 ) {
     layer_vkCmdSetPrimitiveTopology<T>(commandBuffer, primitiveTopology);
 };
@@ -5050,7 +5559,8 @@ constexpr PFN_vkCmdSetPrimitiveTopology getLayerPtr_vkCmdSetPrimitiveTopology()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetPrimitiveTopologyEXT = requires(
-    VkCommandBuffer commandBuffer, VkPrimitiveTopology primitiveTopology
+    VkCommandBuffer commandBuffer,
+    VkPrimitiveTopology primitiveTopology
 ) {
     layer_vkCmdSetPrimitiveTopologyEXT<T>(commandBuffer, primitiveTopology);
 };
@@ -5072,7 +5582,8 @@ constexpr PFN_vkCmdSetPrimitiveTopologyEXT getLayerPtr_vkCmdSetPrimitiveTopology
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetProvokingVertexModeEXT = requires(
-    VkCommandBuffer commandBuffer, VkProvokingVertexModeEXT provokingVertexMode
+    VkCommandBuffer commandBuffer,
+    VkProvokingVertexModeEXT provokingVertexMode
 ) {
     layer_vkCmdSetProvokingVertexModeEXT<T>(commandBuffer, provokingVertexMode);
 };
@@ -5094,7 +5605,8 @@ constexpr PFN_vkCmdSetProvokingVertexModeEXT getLayerPtr_vkCmdSetProvokingVertex
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetRasterizationSamplesEXT = requires(
-    VkCommandBuffer commandBuffer, VkSampleCountFlagBits rasterizationSamples
+    VkCommandBuffer commandBuffer,
+    VkSampleCountFlagBits rasterizationSamples
 ) {
     layer_vkCmdSetRasterizationSamplesEXT<T>(commandBuffer, rasterizationSamples);
 };
@@ -5116,7 +5628,8 @@ constexpr PFN_vkCmdSetRasterizationSamplesEXT getLayerPtr_vkCmdSetRasterizationS
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetRasterizationStreamEXT = requires(
-    VkCommandBuffer commandBuffer, uint32_t rasterizationStream
+    VkCommandBuffer commandBuffer,
+    uint32_t rasterizationStream
 ) {
     layer_vkCmdSetRasterizationStreamEXT<T>(commandBuffer, rasterizationStream);
 };
@@ -5138,7 +5651,8 @@ constexpr PFN_vkCmdSetRasterizationStreamEXT getLayerPtr_vkCmdSetRasterizationSt
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetRasterizerDiscardEnable = requires(
-    VkCommandBuffer commandBuffer, VkBool32 rasterizerDiscardEnable
+    VkCommandBuffer commandBuffer,
+    VkBool32 rasterizerDiscardEnable
 ) {
     layer_vkCmdSetRasterizerDiscardEnable<T>(commandBuffer, rasterizerDiscardEnable);
 };
@@ -5160,7 +5674,8 @@ constexpr PFN_vkCmdSetRasterizerDiscardEnable getLayerPtr_vkCmdSetRasterizerDisc
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetRasterizerDiscardEnableEXT = requires(
-    VkCommandBuffer commandBuffer, VkBool32 rasterizerDiscardEnable
+    VkCommandBuffer commandBuffer,
+    VkBool32 rasterizerDiscardEnable
 ) {
     layer_vkCmdSetRasterizerDiscardEnableEXT<T>(commandBuffer, rasterizerDiscardEnable);
 };
@@ -5182,7 +5697,8 @@ constexpr PFN_vkCmdSetRasterizerDiscardEnableEXT getLayerPtr_vkCmdSetRasterizerD
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetRayTracingPipelineStackSizeKHR = requires(
-    VkCommandBuffer commandBuffer, uint32_t pipelineStackSize
+    VkCommandBuffer commandBuffer,
+    uint32_t pipelineStackSize
 ) {
     layer_vkCmdSetRayTracingPipelineStackSizeKHR<T>(commandBuffer, pipelineStackSize);
 };
@@ -5204,7 +5720,8 @@ constexpr PFN_vkCmdSetRayTracingPipelineStackSizeKHR getLayerPtr_vkCmdSetRayTrac
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetRenderingAttachmentLocations = requires(
-    VkCommandBuffer commandBuffer, const VkRenderingAttachmentLocationInfo* pLocationInfo
+    VkCommandBuffer commandBuffer,
+    const VkRenderingAttachmentLocationInfo* pLocationInfo
 ) {
     layer_vkCmdSetRenderingAttachmentLocations<T>(commandBuffer, pLocationInfo);
 };
@@ -5226,7 +5743,8 @@ constexpr PFN_vkCmdSetRenderingAttachmentLocations getLayerPtr_vkCmdSetRendering
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetRenderingAttachmentLocationsKHR = requires(
-    VkCommandBuffer commandBuffer, const VkRenderingAttachmentLocationInfo* pLocationInfo
+    VkCommandBuffer commandBuffer,
+    const VkRenderingAttachmentLocationInfo* pLocationInfo
 ) {
     layer_vkCmdSetRenderingAttachmentLocationsKHR<T>(commandBuffer, pLocationInfo);
 };
@@ -5248,7 +5766,8 @@ constexpr PFN_vkCmdSetRenderingAttachmentLocationsKHR getLayerPtr_vkCmdSetRender
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetRenderingInputAttachmentIndices = requires(
-    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo
+    VkCommandBuffer commandBuffer,
+    const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo
 ) {
     layer_vkCmdSetRenderingInputAttachmentIndices<T>(commandBuffer, pInputAttachmentIndexInfo);
 };
@@ -5270,7 +5789,8 @@ constexpr PFN_vkCmdSetRenderingInputAttachmentIndices getLayerPtr_vkCmdSetRender
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetRenderingInputAttachmentIndicesKHR = requires(
-    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo
+    VkCommandBuffer commandBuffer,
+    const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo
 ) {
     layer_vkCmdSetRenderingInputAttachmentIndicesKHR<T>(commandBuffer, pInputAttachmentIndexInfo);
 };
@@ -5292,7 +5812,8 @@ constexpr PFN_vkCmdSetRenderingInputAttachmentIndicesKHR getLayerPtr_vkCmdSetRen
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetRepresentativeFragmentTestEnableNV = requires(
-    VkCommandBuffer commandBuffer, VkBool32 representativeFragmentTestEnable
+    VkCommandBuffer commandBuffer,
+    VkBool32 representativeFragmentTestEnable
 ) {
     layer_vkCmdSetRepresentativeFragmentTestEnableNV<T>(commandBuffer, representativeFragmentTestEnable);
 };
@@ -5314,7 +5835,8 @@ constexpr PFN_vkCmdSetRepresentativeFragmentTestEnableNV getLayerPtr_vkCmdSetRep
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetSampleLocationsEXT = requires(
-    VkCommandBuffer commandBuffer, const VkSampleLocationsInfoEXT* pSampleLocationsInfo
+    VkCommandBuffer commandBuffer,
+    const VkSampleLocationsInfoEXT* pSampleLocationsInfo
 ) {
     layer_vkCmdSetSampleLocationsEXT<T>(commandBuffer, pSampleLocationsInfo);
 };
@@ -5336,7 +5858,8 @@ constexpr PFN_vkCmdSetSampleLocationsEXT getLayerPtr_vkCmdSetSampleLocationsEXT(
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetSampleLocationsEnableEXT = requires(
-    VkCommandBuffer commandBuffer, VkBool32 sampleLocationsEnable
+    VkCommandBuffer commandBuffer,
+    VkBool32 sampleLocationsEnable
 ) {
     layer_vkCmdSetSampleLocationsEnableEXT<T>(commandBuffer, sampleLocationsEnable);
 };
@@ -5358,7 +5881,9 @@ constexpr PFN_vkCmdSetSampleLocationsEnableEXT getLayerPtr_vkCmdSetSampleLocatio
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetSampleMaskEXT = requires(
-    VkCommandBuffer commandBuffer, VkSampleCountFlagBits samples, const VkSampleMask* pSampleMask
+    VkCommandBuffer commandBuffer,
+    VkSampleCountFlagBits samples,
+    const VkSampleMask* pSampleMask
 ) {
     layer_vkCmdSetSampleMaskEXT<T>(commandBuffer, samples, pSampleMask);
 };
@@ -5380,7 +5905,10 @@ constexpr PFN_vkCmdSetSampleMaskEXT getLayerPtr_vkCmdSetSampleMaskEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetScissor = requires(
-    VkCommandBuffer commandBuffer, uint32_t firstScissor, uint32_t scissorCount, const VkRect2D* pScissors
+    VkCommandBuffer commandBuffer,
+    uint32_t firstScissor,
+    uint32_t scissorCount,
+    const VkRect2D* pScissors
 ) {
     layer_vkCmdSetScissor<T>(commandBuffer, firstScissor, scissorCount, pScissors);
 };
@@ -5402,7 +5930,9 @@ constexpr PFN_vkCmdSetScissor getLayerPtr_vkCmdSetScissor()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetScissorWithCount = requires(
-    VkCommandBuffer commandBuffer, uint32_t scissorCount, const VkRect2D* pScissors
+    VkCommandBuffer commandBuffer,
+    uint32_t scissorCount,
+    const VkRect2D* pScissors
 ) {
     layer_vkCmdSetScissorWithCount<T>(commandBuffer, scissorCount, pScissors);
 };
@@ -5424,7 +5954,9 @@ constexpr PFN_vkCmdSetScissorWithCount getLayerPtr_vkCmdSetScissorWithCount()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetScissorWithCountEXT = requires(
-    VkCommandBuffer commandBuffer, uint32_t scissorCount, const VkRect2D* pScissors
+    VkCommandBuffer commandBuffer,
+    uint32_t scissorCount,
+    const VkRect2D* pScissors
 ) {
     layer_vkCmdSetScissorWithCountEXT<T>(commandBuffer, scissorCount, pScissors);
 };
@@ -5446,7 +5978,8 @@ constexpr PFN_vkCmdSetScissorWithCountEXT getLayerPtr_vkCmdSetScissorWithCountEX
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetShadingRateImageEnableNV = requires(
-    VkCommandBuffer commandBuffer, VkBool32 shadingRateImageEnable
+    VkCommandBuffer commandBuffer,
+    VkBool32 shadingRateImageEnable
 ) {
     layer_vkCmdSetShadingRateImageEnableNV<T>(commandBuffer, shadingRateImageEnable);
 };
@@ -5468,7 +6001,9 @@ constexpr PFN_vkCmdSetShadingRateImageEnableNV getLayerPtr_vkCmdSetShadingRateIm
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetStencilCompareMask = requires(
-    VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, uint32_t compareMask
+    VkCommandBuffer commandBuffer,
+    VkStencilFaceFlags faceMask,
+    uint32_t compareMask
 ) {
     layer_vkCmdSetStencilCompareMask<T>(commandBuffer, faceMask, compareMask);
 };
@@ -5490,7 +6025,12 @@ constexpr PFN_vkCmdSetStencilCompareMask getLayerPtr_vkCmdSetStencilCompareMask(
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetStencilOp = requires(
-    VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, VkStencilOp failOp, VkStencilOp passOp, VkStencilOp depthFailOp, VkCompareOp compareOp
+    VkCommandBuffer commandBuffer,
+    VkStencilFaceFlags faceMask,
+    VkStencilOp failOp,
+    VkStencilOp passOp,
+    VkStencilOp depthFailOp,
+    VkCompareOp compareOp
 ) {
     layer_vkCmdSetStencilOp<T>(commandBuffer, faceMask, failOp, passOp, depthFailOp, compareOp);
 };
@@ -5512,7 +6052,12 @@ constexpr PFN_vkCmdSetStencilOp getLayerPtr_vkCmdSetStencilOp()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetStencilOpEXT = requires(
-    VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, VkStencilOp failOp, VkStencilOp passOp, VkStencilOp depthFailOp, VkCompareOp compareOp
+    VkCommandBuffer commandBuffer,
+    VkStencilFaceFlags faceMask,
+    VkStencilOp failOp,
+    VkStencilOp passOp,
+    VkStencilOp depthFailOp,
+    VkCompareOp compareOp
 ) {
     layer_vkCmdSetStencilOpEXT<T>(commandBuffer, faceMask, failOp, passOp, depthFailOp, compareOp);
 };
@@ -5534,7 +6079,9 @@ constexpr PFN_vkCmdSetStencilOpEXT getLayerPtr_vkCmdSetStencilOpEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetStencilReference = requires(
-    VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, uint32_t reference
+    VkCommandBuffer commandBuffer,
+    VkStencilFaceFlags faceMask,
+    uint32_t reference
 ) {
     layer_vkCmdSetStencilReference<T>(commandBuffer, faceMask, reference);
 };
@@ -5556,7 +6103,8 @@ constexpr PFN_vkCmdSetStencilReference getLayerPtr_vkCmdSetStencilReference()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetStencilTestEnable = requires(
-    VkCommandBuffer commandBuffer, VkBool32 stencilTestEnable
+    VkCommandBuffer commandBuffer,
+    VkBool32 stencilTestEnable
 ) {
     layer_vkCmdSetStencilTestEnable<T>(commandBuffer, stencilTestEnable);
 };
@@ -5578,7 +6126,8 @@ constexpr PFN_vkCmdSetStencilTestEnable getLayerPtr_vkCmdSetStencilTestEnable()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetStencilTestEnableEXT = requires(
-    VkCommandBuffer commandBuffer, VkBool32 stencilTestEnable
+    VkCommandBuffer commandBuffer,
+    VkBool32 stencilTestEnable
 ) {
     layer_vkCmdSetStencilTestEnableEXT<T>(commandBuffer, stencilTestEnable);
 };
@@ -5600,7 +6149,9 @@ constexpr PFN_vkCmdSetStencilTestEnableEXT getLayerPtr_vkCmdSetStencilTestEnable
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetStencilWriteMask = requires(
-    VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, uint32_t writeMask
+    VkCommandBuffer commandBuffer,
+    VkStencilFaceFlags faceMask,
+    uint32_t writeMask
 ) {
     layer_vkCmdSetStencilWriteMask<T>(commandBuffer, faceMask, writeMask);
 };
@@ -5622,7 +6173,8 @@ constexpr PFN_vkCmdSetStencilWriteMask getLayerPtr_vkCmdSetStencilWriteMask()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetTessellationDomainOriginEXT = requires(
-    VkCommandBuffer commandBuffer, VkTessellationDomainOrigin domainOrigin
+    VkCommandBuffer commandBuffer,
+    VkTessellationDomainOrigin domainOrigin
 ) {
     layer_vkCmdSetTessellationDomainOriginEXT<T>(commandBuffer, domainOrigin);
 };
@@ -5644,7 +6196,11 @@ constexpr PFN_vkCmdSetTessellationDomainOriginEXT getLayerPtr_vkCmdSetTessellati
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetVertexInputEXT = requires(
-    VkCommandBuffer commandBuffer, uint32_t vertexBindingDescriptionCount, const VkVertexInputBindingDescription2EXT* pVertexBindingDescriptions, uint32_t vertexAttributeDescriptionCount, const VkVertexInputAttributeDescription2EXT* pVertexAttributeDescriptions
+    VkCommandBuffer commandBuffer,
+    uint32_t vertexBindingDescriptionCount,
+    const VkVertexInputBindingDescription2EXT* pVertexBindingDescriptions,
+    uint32_t vertexAttributeDescriptionCount,
+    const VkVertexInputAttributeDescription2EXT* pVertexAttributeDescriptions
 ) {
     layer_vkCmdSetVertexInputEXT<T>(commandBuffer, vertexBindingDescriptionCount, pVertexBindingDescriptions, vertexAttributeDescriptionCount, pVertexAttributeDescriptions);
 };
@@ -5666,7 +6222,10 @@ constexpr PFN_vkCmdSetVertexInputEXT getLayerPtr_vkCmdSetVertexInputEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetViewport = requires(
-    VkCommandBuffer commandBuffer, uint32_t firstViewport, uint32_t viewportCount, const VkViewport* pViewports
+    VkCommandBuffer commandBuffer,
+    uint32_t firstViewport,
+    uint32_t viewportCount,
+    const VkViewport* pViewports
 ) {
     layer_vkCmdSetViewport<T>(commandBuffer, firstViewport, viewportCount, pViewports);
 };
@@ -5688,7 +6247,10 @@ constexpr PFN_vkCmdSetViewport getLayerPtr_vkCmdSetViewport()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetViewportSwizzleNV = requires(
-    VkCommandBuffer commandBuffer, uint32_t firstViewport, uint32_t viewportCount, const VkViewportSwizzleNV* pViewportSwizzles
+    VkCommandBuffer commandBuffer,
+    uint32_t firstViewport,
+    uint32_t viewportCount,
+    const VkViewportSwizzleNV* pViewportSwizzles
 ) {
     layer_vkCmdSetViewportSwizzleNV<T>(commandBuffer, firstViewport, viewportCount, pViewportSwizzles);
 };
@@ -5710,7 +6272,8 @@ constexpr PFN_vkCmdSetViewportSwizzleNV getLayerPtr_vkCmdSetViewportSwizzleNV()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetViewportWScalingEnableNV = requires(
-    VkCommandBuffer commandBuffer, VkBool32 viewportWScalingEnable
+    VkCommandBuffer commandBuffer,
+    VkBool32 viewportWScalingEnable
 ) {
     layer_vkCmdSetViewportWScalingEnableNV<T>(commandBuffer, viewportWScalingEnable);
 };
@@ -5732,7 +6295,9 @@ constexpr PFN_vkCmdSetViewportWScalingEnableNV getLayerPtr_vkCmdSetViewportWScal
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetViewportWithCount = requires(
-    VkCommandBuffer commandBuffer, uint32_t viewportCount, const VkViewport* pViewports
+    VkCommandBuffer commandBuffer,
+    uint32_t viewportCount,
+    const VkViewport* pViewports
 ) {
     layer_vkCmdSetViewportWithCount<T>(commandBuffer, viewportCount, pViewports);
 };
@@ -5754,7 +6319,9 @@ constexpr PFN_vkCmdSetViewportWithCount getLayerPtr_vkCmdSetViewportWithCount()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdSetViewportWithCountEXT = requires(
-    VkCommandBuffer commandBuffer, uint32_t viewportCount, const VkViewport* pViewports
+    VkCommandBuffer commandBuffer,
+    uint32_t viewportCount,
+    const VkViewport* pViewports
 ) {
     layer_vkCmdSetViewportWithCountEXT<T>(commandBuffer, viewportCount, pViewports);
 };
@@ -5776,7 +6343,8 @@ constexpr PFN_vkCmdSetViewportWithCountEXT getLayerPtr_vkCmdSetViewportWithCount
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdTraceRaysIndirect2KHR = requires(
-    VkCommandBuffer commandBuffer, VkDeviceAddress indirectDeviceAddress
+    VkCommandBuffer commandBuffer,
+    VkDeviceAddress indirectDeviceAddress
 ) {
     layer_vkCmdTraceRaysIndirect2KHR<T>(commandBuffer, indirectDeviceAddress);
 };
@@ -5798,7 +6366,12 @@ constexpr PFN_vkCmdTraceRaysIndirect2KHR getLayerPtr_vkCmdTraceRaysIndirect2KHR(
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdTraceRaysIndirectKHR = requires(
-    VkCommandBuffer commandBuffer, const VkStridedDeviceAddressRegionKHR* pRaygenShaderBindingTable, const VkStridedDeviceAddressRegionKHR* pMissShaderBindingTable, const VkStridedDeviceAddressRegionKHR* pHitShaderBindingTable, const VkStridedDeviceAddressRegionKHR* pCallableShaderBindingTable, VkDeviceAddress indirectDeviceAddress
+    VkCommandBuffer commandBuffer,
+    const VkStridedDeviceAddressRegionKHR* pRaygenShaderBindingTable,
+    const VkStridedDeviceAddressRegionKHR* pMissShaderBindingTable,
+    const VkStridedDeviceAddressRegionKHR* pHitShaderBindingTable,
+    const VkStridedDeviceAddressRegionKHR* pCallableShaderBindingTable,
+    VkDeviceAddress indirectDeviceAddress
 ) {
     layer_vkCmdTraceRaysIndirectKHR<T>(commandBuffer, pRaygenShaderBindingTable, pMissShaderBindingTable, pHitShaderBindingTable, pCallableShaderBindingTable, indirectDeviceAddress);
 };
@@ -5820,7 +6393,14 @@ constexpr PFN_vkCmdTraceRaysIndirectKHR getLayerPtr_vkCmdTraceRaysIndirectKHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdTraceRaysKHR = requires(
-    VkCommandBuffer commandBuffer, const VkStridedDeviceAddressRegionKHR* pRaygenShaderBindingTable, const VkStridedDeviceAddressRegionKHR* pMissShaderBindingTable, const VkStridedDeviceAddressRegionKHR* pHitShaderBindingTable, const VkStridedDeviceAddressRegionKHR* pCallableShaderBindingTable, uint32_t width, uint32_t height, uint32_t depth
+    VkCommandBuffer commandBuffer,
+    const VkStridedDeviceAddressRegionKHR* pRaygenShaderBindingTable,
+    const VkStridedDeviceAddressRegionKHR* pMissShaderBindingTable,
+    const VkStridedDeviceAddressRegionKHR* pHitShaderBindingTable,
+    const VkStridedDeviceAddressRegionKHR* pCallableShaderBindingTable,
+    uint32_t width,
+    uint32_t height,
+    uint32_t depth
 ) {
     layer_vkCmdTraceRaysKHR<T>(commandBuffer, pRaygenShaderBindingTable, pMissShaderBindingTable, pHitShaderBindingTable, pCallableShaderBindingTable, width, height, depth);
 };
@@ -5842,7 +6422,11 @@ constexpr PFN_vkCmdTraceRaysKHR getLayerPtr_vkCmdTraceRaysKHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdUpdateBuffer = requires(
-    VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset, VkDeviceSize dataSize, const void* pData
+    VkCommandBuffer commandBuffer,
+    VkBuffer dstBuffer,
+    VkDeviceSize dstOffset,
+    VkDeviceSize dataSize,
+    const void* pData
 ) {
     layer_vkCmdUpdateBuffer<T>(commandBuffer, dstBuffer, dstOffset, dataSize, pData);
 };
@@ -5864,7 +6448,11 @@ constexpr PFN_vkCmdUpdateBuffer getLayerPtr_vkCmdUpdateBuffer()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdUpdateMemoryKHR = requires(
-    VkCommandBuffer commandBuffer, const VkDeviceAddressRangeKHR* pDstRange, VkAddressCommandFlagsKHR dstFlags, VkDeviceSize dataSize, const void* pData
+    VkCommandBuffer commandBuffer,
+    const VkDeviceAddressRangeKHR* pDstRange,
+    VkAddressCommandFlagsKHR dstFlags,
+    VkDeviceSize dataSize,
+    const void* pData
 ) {
     layer_vkCmdUpdateMemoryKHR<T>(commandBuffer, pDstRange, dstFlags, dataSize, pData);
 };
@@ -5886,7 +6474,17 @@ constexpr PFN_vkCmdUpdateMemoryKHR getLayerPtr_vkCmdUpdateMemoryKHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdWaitEvents = requires(
-    VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents, VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers, uint32_t bufferMemoryBarrierCount, const VkBufferMemoryBarrier* pBufferMemoryBarriers, uint32_t imageMemoryBarrierCount, const VkImageMemoryBarrier* pImageMemoryBarriers
+    VkCommandBuffer commandBuffer,
+    uint32_t eventCount,
+    const VkEvent* pEvents,
+    VkPipelineStageFlags srcStageMask,
+    VkPipelineStageFlags dstStageMask,
+    uint32_t memoryBarrierCount,
+    const VkMemoryBarrier* pMemoryBarriers,
+    uint32_t bufferMemoryBarrierCount,
+    const VkBufferMemoryBarrier* pBufferMemoryBarriers,
+    uint32_t imageMemoryBarrierCount,
+    const VkImageMemoryBarrier* pImageMemoryBarriers
 ) {
     layer_vkCmdWaitEvents<T>(commandBuffer, eventCount, pEvents, srcStageMask, dstStageMask, memoryBarrierCount, pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
 };
@@ -5908,7 +6506,10 @@ constexpr PFN_vkCmdWaitEvents getLayerPtr_vkCmdWaitEvents()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdWaitEvents2 = requires(
-    VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents, const VkDependencyInfo* pDependencyInfos
+    VkCommandBuffer commandBuffer,
+    uint32_t eventCount,
+    const VkEvent* pEvents,
+    const VkDependencyInfo* pDependencyInfos
 ) {
     layer_vkCmdWaitEvents2<T>(commandBuffer, eventCount, pEvents, pDependencyInfos);
 };
@@ -5930,7 +6531,10 @@ constexpr PFN_vkCmdWaitEvents2 getLayerPtr_vkCmdWaitEvents2()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdWaitEvents2KHR = requires(
-    VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents, const VkDependencyInfo* pDependencyInfos
+    VkCommandBuffer commandBuffer,
+    uint32_t eventCount,
+    const VkEvent* pEvents,
+    const VkDependencyInfo* pDependencyInfos
 ) {
     layer_vkCmdWaitEvents2KHR<T>(commandBuffer, eventCount, pEvents, pDependencyInfos);
 };
@@ -5952,7 +6556,12 @@ constexpr PFN_vkCmdWaitEvents2KHR getLayerPtr_vkCmdWaitEvents2KHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdWriteAccelerationStructuresPropertiesKHR = requires(
-    VkCommandBuffer commandBuffer, uint32_t accelerationStructureCount, const VkAccelerationStructureKHR* pAccelerationStructures, VkQueryType queryType, VkQueryPool queryPool, uint32_t firstQuery
+    VkCommandBuffer commandBuffer,
+    uint32_t accelerationStructureCount,
+    const VkAccelerationStructureKHR* pAccelerationStructures,
+    VkQueryType queryType,
+    VkQueryPool queryPool,
+    uint32_t firstQuery
 ) {
     layer_vkCmdWriteAccelerationStructuresPropertiesKHR<T>(commandBuffer, accelerationStructureCount, pAccelerationStructures, queryType, queryPool, firstQuery);
 };
@@ -5974,7 +6583,11 @@ constexpr PFN_vkCmdWriteAccelerationStructuresPropertiesKHR getLayerPtr_vkCmdWri
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdWriteBufferMarker2AMD = requires(
-    VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage, VkBuffer dstBuffer, VkDeviceSize dstOffset, uint32_t marker
+    VkCommandBuffer commandBuffer,
+    VkPipelineStageFlags2 stage,
+    VkBuffer dstBuffer,
+    VkDeviceSize dstOffset,
+    uint32_t marker
 ) {
     layer_vkCmdWriteBufferMarker2AMD<T>(commandBuffer, stage, dstBuffer, dstOffset, marker);
 };
@@ -5996,7 +6609,8 @@ constexpr PFN_vkCmdWriteBufferMarker2AMD getLayerPtr_vkCmdWriteBufferMarker2AMD(
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdWriteMarkerToMemoryAMD = requires(
-    VkCommandBuffer commandBuffer, const VkMemoryMarkerInfoAMD* pInfo
+    VkCommandBuffer commandBuffer,
+    const VkMemoryMarkerInfoAMD* pInfo
 ) {
     layer_vkCmdWriteMarkerToMemoryAMD<T>(commandBuffer, pInfo);
 };
@@ -6018,7 +6632,12 @@ constexpr PFN_vkCmdWriteMarkerToMemoryAMD getLayerPtr_vkCmdWriteMarkerToMemoryAM
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdWriteMicromapsPropertiesEXT = requires(
-    VkCommandBuffer commandBuffer, uint32_t micromapCount, const VkMicromapEXT* pMicromaps, VkQueryType queryType, VkQueryPool queryPool, uint32_t firstQuery
+    VkCommandBuffer commandBuffer,
+    uint32_t micromapCount,
+    const VkMicromapEXT* pMicromaps,
+    VkQueryType queryType,
+    VkQueryPool queryPool,
+    uint32_t firstQuery
 ) {
     layer_vkCmdWriteMicromapsPropertiesEXT<T>(commandBuffer, micromapCount, pMicromaps, queryType, queryPool, firstQuery);
 };
@@ -6040,7 +6659,10 @@ constexpr PFN_vkCmdWriteMicromapsPropertiesEXT getLayerPtr_vkCmdWriteMicromapsPr
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdWriteTimestamp = requires(
-    VkCommandBuffer commandBuffer, VkPipelineStageFlagBits pipelineStage, VkQueryPool queryPool, uint32_t query
+    VkCommandBuffer commandBuffer,
+    VkPipelineStageFlagBits pipelineStage,
+    VkQueryPool queryPool,
+    uint32_t query
 ) {
     layer_vkCmdWriteTimestamp<T>(commandBuffer, pipelineStage, queryPool, query);
 };
@@ -6062,7 +6684,10 @@ constexpr PFN_vkCmdWriteTimestamp getLayerPtr_vkCmdWriteTimestamp()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdWriteTimestamp2 = requires(
-    VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage, VkQueryPool queryPool, uint32_t query
+    VkCommandBuffer commandBuffer,
+    VkPipelineStageFlags2 stage,
+    VkQueryPool queryPool,
+    uint32_t query
 ) {
     layer_vkCmdWriteTimestamp2<T>(commandBuffer, stage, queryPool, query);
 };
@@ -6084,7 +6709,10 @@ constexpr PFN_vkCmdWriteTimestamp2 getLayerPtr_vkCmdWriteTimestamp2()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCmdWriteTimestamp2KHR = requires(
-    VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage, VkQueryPool queryPool, uint32_t query
+    VkCommandBuffer commandBuffer,
+    VkPipelineStageFlags2 stage,
+    VkQueryPool queryPool,
+    uint32_t query
 ) {
     layer_vkCmdWriteTimestamp2KHR<T>(commandBuffer, stage, queryPool, query);
 };
@@ -6106,7 +6734,9 @@ constexpr PFN_vkCmdWriteTimestamp2KHR getLayerPtr_vkCmdWriteTimestamp2KHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCopyAccelerationStructureKHR = requires(
-    VkDevice device, VkDeferredOperationKHR deferredOperation, const VkCopyAccelerationStructureInfoKHR* pInfo
+    VkDevice device,
+    VkDeferredOperationKHR deferredOperation,
+    const VkCopyAccelerationStructureInfoKHR* pInfo
 ) {
     layer_vkCopyAccelerationStructureKHR<T>(device, deferredOperation, pInfo);
 };
@@ -6128,7 +6758,9 @@ constexpr PFN_vkCopyAccelerationStructureKHR getLayerPtr_vkCopyAccelerationStruc
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCopyAccelerationStructureToMemoryKHR = requires(
-    VkDevice device, VkDeferredOperationKHR deferredOperation, const VkCopyAccelerationStructureToMemoryInfoKHR* pInfo
+    VkDevice device,
+    VkDeferredOperationKHR deferredOperation,
+    const VkCopyAccelerationStructureToMemoryInfoKHR* pInfo
 ) {
     layer_vkCopyAccelerationStructureToMemoryKHR<T>(device, deferredOperation, pInfo);
 };
@@ -6150,7 +6782,8 @@ constexpr PFN_vkCopyAccelerationStructureToMemoryKHR getLayerPtr_vkCopyAccelerat
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCopyImageToImage = requires(
-    VkDevice device, const VkCopyImageToImageInfo* pCopyImageToImageInfo
+    VkDevice device,
+    const VkCopyImageToImageInfo* pCopyImageToImageInfo
 ) {
     layer_vkCopyImageToImage<T>(device, pCopyImageToImageInfo);
 };
@@ -6172,7 +6805,8 @@ constexpr PFN_vkCopyImageToImage getLayerPtr_vkCopyImageToImage()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCopyImageToImageEXT = requires(
-    VkDevice device, const VkCopyImageToImageInfo* pCopyImageToImageInfo
+    VkDevice device,
+    const VkCopyImageToImageInfo* pCopyImageToImageInfo
 ) {
     layer_vkCopyImageToImageEXT<T>(device, pCopyImageToImageInfo);
 };
@@ -6194,7 +6828,8 @@ constexpr PFN_vkCopyImageToImageEXT getLayerPtr_vkCopyImageToImageEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCopyImageToMemory = requires(
-    VkDevice device, const VkCopyImageToMemoryInfo* pCopyImageToMemoryInfo
+    VkDevice device,
+    const VkCopyImageToMemoryInfo* pCopyImageToMemoryInfo
 ) {
     layer_vkCopyImageToMemory<T>(device, pCopyImageToMemoryInfo);
 };
@@ -6216,7 +6851,8 @@ constexpr PFN_vkCopyImageToMemory getLayerPtr_vkCopyImageToMemory()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCopyImageToMemoryEXT = requires(
-    VkDevice device, const VkCopyImageToMemoryInfo* pCopyImageToMemoryInfo
+    VkDevice device,
+    const VkCopyImageToMemoryInfo* pCopyImageToMemoryInfo
 ) {
     layer_vkCopyImageToMemoryEXT<T>(device, pCopyImageToMemoryInfo);
 };
@@ -6238,7 +6874,9 @@ constexpr PFN_vkCopyImageToMemoryEXT getLayerPtr_vkCopyImageToMemoryEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCopyMemoryToAccelerationStructureKHR = requires(
-    VkDevice device, VkDeferredOperationKHR deferredOperation, const VkCopyMemoryToAccelerationStructureInfoKHR* pInfo
+    VkDevice device,
+    VkDeferredOperationKHR deferredOperation,
+    const VkCopyMemoryToAccelerationStructureInfoKHR* pInfo
 ) {
     layer_vkCopyMemoryToAccelerationStructureKHR<T>(device, deferredOperation, pInfo);
 };
@@ -6260,7 +6898,8 @@ constexpr PFN_vkCopyMemoryToAccelerationStructureKHR getLayerPtr_vkCopyMemoryToA
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCopyMemoryToImage = requires(
-    VkDevice device, const VkCopyMemoryToImageInfo* pCopyMemoryToImageInfo
+    VkDevice device,
+    const VkCopyMemoryToImageInfo* pCopyMemoryToImageInfo
 ) {
     layer_vkCopyMemoryToImage<T>(device, pCopyMemoryToImageInfo);
 };
@@ -6282,7 +6921,8 @@ constexpr PFN_vkCopyMemoryToImage getLayerPtr_vkCopyMemoryToImage()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCopyMemoryToImageEXT = requires(
-    VkDevice device, const VkCopyMemoryToImageInfo* pCopyMemoryToImageInfo
+    VkDevice device,
+    const VkCopyMemoryToImageInfo* pCopyMemoryToImageInfo
 ) {
     layer_vkCopyMemoryToImageEXT<T>(device, pCopyMemoryToImageInfo);
 };
@@ -6304,7 +6944,9 @@ constexpr PFN_vkCopyMemoryToImageEXT getLayerPtr_vkCopyMemoryToImageEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCopyMemoryToMicromapEXT = requires(
-    VkDevice device, VkDeferredOperationKHR deferredOperation, const VkCopyMemoryToMicromapInfoEXT* pInfo
+    VkDevice device,
+    VkDeferredOperationKHR deferredOperation,
+    const VkCopyMemoryToMicromapInfoEXT* pInfo
 ) {
     layer_vkCopyMemoryToMicromapEXT<T>(device, deferredOperation, pInfo);
 };
@@ -6326,7 +6968,9 @@ constexpr PFN_vkCopyMemoryToMicromapEXT getLayerPtr_vkCopyMemoryToMicromapEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCopyMicromapEXT = requires(
-    VkDevice device, VkDeferredOperationKHR deferredOperation, const VkCopyMicromapInfoEXT* pInfo
+    VkDevice device,
+    VkDeferredOperationKHR deferredOperation,
+    const VkCopyMicromapInfoEXT* pInfo
 ) {
     layer_vkCopyMicromapEXT<T>(device, deferredOperation, pInfo);
 };
@@ -6348,7 +6992,9 @@ constexpr PFN_vkCopyMicromapEXT getLayerPtr_vkCopyMicromapEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCopyMicromapToMemoryEXT = requires(
-    VkDevice device, VkDeferredOperationKHR deferredOperation, const VkCopyMicromapToMemoryInfoEXT* pInfo
+    VkDevice device,
+    VkDeferredOperationKHR deferredOperation,
+    const VkCopyMicromapToMemoryInfoEXT* pInfo
 ) {
     layer_vkCopyMicromapToMemoryEXT<T>(device, deferredOperation, pInfo);
 };
@@ -6370,7 +7016,10 @@ constexpr PFN_vkCopyMicromapToMemoryEXT getLayerPtr_vkCopyMicromapToMemoryEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateAccelerationStructure2KHR = requires(
-    VkDevice device, const VkAccelerationStructureCreateInfo2KHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkAccelerationStructureKHR* pAccelerationStructure
+    VkDevice device,
+    const VkAccelerationStructureCreateInfo2KHR* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkAccelerationStructureKHR* pAccelerationStructure
 ) {
     layer_vkCreateAccelerationStructure2KHR<T>(device, pCreateInfo, pAllocator, pAccelerationStructure);
 };
@@ -6392,7 +7041,10 @@ constexpr PFN_vkCreateAccelerationStructure2KHR getLayerPtr_vkCreateAcceleration
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateAccelerationStructureKHR = requires(
-    VkDevice device, const VkAccelerationStructureCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkAccelerationStructureKHR* pAccelerationStructure
+    VkDevice device,
+    const VkAccelerationStructureCreateInfoKHR* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkAccelerationStructureKHR* pAccelerationStructure
 ) {
     layer_vkCreateAccelerationStructureKHR<T>(device, pCreateInfo, pAllocator, pAccelerationStructure);
 };
@@ -6414,7 +7066,10 @@ constexpr PFN_vkCreateAccelerationStructureKHR getLayerPtr_vkCreateAccelerationS
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateBuffer = requires(
-    VkDevice device, const VkBufferCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkBuffer* pBuffer
+    VkDevice device,
+    const VkBufferCreateInfo* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkBuffer* pBuffer
 ) {
     layer_vkCreateBuffer<T>(device, pCreateInfo, pAllocator, pBuffer);
 };
@@ -6436,7 +7091,10 @@ constexpr PFN_vkCreateBuffer getLayerPtr_vkCreateBuffer()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateBufferView = requires(
-    VkDevice device, const VkBufferViewCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkBufferView* pView
+    VkDevice device,
+    const VkBufferViewCreateInfo* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkBufferView* pView
 ) {
     layer_vkCreateBufferView<T>(device, pCreateInfo, pAllocator, pView);
 };
@@ -6458,7 +7116,10 @@ constexpr PFN_vkCreateBufferView getLayerPtr_vkCreateBufferView()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateCommandPool = requires(
-    VkDevice device, const VkCommandPoolCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkCommandPool* pCommandPool
+    VkDevice device,
+    const VkCommandPoolCreateInfo* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkCommandPool* pCommandPool
 ) {
     layer_vkCreateCommandPool<T>(device, pCreateInfo, pAllocator, pCommandPool);
 };
@@ -6480,7 +7141,12 @@ constexpr PFN_vkCreateCommandPool getLayerPtr_vkCreateCommandPool()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateComputePipelines = requires(
-    VkDevice device, VkPipelineCache pipelineCache, uint32_t createInfoCount, const VkComputePipelineCreateInfo* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkPipeline* pPipelines
+    VkDevice device,
+    VkPipelineCache pipelineCache,
+    uint32_t createInfoCount,
+    const VkComputePipelineCreateInfo* pCreateInfos,
+    const VkAllocationCallbacks* pAllocator,
+    VkPipeline* pPipelines
 ) {
     layer_vkCreateComputePipelines<T>(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
 };
@@ -6502,7 +7168,10 @@ constexpr PFN_vkCreateComputePipelines getLayerPtr_vkCreateComputePipelines()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateDataGraphPipelineSessionARM = requires(
-    VkDevice device, const VkDataGraphPipelineSessionCreateInfoARM* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDataGraphPipelineSessionARM* pSession
+    VkDevice device,
+    const VkDataGraphPipelineSessionCreateInfoARM* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkDataGraphPipelineSessionARM* pSession
 ) {
     layer_vkCreateDataGraphPipelineSessionARM<T>(device, pCreateInfo, pAllocator, pSession);
 };
@@ -6524,7 +7193,13 @@ constexpr PFN_vkCreateDataGraphPipelineSessionARM getLayerPtr_vkCreateDataGraphP
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateDataGraphPipelinesARM = requires(
-    VkDevice device, VkDeferredOperationKHR deferredOperation, VkPipelineCache pipelineCache, uint32_t createInfoCount, const VkDataGraphPipelineCreateInfoARM* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkPipeline* pPipelines
+    VkDevice device,
+    VkDeferredOperationKHR deferredOperation,
+    VkPipelineCache pipelineCache,
+    uint32_t createInfoCount,
+    const VkDataGraphPipelineCreateInfoARM* pCreateInfos,
+    const VkAllocationCallbacks* pAllocator,
+    VkPipeline* pPipelines
 ) {
     layer_vkCreateDataGraphPipelinesARM<T>(device, deferredOperation, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
 };
@@ -6546,7 +7221,9 @@ constexpr PFN_vkCreateDataGraphPipelinesARM getLayerPtr_vkCreateDataGraphPipelin
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateDeferredOperationKHR = requires(
-    VkDevice device, const VkAllocationCallbacks* pAllocator, VkDeferredOperationKHR* pDeferredOperation
+    VkDevice device,
+    const VkAllocationCallbacks* pAllocator,
+    VkDeferredOperationKHR* pDeferredOperation
 ) {
     layer_vkCreateDeferredOperationKHR<T>(device, pAllocator, pDeferredOperation);
 };
@@ -6568,7 +7245,10 @@ constexpr PFN_vkCreateDeferredOperationKHR getLayerPtr_vkCreateDeferredOperation
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateDescriptorPool = requires(
-    VkDevice device, const VkDescriptorPoolCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDescriptorPool* pDescriptorPool
+    VkDevice device,
+    const VkDescriptorPoolCreateInfo* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkDescriptorPool* pDescriptorPool
 ) {
     layer_vkCreateDescriptorPool<T>(device, pCreateInfo, pAllocator, pDescriptorPool);
 };
@@ -6590,7 +7270,10 @@ constexpr PFN_vkCreateDescriptorPool getLayerPtr_vkCreateDescriptorPool()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateDescriptorSetLayout = requires(
-    VkDevice device, const VkDescriptorSetLayoutCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDescriptorSetLayout* pSetLayout
+    VkDevice device,
+    const VkDescriptorSetLayoutCreateInfo* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkDescriptorSetLayout* pSetLayout
 ) {
     layer_vkCreateDescriptorSetLayout<T>(device, pCreateInfo, pAllocator, pSetLayout);
 };
@@ -6612,7 +7295,10 @@ constexpr PFN_vkCreateDescriptorSetLayout getLayerPtr_vkCreateDescriptorSetLayou
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateDescriptorUpdateTemplate = requires(
-    VkDevice device, const VkDescriptorUpdateTemplateCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDescriptorUpdateTemplate* pDescriptorUpdateTemplate
+    VkDevice device,
+    const VkDescriptorUpdateTemplateCreateInfo* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkDescriptorUpdateTemplate* pDescriptorUpdateTemplate
 ) {
     layer_vkCreateDescriptorUpdateTemplate<T>(device, pCreateInfo, pAllocator, pDescriptorUpdateTemplate);
 };
@@ -6634,7 +7320,10 @@ constexpr PFN_vkCreateDescriptorUpdateTemplate getLayerPtr_vkCreateDescriptorUpd
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateDescriptorUpdateTemplateKHR = requires(
-    VkDevice device, const VkDescriptorUpdateTemplateCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDescriptorUpdateTemplate* pDescriptorUpdateTemplate
+    VkDevice device,
+    const VkDescriptorUpdateTemplateCreateInfo* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkDescriptorUpdateTemplate* pDescriptorUpdateTemplate
 ) {
     layer_vkCreateDescriptorUpdateTemplateKHR<T>(device, pCreateInfo, pAllocator, pDescriptorUpdateTemplate);
 };
@@ -6656,7 +7345,10 @@ constexpr PFN_vkCreateDescriptorUpdateTemplateKHR getLayerPtr_vkCreateDescriptor
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateEvent = requires(
-    VkDevice device, const VkEventCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkEvent* pEvent
+    VkDevice device,
+    const VkEventCreateInfo* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkEvent* pEvent
 ) {
     layer_vkCreateEvent<T>(device, pCreateInfo, pAllocator, pEvent);
 };
@@ -6678,7 +7370,10 @@ constexpr PFN_vkCreateEvent getLayerPtr_vkCreateEvent()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateFence = requires(
-    VkDevice device, const VkFenceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkFence* pFence
+    VkDevice device,
+    const VkFenceCreateInfo* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkFence* pFence
 ) {
     layer_vkCreateFence<T>(device, pCreateInfo, pAllocator, pFence);
 };
@@ -6700,7 +7395,10 @@ constexpr PFN_vkCreateFence getLayerPtr_vkCreateFence()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateFramebuffer = requires(
-    VkDevice device, const VkFramebufferCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkFramebuffer* pFramebuffer
+    VkDevice device,
+    const VkFramebufferCreateInfo* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkFramebuffer* pFramebuffer
 ) {
     layer_vkCreateFramebuffer<T>(device, pCreateInfo, pAllocator, pFramebuffer);
 };
@@ -6722,7 +7420,12 @@ constexpr PFN_vkCreateFramebuffer getLayerPtr_vkCreateFramebuffer()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateGraphicsPipelines = requires(
-    VkDevice device, VkPipelineCache pipelineCache, uint32_t createInfoCount, const VkGraphicsPipelineCreateInfo* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkPipeline* pPipelines
+    VkDevice device,
+    VkPipelineCache pipelineCache,
+    uint32_t createInfoCount,
+    const VkGraphicsPipelineCreateInfo* pCreateInfos,
+    const VkAllocationCallbacks* pAllocator,
+    VkPipeline* pPipelines
 ) {
     layer_vkCreateGraphicsPipelines<T>(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
 };
@@ -6744,7 +7447,10 @@ constexpr PFN_vkCreateGraphicsPipelines getLayerPtr_vkCreateGraphicsPipelines()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateImage = requires(
-    VkDevice device, const VkImageCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkImage* pImage
+    VkDevice device,
+    const VkImageCreateInfo* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkImage* pImage
 ) {
     layer_vkCreateImage<T>(device, pCreateInfo, pAllocator, pImage);
 };
@@ -6766,7 +7472,10 @@ constexpr PFN_vkCreateImage getLayerPtr_vkCreateImage()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateImageView = requires(
-    VkDevice device, const VkImageViewCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkImageView* pView
+    VkDevice device,
+    const VkImageViewCreateInfo* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkImageView* pView
 ) {
     layer_vkCreateImageView<T>(device, pCreateInfo, pAllocator, pView);
 };
@@ -6788,7 +7497,10 @@ constexpr PFN_vkCreateImageView getLayerPtr_vkCreateImageView()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateIndirectCommandsLayoutEXT = requires(
-    VkDevice device, const VkIndirectCommandsLayoutCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkIndirectCommandsLayoutEXT* pIndirectCommandsLayout
+    VkDevice device,
+    const VkIndirectCommandsLayoutCreateInfoEXT* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkIndirectCommandsLayoutEXT* pIndirectCommandsLayout
 ) {
     layer_vkCreateIndirectCommandsLayoutEXT<T>(device, pCreateInfo, pAllocator, pIndirectCommandsLayout);
 };
@@ -6810,7 +7522,10 @@ constexpr PFN_vkCreateIndirectCommandsLayoutEXT getLayerPtr_vkCreateIndirectComm
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateIndirectExecutionSetEXT = requires(
-    VkDevice device, const VkIndirectExecutionSetCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkIndirectExecutionSetEXT* pIndirectExecutionSet
+    VkDevice device,
+    const VkIndirectExecutionSetCreateInfoEXT* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkIndirectExecutionSetEXT* pIndirectExecutionSet
 ) {
     layer_vkCreateIndirectExecutionSetEXT<T>(device, pCreateInfo, pAllocator, pIndirectExecutionSet);
 };
@@ -6832,7 +7547,10 @@ constexpr PFN_vkCreateIndirectExecutionSetEXT getLayerPtr_vkCreateIndirectExecut
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateMicromapEXT = requires(
-    VkDevice device, const VkMicromapCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkMicromapEXT* pMicromap
+    VkDevice device,
+    const VkMicromapCreateInfoEXT* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkMicromapEXT* pMicromap
 ) {
     layer_vkCreateMicromapEXT<T>(device, pCreateInfo, pAllocator, pMicromap);
 };
@@ -6854,7 +7572,10 @@ constexpr PFN_vkCreateMicromapEXT getLayerPtr_vkCreateMicromapEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreatePipelineBinariesKHR = requires(
-    VkDevice device, const VkPipelineBinaryCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkPipelineBinaryHandlesInfoKHR* pBinaries
+    VkDevice device,
+    const VkPipelineBinaryCreateInfoKHR* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkPipelineBinaryHandlesInfoKHR* pBinaries
 ) {
     layer_vkCreatePipelineBinariesKHR<T>(device, pCreateInfo, pAllocator, pBinaries);
 };
@@ -6876,7 +7597,10 @@ constexpr PFN_vkCreatePipelineBinariesKHR getLayerPtr_vkCreatePipelineBinariesKH
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreatePipelineCache = requires(
-    VkDevice device, const VkPipelineCacheCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkPipelineCache* pPipelineCache
+    VkDevice device,
+    const VkPipelineCacheCreateInfo* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkPipelineCache* pPipelineCache
 ) {
     layer_vkCreatePipelineCache<T>(device, pCreateInfo, pAllocator, pPipelineCache);
 };
@@ -6898,7 +7622,10 @@ constexpr PFN_vkCreatePipelineCache getLayerPtr_vkCreatePipelineCache()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreatePipelineLayout = requires(
-    VkDevice device, const VkPipelineLayoutCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkPipelineLayout* pPipelineLayout
+    VkDevice device,
+    const VkPipelineLayoutCreateInfo* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkPipelineLayout* pPipelineLayout
 ) {
     layer_vkCreatePipelineLayout<T>(device, pCreateInfo, pAllocator, pPipelineLayout);
 };
@@ -6920,7 +7647,10 @@ constexpr PFN_vkCreatePipelineLayout getLayerPtr_vkCreatePipelineLayout()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreatePrivateDataSlot = requires(
-    VkDevice device, const VkPrivateDataSlotCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkPrivateDataSlot* pPrivateDataSlot
+    VkDevice device,
+    const VkPrivateDataSlotCreateInfo* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkPrivateDataSlot* pPrivateDataSlot
 ) {
     layer_vkCreatePrivateDataSlot<T>(device, pCreateInfo, pAllocator, pPrivateDataSlot);
 };
@@ -6942,7 +7672,10 @@ constexpr PFN_vkCreatePrivateDataSlot getLayerPtr_vkCreatePrivateDataSlot()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreatePrivateDataSlotEXT = requires(
-    VkDevice device, const VkPrivateDataSlotCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkPrivateDataSlot* pPrivateDataSlot
+    VkDevice device,
+    const VkPrivateDataSlotCreateInfo* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkPrivateDataSlot* pPrivateDataSlot
 ) {
     layer_vkCreatePrivateDataSlotEXT<T>(device, pCreateInfo, pAllocator, pPrivateDataSlot);
 };
@@ -6964,7 +7697,10 @@ constexpr PFN_vkCreatePrivateDataSlotEXT getLayerPtr_vkCreatePrivateDataSlotEXT(
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateQueryPool = requires(
-    VkDevice device, const VkQueryPoolCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkQueryPool* pQueryPool
+    VkDevice device,
+    const VkQueryPoolCreateInfo* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkQueryPool* pQueryPool
 ) {
     layer_vkCreateQueryPool<T>(device, pCreateInfo, pAllocator, pQueryPool);
 };
@@ -6986,7 +7722,13 @@ constexpr PFN_vkCreateQueryPool getLayerPtr_vkCreateQueryPool()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateRayTracingPipelinesKHR = requires(
-    VkDevice device, VkDeferredOperationKHR deferredOperation, VkPipelineCache pipelineCache, uint32_t createInfoCount, const VkRayTracingPipelineCreateInfoKHR* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkPipeline* pPipelines
+    VkDevice device,
+    VkDeferredOperationKHR deferredOperation,
+    VkPipelineCache pipelineCache,
+    uint32_t createInfoCount,
+    const VkRayTracingPipelineCreateInfoKHR* pCreateInfos,
+    const VkAllocationCallbacks* pAllocator,
+    VkPipeline* pPipelines
 ) {
     layer_vkCreateRayTracingPipelinesKHR<T>(device, deferredOperation, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
 };
@@ -7008,7 +7750,10 @@ constexpr PFN_vkCreateRayTracingPipelinesKHR getLayerPtr_vkCreateRayTracingPipel
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateRenderPass = requires(
-    VkDevice device, const VkRenderPassCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkRenderPass* pRenderPass
+    VkDevice device,
+    const VkRenderPassCreateInfo* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkRenderPass* pRenderPass
 ) {
     layer_vkCreateRenderPass<T>(device, pCreateInfo, pAllocator, pRenderPass);
 };
@@ -7030,7 +7775,10 @@ constexpr PFN_vkCreateRenderPass getLayerPtr_vkCreateRenderPass()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateRenderPass2 = requires(
-    VkDevice device, const VkRenderPassCreateInfo2* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkRenderPass* pRenderPass
+    VkDevice device,
+    const VkRenderPassCreateInfo2* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkRenderPass* pRenderPass
 ) {
     layer_vkCreateRenderPass2<T>(device, pCreateInfo, pAllocator, pRenderPass);
 };
@@ -7052,7 +7800,10 @@ constexpr PFN_vkCreateRenderPass2 getLayerPtr_vkCreateRenderPass2()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateRenderPass2KHR = requires(
-    VkDevice device, const VkRenderPassCreateInfo2* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkRenderPass* pRenderPass
+    VkDevice device,
+    const VkRenderPassCreateInfo2* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkRenderPass* pRenderPass
 ) {
     layer_vkCreateRenderPass2KHR<T>(device, pCreateInfo, pAllocator, pRenderPass);
 };
@@ -7074,7 +7825,10 @@ constexpr PFN_vkCreateRenderPass2KHR getLayerPtr_vkCreateRenderPass2KHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateSampler = requires(
-    VkDevice device, const VkSamplerCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSampler* pSampler
+    VkDevice device,
+    const VkSamplerCreateInfo* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkSampler* pSampler
 ) {
     layer_vkCreateSampler<T>(device, pCreateInfo, pAllocator, pSampler);
 };
@@ -7096,7 +7850,10 @@ constexpr PFN_vkCreateSampler getLayerPtr_vkCreateSampler()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateSamplerYcbcrConversion = requires(
-    VkDevice device, const VkSamplerYcbcrConversionCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSamplerYcbcrConversion* pYcbcrConversion
+    VkDevice device,
+    const VkSamplerYcbcrConversionCreateInfo* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkSamplerYcbcrConversion* pYcbcrConversion
 ) {
     layer_vkCreateSamplerYcbcrConversion<T>(device, pCreateInfo, pAllocator, pYcbcrConversion);
 };
@@ -7118,7 +7875,10 @@ constexpr PFN_vkCreateSamplerYcbcrConversion getLayerPtr_vkCreateSamplerYcbcrCon
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateSamplerYcbcrConversionKHR = requires(
-    VkDevice device, const VkSamplerYcbcrConversionCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSamplerYcbcrConversion* pYcbcrConversion
+    VkDevice device,
+    const VkSamplerYcbcrConversionCreateInfo* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkSamplerYcbcrConversion* pYcbcrConversion
 ) {
     layer_vkCreateSamplerYcbcrConversionKHR<T>(device, pCreateInfo, pAllocator, pYcbcrConversion);
 };
@@ -7140,7 +7900,10 @@ constexpr PFN_vkCreateSamplerYcbcrConversionKHR getLayerPtr_vkCreateSamplerYcbcr
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateSemaphore = requires(
-    VkDevice device, const VkSemaphoreCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSemaphore* pSemaphore
+    VkDevice device,
+    const VkSemaphoreCreateInfo* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkSemaphore* pSemaphore
 ) {
     layer_vkCreateSemaphore<T>(device, pCreateInfo, pAllocator, pSemaphore);
 };
@@ -7162,7 +7925,10 @@ constexpr PFN_vkCreateSemaphore getLayerPtr_vkCreateSemaphore()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateShaderInstrumentationARM = requires(
-    VkDevice device, const VkShaderInstrumentationCreateInfoARM* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkShaderInstrumentationARM* pInstrumentation
+    VkDevice device,
+    const VkShaderInstrumentationCreateInfoARM* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkShaderInstrumentationARM* pInstrumentation
 ) {
     layer_vkCreateShaderInstrumentationARM<T>(device, pCreateInfo, pAllocator, pInstrumentation);
 };
@@ -7184,7 +7950,10 @@ constexpr PFN_vkCreateShaderInstrumentationARM getLayerPtr_vkCreateShaderInstrum
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateShaderModule = requires(
-    VkDevice device, const VkShaderModuleCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkShaderModule* pShaderModule
+    VkDevice device,
+    const VkShaderModuleCreateInfo* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkShaderModule* pShaderModule
 ) {
     layer_vkCreateShaderModule<T>(device, pCreateInfo, pAllocator, pShaderModule);
 };
@@ -7206,7 +7975,11 @@ constexpr PFN_vkCreateShaderModule getLayerPtr_vkCreateShaderModule()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateShadersEXT = requires(
-    VkDevice device, uint32_t createInfoCount, const VkShaderCreateInfoEXT* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkShaderEXT* pShaders
+    VkDevice device,
+    uint32_t createInfoCount,
+    const VkShaderCreateInfoEXT* pCreateInfos,
+    const VkAllocationCallbacks* pAllocator,
+    VkShaderEXT* pShaders
 ) {
     layer_vkCreateShadersEXT<T>(device, createInfoCount, pCreateInfos, pAllocator, pShaders);
 };
@@ -7228,7 +8001,11 @@ constexpr PFN_vkCreateShadersEXT getLayerPtr_vkCreateShadersEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateSharedSwapchainsKHR = requires(
-    VkDevice device, uint32_t swapchainCount, const VkSwapchainCreateInfoKHR* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkSwapchainKHR* pSwapchains
+    VkDevice device,
+    uint32_t swapchainCount,
+    const VkSwapchainCreateInfoKHR* pCreateInfos,
+    const VkAllocationCallbacks* pAllocator,
+    VkSwapchainKHR* pSwapchains
 ) {
     layer_vkCreateSharedSwapchainsKHR<T>(device, swapchainCount, pCreateInfos, pAllocator, pSwapchains);
 };
@@ -7250,7 +8027,10 @@ constexpr PFN_vkCreateSharedSwapchainsKHR getLayerPtr_vkCreateSharedSwapchainsKH
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateSwapchainKHR = requires(
-    VkDevice device, const VkSwapchainCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSwapchainKHR* pSwapchain
+    VkDevice device,
+    const VkSwapchainCreateInfoKHR* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkSwapchainKHR* pSwapchain
 ) {
     layer_vkCreateSwapchainKHR<T>(device, pCreateInfo, pAllocator, pSwapchain);
 };
@@ -7272,7 +8052,10 @@ constexpr PFN_vkCreateSwapchainKHR getLayerPtr_vkCreateSwapchainKHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateTensorARM = requires(
-    VkDevice device, const VkTensorCreateInfoARM* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkTensorARM* pTensor
+    VkDevice device,
+    const VkTensorCreateInfoARM* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkTensorARM* pTensor
 ) {
     layer_vkCreateTensorARM<T>(device, pCreateInfo, pAllocator, pTensor);
 };
@@ -7294,7 +8077,10 @@ constexpr PFN_vkCreateTensorARM getLayerPtr_vkCreateTensorARM()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateTensorViewARM = requires(
-    VkDevice device, const VkTensorViewCreateInfoARM* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkTensorViewARM* pView
+    VkDevice device,
+    const VkTensorViewCreateInfoARM* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkTensorViewARM* pView
 ) {
     layer_vkCreateTensorViewARM<T>(device, pCreateInfo, pAllocator, pView);
 };
@@ -7316,7 +8102,10 @@ constexpr PFN_vkCreateTensorViewARM getLayerPtr_vkCreateTensorViewARM()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateValidationCacheEXT = requires(
-    VkDevice device, const VkValidationCacheCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkValidationCacheEXT* pValidationCache
+    VkDevice device,
+    const VkValidationCacheCreateInfoEXT* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkValidationCacheEXT* pValidationCache
 ) {
     layer_vkCreateValidationCacheEXT<T>(device, pCreateInfo, pAllocator, pValidationCache);
 };
@@ -7338,7 +8127,8 @@ constexpr PFN_vkCreateValidationCacheEXT getLayerPtr_vkCreateValidationCacheEXT(
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDebugMarkerSetObjectNameEXT = requires(
-    VkDevice device, const VkDebugMarkerObjectNameInfoEXT* pNameInfo
+    VkDevice device,
+    const VkDebugMarkerObjectNameInfoEXT* pNameInfo
 ) {
     layer_vkDebugMarkerSetObjectNameEXT<T>(device, pNameInfo);
 };
@@ -7360,7 +8150,8 @@ constexpr PFN_vkDebugMarkerSetObjectNameEXT getLayerPtr_vkDebugMarkerSetObjectNa
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDebugMarkerSetObjectTagEXT = requires(
-    VkDevice device, const VkDebugMarkerObjectTagInfoEXT* pTagInfo
+    VkDevice device,
+    const VkDebugMarkerObjectTagInfoEXT* pTagInfo
 ) {
     layer_vkDebugMarkerSetObjectTagEXT<T>(device, pTagInfo);
 };
@@ -7382,7 +8173,8 @@ constexpr PFN_vkDebugMarkerSetObjectTagEXT getLayerPtr_vkDebugMarkerSetObjectTag
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDeferredOperationJoinKHR = requires(
-    VkDevice device, VkDeferredOperationKHR operation
+    VkDevice device,
+    VkDeferredOperationKHR operation
 ) {
     layer_vkDeferredOperationJoinKHR<T>(device, operation);
 };
@@ -7404,7 +8196,9 @@ constexpr PFN_vkDeferredOperationJoinKHR getLayerPtr_vkDeferredOperationJoinKHR(
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDestroyAccelerationStructureKHR = requires(
-    VkDevice device, VkAccelerationStructureKHR accelerationStructure, const VkAllocationCallbacks* pAllocator
+    VkDevice device,
+    VkAccelerationStructureKHR accelerationStructure,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkDestroyAccelerationStructureKHR<T>(device, accelerationStructure, pAllocator);
 };
@@ -7426,7 +8220,9 @@ constexpr PFN_vkDestroyAccelerationStructureKHR getLayerPtr_vkDestroyAcceleratio
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDestroyBuffer = requires(
-    VkDevice device, VkBuffer buffer, const VkAllocationCallbacks* pAllocator
+    VkDevice device,
+    VkBuffer buffer,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkDestroyBuffer<T>(device, buffer, pAllocator);
 };
@@ -7448,7 +8244,9 @@ constexpr PFN_vkDestroyBuffer getLayerPtr_vkDestroyBuffer()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDestroyBufferView = requires(
-    VkDevice device, VkBufferView bufferView, const VkAllocationCallbacks* pAllocator
+    VkDevice device,
+    VkBufferView bufferView,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkDestroyBufferView<T>(device, bufferView, pAllocator);
 };
@@ -7470,7 +8268,9 @@ constexpr PFN_vkDestroyBufferView getLayerPtr_vkDestroyBufferView()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDestroyCommandPool = requires(
-    VkDevice device, VkCommandPool commandPool, const VkAllocationCallbacks* pAllocator
+    VkDevice device,
+    VkCommandPool commandPool,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkDestroyCommandPool<T>(device, commandPool, pAllocator);
 };
@@ -7492,7 +8292,9 @@ constexpr PFN_vkDestroyCommandPool getLayerPtr_vkDestroyCommandPool()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDestroyDataGraphPipelineSessionARM = requires(
-    VkDevice device, VkDataGraphPipelineSessionARM session, const VkAllocationCallbacks* pAllocator
+    VkDevice device,
+    VkDataGraphPipelineSessionARM session,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkDestroyDataGraphPipelineSessionARM<T>(device, session, pAllocator);
 };
@@ -7514,7 +8316,9 @@ constexpr PFN_vkDestroyDataGraphPipelineSessionARM getLayerPtr_vkDestroyDataGrap
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDestroyDeferredOperationKHR = requires(
-    VkDevice device, VkDeferredOperationKHR operation, const VkAllocationCallbacks* pAllocator
+    VkDevice device,
+    VkDeferredOperationKHR operation,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkDestroyDeferredOperationKHR<T>(device, operation, pAllocator);
 };
@@ -7536,7 +8340,9 @@ constexpr PFN_vkDestroyDeferredOperationKHR getLayerPtr_vkDestroyDeferredOperati
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDestroyDescriptorPool = requires(
-    VkDevice device, VkDescriptorPool descriptorPool, const VkAllocationCallbacks* pAllocator
+    VkDevice device,
+    VkDescriptorPool descriptorPool,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkDestroyDescriptorPool<T>(device, descriptorPool, pAllocator);
 };
@@ -7558,7 +8364,9 @@ constexpr PFN_vkDestroyDescriptorPool getLayerPtr_vkDestroyDescriptorPool()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDestroyDescriptorSetLayout = requires(
-    VkDevice device, VkDescriptorSetLayout descriptorSetLayout, const VkAllocationCallbacks* pAllocator
+    VkDevice device,
+    VkDescriptorSetLayout descriptorSetLayout,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkDestroyDescriptorSetLayout<T>(device, descriptorSetLayout, pAllocator);
 };
@@ -7580,7 +8388,9 @@ constexpr PFN_vkDestroyDescriptorSetLayout getLayerPtr_vkDestroyDescriptorSetLay
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDestroyDescriptorUpdateTemplate = requires(
-    VkDevice device, VkDescriptorUpdateTemplate descriptorUpdateTemplate, const VkAllocationCallbacks* pAllocator
+    VkDevice device,
+    VkDescriptorUpdateTemplate descriptorUpdateTemplate,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkDestroyDescriptorUpdateTemplate<T>(device, descriptorUpdateTemplate, pAllocator);
 };
@@ -7602,7 +8412,9 @@ constexpr PFN_vkDestroyDescriptorUpdateTemplate getLayerPtr_vkDestroyDescriptorU
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDestroyDescriptorUpdateTemplateKHR = requires(
-    VkDevice device, VkDescriptorUpdateTemplate descriptorUpdateTemplate, const VkAllocationCallbacks* pAllocator
+    VkDevice device,
+    VkDescriptorUpdateTemplate descriptorUpdateTemplate,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkDestroyDescriptorUpdateTemplateKHR<T>(device, descriptorUpdateTemplate, pAllocator);
 };
@@ -7624,7 +8436,8 @@ constexpr PFN_vkDestroyDescriptorUpdateTemplateKHR getLayerPtr_vkDestroyDescript
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDestroyDevice = requires(
-    VkDevice device, const VkAllocationCallbacks* pAllocator
+    VkDevice device,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkDestroyDevice<T>(device, pAllocator);
 };
@@ -7646,7 +8459,9 @@ constexpr PFN_vkDestroyDevice getLayerPtr_vkDestroyDevice()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDestroyEvent = requires(
-    VkDevice device, VkEvent event, const VkAllocationCallbacks* pAllocator
+    VkDevice device,
+    VkEvent event,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkDestroyEvent<T>(device, event, pAllocator);
 };
@@ -7668,7 +8483,9 @@ constexpr PFN_vkDestroyEvent getLayerPtr_vkDestroyEvent()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDestroyFence = requires(
-    VkDevice device, VkFence fence, const VkAllocationCallbacks* pAllocator
+    VkDevice device,
+    VkFence fence,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkDestroyFence<T>(device, fence, pAllocator);
 };
@@ -7690,7 +8507,9 @@ constexpr PFN_vkDestroyFence getLayerPtr_vkDestroyFence()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDestroyFramebuffer = requires(
-    VkDevice device, VkFramebuffer framebuffer, const VkAllocationCallbacks* pAllocator
+    VkDevice device,
+    VkFramebuffer framebuffer,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkDestroyFramebuffer<T>(device, framebuffer, pAllocator);
 };
@@ -7712,7 +8531,9 @@ constexpr PFN_vkDestroyFramebuffer getLayerPtr_vkDestroyFramebuffer()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDestroyImage = requires(
-    VkDevice device, VkImage image, const VkAllocationCallbacks* pAllocator
+    VkDevice device,
+    VkImage image,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkDestroyImage<T>(device, image, pAllocator);
 };
@@ -7734,7 +8555,9 @@ constexpr PFN_vkDestroyImage getLayerPtr_vkDestroyImage()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDestroyImageView = requires(
-    VkDevice device, VkImageView imageView, const VkAllocationCallbacks* pAllocator
+    VkDevice device,
+    VkImageView imageView,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkDestroyImageView<T>(device, imageView, pAllocator);
 };
@@ -7756,7 +8579,9 @@ constexpr PFN_vkDestroyImageView getLayerPtr_vkDestroyImageView()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDestroyIndirectCommandsLayoutEXT = requires(
-    VkDevice device, VkIndirectCommandsLayoutEXT indirectCommandsLayout, const VkAllocationCallbacks* pAllocator
+    VkDevice device,
+    VkIndirectCommandsLayoutEXT indirectCommandsLayout,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkDestroyIndirectCommandsLayoutEXT<T>(device, indirectCommandsLayout, pAllocator);
 };
@@ -7778,7 +8603,9 @@ constexpr PFN_vkDestroyIndirectCommandsLayoutEXT getLayerPtr_vkDestroyIndirectCo
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDestroyIndirectExecutionSetEXT = requires(
-    VkDevice device, VkIndirectExecutionSetEXT indirectExecutionSet, const VkAllocationCallbacks* pAllocator
+    VkDevice device,
+    VkIndirectExecutionSetEXT indirectExecutionSet,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkDestroyIndirectExecutionSetEXT<T>(device, indirectExecutionSet, pAllocator);
 };
@@ -7800,7 +8627,9 @@ constexpr PFN_vkDestroyIndirectExecutionSetEXT getLayerPtr_vkDestroyIndirectExec
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDestroyMicromapEXT = requires(
-    VkDevice device, VkMicromapEXT micromap, const VkAllocationCallbacks* pAllocator
+    VkDevice device,
+    VkMicromapEXT micromap,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkDestroyMicromapEXT<T>(device, micromap, pAllocator);
 };
@@ -7822,7 +8651,9 @@ constexpr PFN_vkDestroyMicromapEXT getLayerPtr_vkDestroyMicromapEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDestroyPipeline = requires(
-    VkDevice device, VkPipeline pipeline, const VkAllocationCallbacks* pAllocator
+    VkDevice device,
+    VkPipeline pipeline,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkDestroyPipeline<T>(device, pipeline, pAllocator);
 };
@@ -7844,7 +8675,9 @@ constexpr PFN_vkDestroyPipeline getLayerPtr_vkDestroyPipeline()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDestroyPipelineBinaryKHR = requires(
-    VkDevice device, VkPipelineBinaryKHR pipelineBinary, const VkAllocationCallbacks* pAllocator
+    VkDevice device,
+    VkPipelineBinaryKHR pipelineBinary,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkDestroyPipelineBinaryKHR<T>(device, pipelineBinary, pAllocator);
 };
@@ -7866,7 +8699,9 @@ constexpr PFN_vkDestroyPipelineBinaryKHR getLayerPtr_vkDestroyPipelineBinaryKHR(
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDestroyPipelineCache = requires(
-    VkDevice device, VkPipelineCache pipelineCache, const VkAllocationCallbacks* pAllocator
+    VkDevice device,
+    VkPipelineCache pipelineCache,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkDestroyPipelineCache<T>(device, pipelineCache, pAllocator);
 };
@@ -7888,7 +8723,9 @@ constexpr PFN_vkDestroyPipelineCache getLayerPtr_vkDestroyPipelineCache()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDestroyPipelineLayout = requires(
-    VkDevice device, VkPipelineLayout pipelineLayout, const VkAllocationCallbacks* pAllocator
+    VkDevice device,
+    VkPipelineLayout pipelineLayout,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkDestroyPipelineLayout<T>(device, pipelineLayout, pAllocator);
 };
@@ -7910,7 +8747,9 @@ constexpr PFN_vkDestroyPipelineLayout getLayerPtr_vkDestroyPipelineLayout()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDestroyPrivateDataSlot = requires(
-    VkDevice device, VkPrivateDataSlot privateDataSlot, const VkAllocationCallbacks* pAllocator
+    VkDevice device,
+    VkPrivateDataSlot privateDataSlot,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkDestroyPrivateDataSlot<T>(device, privateDataSlot, pAllocator);
 };
@@ -7932,7 +8771,9 @@ constexpr PFN_vkDestroyPrivateDataSlot getLayerPtr_vkDestroyPrivateDataSlot()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDestroyPrivateDataSlotEXT = requires(
-    VkDevice device, VkPrivateDataSlot privateDataSlot, const VkAllocationCallbacks* pAllocator
+    VkDevice device,
+    VkPrivateDataSlot privateDataSlot,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkDestroyPrivateDataSlotEXT<T>(device, privateDataSlot, pAllocator);
 };
@@ -7954,7 +8795,9 @@ constexpr PFN_vkDestroyPrivateDataSlotEXT getLayerPtr_vkDestroyPrivateDataSlotEX
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDestroyQueryPool = requires(
-    VkDevice device, VkQueryPool queryPool, const VkAllocationCallbacks* pAllocator
+    VkDevice device,
+    VkQueryPool queryPool,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkDestroyQueryPool<T>(device, queryPool, pAllocator);
 };
@@ -7976,7 +8819,9 @@ constexpr PFN_vkDestroyQueryPool getLayerPtr_vkDestroyQueryPool()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDestroyRenderPass = requires(
-    VkDevice device, VkRenderPass renderPass, const VkAllocationCallbacks* pAllocator
+    VkDevice device,
+    VkRenderPass renderPass,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkDestroyRenderPass<T>(device, renderPass, pAllocator);
 };
@@ -7998,7 +8843,9 @@ constexpr PFN_vkDestroyRenderPass getLayerPtr_vkDestroyRenderPass()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDestroySampler = requires(
-    VkDevice device, VkSampler sampler, const VkAllocationCallbacks* pAllocator
+    VkDevice device,
+    VkSampler sampler,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkDestroySampler<T>(device, sampler, pAllocator);
 };
@@ -8020,7 +8867,9 @@ constexpr PFN_vkDestroySampler getLayerPtr_vkDestroySampler()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDestroySamplerYcbcrConversion = requires(
-    VkDevice device, VkSamplerYcbcrConversion ycbcrConversion, const VkAllocationCallbacks* pAllocator
+    VkDevice device,
+    VkSamplerYcbcrConversion ycbcrConversion,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkDestroySamplerYcbcrConversion<T>(device, ycbcrConversion, pAllocator);
 };
@@ -8042,7 +8891,9 @@ constexpr PFN_vkDestroySamplerYcbcrConversion getLayerPtr_vkDestroySamplerYcbcrC
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDestroySamplerYcbcrConversionKHR = requires(
-    VkDevice device, VkSamplerYcbcrConversion ycbcrConversion, const VkAllocationCallbacks* pAllocator
+    VkDevice device,
+    VkSamplerYcbcrConversion ycbcrConversion,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkDestroySamplerYcbcrConversionKHR<T>(device, ycbcrConversion, pAllocator);
 };
@@ -8064,7 +8915,9 @@ constexpr PFN_vkDestroySamplerYcbcrConversionKHR getLayerPtr_vkDestroySamplerYcb
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDestroySemaphore = requires(
-    VkDevice device, VkSemaphore semaphore, const VkAllocationCallbacks* pAllocator
+    VkDevice device,
+    VkSemaphore semaphore,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkDestroySemaphore<T>(device, semaphore, pAllocator);
 };
@@ -8086,7 +8939,9 @@ constexpr PFN_vkDestroySemaphore getLayerPtr_vkDestroySemaphore()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDestroyShaderEXT = requires(
-    VkDevice device, VkShaderEXT shader, const VkAllocationCallbacks* pAllocator
+    VkDevice device,
+    VkShaderEXT shader,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkDestroyShaderEXT<T>(device, shader, pAllocator);
 };
@@ -8108,7 +8963,9 @@ constexpr PFN_vkDestroyShaderEXT getLayerPtr_vkDestroyShaderEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDestroyShaderInstrumentationARM = requires(
-    VkDevice device, VkShaderInstrumentationARM instrumentation, const VkAllocationCallbacks* pAllocator
+    VkDevice device,
+    VkShaderInstrumentationARM instrumentation,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkDestroyShaderInstrumentationARM<T>(device, instrumentation, pAllocator);
 };
@@ -8130,7 +8987,9 @@ constexpr PFN_vkDestroyShaderInstrumentationARM getLayerPtr_vkDestroyShaderInstr
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDestroyShaderModule = requires(
-    VkDevice device, VkShaderModule shaderModule, const VkAllocationCallbacks* pAllocator
+    VkDevice device,
+    VkShaderModule shaderModule,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkDestroyShaderModule<T>(device, shaderModule, pAllocator);
 };
@@ -8152,7 +9011,9 @@ constexpr PFN_vkDestroyShaderModule getLayerPtr_vkDestroyShaderModule()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDestroySwapchainKHR = requires(
-    VkDevice device, VkSwapchainKHR swapchain, const VkAllocationCallbacks* pAllocator
+    VkDevice device,
+    VkSwapchainKHR swapchain,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkDestroySwapchainKHR<T>(device, swapchain, pAllocator);
 };
@@ -8174,7 +9035,9 @@ constexpr PFN_vkDestroySwapchainKHR getLayerPtr_vkDestroySwapchainKHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDestroyTensorARM = requires(
-    VkDevice device, VkTensorARM tensor, const VkAllocationCallbacks* pAllocator
+    VkDevice device,
+    VkTensorARM tensor,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkDestroyTensorARM<T>(device, tensor, pAllocator);
 };
@@ -8196,7 +9059,9 @@ constexpr PFN_vkDestroyTensorARM getLayerPtr_vkDestroyTensorARM()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDestroyTensorViewARM = requires(
-    VkDevice device, VkTensorViewARM tensorView, const VkAllocationCallbacks* pAllocator
+    VkDevice device,
+    VkTensorViewARM tensorView,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkDestroyTensorViewARM<T>(device, tensorView, pAllocator);
 };
@@ -8218,7 +9083,9 @@ constexpr PFN_vkDestroyTensorViewARM getLayerPtr_vkDestroyTensorViewARM()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDestroyValidationCacheEXT = requires(
-    VkDevice device, VkValidationCacheEXT validationCache, const VkAllocationCallbacks* pAllocator
+    VkDevice device,
+    VkValidationCacheEXT validationCache,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkDestroyValidationCacheEXT<T>(device, validationCache, pAllocator);
 };
@@ -8262,7 +9129,9 @@ constexpr PFN_vkDeviceWaitIdle getLayerPtr_vkDeviceWaitIdle()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDisplayPowerControlEXT = requires(
-    VkDevice device, VkDisplayKHR display, const VkDisplayPowerInfoEXT* pDisplayPowerInfo
+    VkDevice device,
+    VkDisplayKHR display,
+    const VkDisplayPowerInfoEXT* pDisplayPowerInfo
 ) {
     layer_vkDisplayPowerControlEXT<T>(device, display, pDisplayPowerInfo);
 };
@@ -8306,7 +9175,9 @@ constexpr PFN_vkEndCommandBuffer getLayerPtr_vkEndCommandBuffer()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkFlushMappedMemoryRanges = requires(
-    VkDevice device, uint32_t memoryRangeCount, const VkMappedMemoryRange* pMemoryRanges
+    VkDevice device,
+    uint32_t memoryRangeCount,
+    const VkMappedMemoryRange* pMemoryRanges
 ) {
     layer_vkFlushMappedMemoryRanges<T>(device, memoryRangeCount, pMemoryRanges);
 };
@@ -8328,7 +9199,10 @@ constexpr PFN_vkFlushMappedMemoryRanges getLayerPtr_vkFlushMappedMemoryRanges()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkFreeCommandBuffers = requires(
-    VkDevice device, VkCommandPool commandPool, uint32_t commandBufferCount, const VkCommandBuffer* pCommandBuffers
+    VkDevice device,
+    VkCommandPool commandPool,
+    uint32_t commandBufferCount,
+    const VkCommandBuffer* pCommandBuffers
 ) {
     layer_vkFreeCommandBuffers<T>(device, commandPool, commandBufferCount, pCommandBuffers);
 };
@@ -8350,7 +9224,10 @@ constexpr PFN_vkFreeCommandBuffers getLayerPtr_vkFreeCommandBuffers()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkFreeDescriptorSets = requires(
-    VkDevice device, VkDescriptorPool descriptorPool, uint32_t descriptorSetCount, const VkDescriptorSet* pDescriptorSets
+    VkDevice device,
+    VkDescriptorPool descriptorPool,
+    uint32_t descriptorSetCount,
+    const VkDescriptorSet* pDescriptorSets
 ) {
     layer_vkFreeDescriptorSets<T>(device, descriptorPool, descriptorSetCount, pDescriptorSets);
 };
@@ -8372,7 +9249,9 @@ constexpr PFN_vkFreeDescriptorSets getLayerPtr_vkFreeDescriptorSets()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkFreeMemory = requires(
-    VkDevice device, VkDeviceMemory memory, const VkAllocationCallbacks* pAllocator
+    VkDevice device,
+    VkDeviceMemory memory,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkFreeMemory<T>(device, memory, pAllocator);
 };
@@ -8394,7 +9273,11 @@ constexpr PFN_vkFreeMemory getLayerPtr_vkFreeMemory()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetAccelerationStructureBuildSizesKHR = requires(
-    VkDevice device, VkAccelerationStructureBuildTypeKHR buildType, const VkAccelerationStructureBuildGeometryInfoKHR* pBuildInfo, const uint32_t* pMaxPrimitiveCounts, VkAccelerationStructureBuildSizesInfoKHR* pSizeInfo
+    VkDevice device,
+    VkAccelerationStructureBuildTypeKHR buildType,
+    const VkAccelerationStructureBuildGeometryInfoKHR* pBuildInfo,
+    const uint32_t* pMaxPrimitiveCounts,
+    VkAccelerationStructureBuildSizesInfoKHR* pSizeInfo
 ) {
     layer_vkGetAccelerationStructureBuildSizesKHR<T>(device, buildType, pBuildInfo, pMaxPrimitiveCounts, pSizeInfo);
 };
@@ -8416,7 +9299,8 @@ constexpr PFN_vkGetAccelerationStructureBuildSizesKHR getLayerPtr_vkGetAccelerat
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetAccelerationStructureDeviceAddressKHR = requires(
-    VkDevice device, const VkAccelerationStructureDeviceAddressInfoKHR* pInfo
+    VkDevice device,
+    const VkAccelerationStructureDeviceAddressInfoKHR* pInfo
 ) {
     layer_vkGetAccelerationStructureDeviceAddressKHR<T>(device, pInfo);
 };
@@ -8438,7 +9322,9 @@ constexpr PFN_vkGetAccelerationStructureDeviceAddressKHR getLayerPtr_vkGetAccele
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetAccelerationStructureOpaqueCaptureDescriptorDataEXT = requires(
-    VkDevice device, const VkAccelerationStructureCaptureDescriptorDataInfoEXT* pInfo, void* pData
+    VkDevice device,
+    const VkAccelerationStructureCaptureDescriptorDataInfoEXT* pInfo,
+    void* pData
 ) {
     layer_vkGetAccelerationStructureOpaqueCaptureDescriptorDataEXT<T>(device, pInfo, pData);
 };
@@ -8460,7 +9346,8 @@ constexpr PFN_vkGetAccelerationStructureOpaqueCaptureDescriptorDataEXT getLayerP
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetBufferDeviceAddress = requires(
-    VkDevice device, const VkBufferDeviceAddressInfo* pInfo
+    VkDevice device,
+    const VkBufferDeviceAddressInfo* pInfo
 ) {
     layer_vkGetBufferDeviceAddress<T>(device, pInfo);
 };
@@ -8482,7 +9369,8 @@ constexpr PFN_vkGetBufferDeviceAddress getLayerPtr_vkGetBufferDeviceAddress()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetBufferDeviceAddressEXT = requires(
-    VkDevice device, const VkBufferDeviceAddressInfo* pInfo
+    VkDevice device,
+    const VkBufferDeviceAddressInfo* pInfo
 ) {
     layer_vkGetBufferDeviceAddressEXT<T>(device, pInfo);
 };
@@ -8504,7 +9392,8 @@ constexpr PFN_vkGetBufferDeviceAddressEXT getLayerPtr_vkGetBufferDeviceAddressEX
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetBufferDeviceAddressKHR = requires(
-    VkDevice device, const VkBufferDeviceAddressInfo* pInfo
+    VkDevice device,
+    const VkBufferDeviceAddressInfo* pInfo
 ) {
     layer_vkGetBufferDeviceAddressKHR<T>(device, pInfo);
 };
@@ -8526,7 +9415,9 @@ constexpr PFN_vkGetBufferDeviceAddressKHR getLayerPtr_vkGetBufferDeviceAddressKH
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetBufferMemoryRequirements = requires(
-    VkDevice device, VkBuffer buffer, VkMemoryRequirements* pMemoryRequirements
+    VkDevice device,
+    VkBuffer buffer,
+    VkMemoryRequirements* pMemoryRequirements
 ) {
     layer_vkGetBufferMemoryRequirements<T>(device, buffer, pMemoryRequirements);
 };
@@ -8548,7 +9439,9 @@ constexpr PFN_vkGetBufferMemoryRequirements getLayerPtr_vkGetBufferMemoryRequire
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetBufferMemoryRequirements2 = requires(
-    VkDevice device, const VkBufferMemoryRequirementsInfo2* pInfo, VkMemoryRequirements2* pMemoryRequirements
+    VkDevice device,
+    const VkBufferMemoryRequirementsInfo2* pInfo,
+    VkMemoryRequirements2* pMemoryRequirements
 ) {
     layer_vkGetBufferMemoryRequirements2<T>(device, pInfo, pMemoryRequirements);
 };
@@ -8570,7 +9463,9 @@ constexpr PFN_vkGetBufferMemoryRequirements2 getLayerPtr_vkGetBufferMemoryRequir
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetBufferMemoryRequirements2KHR = requires(
-    VkDevice device, const VkBufferMemoryRequirementsInfo2* pInfo, VkMemoryRequirements2* pMemoryRequirements
+    VkDevice device,
+    const VkBufferMemoryRequirementsInfo2* pInfo,
+    VkMemoryRequirements2* pMemoryRequirements
 ) {
     layer_vkGetBufferMemoryRequirements2KHR<T>(device, pInfo, pMemoryRequirements);
 };
@@ -8592,7 +9487,8 @@ constexpr PFN_vkGetBufferMemoryRequirements2KHR getLayerPtr_vkGetBufferMemoryReq
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetBufferOpaqueCaptureAddress = requires(
-    VkDevice device, const VkBufferDeviceAddressInfo* pInfo
+    VkDevice device,
+    const VkBufferDeviceAddressInfo* pInfo
 ) {
     layer_vkGetBufferOpaqueCaptureAddress<T>(device, pInfo);
 };
@@ -8614,7 +9510,8 @@ constexpr PFN_vkGetBufferOpaqueCaptureAddress getLayerPtr_vkGetBufferOpaqueCaptu
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetBufferOpaqueCaptureAddressKHR = requires(
-    VkDevice device, const VkBufferDeviceAddressInfo* pInfo
+    VkDevice device,
+    const VkBufferDeviceAddressInfo* pInfo
 ) {
     layer_vkGetBufferOpaqueCaptureAddressKHR<T>(device, pInfo);
 };
@@ -8636,7 +9533,9 @@ constexpr PFN_vkGetBufferOpaqueCaptureAddressKHR getLayerPtr_vkGetBufferOpaqueCa
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetBufferOpaqueCaptureDescriptorDataEXT = requires(
-    VkDevice device, const VkBufferCaptureDescriptorDataInfoEXT* pInfo, void* pData
+    VkDevice device,
+    const VkBufferCaptureDescriptorDataInfoEXT* pInfo,
+    void* pData
 ) {
     layer_vkGetBufferOpaqueCaptureDescriptorDataEXT<T>(device, pInfo, pData);
 };
@@ -8658,7 +9557,11 @@ constexpr PFN_vkGetBufferOpaqueCaptureDescriptorDataEXT getLayerPtr_vkGetBufferO
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetCalibratedTimestampsEXT = requires(
-    VkDevice device, uint32_t timestampCount, const VkCalibratedTimestampInfoKHR* pTimestampInfos, uint64_t* pTimestamps, uint64_t* pMaxDeviation
+    VkDevice device,
+    uint32_t timestampCount,
+    const VkCalibratedTimestampInfoKHR* pTimestampInfos,
+    uint64_t* pTimestamps,
+    uint64_t* pMaxDeviation
 ) {
     layer_vkGetCalibratedTimestampsEXT<T>(device, timestampCount, pTimestampInfos, pTimestamps, pMaxDeviation);
 };
@@ -8680,7 +9583,11 @@ constexpr PFN_vkGetCalibratedTimestampsEXT getLayerPtr_vkGetCalibratedTimestamps
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetCalibratedTimestampsKHR = requires(
-    VkDevice device, uint32_t timestampCount, const VkCalibratedTimestampInfoKHR* pTimestampInfos, uint64_t* pTimestamps, uint64_t* pMaxDeviation
+    VkDevice device,
+    uint32_t timestampCount,
+    const VkCalibratedTimestampInfoKHR* pTimestampInfos,
+    uint64_t* pTimestamps,
+    uint64_t* pMaxDeviation
 ) {
     layer_vkGetCalibratedTimestampsKHR<T>(device, timestampCount, pTimestampInfos, pTimestamps, pMaxDeviation);
 };
@@ -8702,7 +9609,10 @@ constexpr PFN_vkGetCalibratedTimestampsKHR getLayerPtr_vkGetCalibratedTimestamps
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetDataGraphPipelineAvailablePropertiesARM = requires(
-    VkDevice device, const VkDataGraphPipelineInfoARM* pPipelineInfo, uint32_t* pPropertiesCount, VkDataGraphPipelinePropertyARM* pProperties
+    VkDevice device,
+    const VkDataGraphPipelineInfoARM* pPipelineInfo,
+    uint32_t* pPropertiesCount,
+    VkDataGraphPipelinePropertyARM* pProperties
 ) {
     layer_vkGetDataGraphPipelineAvailablePropertiesARM<T>(device, pPipelineInfo, pPropertiesCount, pProperties);
 };
@@ -8724,7 +9634,10 @@ constexpr PFN_vkGetDataGraphPipelineAvailablePropertiesARM getLayerPtr_vkGetData
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetDataGraphPipelinePropertiesARM = requires(
-    VkDevice device, const VkDataGraphPipelineInfoARM* pPipelineInfo, uint32_t propertiesCount, VkDataGraphPipelinePropertyQueryResultARM* pProperties
+    VkDevice device,
+    const VkDataGraphPipelineInfoARM* pPipelineInfo,
+    uint32_t propertiesCount,
+    VkDataGraphPipelinePropertyQueryResultARM* pProperties
 ) {
     layer_vkGetDataGraphPipelinePropertiesARM<T>(device, pPipelineInfo, propertiesCount, pProperties);
 };
@@ -8746,7 +9659,10 @@ constexpr PFN_vkGetDataGraphPipelinePropertiesARM getLayerPtr_vkGetDataGraphPipe
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetDataGraphPipelineSessionBindPointRequirementsARM = requires(
-    VkDevice device, const VkDataGraphPipelineSessionBindPointRequirementsInfoARM* pInfo, uint32_t* pBindPointRequirementCount, VkDataGraphPipelineSessionBindPointRequirementARM* pBindPointRequirements
+    VkDevice device,
+    const VkDataGraphPipelineSessionBindPointRequirementsInfoARM* pInfo,
+    uint32_t* pBindPointRequirementCount,
+    VkDataGraphPipelineSessionBindPointRequirementARM* pBindPointRequirements
 ) {
     layer_vkGetDataGraphPipelineSessionBindPointRequirementsARM<T>(device, pInfo, pBindPointRequirementCount, pBindPointRequirements);
 };
@@ -8768,7 +9684,9 @@ constexpr PFN_vkGetDataGraphPipelineSessionBindPointRequirementsARM getLayerPtr_
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetDataGraphPipelineSessionMemoryRequirementsARM = requires(
-    VkDevice device, const VkDataGraphPipelineSessionMemoryRequirementsInfoARM* pInfo, VkMemoryRequirements2* pMemoryRequirements
+    VkDevice device,
+    const VkDataGraphPipelineSessionMemoryRequirementsInfoARM* pInfo,
+    VkMemoryRequirements2* pMemoryRequirements
 ) {
     layer_vkGetDataGraphPipelineSessionMemoryRequirementsARM<T>(device, pInfo, pMemoryRequirements);
 };
@@ -8790,7 +9708,8 @@ constexpr PFN_vkGetDataGraphPipelineSessionMemoryRequirementsARM getLayerPtr_vkG
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetDeferredOperationMaxConcurrencyKHR = requires(
-    VkDevice device, VkDeferredOperationKHR operation
+    VkDevice device,
+    VkDeferredOperationKHR operation
 ) {
     layer_vkGetDeferredOperationMaxConcurrencyKHR<T>(device, operation);
 };
@@ -8812,7 +9731,8 @@ constexpr PFN_vkGetDeferredOperationMaxConcurrencyKHR getLayerPtr_vkGetDeferredO
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetDeferredOperationResultKHR = requires(
-    VkDevice device, VkDeferredOperationKHR operation
+    VkDevice device,
+    VkDeferredOperationKHR operation
 ) {
     layer_vkGetDeferredOperationResultKHR<T>(device, operation);
 };
@@ -8834,7 +9754,10 @@ constexpr PFN_vkGetDeferredOperationResultKHR getLayerPtr_vkGetDeferredOperation
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetDescriptorEXT = requires(
-    VkDevice device, const VkDescriptorGetInfoEXT* pDescriptorInfo, size_t dataSize, void* pDescriptor
+    VkDevice device,
+    const VkDescriptorGetInfoEXT* pDescriptorInfo,
+    size_t dataSize,
+    void* pDescriptor
 ) {
     layer_vkGetDescriptorEXT<T>(device, pDescriptorInfo, dataSize, pDescriptor);
 };
@@ -8856,7 +9779,10 @@ constexpr PFN_vkGetDescriptorEXT getLayerPtr_vkGetDescriptorEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetDescriptorSetLayoutBindingOffsetEXT = requires(
-    VkDevice device, VkDescriptorSetLayout layout, uint32_t binding, VkDeviceSize* pOffset
+    VkDevice device,
+    VkDescriptorSetLayout layout,
+    uint32_t binding,
+    VkDeviceSize* pOffset
 ) {
     layer_vkGetDescriptorSetLayoutBindingOffsetEXT<T>(device, layout, binding, pOffset);
 };
@@ -8878,7 +9804,9 @@ constexpr PFN_vkGetDescriptorSetLayoutBindingOffsetEXT getLayerPtr_vkGetDescript
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetDescriptorSetLayoutSizeEXT = requires(
-    VkDevice device, VkDescriptorSetLayout layout, VkDeviceSize* pLayoutSizeInBytes
+    VkDevice device,
+    VkDescriptorSetLayout layout,
+    VkDeviceSize* pLayoutSizeInBytes
 ) {
     layer_vkGetDescriptorSetLayoutSizeEXT<T>(device, layout, pLayoutSizeInBytes);
 };
@@ -8900,7 +9828,9 @@ constexpr PFN_vkGetDescriptorSetLayoutSizeEXT getLayerPtr_vkGetDescriptorSetLayo
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetDescriptorSetLayoutSupport = requires(
-    VkDevice device, const VkDescriptorSetLayoutCreateInfo* pCreateInfo, VkDescriptorSetLayoutSupport* pSupport
+    VkDevice device,
+    const VkDescriptorSetLayoutCreateInfo* pCreateInfo,
+    VkDescriptorSetLayoutSupport* pSupport
 ) {
     layer_vkGetDescriptorSetLayoutSupport<T>(device, pCreateInfo, pSupport);
 };
@@ -8922,7 +9852,9 @@ constexpr PFN_vkGetDescriptorSetLayoutSupport getLayerPtr_vkGetDescriptorSetLayo
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetDescriptorSetLayoutSupportKHR = requires(
-    VkDevice device, const VkDescriptorSetLayoutCreateInfo* pCreateInfo, VkDescriptorSetLayoutSupport* pSupport
+    VkDevice device,
+    const VkDescriptorSetLayoutCreateInfo* pCreateInfo,
+    VkDescriptorSetLayoutSupport* pSupport
 ) {
     layer_vkGetDescriptorSetLayoutSupportKHR<T>(device, pCreateInfo, pSupport);
 };
@@ -8944,7 +9876,9 @@ constexpr PFN_vkGetDescriptorSetLayoutSupportKHR getLayerPtr_vkGetDescriptorSetL
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetDeviceAccelerationStructureCompatibilityKHR = requires(
-    VkDevice device, const VkAccelerationStructureVersionInfoKHR* pVersionInfo, VkAccelerationStructureCompatibilityKHR* pCompatibility
+    VkDevice device,
+    const VkAccelerationStructureVersionInfoKHR* pVersionInfo,
+    VkAccelerationStructureCompatibilityKHR* pCompatibility
 ) {
     layer_vkGetDeviceAccelerationStructureCompatibilityKHR<T>(device, pVersionInfo, pCompatibility);
 };
@@ -8966,7 +9900,9 @@ constexpr PFN_vkGetDeviceAccelerationStructureCompatibilityKHR getLayerPtr_vkGet
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetDeviceBufferMemoryRequirements = requires(
-    VkDevice device, const VkDeviceBufferMemoryRequirements* pInfo, VkMemoryRequirements2* pMemoryRequirements
+    VkDevice device,
+    const VkDeviceBufferMemoryRequirements* pInfo,
+    VkMemoryRequirements2* pMemoryRequirements
 ) {
     layer_vkGetDeviceBufferMemoryRequirements<T>(device, pInfo, pMemoryRequirements);
 };
@@ -8988,7 +9924,9 @@ constexpr PFN_vkGetDeviceBufferMemoryRequirements getLayerPtr_vkGetDeviceBufferM
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetDeviceBufferMemoryRequirementsKHR = requires(
-    VkDevice device, const VkDeviceBufferMemoryRequirements* pInfo, VkMemoryRequirements2* pMemoryRequirements
+    VkDevice device,
+    const VkDeviceBufferMemoryRequirements* pInfo,
+    VkMemoryRequirements2* pMemoryRequirements
 ) {
     layer_vkGetDeviceBufferMemoryRequirementsKHR<T>(device, pInfo, pMemoryRequirements);
 };
@@ -9010,7 +9948,8 @@ constexpr PFN_vkGetDeviceBufferMemoryRequirementsKHR getLayerPtr_vkGetDeviceBuff
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetDeviceFaultDebugInfoKHR = requires(
-    VkDevice device, VkDeviceFaultDebugInfoKHR* pDebugInfo
+    VkDevice device,
+    VkDeviceFaultDebugInfoKHR* pDebugInfo
 ) {
     layer_vkGetDeviceFaultDebugInfoKHR<T>(device, pDebugInfo);
 };
@@ -9032,7 +9971,9 @@ constexpr PFN_vkGetDeviceFaultDebugInfoKHR getLayerPtr_vkGetDeviceFaultDebugInfo
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetDeviceFaultInfoEXT = requires(
-    VkDevice device, VkDeviceFaultCountsEXT* pFaultCounts, VkDeviceFaultInfoEXT* pFaultInfo
+    VkDevice device,
+    VkDeviceFaultCountsEXT* pFaultCounts,
+    VkDeviceFaultInfoEXT* pFaultInfo
 ) {
     layer_vkGetDeviceFaultInfoEXT<T>(device, pFaultCounts, pFaultInfo);
 };
@@ -9054,7 +9995,10 @@ constexpr PFN_vkGetDeviceFaultInfoEXT getLayerPtr_vkGetDeviceFaultInfoEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetDeviceFaultReportsKHR = requires(
-    VkDevice device, uint64_t timeout, uint32_t* pFaultCounts, VkDeviceFaultInfoKHR* pFaultInfo
+    VkDevice device,
+    uint64_t timeout,
+    uint32_t* pFaultCounts,
+    VkDeviceFaultInfoKHR* pFaultInfo
 ) {
     layer_vkGetDeviceFaultReportsKHR<T>(device, timeout, pFaultCounts, pFaultInfo);
 };
@@ -9076,7 +10020,11 @@ constexpr PFN_vkGetDeviceFaultReportsKHR getLayerPtr_vkGetDeviceFaultReportsKHR(
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetDeviceGroupPeerMemoryFeatures = requires(
-    VkDevice device, uint32_t heapIndex, uint32_t localDeviceIndex, uint32_t remoteDeviceIndex, VkPeerMemoryFeatureFlags* pPeerMemoryFeatures
+    VkDevice device,
+    uint32_t heapIndex,
+    uint32_t localDeviceIndex,
+    uint32_t remoteDeviceIndex,
+    VkPeerMemoryFeatureFlags* pPeerMemoryFeatures
 ) {
     layer_vkGetDeviceGroupPeerMemoryFeatures<T>(device, heapIndex, localDeviceIndex, remoteDeviceIndex, pPeerMemoryFeatures);
 };
@@ -9098,7 +10046,11 @@ constexpr PFN_vkGetDeviceGroupPeerMemoryFeatures getLayerPtr_vkGetDeviceGroupPee
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetDeviceGroupPeerMemoryFeaturesKHR = requires(
-    VkDevice device, uint32_t heapIndex, uint32_t localDeviceIndex, uint32_t remoteDeviceIndex, VkPeerMemoryFeatureFlags* pPeerMemoryFeatures
+    VkDevice device,
+    uint32_t heapIndex,
+    uint32_t localDeviceIndex,
+    uint32_t remoteDeviceIndex,
+    VkPeerMemoryFeatureFlags* pPeerMemoryFeatures
 ) {
     layer_vkGetDeviceGroupPeerMemoryFeaturesKHR<T>(device, heapIndex, localDeviceIndex, remoteDeviceIndex, pPeerMemoryFeatures);
 };
@@ -9120,7 +10072,8 @@ constexpr PFN_vkGetDeviceGroupPeerMemoryFeaturesKHR getLayerPtr_vkGetDeviceGroup
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetDeviceGroupPresentCapabilitiesKHR = requires(
-    VkDevice device, VkDeviceGroupPresentCapabilitiesKHR* pDeviceGroupPresentCapabilities
+    VkDevice device,
+    VkDeviceGroupPresentCapabilitiesKHR* pDeviceGroupPresentCapabilities
 ) {
     layer_vkGetDeviceGroupPresentCapabilitiesKHR<T>(device, pDeviceGroupPresentCapabilities);
 };
@@ -9142,7 +10095,9 @@ constexpr PFN_vkGetDeviceGroupPresentCapabilitiesKHR getLayerPtr_vkGetDeviceGrou
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetDeviceGroupSurfacePresentModesKHR = requires(
-    VkDevice device, VkSurfaceKHR surface, VkDeviceGroupPresentModeFlagsKHR* pModes
+    VkDevice device,
+    VkSurfaceKHR surface,
+    VkDeviceGroupPresentModeFlagsKHR* pModes
 ) {
     layer_vkGetDeviceGroupSurfacePresentModesKHR<T>(device, surface, pModes);
 };
@@ -9164,7 +10119,9 @@ constexpr PFN_vkGetDeviceGroupSurfacePresentModesKHR getLayerPtr_vkGetDeviceGrou
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetDeviceImageMemoryRequirements = requires(
-    VkDevice device, const VkDeviceImageMemoryRequirements* pInfo, VkMemoryRequirements2* pMemoryRequirements
+    VkDevice device,
+    const VkDeviceImageMemoryRequirements* pInfo,
+    VkMemoryRequirements2* pMemoryRequirements
 ) {
     layer_vkGetDeviceImageMemoryRequirements<T>(device, pInfo, pMemoryRequirements);
 };
@@ -9186,7 +10143,9 @@ constexpr PFN_vkGetDeviceImageMemoryRequirements getLayerPtr_vkGetDeviceImageMem
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetDeviceImageMemoryRequirementsKHR = requires(
-    VkDevice device, const VkDeviceImageMemoryRequirements* pInfo, VkMemoryRequirements2* pMemoryRequirements
+    VkDevice device,
+    const VkDeviceImageMemoryRequirements* pInfo,
+    VkMemoryRequirements2* pMemoryRequirements
 ) {
     layer_vkGetDeviceImageMemoryRequirementsKHR<T>(device, pInfo, pMemoryRequirements);
 };
@@ -9208,7 +10167,10 @@ constexpr PFN_vkGetDeviceImageMemoryRequirementsKHR getLayerPtr_vkGetDeviceImage
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetDeviceImageSparseMemoryRequirements = requires(
-    VkDevice device, const VkDeviceImageMemoryRequirements* pInfo, uint32_t* pSparseMemoryRequirementCount, VkSparseImageMemoryRequirements2* pSparseMemoryRequirements
+    VkDevice device,
+    const VkDeviceImageMemoryRequirements* pInfo,
+    uint32_t* pSparseMemoryRequirementCount,
+    VkSparseImageMemoryRequirements2* pSparseMemoryRequirements
 ) {
     layer_vkGetDeviceImageSparseMemoryRequirements<T>(device, pInfo, pSparseMemoryRequirementCount, pSparseMemoryRequirements);
 };
@@ -9230,7 +10192,10 @@ constexpr PFN_vkGetDeviceImageSparseMemoryRequirements getLayerPtr_vkGetDeviceIm
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetDeviceImageSparseMemoryRequirementsKHR = requires(
-    VkDevice device, const VkDeviceImageMemoryRequirements* pInfo, uint32_t* pSparseMemoryRequirementCount, VkSparseImageMemoryRequirements2* pSparseMemoryRequirements
+    VkDevice device,
+    const VkDeviceImageMemoryRequirements* pInfo,
+    uint32_t* pSparseMemoryRequirementCount,
+    VkSparseImageMemoryRequirements2* pSparseMemoryRequirements
 ) {
     layer_vkGetDeviceImageSparseMemoryRequirementsKHR<T>(device, pInfo, pSparseMemoryRequirementCount, pSparseMemoryRequirements);
 };
@@ -9252,7 +10217,9 @@ constexpr PFN_vkGetDeviceImageSparseMemoryRequirementsKHR getLayerPtr_vkGetDevic
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetDeviceImageSubresourceLayout = requires(
-    VkDevice device, const VkDeviceImageSubresourceInfo* pInfo, VkSubresourceLayout2* pLayout
+    VkDevice device,
+    const VkDeviceImageSubresourceInfo* pInfo,
+    VkSubresourceLayout2* pLayout
 ) {
     layer_vkGetDeviceImageSubresourceLayout<T>(device, pInfo, pLayout);
 };
@@ -9274,7 +10241,9 @@ constexpr PFN_vkGetDeviceImageSubresourceLayout getLayerPtr_vkGetDeviceImageSubr
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetDeviceImageSubresourceLayoutKHR = requires(
-    VkDevice device, const VkDeviceImageSubresourceInfo* pInfo, VkSubresourceLayout2* pLayout
+    VkDevice device,
+    const VkDeviceImageSubresourceInfo* pInfo,
+    VkSubresourceLayout2* pLayout
 ) {
     layer_vkGetDeviceImageSubresourceLayoutKHR<T>(device, pInfo, pLayout);
 };
@@ -9296,7 +10265,9 @@ constexpr PFN_vkGetDeviceImageSubresourceLayoutKHR getLayerPtr_vkGetDeviceImageS
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetDeviceMemoryCommitment = requires(
-    VkDevice device, VkDeviceMemory memory, VkDeviceSize* pCommittedMemoryInBytes
+    VkDevice device,
+    VkDeviceMemory memory,
+    VkDeviceSize* pCommittedMemoryInBytes
 ) {
     layer_vkGetDeviceMemoryCommitment<T>(device, memory, pCommittedMemoryInBytes);
 };
@@ -9318,7 +10289,8 @@ constexpr PFN_vkGetDeviceMemoryCommitment getLayerPtr_vkGetDeviceMemoryCommitmen
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetDeviceMemoryOpaqueCaptureAddress = requires(
-    VkDevice device, const VkDeviceMemoryOpaqueCaptureAddressInfo* pInfo
+    VkDevice device,
+    const VkDeviceMemoryOpaqueCaptureAddressInfo* pInfo
 ) {
     layer_vkGetDeviceMemoryOpaqueCaptureAddress<T>(device, pInfo);
 };
@@ -9340,7 +10312,8 @@ constexpr PFN_vkGetDeviceMemoryOpaqueCaptureAddress getLayerPtr_vkGetDeviceMemor
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetDeviceMemoryOpaqueCaptureAddressKHR = requires(
-    VkDevice device, const VkDeviceMemoryOpaqueCaptureAddressInfo* pInfo
+    VkDevice device,
+    const VkDeviceMemoryOpaqueCaptureAddressInfo* pInfo
 ) {
     layer_vkGetDeviceMemoryOpaqueCaptureAddressKHR<T>(device, pInfo);
 };
@@ -9362,7 +10335,9 @@ constexpr PFN_vkGetDeviceMemoryOpaqueCaptureAddressKHR getLayerPtr_vkGetDeviceMe
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetDeviceMicromapCompatibilityEXT = requires(
-    VkDevice device, const VkMicromapVersionInfoEXT* pVersionInfo, VkAccelerationStructureCompatibilityKHR* pCompatibility
+    VkDevice device,
+    const VkMicromapVersionInfoEXT* pVersionInfo,
+    VkAccelerationStructureCompatibilityKHR* pCompatibility
 ) {
     layer_vkGetDeviceMicromapCompatibilityEXT<T>(device, pVersionInfo, pCompatibility);
 };
@@ -9384,7 +10359,8 @@ constexpr PFN_vkGetDeviceMicromapCompatibilityEXT getLayerPtr_vkGetDeviceMicroma
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetDeviceProcAddr = requires(
-    VkDevice device, const char* pName
+    VkDevice device,
+    const char* pName
 ) {
     layer_vkGetDeviceProcAddr<T>(device, pName);
 };
@@ -9406,7 +10382,10 @@ constexpr PFN_vkGetDeviceProcAddr getLayerPtr_vkGetDeviceProcAddr()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetDeviceQueue = requires(
-    VkDevice device, uint32_t queueFamilyIndex, uint32_t queueIndex, VkQueue* pQueue
+    VkDevice device,
+    uint32_t queueFamilyIndex,
+    uint32_t queueIndex,
+    VkQueue* pQueue
 ) {
     layer_vkGetDeviceQueue<T>(device, queueFamilyIndex, queueIndex, pQueue);
 };
@@ -9428,7 +10407,9 @@ constexpr PFN_vkGetDeviceQueue getLayerPtr_vkGetDeviceQueue()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetDeviceQueue2 = requires(
-    VkDevice device, const VkDeviceQueueInfo2* pQueueInfo, VkQueue* pQueue
+    VkDevice device,
+    const VkDeviceQueueInfo2* pQueueInfo,
+    VkQueue* pQueue
 ) {
     layer_vkGetDeviceQueue2<T>(device, pQueueInfo, pQueue);
 };
@@ -9450,7 +10431,9 @@ constexpr PFN_vkGetDeviceQueue2 getLayerPtr_vkGetDeviceQueue2()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetDeviceTensorMemoryRequirementsARM = requires(
-    VkDevice device, const VkDeviceTensorMemoryRequirementsARM* pInfo, VkMemoryRequirements2* pMemoryRequirements
+    VkDevice device,
+    const VkDeviceTensorMemoryRequirementsARM* pInfo,
+    VkMemoryRequirements2* pMemoryRequirements
 ) {
     layer_vkGetDeviceTensorMemoryRequirementsARM<T>(device, pInfo, pMemoryRequirements);
 };
@@ -9472,7 +10455,8 @@ constexpr PFN_vkGetDeviceTensorMemoryRequirementsARM getLayerPtr_vkGetDeviceTens
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetEventStatus = requires(
-    VkDevice device, VkEvent event
+    VkDevice device,
+    VkEvent event
 ) {
     layer_vkGetEventStatus<T>(device, event);
 };
@@ -9494,7 +10478,9 @@ constexpr PFN_vkGetEventStatus getLayerPtr_vkGetEventStatus()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetFenceFdKHR = requires(
-    VkDevice device, const VkFenceGetFdInfoKHR* pGetFdInfo, int* pFd
+    VkDevice device,
+    const VkFenceGetFdInfoKHR* pGetFdInfo,
+    int* pFd
 ) {
     layer_vkGetFenceFdKHR<T>(device, pGetFdInfo, pFd);
 };
@@ -9516,7 +10502,8 @@ constexpr PFN_vkGetFenceFdKHR getLayerPtr_vkGetFenceFdKHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetFenceStatus = requires(
-    VkDevice device, VkFence fence
+    VkDevice device,
+    VkFence fence
 ) {
     layer_vkGetFenceStatus<T>(device, fence);
 };
@@ -9538,7 +10525,9 @@ constexpr PFN_vkGetFenceStatus getLayerPtr_vkGetFenceStatus()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetGeneratedCommandsMemoryRequirementsEXT = requires(
-    VkDevice device, const VkGeneratedCommandsMemoryRequirementsInfoEXT* pInfo, VkMemoryRequirements2* pMemoryRequirements
+    VkDevice device,
+    const VkGeneratedCommandsMemoryRequirementsInfoEXT* pInfo,
+    VkMemoryRequirements2* pMemoryRequirements
 ) {
     layer_vkGetGeneratedCommandsMemoryRequirementsEXT<T>(device, pInfo, pMemoryRequirements);
 };
@@ -9560,7 +10549,9 @@ constexpr PFN_vkGetGeneratedCommandsMemoryRequirementsEXT getLayerPtr_vkGetGener
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetImageDrmFormatModifierPropertiesEXT = requires(
-    VkDevice device, VkImage image, VkImageDrmFormatModifierPropertiesEXT* pProperties
+    VkDevice device,
+    VkImage image,
+    VkImageDrmFormatModifierPropertiesEXT* pProperties
 ) {
     layer_vkGetImageDrmFormatModifierPropertiesEXT<T>(device, image, pProperties);
 };
@@ -9582,7 +10573,9 @@ constexpr PFN_vkGetImageDrmFormatModifierPropertiesEXT getLayerPtr_vkGetImageDrm
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetImageMemoryRequirements = requires(
-    VkDevice device, VkImage image, VkMemoryRequirements* pMemoryRequirements
+    VkDevice device,
+    VkImage image,
+    VkMemoryRequirements* pMemoryRequirements
 ) {
     layer_vkGetImageMemoryRequirements<T>(device, image, pMemoryRequirements);
 };
@@ -9604,7 +10597,9 @@ constexpr PFN_vkGetImageMemoryRequirements getLayerPtr_vkGetImageMemoryRequireme
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetImageMemoryRequirements2 = requires(
-    VkDevice device, const VkImageMemoryRequirementsInfo2* pInfo, VkMemoryRequirements2* pMemoryRequirements
+    VkDevice device,
+    const VkImageMemoryRequirementsInfo2* pInfo,
+    VkMemoryRequirements2* pMemoryRequirements
 ) {
     layer_vkGetImageMemoryRequirements2<T>(device, pInfo, pMemoryRequirements);
 };
@@ -9626,7 +10621,9 @@ constexpr PFN_vkGetImageMemoryRequirements2 getLayerPtr_vkGetImageMemoryRequirem
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetImageMemoryRequirements2KHR = requires(
-    VkDevice device, const VkImageMemoryRequirementsInfo2* pInfo, VkMemoryRequirements2* pMemoryRequirements
+    VkDevice device,
+    const VkImageMemoryRequirementsInfo2* pInfo,
+    VkMemoryRequirements2* pMemoryRequirements
 ) {
     layer_vkGetImageMemoryRequirements2KHR<T>(device, pInfo, pMemoryRequirements);
 };
@@ -9648,7 +10645,10 @@ constexpr PFN_vkGetImageMemoryRequirements2KHR getLayerPtr_vkGetImageMemoryRequi
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetImageOpaqueCaptureDataEXT = requires(
-    VkDevice device, uint32_t imageCount, const VkImage* pImages, VkHostAddressRangeEXT* pDatas
+    VkDevice device,
+    uint32_t imageCount,
+    const VkImage* pImages,
+    VkHostAddressRangeEXT* pDatas
 ) {
     layer_vkGetImageOpaqueCaptureDataEXT<T>(device, imageCount, pImages, pDatas);
 };
@@ -9670,7 +10670,9 @@ constexpr PFN_vkGetImageOpaqueCaptureDataEXT getLayerPtr_vkGetImageOpaqueCapture
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetImageOpaqueCaptureDescriptorDataEXT = requires(
-    VkDevice device, const VkImageCaptureDescriptorDataInfoEXT* pInfo, void* pData
+    VkDevice device,
+    const VkImageCaptureDescriptorDataInfoEXT* pInfo,
+    void* pData
 ) {
     layer_vkGetImageOpaqueCaptureDescriptorDataEXT<T>(device, pInfo, pData);
 };
@@ -9692,7 +10694,10 @@ constexpr PFN_vkGetImageOpaqueCaptureDescriptorDataEXT getLayerPtr_vkGetImageOpa
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetImageSparseMemoryRequirements = requires(
-    VkDevice device, VkImage image, uint32_t* pSparseMemoryRequirementCount, VkSparseImageMemoryRequirements* pSparseMemoryRequirements
+    VkDevice device,
+    VkImage image,
+    uint32_t* pSparseMemoryRequirementCount,
+    VkSparseImageMemoryRequirements* pSparseMemoryRequirements
 ) {
     layer_vkGetImageSparseMemoryRequirements<T>(device, image, pSparseMemoryRequirementCount, pSparseMemoryRequirements);
 };
@@ -9714,7 +10719,10 @@ constexpr PFN_vkGetImageSparseMemoryRequirements getLayerPtr_vkGetImageSparseMem
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetImageSparseMemoryRequirements2 = requires(
-    VkDevice device, const VkImageSparseMemoryRequirementsInfo2* pInfo, uint32_t* pSparseMemoryRequirementCount, VkSparseImageMemoryRequirements2* pSparseMemoryRequirements
+    VkDevice device,
+    const VkImageSparseMemoryRequirementsInfo2* pInfo,
+    uint32_t* pSparseMemoryRequirementCount,
+    VkSparseImageMemoryRequirements2* pSparseMemoryRequirements
 ) {
     layer_vkGetImageSparseMemoryRequirements2<T>(device, pInfo, pSparseMemoryRequirementCount, pSparseMemoryRequirements);
 };
@@ -9736,7 +10744,10 @@ constexpr PFN_vkGetImageSparseMemoryRequirements2 getLayerPtr_vkGetImageSparseMe
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetImageSparseMemoryRequirements2KHR = requires(
-    VkDevice device, const VkImageSparseMemoryRequirementsInfo2* pInfo, uint32_t* pSparseMemoryRequirementCount, VkSparseImageMemoryRequirements2* pSparseMemoryRequirements
+    VkDevice device,
+    const VkImageSparseMemoryRequirementsInfo2* pInfo,
+    uint32_t* pSparseMemoryRequirementCount,
+    VkSparseImageMemoryRequirements2* pSparseMemoryRequirements
 ) {
     layer_vkGetImageSparseMemoryRequirements2KHR<T>(device, pInfo, pSparseMemoryRequirementCount, pSparseMemoryRequirements);
 };
@@ -9758,7 +10769,10 @@ constexpr PFN_vkGetImageSparseMemoryRequirements2KHR getLayerPtr_vkGetImageSpars
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetImageSubresourceLayout = requires(
-    VkDevice device, VkImage image, const VkImageSubresource* pSubresource, VkSubresourceLayout* pLayout
+    VkDevice device,
+    VkImage image,
+    const VkImageSubresource* pSubresource,
+    VkSubresourceLayout* pLayout
 ) {
     layer_vkGetImageSubresourceLayout<T>(device, image, pSubresource, pLayout);
 };
@@ -9780,7 +10794,10 @@ constexpr PFN_vkGetImageSubresourceLayout getLayerPtr_vkGetImageSubresourceLayou
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetImageSubresourceLayout2 = requires(
-    VkDevice device, VkImage image, const VkImageSubresource2* pSubresource, VkSubresourceLayout2* pLayout
+    VkDevice device,
+    VkImage image,
+    const VkImageSubresource2* pSubresource,
+    VkSubresourceLayout2* pLayout
 ) {
     layer_vkGetImageSubresourceLayout2<T>(device, image, pSubresource, pLayout);
 };
@@ -9802,7 +10819,10 @@ constexpr PFN_vkGetImageSubresourceLayout2 getLayerPtr_vkGetImageSubresourceLayo
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetImageSubresourceLayout2EXT = requires(
-    VkDevice device, VkImage image, const VkImageSubresource2* pSubresource, VkSubresourceLayout2* pLayout
+    VkDevice device,
+    VkImage image,
+    const VkImageSubresource2* pSubresource,
+    VkSubresourceLayout2* pLayout
 ) {
     layer_vkGetImageSubresourceLayout2EXT<T>(device, image, pSubresource, pLayout);
 };
@@ -9824,7 +10844,10 @@ constexpr PFN_vkGetImageSubresourceLayout2EXT getLayerPtr_vkGetImageSubresourceL
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetImageSubresourceLayout2KHR = requires(
-    VkDevice device, VkImage image, const VkImageSubresource2* pSubresource, VkSubresourceLayout2* pLayout
+    VkDevice device,
+    VkImage image,
+    const VkImageSubresource2* pSubresource,
+    VkSubresourceLayout2* pLayout
 ) {
     layer_vkGetImageSubresourceLayout2KHR<T>(device, image, pSubresource, pLayout);
 };
@@ -9846,7 +10869,9 @@ constexpr PFN_vkGetImageSubresourceLayout2KHR getLayerPtr_vkGetImageSubresourceL
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetImageViewOpaqueCaptureDescriptorDataEXT = requires(
-    VkDevice device, const VkImageViewCaptureDescriptorDataInfoEXT* pInfo, void* pData
+    VkDevice device,
+    const VkImageViewCaptureDescriptorDataInfoEXT* pInfo,
+    void* pData
 ) {
     layer_vkGetImageViewOpaqueCaptureDescriptorDataEXT<T>(device, pInfo, pData);
 };
@@ -9868,7 +10893,9 @@ constexpr PFN_vkGetImageViewOpaqueCaptureDescriptorDataEXT getLayerPtr_vkGetImag
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetMemoryFdKHR = requires(
-    VkDevice device, const VkMemoryGetFdInfoKHR* pGetFdInfo, int* pFd
+    VkDevice device,
+    const VkMemoryGetFdInfoKHR* pGetFdInfo,
+    int* pFd
 ) {
     layer_vkGetMemoryFdKHR<T>(device, pGetFdInfo, pFd);
 };
@@ -9890,7 +10917,10 @@ constexpr PFN_vkGetMemoryFdKHR getLayerPtr_vkGetMemoryFdKHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetMemoryFdPropertiesKHR = requires(
-    VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, int fd, VkMemoryFdPropertiesKHR* pMemoryFdProperties
+    VkDevice device,
+    VkExternalMemoryHandleTypeFlagBits handleType,
+    int fd,
+    VkMemoryFdPropertiesKHR* pMemoryFdProperties
 ) {
     layer_vkGetMemoryFdPropertiesKHR<T>(device, handleType, fd, pMemoryFdProperties);
 };
@@ -9912,7 +10942,10 @@ constexpr PFN_vkGetMemoryFdPropertiesKHR getLayerPtr_vkGetMemoryFdPropertiesKHR(
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetMemoryHostPointerPropertiesEXT = requires(
-    VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, const void* pHostPointer, VkMemoryHostPointerPropertiesEXT* pMemoryHostPointerProperties
+    VkDevice device,
+    VkExternalMemoryHandleTypeFlagBits handleType,
+    const void* pHostPointer,
+    VkMemoryHostPointerPropertiesEXT* pMemoryHostPointerProperties
 ) {
     layer_vkGetMemoryHostPointerPropertiesEXT<T>(device, handleType, pHostPointer, pMemoryHostPointerProperties);
 };
@@ -9934,7 +10967,10 @@ constexpr PFN_vkGetMemoryHostPointerPropertiesEXT getLayerPtr_vkGetMemoryHostPoi
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetMicromapBuildSizesEXT = requires(
-    VkDevice device, VkAccelerationStructureBuildTypeKHR buildType, const VkMicromapBuildInfoEXT* pBuildInfo, VkMicromapBuildSizesInfoEXT* pSizeInfo
+    VkDevice device,
+    VkAccelerationStructureBuildTypeKHR buildType,
+    const VkMicromapBuildInfoEXT* pBuildInfo,
+    VkMicromapBuildSizesInfoEXT* pSizeInfo
 ) {
     layer_vkGetMicromapBuildSizesEXT<T>(device, buildType, pBuildInfo, pSizeInfo);
 };
@@ -9956,7 +10992,9 @@ constexpr PFN_vkGetMicromapBuildSizesEXT getLayerPtr_vkGetMicromapBuildSizesEXT(
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPastPresentationTimingEXT = requires(
-    VkDevice device, const VkPastPresentationTimingInfoEXT* pPastPresentationTimingInfo, VkPastPresentationTimingPropertiesEXT* pPastPresentationTimingProperties
+    VkDevice device,
+    const VkPastPresentationTimingInfoEXT* pPastPresentationTimingInfo,
+    VkPastPresentationTimingPropertiesEXT* pPastPresentationTimingProperties
 ) {
     layer_vkGetPastPresentationTimingEXT<T>(device, pPastPresentationTimingInfo, pPastPresentationTimingProperties);
 };
@@ -9978,7 +11016,11 @@ constexpr PFN_vkGetPastPresentationTimingEXT getLayerPtr_vkGetPastPresentationTi
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPipelineBinaryDataKHR = requires(
-    VkDevice device, const VkPipelineBinaryDataInfoKHR* pInfo, VkPipelineBinaryKeyKHR* pPipelineBinaryKey, size_t* pPipelineBinaryDataSize, void* pPipelineBinaryData
+    VkDevice device,
+    const VkPipelineBinaryDataInfoKHR* pInfo,
+    VkPipelineBinaryKeyKHR* pPipelineBinaryKey,
+    size_t* pPipelineBinaryDataSize,
+    void* pPipelineBinaryData
 ) {
     layer_vkGetPipelineBinaryDataKHR<T>(device, pInfo, pPipelineBinaryKey, pPipelineBinaryDataSize, pPipelineBinaryData);
 };
@@ -10000,7 +11042,10 @@ constexpr PFN_vkGetPipelineBinaryDataKHR getLayerPtr_vkGetPipelineBinaryDataKHR(
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPipelineCacheData = requires(
-    VkDevice device, VkPipelineCache pipelineCache, size_t* pDataSize, void* pData
+    VkDevice device,
+    VkPipelineCache pipelineCache,
+    size_t* pDataSize,
+    void* pData
 ) {
     layer_vkGetPipelineCacheData<T>(device, pipelineCache, pDataSize, pData);
 };
@@ -10022,7 +11067,10 @@ constexpr PFN_vkGetPipelineCacheData getLayerPtr_vkGetPipelineCacheData()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPipelineExecutableInternalRepresentationsKHR = requires(
-    VkDevice device, const VkPipelineExecutableInfoKHR* pExecutableInfo, uint32_t* pInternalRepresentationCount, VkPipelineExecutableInternalRepresentationKHR* pInternalRepresentations
+    VkDevice device,
+    const VkPipelineExecutableInfoKHR* pExecutableInfo,
+    uint32_t* pInternalRepresentationCount,
+    VkPipelineExecutableInternalRepresentationKHR* pInternalRepresentations
 ) {
     layer_vkGetPipelineExecutableInternalRepresentationsKHR<T>(device, pExecutableInfo, pInternalRepresentationCount, pInternalRepresentations);
 };
@@ -10044,7 +11092,10 @@ constexpr PFN_vkGetPipelineExecutableInternalRepresentationsKHR getLayerPtr_vkGe
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPipelineExecutablePropertiesKHR = requires(
-    VkDevice device, const VkPipelineInfoKHR* pPipelineInfo, uint32_t* pExecutableCount, VkPipelineExecutablePropertiesKHR* pProperties
+    VkDevice device,
+    const VkPipelineInfoKHR* pPipelineInfo,
+    uint32_t* pExecutableCount,
+    VkPipelineExecutablePropertiesKHR* pProperties
 ) {
     layer_vkGetPipelineExecutablePropertiesKHR<T>(device, pPipelineInfo, pExecutableCount, pProperties);
 };
@@ -10066,7 +11117,10 @@ constexpr PFN_vkGetPipelineExecutablePropertiesKHR getLayerPtr_vkGetPipelineExec
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPipelineExecutableStatisticsKHR = requires(
-    VkDevice device, const VkPipelineExecutableInfoKHR* pExecutableInfo, uint32_t* pStatisticCount, VkPipelineExecutableStatisticKHR* pStatistics
+    VkDevice device,
+    const VkPipelineExecutableInfoKHR* pExecutableInfo,
+    uint32_t* pStatisticCount,
+    VkPipelineExecutableStatisticKHR* pStatistics
 ) {
     layer_vkGetPipelineExecutableStatisticsKHR<T>(device, pExecutableInfo, pStatisticCount, pStatistics);
 };
@@ -10088,7 +11142,9 @@ constexpr PFN_vkGetPipelineExecutableStatisticsKHR getLayerPtr_vkGetPipelineExec
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPipelineKeyKHR = requires(
-    VkDevice device, const VkPipelineCreateInfoKHR* pPipelineCreateInfo, VkPipelineBinaryKeyKHR* pPipelineKey
+    VkDevice device,
+    const VkPipelineCreateInfoKHR* pPipelineCreateInfo,
+    VkPipelineBinaryKeyKHR* pPipelineKey
 ) {
     layer_vkGetPipelineKeyKHR<T>(device, pPipelineCreateInfo, pPipelineKey);
 };
@@ -10110,7 +11166,9 @@ constexpr PFN_vkGetPipelineKeyKHR getLayerPtr_vkGetPipelineKeyKHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPipelinePropertiesEXT = requires(
-    VkDevice device, const VkPipelineInfoKHR* pPipelineInfo, VkBaseOutStructure* pPipelineProperties
+    VkDevice device,
+    const VkPipelineInfoKHR* pPipelineInfo,
+    VkBaseOutStructure* pPipelineProperties
 ) {
     layer_vkGetPipelinePropertiesEXT<T>(device, pPipelineInfo, pPipelineProperties);
 };
@@ -10132,7 +11190,11 @@ constexpr PFN_vkGetPipelinePropertiesEXT getLayerPtr_vkGetPipelinePropertiesEXT(
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPrivateData = requires(
-    VkDevice device, VkObjectType objectType, uint64_t objectHandle, VkPrivateDataSlot privateDataSlot, uint64_t* pData
+    VkDevice device,
+    VkObjectType objectType,
+    uint64_t objectHandle,
+    VkPrivateDataSlot privateDataSlot,
+    uint64_t* pData
 ) {
     layer_vkGetPrivateData<T>(device, objectType, objectHandle, privateDataSlot, pData);
 };
@@ -10154,7 +11216,11 @@ constexpr PFN_vkGetPrivateData getLayerPtr_vkGetPrivateData()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPrivateDataEXT = requires(
-    VkDevice device, VkObjectType objectType, uint64_t objectHandle, VkPrivateDataSlot privateDataSlot, uint64_t* pData
+    VkDevice device,
+    VkObjectType objectType,
+    uint64_t objectHandle,
+    VkPrivateDataSlot privateDataSlot,
+    uint64_t* pData
 ) {
     layer_vkGetPrivateDataEXT<T>(device, objectType, objectHandle, privateDataSlot, pData);
 };
@@ -10176,7 +11242,14 @@ constexpr PFN_vkGetPrivateDataEXT getLayerPtr_vkGetPrivateDataEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetQueryPoolResults = requires(
-    VkDevice device, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount, size_t dataSize, void* pData, VkDeviceSize stride, VkQueryResultFlags flags
+    VkDevice device,
+    VkQueryPool queryPool,
+    uint32_t firstQuery,
+    uint32_t queryCount,
+    size_t dataSize,
+    void* pData,
+    VkDeviceSize stride,
+    VkQueryResultFlags flags
 ) {
     layer_vkGetQueryPoolResults<T>(device, queryPool, firstQuery, queryCount, dataSize, pData, stride, flags);
 };
@@ -10198,7 +11271,12 @@ constexpr PFN_vkGetQueryPoolResults getLayerPtr_vkGetQueryPoolResults()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetRayTracingCaptureReplayShaderGroupHandlesKHR = requires(
-    VkDevice device, VkPipeline pipeline, uint32_t firstGroup, uint32_t groupCount, size_t dataSize, void* pData
+    VkDevice device,
+    VkPipeline pipeline,
+    uint32_t firstGroup,
+    uint32_t groupCount,
+    size_t dataSize,
+    void* pData
 ) {
     layer_vkGetRayTracingCaptureReplayShaderGroupHandlesKHR<T>(device, pipeline, firstGroup, groupCount, dataSize, pData);
 };
@@ -10220,7 +11298,12 @@ constexpr PFN_vkGetRayTracingCaptureReplayShaderGroupHandlesKHR getLayerPtr_vkGe
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetRayTracingShaderGroupHandlesKHR = requires(
-    VkDevice device, VkPipeline pipeline, uint32_t firstGroup, uint32_t groupCount, size_t dataSize, void* pData
+    VkDevice device,
+    VkPipeline pipeline,
+    uint32_t firstGroup,
+    uint32_t groupCount,
+    size_t dataSize,
+    void* pData
 ) {
     layer_vkGetRayTracingShaderGroupHandlesKHR<T>(device, pipeline, firstGroup, groupCount, dataSize, pData);
 };
@@ -10242,7 +11325,10 @@ constexpr PFN_vkGetRayTracingShaderGroupHandlesKHR getLayerPtr_vkGetRayTracingSh
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetRayTracingShaderGroupStackSizeKHR = requires(
-    VkDevice device, VkPipeline pipeline, uint32_t group, VkShaderGroupShaderKHR groupShader
+    VkDevice device,
+    VkPipeline pipeline,
+    uint32_t group,
+    VkShaderGroupShaderKHR groupShader
 ) {
     layer_vkGetRayTracingShaderGroupStackSizeKHR<T>(device, pipeline, group, groupShader);
 };
@@ -10264,7 +11350,9 @@ constexpr PFN_vkGetRayTracingShaderGroupStackSizeKHR getLayerPtr_vkGetRayTracing
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetRenderAreaGranularity = requires(
-    VkDevice device, VkRenderPass renderPass, VkExtent2D* pGranularity
+    VkDevice device,
+    VkRenderPass renderPass,
+    VkExtent2D* pGranularity
 ) {
     layer_vkGetRenderAreaGranularity<T>(device, renderPass, pGranularity);
 };
@@ -10286,7 +11374,9 @@ constexpr PFN_vkGetRenderAreaGranularity getLayerPtr_vkGetRenderAreaGranularity(
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetRenderingAreaGranularity = requires(
-    VkDevice device, const VkRenderingAreaInfo* pRenderingAreaInfo, VkExtent2D* pGranularity
+    VkDevice device,
+    const VkRenderingAreaInfo* pRenderingAreaInfo,
+    VkExtent2D* pGranularity
 ) {
     layer_vkGetRenderingAreaGranularity<T>(device, pRenderingAreaInfo, pGranularity);
 };
@@ -10308,7 +11398,9 @@ constexpr PFN_vkGetRenderingAreaGranularity getLayerPtr_vkGetRenderingAreaGranul
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetRenderingAreaGranularityKHR = requires(
-    VkDevice device, const VkRenderingAreaInfo* pRenderingAreaInfo, VkExtent2D* pGranularity
+    VkDevice device,
+    const VkRenderingAreaInfo* pRenderingAreaInfo,
+    VkExtent2D* pGranularity
 ) {
     layer_vkGetRenderingAreaGranularityKHR<T>(device, pRenderingAreaInfo, pGranularity);
 };
@@ -10330,7 +11422,9 @@ constexpr PFN_vkGetRenderingAreaGranularityKHR getLayerPtr_vkGetRenderingAreaGra
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetSamplerOpaqueCaptureDescriptorDataEXT = requires(
-    VkDevice device, const VkSamplerCaptureDescriptorDataInfoEXT* pInfo, void* pData
+    VkDevice device,
+    const VkSamplerCaptureDescriptorDataInfoEXT* pInfo,
+    void* pData
 ) {
     layer_vkGetSamplerOpaqueCaptureDescriptorDataEXT<T>(device, pInfo, pData);
 };
@@ -10352,7 +11446,9 @@ constexpr PFN_vkGetSamplerOpaqueCaptureDescriptorDataEXT getLayerPtr_vkGetSample
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetSemaphoreCounterValue = requires(
-    VkDevice device, VkSemaphore semaphore, uint64_t* pValue
+    VkDevice device,
+    VkSemaphore semaphore,
+    uint64_t* pValue
 ) {
     layer_vkGetSemaphoreCounterValue<T>(device, semaphore, pValue);
 };
@@ -10374,7 +11470,9 @@ constexpr PFN_vkGetSemaphoreCounterValue getLayerPtr_vkGetSemaphoreCounterValue(
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetSemaphoreCounterValueKHR = requires(
-    VkDevice device, VkSemaphore semaphore, uint64_t* pValue
+    VkDevice device,
+    VkSemaphore semaphore,
+    uint64_t* pValue
 ) {
     layer_vkGetSemaphoreCounterValueKHR<T>(device, semaphore, pValue);
 };
@@ -10396,7 +11494,9 @@ constexpr PFN_vkGetSemaphoreCounterValueKHR getLayerPtr_vkGetSemaphoreCounterVal
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetSemaphoreFdKHR = requires(
-    VkDevice device, const VkSemaphoreGetFdInfoKHR* pGetFdInfo, int* pFd
+    VkDevice device,
+    const VkSemaphoreGetFdInfoKHR* pGetFdInfo,
+    int* pFd
 ) {
     layer_vkGetSemaphoreFdKHR<T>(device, pGetFdInfo, pFd);
 };
@@ -10418,7 +11518,10 @@ constexpr PFN_vkGetSemaphoreFdKHR getLayerPtr_vkGetSemaphoreFdKHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetShaderBinaryDataEXT = requires(
-    VkDevice device, VkShaderEXT shader, size_t* pDataSize, void* pData
+    VkDevice device,
+    VkShaderEXT shader,
+    size_t* pDataSize,
+    void* pData
 ) {
     layer_vkGetShaderBinaryDataEXT<T>(device, shader, pDataSize, pData);
 };
@@ -10440,7 +11543,11 @@ constexpr PFN_vkGetShaderBinaryDataEXT getLayerPtr_vkGetShaderBinaryDataEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetShaderInstrumentationValuesARM = requires(
-    VkDevice device, VkShaderInstrumentationARM instrumentation, uint32_t* pMetricBlockCount, void* pMetricValues, VkShaderInstrumentationValuesFlagsARM flags
+    VkDevice device,
+    VkShaderInstrumentationARM instrumentation,
+    uint32_t* pMetricBlockCount,
+    void* pMetricValues,
+    VkShaderInstrumentationValuesFlagsARM flags
 ) {
     layer_vkGetShaderInstrumentationValuesARM<T>(device, instrumentation, pMetricBlockCount, pMetricValues, flags);
 };
@@ -10462,7 +11569,9 @@ constexpr PFN_vkGetShaderInstrumentationValuesARM getLayerPtr_vkGetShaderInstrum
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetShaderModuleCreateInfoIdentifierEXT = requires(
-    VkDevice device, const VkShaderModuleCreateInfo* pCreateInfo, VkShaderModuleIdentifierEXT* pIdentifier
+    VkDevice device,
+    const VkShaderModuleCreateInfo* pCreateInfo,
+    VkShaderModuleIdentifierEXT* pIdentifier
 ) {
     layer_vkGetShaderModuleCreateInfoIdentifierEXT<T>(device, pCreateInfo, pIdentifier);
 };
@@ -10484,7 +11593,9 @@ constexpr PFN_vkGetShaderModuleCreateInfoIdentifierEXT getLayerPtr_vkGetShaderMo
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetShaderModuleIdentifierEXT = requires(
-    VkDevice device, VkShaderModule shaderModule, VkShaderModuleIdentifierEXT* pIdentifier
+    VkDevice device,
+    VkShaderModule shaderModule,
+    VkShaderModuleIdentifierEXT* pIdentifier
 ) {
     layer_vkGetShaderModuleIdentifierEXT<T>(device, shaderModule, pIdentifier);
 };
@@ -10506,7 +11617,10 @@ constexpr PFN_vkGetShaderModuleIdentifierEXT getLayerPtr_vkGetShaderModuleIdenti
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetSwapchainCounterEXT = requires(
-    VkDevice device, VkSwapchainKHR swapchain, VkSurfaceCounterFlagBitsEXT counter, uint64_t* pCounterValue
+    VkDevice device,
+    VkSwapchainKHR swapchain,
+    VkSurfaceCounterFlagBitsEXT counter,
+    uint64_t* pCounterValue
 ) {
     layer_vkGetSwapchainCounterEXT<T>(device, swapchain, counter, pCounterValue);
 };
@@ -10528,7 +11642,10 @@ constexpr PFN_vkGetSwapchainCounterEXT getLayerPtr_vkGetSwapchainCounterEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetSwapchainImagesKHR = requires(
-    VkDevice device, VkSwapchainKHR swapchain, uint32_t* pSwapchainImageCount, VkImage* pSwapchainImages
+    VkDevice device,
+    VkSwapchainKHR swapchain,
+    uint32_t* pSwapchainImageCount,
+    VkImage* pSwapchainImages
 ) {
     layer_vkGetSwapchainImagesKHR<T>(device, swapchain, pSwapchainImageCount, pSwapchainImages);
 };
@@ -10550,7 +11667,8 @@ constexpr PFN_vkGetSwapchainImagesKHR getLayerPtr_vkGetSwapchainImagesKHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetSwapchainStatusKHR = requires(
-    VkDevice device, VkSwapchainKHR swapchain
+    VkDevice device,
+    VkSwapchainKHR swapchain
 ) {
     layer_vkGetSwapchainStatusKHR<T>(device, swapchain);
 };
@@ -10572,7 +11690,10 @@ constexpr PFN_vkGetSwapchainStatusKHR getLayerPtr_vkGetSwapchainStatusKHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetSwapchainTimeDomainPropertiesEXT = requires(
-    VkDevice device, VkSwapchainKHR swapchain, VkSwapchainTimeDomainPropertiesEXT* pSwapchainTimeDomainProperties, uint64_t* pTimeDomainsCounter
+    VkDevice device,
+    VkSwapchainKHR swapchain,
+    VkSwapchainTimeDomainPropertiesEXT* pSwapchainTimeDomainProperties,
+    uint64_t* pTimeDomainsCounter
 ) {
     layer_vkGetSwapchainTimeDomainPropertiesEXT<T>(device, swapchain, pSwapchainTimeDomainProperties, pTimeDomainsCounter);
 };
@@ -10594,7 +11715,10 @@ constexpr PFN_vkGetSwapchainTimeDomainPropertiesEXT getLayerPtr_vkGetSwapchainTi
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetSwapchainTimingPropertiesEXT = requires(
-    VkDevice device, VkSwapchainKHR swapchain, VkSwapchainTimingPropertiesEXT* pSwapchainTimingProperties, uint64_t* pSwapchainTimingPropertiesCounter
+    VkDevice device,
+    VkSwapchainKHR swapchain,
+    VkSwapchainTimingPropertiesEXT* pSwapchainTimingProperties,
+    uint64_t* pSwapchainTimingPropertiesCounter
 ) {
     layer_vkGetSwapchainTimingPropertiesEXT<T>(device, swapchain, pSwapchainTimingProperties, pSwapchainTimingPropertiesCounter);
 };
@@ -10616,7 +11740,9 @@ constexpr PFN_vkGetSwapchainTimingPropertiesEXT getLayerPtr_vkGetSwapchainTiming
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetTensorMemoryRequirementsARM = requires(
-    VkDevice device, const VkTensorMemoryRequirementsInfoARM* pInfo, VkMemoryRequirements2* pMemoryRequirements
+    VkDevice device,
+    const VkTensorMemoryRequirementsInfoARM* pInfo,
+    VkMemoryRequirements2* pMemoryRequirements
 ) {
     layer_vkGetTensorMemoryRequirementsARM<T>(device, pInfo, pMemoryRequirements);
 };
@@ -10638,7 +11764,10 @@ constexpr PFN_vkGetTensorMemoryRequirementsARM getLayerPtr_vkGetTensorMemoryRequ
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetTensorOpaqueCaptureDataARM = requires(
-    VkDevice device, uint32_t tensorCount, const VkTensorARM* pTensors, VkHostAddressRangeEXT* pDatas
+    VkDevice device,
+    uint32_t tensorCount,
+    const VkTensorARM* pTensors,
+    VkHostAddressRangeEXT* pDatas
 ) {
     layer_vkGetTensorOpaqueCaptureDataARM<T>(device, tensorCount, pTensors, pDatas);
 };
@@ -10660,7 +11789,9 @@ constexpr PFN_vkGetTensorOpaqueCaptureDataARM getLayerPtr_vkGetTensorOpaqueCaptu
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetTensorOpaqueCaptureDescriptorDataARM = requires(
-    VkDevice device, const VkTensorCaptureDescriptorDataInfoARM* pInfo, void* pData
+    VkDevice device,
+    const VkTensorCaptureDescriptorDataInfoARM* pInfo,
+    void* pData
 ) {
     layer_vkGetTensorOpaqueCaptureDescriptorDataARM<T>(device, pInfo, pData);
 };
@@ -10682,7 +11813,9 @@ constexpr PFN_vkGetTensorOpaqueCaptureDescriptorDataARM getLayerPtr_vkGetTensorO
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetTensorViewOpaqueCaptureDescriptorDataARM = requires(
-    VkDevice device, const VkTensorViewCaptureDescriptorDataInfoARM* pInfo, void* pData
+    VkDevice device,
+    const VkTensorViewCaptureDescriptorDataInfoARM* pInfo,
+    void* pData
 ) {
     layer_vkGetTensorViewOpaqueCaptureDescriptorDataARM<T>(device, pInfo, pData);
 };
@@ -10704,7 +11837,10 @@ constexpr PFN_vkGetTensorViewOpaqueCaptureDescriptorDataARM getLayerPtr_vkGetTen
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetValidationCacheDataEXT = requires(
-    VkDevice device, VkValidationCacheEXT validationCache, size_t* pDataSize, void* pData
+    VkDevice device,
+    VkValidationCacheEXT validationCache,
+    size_t* pDataSize,
+    void* pData
 ) {
     layer_vkGetValidationCacheDataEXT<T>(device, validationCache, pDataSize, pData);
 };
@@ -10726,7 +11862,8 @@ constexpr PFN_vkGetValidationCacheDataEXT getLayerPtr_vkGetValidationCacheDataEX
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkImportFenceFdKHR = requires(
-    VkDevice device, const VkImportFenceFdInfoKHR* pImportFenceFdInfo
+    VkDevice device,
+    const VkImportFenceFdInfoKHR* pImportFenceFdInfo
 ) {
     layer_vkImportFenceFdKHR<T>(device, pImportFenceFdInfo);
 };
@@ -10748,7 +11885,8 @@ constexpr PFN_vkImportFenceFdKHR getLayerPtr_vkImportFenceFdKHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkImportSemaphoreFdKHR = requires(
-    VkDevice device, const VkImportSemaphoreFdInfoKHR* pImportSemaphoreFdInfo
+    VkDevice device,
+    const VkImportSemaphoreFdInfoKHR* pImportSemaphoreFdInfo
 ) {
     layer_vkImportSemaphoreFdKHR<T>(device, pImportSemaphoreFdInfo);
 };
@@ -10770,7 +11908,9 @@ constexpr PFN_vkImportSemaphoreFdKHR getLayerPtr_vkImportSemaphoreFdKHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkInvalidateMappedMemoryRanges = requires(
-    VkDevice device, uint32_t memoryRangeCount, const VkMappedMemoryRange* pMemoryRanges
+    VkDevice device,
+    uint32_t memoryRangeCount,
+    const VkMappedMemoryRange* pMemoryRanges
 ) {
     layer_vkInvalidateMappedMemoryRanges<T>(device, memoryRangeCount, pMemoryRanges);
 };
@@ -10792,7 +11932,12 @@ constexpr PFN_vkInvalidateMappedMemoryRanges getLayerPtr_vkInvalidateMappedMemor
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkMapMemory = requires(
-    VkDevice device, VkDeviceMemory memory, VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags, void** ppData
+    VkDevice device,
+    VkDeviceMemory memory,
+    VkDeviceSize offset,
+    VkDeviceSize size,
+    VkMemoryMapFlags flags,
+    void** ppData
 ) {
     layer_vkMapMemory<T>(device, memory, offset, size, flags, ppData);
 };
@@ -10814,7 +11959,9 @@ constexpr PFN_vkMapMemory getLayerPtr_vkMapMemory()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkMapMemory2 = requires(
-    VkDevice device, const VkMemoryMapInfo* pMemoryMapInfo, void** ppData
+    VkDevice device,
+    const VkMemoryMapInfo* pMemoryMapInfo,
+    void** ppData
 ) {
     layer_vkMapMemory2<T>(device, pMemoryMapInfo, ppData);
 };
@@ -10836,7 +11983,9 @@ constexpr PFN_vkMapMemory2 getLayerPtr_vkMapMemory2()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkMapMemory2KHR = requires(
-    VkDevice device, const VkMemoryMapInfo* pMemoryMapInfo, void** ppData
+    VkDevice device,
+    const VkMemoryMapInfo* pMemoryMapInfo,
+    void** ppData
 ) {
     layer_vkMapMemory2KHR<T>(device, pMemoryMapInfo, ppData);
 };
@@ -10858,7 +12007,10 @@ constexpr PFN_vkMapMemory2KHR getLayerPtr_vkMapMemory2KHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkMergePipelineCaches = requires(
-    VkDevice device, VkPipelineCache dstCache, uint32_t srcCacheCount, const VkPipelineCache* pSrcCaches
+    VkDevice device,
+    VkPipelineCache dstCache,
+    uint32_t srcCacheCount,
+    const VkPipelineCache* pSrcCaches
 ) {
     layer_vkMergePipelineCaches<T>(device, dstCache, srcCacheCount, pSrcCaches);
 };
@@ -10880,7 +12032,10 @@ constexpr PFN_vkMergePipelineCaches getLayerPtr_vkMergePipelineCaches()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkMergeValidationCachesEXT = requires(
-    VkDevice device, VkValidationCacheEXT dstCache, uint32_t srcCacheCount, const VkValidationCacheEXT* pSrcCaches
+    VkDevice device,
+    VkValidationCacheEXT dstCache,
+    uint32_t srcCacheCount,
+    const VkValidationCacheEXT* pSrcCaches
 ) {
     layer_vkMergeValidationCachesEXT<T>(device, dstCache, srcCacheCount, pSrcCaches);
 };
@@ -10902,7 +12057,8 @@ constexpr PFN_vkMergeValidationCachesEXT getLayerPtr_vkMergeValidationCachesEXT(
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkQueueBeginDebugUtilsLabelEXT = requires(
-    VkQueue queue, const VkDebugUtilsLabelEXT* pLabelInfo
+    VkQueue queue,
+    const VkDebugUtilsLabelEXT* pLabelInfo
 ) {
     layer_vkQueueBeginDebugUtilsLabelEXT<T>(queue, pLabelInfo);
 };
@@ -10924,7 +12080,10 @@ constexpr PFN_vkQueueBeginDebugUtilsLabelEXT getLayerPtr_vkQueueBeginDebugUtilsL
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkQueueBindSparse = requires(
-    VkQueue queue, uint32_t bindInfoCount, const VkBindSparseInfo* pBindInfo, VkFence fence
+    VkQueue queue,
+    uint32_t bindInfoCount,
+    const VkBindSparseInfo* pBindInfo,
+    VkFence fence
 ) {
     layer_vkQueueBindSparse<T>(queue, bindInfoCount, pBindInfo, fence);
 };
@@ -10968,7 +12127,8 @@ constexpr PFN_vkQueueEndDebugUtilsLabelEXT getLayerPtr_vkQueueEndDebugUtilsLabel
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkQueueInsertDebugUtilsLabelEXT = requires(
-    VkQueue queue, const VkDebugUtilsLabelEXT* pLabelInfo
+    VkQueue queue,
+    const VkDebugUtilsLabelEXT* pLabelInfo
 ) {
     layer_vkQueueInsertDebugUtilsLabelEXT<T>(queue, pLabelInfo);
 };
@@ -10990,7 +12150,8 @@ constexpr PFN_vkQueueInsertDebugUtilsLabelEXT getLayerPtr_vkQueueInsertDebugUtil
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkQueuePresentKHR = requires(
-    VkQueue queue, const VkPresentInfoKHR* pPresentInfo
+    VkQueue queue,
+    const VkPresentInfoKHR* pPresentInfo
 ) {
     layer_vkQueuePresentKHR<T>(queue, pPresentInfo);
 };
@@ -11012,7 +12173,10 @@ constexpr PFN_vkQueuePresentKHR getLayerPtr_vkQueuePresentKHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkQueueSubmit = requires(
-    VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence
+    VkQueue queue,
+    uint32_t submitCount,
+    const VkSubmitInfo* pSubmits,
+    VkFence fence
 ) {
     layer_vkQueueSubmit<T>(queue, submitCount, pSubmits, fence);
 };
@@ -11034,7 +12198,10 @@ constexpr PFN_vkQueueSubmit getLayerPtr_vkQueueSubmit()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkQueueSubmit2 = requires(
-    VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence
+    VkQueue queue,
+    uint32_t submitCount,
+    const VkSubmitInfo2* pSubmits,
+    VkFence fence
 ) {
     layer_vkQueueSubmit2<T>(queue, submitCount, pSubmits, fence);
 };
@@ -11056,7 +12223,10 @@ constexpr PFN_vkQueueSubmit2 getLayerPtr_vkQueueSubmit2()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkQueueSubmit2KHR = requires(
-    VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence
+    VkQueue queue,
+    uint32_t submitCount,
+    const VkSubmitInfo2* pSubmits,
+    VkFence fence
 ) {
     layer_vkQueueSubmit2KHR<T>(queue, submitCount, pSubmits, fence);
 };
@@ -11100,7 +12270,10 @@ constexpr PFN_vkQueueWaitIdle getLayerPtr_vkQueueWaitIdle()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkRegisterCustomBorderColorEXT = requires(
-    VkDevice device, const VkSamplerCustomBorderColorCreateInfoEXT* pBorderColor, VkBool32 requestIndex, uint32_t* pIndex
+    VkDevice device,
+    const VkSamplerCustomBorderColorCreateInfoEXT* pBorderColor,
+    VkBool32 requestIndex,
+    uint32_t* pIndex
 ) {
     layer_vkRegisterCustomBorderColorEXT<T>(device, pBorderColor, requestIndex, pIndex);
 };
@@ -11122,7 +12295,10 @@ constexpr PFN_vkRegisterCustomBorderColorEXT getLayerPtr_vkRegisterCustomBorderC
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkRegisterDeviceEventEXT = requires(
-    VkDevice device, const VkDeviceEventInfoEXT* pDeviceEventInfo, const VkAllocationCallbacks* pAllocator, VkFence* pFence
+    VkDevice device,
+    const VkDeviceEventInfoEXT* pDeviceEventInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkFence* pFence
 ) {
     layer_vkRegisterDeviceEventEXT<T>(device, pDeviceEventInfo, pAllocator, pFence);
 };
@@ -11144,7 +12320,11 @@ constexpr PFN_vkRegisterDeviceEventEXT getLayerPtr_vkRegisterDeviceEventEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkRegisterDisplayEventEXT = requires(
-    VkDevice device, VkDisplayKHR display, const VkDisplayEventInfoEXT* pDisplayEventInfo, const VkAllocationCallbacks* pAllocator, VkFence* pFence
+    VkDevice device,
+    VkDisplayKHR display,
+    const VkDisplayEventInfoEXT* pDisplayEventInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkFence* pFence
 ) {
     layer_vkRegisterDisplayEventEXT<T>(device, display, pDisplayEventInfo, pAllocator, pFence);
 };
@@ -11166,7 +12346,9 @@ constexpr PFN_vkRegisterDisplayEventEXT getLayerPtr_vkRegisterDisplayEventEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkReleaseCapturedPipelineDataKHR = requires(
-    VkDevice device, const VkReleaseCapturedPipelineDataInfoKHR* pInfo, const VkAllocationCallbacks* pAllocator
+    VkDevice device,
+    const VkReleaseCapturedPipelineDataInfoKHR* pInfo,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkReleaseCapturedPipelineDataKHR<T>(device, pInfo, pAllocator);
 };
@@ -11210,7 +12392,8 @@ constexpr PFN_vkReleaseProfilingLockKHR getLayerPtr_vkReleaseProfilingLockKHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkReleaseSwapchainImagesEXT = requires(
-    VkDevice device, const VkReleaseSwapchainImagesInfoKHR* pReleaseInfo
+    VkDevice device,
+    const VkReleaseSwapchainImagesInfoKHR* pReleaseInfo
 ) {
     layer_vkReleaseSwapchainImagesEXT<T>(device, pReleaseInfo);
 };
@@ -11232,7 +12415,8 @@ constexpr PFN_vkReleaseSwapchainImagesEXT getLayerPtr_vkReleaseSwapchainImagesEX
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkReleaseSwapchainImagesKHR = requires(
-    VkDevice device, const VkReleaseSwapchainImagesInfoKHR* pReleaseInfo
+    VkDevice device,
+    const VkReleaseSwapchainImagesInfoKHR* pReleaseInfo
 ) {
     layer_vkReleaseSwapchainImagesKHR<T>(device, pReleaseInfo);
 };
@@ -11254,7 +12438,8 @@ constexpr PFN_vkReleaseSwapchainImagesKHR getLayerPtr_vkReleaseSwapchainImagesKH
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkResetCommandBuffer = requires(
-    VkCommandBuffer commandBuffer, VkCommandBufferResetFlags flags
+    VkCommandBuffer commandBuffer,
+    VkCommandBufferResetFlags flags
 ) {
     layer_vkResetCommandBuffer<T>(commandBuffer, flags);
 };
@@ -11276,7 +12461,9 @@ constexpr PFN_vkResetCommandBuffer getLayerPtr_vkResetCommandBuffer()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkResetCommandPool = requires(
-    VkDevice device, VkCommandPool commandPool, VkCommandPoolResetFlags flags
+    VkDevice device,
+    VkCommandPool commandPool,
+    VkCommandPoolResetFlags flags
 ) {
     layer_vkResetCommandPool<T>(device, commandPool, flags);
 };
@@ -11298,7 +12485,9 @@ constexpr PFN_vkResetCommandPool getLayerPtr_vkResetCommandPool()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkResetDescriptorPool = requires(
-    VkDevice device, VkDescriptorPool descriptorPool, VkDescriptorPoolResetFlags flags
+    VkDevice device,
+    VkDescriptorPool descriptorPool,
+    VkDescriptorPoolResetFlags flags
 ) {
     layer_vkResetDescriptorPool<T>(device, descriptorPool, flags);
 };
@@ -11320,7 +12509,8 @@ constexpr PFN_vkResetDescriptorPool getLayerPtr_vkResetDescriptorPool()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkResetEvent = requires(
-    VkDevice device, VkEvent event
+    VkDevice device,
+    VkEvent event
 ) {
     layer_vkResetEvent<T>(device, event);
 };
@@ -11342,7 +12532,9 @@ constexpr PFN_vkResetEvent getLayerPtr_vkResetEvent()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkResetFences = requires(
-    VkDevice device, uint32_t fenceCount, const VkFence* pFences
+    VkDevice device,
+    uint32_t fenceCount,
+    const VkFence* pFences
 ) {
     layer_vkResetFences<T>(device, fenceCount, pFences);
 };
@@ -11364,7 +12556,10 @@ constexpr PFN_vkResetFences getLayerPtr_vkResetFences()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkResetQueryPool = requires(
-    VkDevice device, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount
+    VkDevice device,
+    VkQueryPool queryPool,
+    uint32_t firstQuery,
+    uint32_t queryCount
 ) {
     layer_vkResetQueryPool<T>(device, queryPool, firstQuery, queryCount);
 };
@@ -11386,7 +12581,10 @@ constexpr PFN_vkResetQueryPool getLayerPtr_vkResetQueryPool()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkResetQueryPoolEXT = requires(
-    VkDevice device, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount
+    VkDevice device,
+    VkQueryPool queryPool,
+    uint32_t firstQuery,
+    uint32_t queryCount
 ) {
     layer_vkResetQueryPoolEXT<T>(device, queryPool, firstQuery, queryCount);
 };
@@ -11408,7 +12606,8 @@ constexpr PFN_vkResetQueryPoolEXT getLayerPtr_vkResetQueryPoolEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkSetDebugUtilsObjectNameEXT = requires(
-    VkDevice device, const VkDebugUtilsObjectNameInfoEXT* pNameInfo
+    VkDevice device,
+    const VkDebugUtilsObjectNameInfoEXT* pNameInfo
 ) {
     layer_vkSetDebugUtilsObjectNameEXT<T>(device, pNameInfo);
 };
@@ -11430,7 +12629,8 @@ constexpr PFN_vkSetDebugUtilsObjectNameEXT getLayerPtr_vkSetDebugUtilsObjectName
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkSetDebugUtilsObjectTagEXT = requires(
-    VkDevice device, const VkDebugUtilsObjectTagInfoEXT* pTagInfo
+    VkDevice device,
+    const VkDebugUtilsObjectTagInfoEXT* pTagInfo
 ) {
     layer_vkSetDebugUtilsObjectTagEXT<T>(device, pTagInfo);
 };
@@ -11452,7 +12652,9 @@ constexpr PFN_vkSetDebugUtilsObjectTagEXT getLayerPtr_vkSetDebugUtilsObjectTagEX
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkSetDeviceMemoryPriorityEXT = requires(
-    VkDevice device, VkDeviceMemory memory, float priority
+    VkDevice device,
+    VkDeviceMemory memory,
+    float priority
 ) {
     layer_vkSetDeviceMemoryPriorityEXT<T>(device, memory, priority);
 };
@@ -11474,7 +12676,8 @@ constexpr PFN_vkSetDeviceMemoryPriorityEXT getLayerPtr_vkSetDeviceMemoryPriority
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkSetEvent = requires(
-    VkDevice device, VkEvent event
+    VkDevice device,
+    VkEvent event
 ) {
     layer_vkSetEvent<T>(device, event);
 };
@@ -11496,7 +12699,10 @@ constexpr PFN_vkSetEvent getLayerPtr_vkSetEvent()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkSetHdrMetadataEXT = requires(
-    VkDevice device, uint32_t swapchainCount, const VkSwapchainKHR* pSwapchains, const VkHdrMetadataEXT* pMetadata
+    VkDevice device,
+    uint32_t swapchainCount,
+    const VkSwapchainKHR* pSwapchains,
+    const VkHdrMetadataEXT* pMetadata
 ) {
     layer_vkSetHdrMetadataEXT<T>(device, swapchainCount, pSwapchains, pMetadata);
 };
@@ -11518,7 +12724,11 @@ constexpr PFN_vkSetHdrMetadataEXT getLayerPtr_vkSetHdrMetadataEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkSetPrivateData = requires(
-    VkDevice device, VkObjectType objectType, uint64_t objectHandle, VkPrivateDataSlot privateDataSlot, uint64_t data
+    VkDevice device,
+    VkObjectType objectType,
+    uint64_t objectHandle,
+    VkPrivateDataSlot privateDataSlot,
+    uint64_t data
 ) {
     layer_vkSetPrivateData<T>(device, objectType, objectHandle, privateDataSlot, data);
 };
@@ -11540,7 +12750,11 @@ constexpr PFN_vkSetPrivateData getLayerPtr_vkSetPrivateData()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkSetPrivateDataEXT = requires(
-    VkDevice device, VkObjectType objectType, uint64_t objectHandle, VkPrivateDataSlot privateDataSlot, uint64_t data
+    VkDevice device,
+    VkObjectType objectType,
+    uint64_t objectHandle,
+    VkPrivateDataSlot privateDataSlot,
+    uint64_t data
 ) {
     layer_vkSetPrivateDataEXT<T>(device, objectType, objectHandle, privateDataSlot, data);
 };
@@ -11562,7 +12776,9 @@ constexpr PFN_vkSetPrivateDataEXT getLayerPtr_vkSetPrivateDataEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkSetSwapchainPresentTimingQueueSizeEXT = requires(
-    VkDevice device, VkSwapchainKHR swapchain, uint32_t size
+    VkDevice device,
+    VkSwapchainKHR swapchain,
+    uint32_t size
 ) {
     layer_vkSetSwapchainPresentTimingQueueSizeEXT<T>(device, swapchain, size);
 };
@@ -11584,7 +12800,8 @@ constexpr PFN_vkSetSwapchainPresentTimingQueueSizeEXT getLayerPtr_vkSetSwapchain
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkSignalSemaphore = requires(
-    VkDevice device, const VkSemaphoreSignalInfo* pSignalInfo
+    VkDevice device,
+    const VkSemaphoreSignalInfo* pSignalInfo
 ) {
     layer_vkSignalSemaphore<T>(device, pSignalInfo);
 };
@@ -11606,7 +12823,8 @@ constexpr PFN_vkSignalSemaphore getLayerPtr_vkSignalSemaphore()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkSignalSemaphoreKHR = requires(
-    VkDevice device, const VkSemaphoreSignalInfo* pSignalInfo
+    VkDevice device,
+    const VkSemaphoreSignalInfo* pSignalInfo
 ) {
     layer_vkSignalSemaphoreKHR<T>(device, pSignalInfo);
 };
@@ -11628,7 +12846,9 @@ constexpr PFN_vkSignalSemaphoreKHR getLayerPtr_vkSignalSemaphoreKHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkTransitionImageLayout = requires(
-    VkDevice device, uint32_t transitionCount, const VkHostImageLayoutTransitionInfo* pTransitions
+    VkDevice device,
+    uint32_t transitionCount,
+    const VkHostImageLayoutTransitionInfo* pTransitions
 ) {
     layer_vkTransitionImageLayout<T>(device, transitionCount, pTransitions);
 };
@@ -11650,7 +12870,9 @@ constexpr PFN_vkTransitionImageLayout getLayerPtr_vkTransitionImageLayout()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkTransitionImageLayoutEXT = requires(
-    VkDevice device, uint32_t transitionCount, const VkHostImageLayoutTransitionInfo* pTransitions
+    VkDevice device,
+    uint32_t transitionCount,
+    const VkHostImageLayoutTransitionInfo* pTransitions
 ) {
     layer_vkTransitionImageLayoutEXT<T>(device, transitionCount, pTransitions);
 };
@@ -11672,7 +12894,9 @@ constexpr PFN_vkTransitionImageLayoutEXT getLayerPtr_vkTransitionImageLayoutEXT(
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkTrimCommandPool = requires(
-    VkDevice device, VkCommandPool commandPool, VkCommandPoolTrimFlags flags
+    VkDevice device,
+    VkCommandPool commandPool,
+    VkCommandPoolTrimFlags flags
 ) {
     layer_vkTrimCommandPool<T>(device, commandPool, flags);
 };
@@ -11694,7 +12918,9 @@ constexpr PFN_vkTrimCommandPool getLayerPtr_vkTrimCommandPool()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkTrimCommandPoolKHR = requires(
-    VkDevice device, VkCommandPool commandPool, VkCommandPoolTrimFlags flags
+    VkDevice device,
+    VkCommandPool commandPool,
+    VkCommandPoolTrimFlags flags
 ) {
     layer_vkTrimCommandPoolKHR<T>(device, commandPool, flags);
 };
@@ -11716,7 +12942,8 @@ constexpr PFN_vkTrimCommandPoolKHR getLayerPtr_vkTrimCommandPoolKHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkUnmapMemory = requires(
-    VkDevice device, VkDeviceMemory memory
+    VkDevice device,
+    VkDeviceMemory memory
 ) {
     layer_vkUnmapMemory<T>(device, memory);
 };
@@ -11738,7 +12965,8 @@ constexpr PFN_vkUnmapMemory getLayerPtr_vkUnmapMemory()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkUnmapMemory2 = requires(
-    VkDevice device, const VkMemoryUnmapInfo* pMemoryUnmapInfo
+    VkDevice device,
+    const VkMemoryUnmapInfo* pMemoryUnmapInfo
 ) {
     layer_vkUnmapMemory2<T>(device, pMemoryUnmapInfo);
 };
@@ -11760,7 +12988,8 @@ constexpr PFN_vkUnmapMemory2 getLayerPtr_vkUnmapMemory2()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkUnmapMemory2KHR = requires(
-    VkDevice device, const VkMemoryUnmapInfo* pMemoryUnmapInfo
+    VkDevice device,
+    const VkMemoryUnmapInfo* pMemoryUnmapInfo
 ) {
     layer_vkUnmapMemory2KHR<T>(device, pMemoryUnmapInfo);
 };
@@ -11782,7 +13011,8 @@ constexpr PFN_vkUnmapMemory2KHR getLayerPtr_vkUnmapMemory2KHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkUnregisterCustomBorderColorEXT = requires(
-    VkDevice device, uint32_t index
+    VkDevice device,
+    uint32_t index
 ) {
     layer_vkUnregisterCustomBorderColorEXT<T>(device, index);
 };
@@ -11804,7 +13034,10 @@ constexpr PFN_vkUnregisterCustomBorderColorEXT getLayerPtr_vkUnregisterCustomBor
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkUpdateDescriptorSetWithTemplate = requires(
-    VkDevice device, VkDescriptorSet descriptorSet, VkDescriptorUpdateTemplate descriptorUpdateTemplate, const void* pData
+    VkDevice device,
+    VkDescriptorSet descriptorSet,
+    VkDescriptorUpdateTemplate descriptorUpdateTemplate,
+    const void* pData
 ) {
     layer_vkUpdateDescriptorSetWithTemplate<T>(device, descriptorSet, descriptorUpdateTemplate, pData);
 };
@@ -11826,7 +13059,10 @@ constexpr PFN_vkUpdateDescriptorSetWithTemplate getLayerPtr_vkUpdateDescriptorSe
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkUpdateDescriptorSetWithTemplateKHR = requires(
-    VkDevice device, VkDescriptorSet descriptorSet, VkDescriptorUpdateTemplate descriptorUpdateTemplate, const void* pData
+    VkDevice device,
+    VkDescriptorSet descriptorSet,
+    VkDescriptorUpdateTemplate descriptorUpdateTemplate,
+    const void* pData
 ) {
     layer_vkUpdateDescriptorSetWithTemplateKHR<T>(device, descriptorSet, descriptorUpdateTemplate, pData);
 };
@@ -11848,7 +13084,11 @@ constexpr PFN_vkUpdateDescriptorSetWithTemplateKHR getLayerPtr_vkUpdateDescripto
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkUpdateDescriptorSets = requires(
-    VkDevice device, uint32_t descriptorWriteCount, const VkWriteDescriptorSet* pDescriptorWrites, uint32_t descriptorCopyCount, const VkCopyDescriptorSet* pDescriptorCopies
+    VkDevice device,
+    uint32_t descriptorWriteCount,
+    const VkWriteDescriptorSet* pDescriptorWrites,
+    uint32_t descriptorCopyCount,
+    const VkCopyDescriptorSet* pDescriptorCopies
 ) {
     layer_vkUpdateDescriptorSets<T>(device, descriptorWriteCount, pDescriptorWrites, descriptorCopyCount, pDescriptorCopies);
 };
@@ -11870,7 +13110,10 @@ constexpr PFN_vkUpdateDescriptorSets getLayerPtr_vkUpdateDescriptorSets()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkUpdateIndirectExecutionSetPipelineEXT = requires(
-    VkDevice device, VkIndirectExecutionSetEXT indirectExecutionSet, uint32_t executionSetWriteCount, const VkWriteIndirectExecutionSetPipelineEXT* pExecutionSetWrites
+    VkDevice device,
+    VkIndirectExecutionSetEXT indirectExecutionSet,
+    uint32_t executionSetWriteCount,
+    const VkWriteIndirectExecutionSetPipelineEXT* pExecutionSetWrites
 ) {
     layer_vkUpdateIndirectExecutionSetPipelineEXT<T>(device, indirectExecutionSet, executionSetWriteCount, pExecutionSetWrites);
 };
@@ -11892,7 +13135,10 @@ constexpr PFN_vkUpdateIndirectExecutionSetPipelineEXT getLayerPtr_vkUpdateIndire
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkUpdateIndirectExecutionSetShaderEXT = requires(
-    VkDevice device, VkIndirectExecutionSetEXT indirectExecutionSet, uint32_t executionSetWriteCount, const VkWriteIndirectExecutionSetShaderEXT* pExecutionSetWrites
+    VkDevice device,
+    VkIndirectExecutionSetEXT indirectExecutionSet,
+    uint32_t executionSetWriteCount,
+    const VkWriteIndirectExecutionSetShaderEXT* pExecutionSetWrites
 ) {
     layer_vkUpdateIndirectExecutionSetShaderEXT<T>(device, indirectExecutionSet, executionSetWriteCount, pExecutionSetWrites);
 };
@@ -11914,7 +13160,11 @@ constexpr PFN_vkUpdateIndirectExecutionSetShaderEXT getLayerPtr_vkUpdateIndirect
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkWaitForFences = requires(
-    VkDevice device, uint32_t fenceCount, const VkFence* pFences, VkBool32 waitAll, uint64_t timeout
+    VkDevice device,
+    uint32_t fenceCount,
+    const VkFence* pFences,
+    VkBool32 waitAll,
+    uint64_t timeout
 ) {
     layer_vkWaitForFences<T>(device, fenceCount, pFences, waitAll, timeout);
 };
@@ -11936,7 +13186,9 @@ constexpr PFN_vkWaitForFences getLayerPtr_vkWaitForFences()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkWaitForPresent2KHR = requires(
-    VkDevice device, VkSwapchainKHR swapchain, const VkPresentWait2InfoKHR* pPresentWait2Info
+    VkDevice device,
+    VkSwapchainKHR swapchain,
+    const VkPresentWait2InfoKHR* pPresentWait2Info
 ) {
     layer_vkWaitForPresent2KHR<T>(device, swapchain, pPresentWait2Info);
 };
@@ -11958,7 +13210,10 @@ constexpr PFN_vkWaitForPresent2KHR getLayerPtr_vkWaitForPresent2KHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkWaitForPresentKHR = requires(
-    VkDevice device, VkSwapchainKHR swapchain, uint64_t presentId, uint64_t timeout
+    VkDevice device,
+    VkSwapchainKHR swapchain,
+    uint64_t presentId,
+    uint64_t timeout
 ) {
     layer_vkWaitForPresentKHR<T>(device, swapchain, presentId, timeout);
 };
@@ -11980,7 +13235,9 @@ constexpr PFN_vkWaitForPresentKHR getLayerPtr_vkWaitForPresentKHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkWaitSemaphores = requires(
-    VkDevice device, const VkSemaphoreWaitInfo* pWaitInfo, uint64_t timeout
+    VkDevice device,
+    const VkSemaphoreWaitInfo* pWaitInfo,
+    uint64_t timeout
 ) {
     layer_vkWaitSemaphores<T>(device, pWaitInfo, timeout);
 };
@@ -12002,7 +13259,9 @@ constexpr PFN_vkWaitSemaphores getLayerPtr_vkWaitSemaphores()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkWaitSemaphoresKHR = requires(
-    VkDevice device, const VkSemaphoreWaitInfo* pWaitInfo, uint64_t timeout
+    VkDevice device,
+    const VkSemaphoreWaitInfo* pWaitInfo,
+    uint64_t timeout
 ) {
     layer_vkWaitSemaphoresKHR<T>(device, pWaitInfo, timeout);
 };
@@ -12024,7 +13283,13 @@ constexpr PFN_vkWaitSemaphoresKHR getLayerPtr_vkWaitSemaphoresKHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkWriteAccelerationStructuresPropertiesKHR = requires(
-    VkDevice device, uint32_t accelerationStructureCount, const VkAccelerationStructureKHR* pAccelerationStructures, VkQueryType queryType, size_t dataSize, void* pData, size_t stride
+    VkDevice device,
+    uint32_t accelerationStructureCount,
+    const VkAccelerationStructureKHR* pAccelerationStructures,
+    VkQueryType queryType,
+    size_t dataSize,
+    void* pData,
+    size_t stride
 ) {
     layer_vkWriteAccelerationStructuresPropertiesKHR<T>(device, accelerationStructureCount, pAccelerationStructures, queryType, dataSize, pData, stride);
 };
@@ -12046,7 +13311,13 @@ constexpr PFN_vkWriteAccelerationStructuresPropertiesKHR getLayerPtr_vkWriteAcce
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkWriteMicromapsPropertiesEXT = requires(
-    VkDevice device, uint32_t micromapCount, const VkMicromapEXT* pMicromaps, VkQueryType queryType, size_t dataSize, void* pData, size_t stride
+    VkDevice device,
+    uint32_t micromapCount,
+    const VkMicromapEXT* pMicromaps,
+    VkQueryType queryType,
+    size_t dataSize,
+    void* pData,
+    size_t stride
 ) {
     layer_vkWriteMicromapsPropertiesEXT<T>(device, micromapCount, pMicromaps, queryType, dataSize, pData, stride);
 };
@@ -12068,7 +13339,10 @@ constexpr PFN_vkWriteMicromapsPropertiesEXT getLayerPtr_vkWriteMicromapsProperti
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkWriteResourceDescriptorsEXT = requires(
-    VkDevice device, uint32_t resourceCount, const VkResourceDescriptorInfoEXT* pResources, const VkHostAddressRangeEXT* pDescriptors
+    VkDevice device,
+    uint32_t resourceCount,
+    const VkResourceDescriptorInfoEXT* pResources,
+    const VkHostAddressRangeEXT* pDescriptors
 ) {
     layer_vkWriteResourceDescriptorsEXT<T>(device, resourceCount, pResources, pDescriptors);
 };
@@ -12090,7 +13364,10 @@ constexpr PFN_vkWriteResourceDescriptorsEXT getLayerPtr_vkWriteResourceDescripto
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkWriteSamplerDescriptorsEXT = requires(
-    VkDevice device, uint32_t samplerCount, const VkSamplerCreateInfo* pSamplers, const VkHostAddressRangeEXT* pDescriptors
+    VkDevice device,
+    uint32_t samplerCount,
+    const VkSamplerCreateInfo* pSamplers,
+    const VkHostAddressRangeEXT* pDescriptors
 ) {
     layer_vkWriteSamplerDescriptorsEXT<T>(device, samplerCount, pSamplers, pDescriptors);
 };
@@ -12108,5 +13385,3 @@ constexpr PFN_vkWriteSamplerDescriptorsEXT getLayerPtr_vkWriteSamplerDescriptors
         return layer_vkWriteSamplerDescriptorsEXT<default_tag>;
     }.operator()<user_tag>();
 }
-
-// clang-format on

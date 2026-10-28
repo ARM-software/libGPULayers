@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2025 Arm Limited
+ * Copyright (c) 2025-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -61,7 +61,8 @@ public:
      *
      * @param comms The commons interface used to transmit the message
      */
-    static void emitHeaderMessage(TimelineComms& comms);
+    static void emitHeaderMessage(
+        TimelineComms& comms);
 
     /**
      * @brief Called once when the layer is first created to produce the "metadata" frame for that layer device
@@ -73,12 +74,13 @@ public:
      * @param patch The driver patch version
      * @param name The device name
      */
-    static void emitMetadata(Device& device,
-                             uint32_t pid,
-                             uint32_t major,
-                             uint32_t minor,
-                             uint32_t patch,
-                             std::string name);
+    static void emitMetadata(
+        Device& device,
+        uint32_t pid,
+        uint32_t major,
+        uint32_t minor,
+        uint32_t patch,
+        std::string name);
 
     /**
      * @brief Called at the start of a frame, delimiting the subsequent items from any later frame
@@ -87,7 +89,10 @@ public:
      * @param frameNumber The frame number that uniquely identifies this frame
      * @param timestamp The timestamp of the frame
      */
-    static void emitFrame(Device& device, uint64_t frameNumber, uint64_t timestamp);
+    static void emitFrame(
+        Device& device,
+        uint64_t frameNumber,
+        uint64_t timestamp);
 
     /**
      * Construct a new workload metadata emitter that will output payloads for the provided device
@@ -95,33 +100,52 @@ public:
      * @param _device The device object that the payloads are produced for, and to which they are passed for
      * transmission
      */
-    TimelineProtobufEncoder(Device& _device)
-        : device(_device)
+    TimelineProtobufEncoder(
+        Device& _device
+    ) :
+        device(_device)
     {
     }
 
     // Visitor should not be copied or moved from
-    TimelineProtobufEncoder(const TimelineProtobufEncoder&) = delete;
-    TimelineProtobufEncoder(TimelineProtobufEncoder&&) noexcept = delete;
-    TimelineProtobufEncoder& operator=(const TimelineProtobufEncoder&) = delete;
-    TimelineProtobufEncoder& operator=(TimelineProtobufEncoder&&) noexcept = delete;
+    TimelineProtobufEncoder(
+        const TimelineProtobufEncoder&) = delete;
+    TimelineProtobufEncoder(
+        TimelineProtobufEncoder&&) noexcept = delete;
+    TimelineProtobufEncoder& operator=(
+        const TimelineProtobufEncoder&) = delete;
+    TimelineProtobufEncoder& operator=(
+        TimelineProtobufEncoder&&) noexcept = delete;
 
     // Methods from the visitor interface
-    void operator()(const Tracker::LCSRenderPass& renderPass, const std::vector<std::string>& debugStack) override;
-    void operator()(const Tracker::LCSRenderPassContinuation& continuation,
-                    const std::vector<std::string>& debugStack,
-                    uint64_t renderPassTagID) override;
-    void operator()(const Tracker::LCSDispatch& dispatch, const std::vector<std::string>& debugStack) override;
-    void operator()(const Tracker::LCSDispatchDataGraph& dispatch, const std::vector<std::string>& debugStack) override;
-    void operator()(const Tracker::LCSTraceRays& traceRays, const std::vector<std::string>& debugStack) override;
-    void operator()(const Tracker::LCSImageTransfer& imageTransfer,
-                    const std::vector<std::string>& debugStack) override;
-    void operator()(const Tracker::LCSBufferTransfer& bufferTransfer,
-                    const std::vector<std::string>& debugStack) override;
-    void operator()(const Tracker::LCSAccelerationStructureBuild& asBuild,
-                    const std::vector<std::string>& debugStack) override;
-    void operator()(const Tracker::LCSAccelerationStructureTransfer& asTransfer,
-                    const std::vector<std::string>& debugStack) override;
+    void operator()(
+        const Tracker::LCSRenderPass& renderPass,
+        const std::vector<std::string>& debugStack) override;
+    void operator()(
+        const Tracker::LCSRenderPassContinuation& continuation,
+        const std::vector<std::string>& debugStack,
+        uint64_t renderPassTagID) override;
+    void operator()(
+        const Tracker::LCSDispatch& dispatch,
+        const std::vector<std::string>& debugStack) override;
+    void operator()(
+        const Tracker::LCSDispatchDataGraph& dispatch,
+        const std::vector<std::string>& debugStack) override;
+    void operator()(
+        const Tracker::LCSTraceRays& traceRays,
+        const std::vector<std::string>& debugStack) override;
+    void operator()(
+        const Tracker::LCSImageTransfer& imageTransfer,
+        const std::vector<std::string>& debugStack) override;
+    void operator()(
+        const Tracker::LCSBufferTransfer& bufferTransfer,
+        const std::vector<std::string>& debugStack) override;
+    void operator()(
+        const Tracker::LCSAccelerationStructureBuild& asBuild,
+        const std::vector<std::string>& debugStack) override;
+    void operator()(
+        const Tracker::LCSAccelerationStructureTransfer& asTransfer,
+        const std::vector<std::string>& debugStack) override;
 
     /**
      * @brief Called at the start of the submit to emit a "Submit" record, delimiting the subsequent items from any
@@ -130,7 +154,9 @@ public:
      * @param queue The queue that was submitted to
      * @param timestamp The timestamp of the submission
      */
-    void emitSubmit(VkQueue queue, uint64_t timestamp);
+    void emitSubmit(
+        VkQueue queue,
+        uint64_t timestamp);
 
 private:
     Device& device;

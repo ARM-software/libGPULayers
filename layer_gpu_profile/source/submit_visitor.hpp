@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024-2025 Arm Limited
+ * Copyright (c) 2024-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -43,16 +43,22 @@ public:
      *
      * @param _device The device object for the command stream.
      */
-    ProfileSubmitVisitor(Device& _device)
-        : device(_device)
+    ProfileSubmitVisitor(
+        Device& _device
+    ) :
+        device(_device)
     {
     }
 
     // Visitor should not be copied or moved from
-    ProfileSubmitVisitor(const ProfileSubmitVisitor&) = delete;
-    ProfileSubmitVisitor(ProfileSubmitVisitor&&) noexcept = delete;
-    ProfileSubmitVisitor& operator=(const ProfileSubmitVisitor&) = delete;
-    ProfileSubmitVisitor& operator=(ProfileSubmitVisitor&&) noexcept = delete;
+    ProfileSubmitVisitor(
+        const ProfileSubmitVisitor&) = delete;
+    ProfileSubmitVisitor(
+        ProfileSubmitVisitor&&) noexcept = delete;
+    ProfileSubmitVisitor& operator=(
+        const ProfileSubmitVisitor&) = delete;
+    ProfileSubmitVisitor& operator=(
+        ProfileSubmitVisitor&&) noexcept = delete;
 
     // Methods from the visitor interface
     void operator()(

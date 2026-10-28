@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024-2025 Arm Limited
+ * Copyright (c) 2024-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -51,23 +51,27 @@ std::vector<std::pair<std::string, uint32_t>> Instance::injectedDeviceExtensions
 };
 
 /* See header for documentation. */
-void Instance::store(VkInstance handle, std::unique_ptr<Instance>& instance)
-{
+void Instance::store(
+    VkInstance handle,
+    std::unique_ptr<Instance>& instance
+) {
     void* key = getDispatchKey(handle);
     g_instances.insert({key, std::move(instance)});
 }
 
 /* See header for documentation. */
-Instance* Instance::retrieve(VkInstance handle)
-{
+Instance* Instance::retrieve(
+    VkInstance handle
+) {
     void* key = getDispatchKey(handle);
     assert(isInMap(key, g_instances));
     return g_instances.at(key).get();
 }
 
 /* See header for documentation. */
-Instance* Instance::retrieve(VkPhysicalDevice handle)
-{
+Instance* Instance::retrieve(
+    VkPhysicalDevice handle
+) {
     void* key = getDispatchKey(handle);
     assert(isInMap(key, g_instances));
     return g_instances.at(key).get();
@@ -86,9 +90,12 @@ std::unique_ptr<Instance> Instance::destroy(
 }
 
 /* See header for documentation. */
-Instance::Instance(VkInstance _instance, PFN_vkGetInstanceProcAddr _nlayerGetProcAddress)
-    : instance(_instance),
-      nlayerGetProcAddress(_nlayerGetProcAddress)
+Instance::Instance(
+    VkInstance _instance,
+    PFN_vkGetInstanceProcAddr _nlayerGetProcAddress
+) :
+    instance(_instance),
+    nlayerGetProcAddress(_nlayerGetProcAddress)
 {
     initDriverInstanceDispatchTable(instance, nlayerGetProcAddress, driver);
 }

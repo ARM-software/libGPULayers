@@ -63,14 +63,20 @@ public:
      *
      * @return The assigned ID.
      */
-    uint64_t getTagID() const { return tagID; }
+    uint64_t getTagID() const
+    {
+        return tagID;
+    }
 
     /**
      * @brief Get a unique tagID to label a workload in a command buffer.
      *
      * @return The assigned ID.
      */
-    static uint64_t assignTagID() { return nextTagID.fetch_add(1, std::memory_order_relaxed); }
+    static uint64_t assignTagID()
+    {
+        return nextTagID.fetch_add(1, std::memory_order_relaxed);
+    }
 
 protected:
     /**
@@ -85,7 +91,8 @@ protected:
      *
      * @param tagID   The assigned tagID.
      */
-    LCSWorkload(uint64_t tagID);
+    LCSWorkload(
+        uint64_t tagID);
 
     /**
      * @brief Destroy a workload; this is protected since we should never really be dealing with workloads in the
@@ -111,17 +118,27 @@ public:
      *
      * @return @c true if this instance suspends rather than ends.
      */
-    bool isSuspending() const { return suspending; }
+    bool isSuspending() const
+    {
+        return suspending;
+    }
 
     /**
      * @brief Update this workload with the final draw count.
      *
      * @param count   The number of draw calls tracked by the command buffer.
      */
-    void setDrawCallCount(uint64_t count) { drawCallCount = count; }
+    void setDrawCallCount(
+        uint64_t count
+    ) {
+        drawCallCount = count;
+    }
 
     /** @return The number of draw calls in this renderpass */
-    uint64_t getDrawCallCount() const { return drawCallCount; }
+    uint64_t getDrawCallCount() const
+    {
+        return drawCallCount;
+    }
 
 protected:
     /**
@@ -130,7 +147,9 @@ protected:
      * @param tagID           The assigned tagID.
      * @param suspending      Is this a render pass part that suspends later?
      */
-    LCSRenderPassBase(uint64_t tagID, bool suspending);
+    LCSRenderPassBase(
+        uint64_t tagID,
+        bool suspending);
 
     /**
      * @brief The number of draw calls in the render pass.
@@ -162,27 +181,43 @@ public:
      * @param suspending      Is this a render pass part that suspends later?
      * @param oneTimeSubmit   Is this recorded into a one-time-submit command buffer?
      */
-    LCSRenderPass(uint64_t tagID,
-                  const RenderPass& renderPass,
-                  uint32_t width,
-                  uint32_t height,
-                  bool suspending,
-                  bool oneTimeSubmit);
+    LCSRenderPass(
+        uint64_t tagID,
+        const RenderPass& renderPass,
+        uint32_t width,
+        uint32_t height,
+        bool suspending,
+        bool oneTimeSubmit);
 
     /** @return The width of the renderpass in pixels */
-    uint32_t getWidth() const { return width; }
+    uint32_t getWidth() const
+    {
+        return width;
+    }
 
     /** @return The height of the renderpass in pixels */
-    uint32_t getHeight() const { return height; }
+    uint32_t getHeight() const
+    {
+        return height;
+    }
 
     /** @return The number of subpasses */
-    uint32_t getSubpassCount() const { return subpassCount; }
+    uint32_t getSubpassCount() const
+    {
+        return subpassCount;
+    }
 
     /** @return True if it is a one-time submit renderpass */
-    bool isOneTimeSubmit() const { return oneTimeSubmit; }
+    bool isOneTimeSubmit() const
+    {
+        return oneTimeSubmit;
+    }
 
     /** @return The list of attachments */
-    const std::vector<RenderPassAttachment>& getAttachments() const { return attachments; }
+    const std::vector<RenderPassAttachment>& getAttachments() const
+    {
+        return attachments;
+    }
 
 private:
     /**
@@ -222,8 +257,10 @@ public:
      *
      * @param _suspending      Is this a render pass part that suspends later?
      */
-    LCSRenderPassContinuation(bool _suspending)
-        : LCSRenderPassBase(0, _suspending)
+    LCSRenderPassContinuation(
+        bool _suspending
+    ) :
+        LCSRenderPassBase(0, _suspending)
     {
     }
 };
@@ -244,16 +281,29 @@ public:
      * @param yGroups   The number of work groups in the Y dimension.
      * @param zGroups   The number of work groups in the Z dimension.
      */
-    LCSDispatch(uint64_t tagID, int64_t xGroups, int64_t yGroups, int64_t zGroups);
+    LCSDispatch(
+        uint64_t tagID,
+        int64_t xGroups,
+        int64_t yGroups,
+        int64_t zGroups);
 
     /** @return The number of work groups in the X dimension, or -1 if unknown. */
-    int64_t getXGroups() const { return xGroups; }
+    int64_t getXGroups() const
+    {
+        return xGroups;
+    }
 
     /** @return The number of work groups in the y dimension, or -1 if unknown. */
-    int64_t getYGroups() const { return yGroups; }
+    int64_t getYGroups() const
+    {
+        return yGroups;
+    }
 
     /** @return The number of work groups in the z dimension, or -1 if unknown. */
-    int64_t getZGroups() const { return zGroups; }
+    int64_t getZGroups() const
+    {
+        return zGroups;
+    }
 
 private:
     /**
@@ -283,7 +333,8 @@ public:
      *
      * @param tagID     The assigned tagID.
      */
-    LCSDispatchDataGraph(uint64_t tagID);
+    LCSDispatchDataGraph(
+        uint64_t tagID);
 };
 
 /**
@@ -302,16 +353,29 @@ public:
      * @param yItems   The number of work items in the Y dimension.
      * @param zItems   The number of work items in the Z dimension.
      */
-    LCSTraceRays(uint64_t tagID, int64_t xItems, int64_t yItems, int64_t zItems);
+    LCSTraceRays(
+        uint64_t tagID,
+        int64_t xItems,
+        int64_t yItems,
+        int64_t zItems);
 
     /** @return The number of work items in the X dimension, or -1 if unknown. */
-    int64_t getXItems() const { return xItems; }
+    int64_t getXItems() const
+    {
+        return xItems;
+    }
 
     /** @return The number of work items in the y dimension, or -1 if unknown. */
-    int64_t getYItems() const { return yItems; }
+    int64_t getYItems() const
+    {
+        return yItems;
+    }
 
     /** @return The number of work items in the z dimension, or -1 if unknown. */
-    int64_t getZItems() const { return zItems; }
+    int64_t getZItems() const
+    {
+        return zItems;
+    }
 
 private:
     /**
@@ -356,16 +420,25 @@ public:
      * @param transferType   The subtype of the transfer.
      * @param pixelCount     The size of the transfer, in pixels.
      */
-    LCSImageTransfer(uint64_t tagID, Type transferType, int64_t pixelCount);
+    LCSImageTransfer(
+        uint64_t tagID,
+        Type transferType,
+        int64_t pixelCount);
 
     /** @return The subtype of the transfer */
-    Type getTransferType() const { return transferType; }
+    Type getTransferType() const
+    {
+        return transferType;
+    }
 
     /** @return The subtype of the transfer */
     std::string getTransferTypeStr() const;
 
     /** @return The size of the transfer, in pixels */
-    int64_t getPixelCount() const { return pixelCount; }
+    int64_t getPixelCount() const
+    {
+        return pixelCount;
+    }
 
 private:
     /**
@@ -405,16 +478,25 @@ public:
      * @param transferType   The subtype of the transfer.
      * @param byteCount      The size of the transfer, in bytes.
      */
-    LCSBufferTransfer(uint64_t tagID, Type transferType, int64_t byteCount);
+    LCSBufferTransfer(
+        uint64_t tagID,
+        Type transferType,
+        int64_t byteCount);
 
     /** @return The subtype of the transfer */
-    Type getTransferType() const { return transferType; }
+    Type getTransferType() const
+    {
+        return transferType;
+    }
 
     /** @return The subtype of the transfer */
     std::string getTransferTypeStr() const;
 
     /** @return The size of the transfer, in bytes */
-    int64_t getByteCount() const { return byteCount; }
+    int64_t getByteCount() const
+    {
+        return byteCount;
+    }
 
 private:
     /**
@@ -451,16 +533,25 @@ public:
      * @param buildType        The subtype of the build.
      * @param primitiveCount   The size of the build, in primitives.
      */
-    LCSAccelerationStructureBuild(uint64_t tagID, Type buildType, int64_t primitiveCount);
+    LCSAccelerationStructureBuild(
+        uint64_t tagID,
+        Type buildType,
+        int64_t primitiveCount);
 
     /** @return The subtype of the build */
-    Type getBuildType() const { return buildType; }
+    Type getBuildType() const
+    {
+        return buildType;
+    }
 
     /** @return The subtype of the build */
     std::string getBuildTypeStr() const;
 
     /** @return The size of the build, in primitives */
-    int64_t getPrimitiveCount() const { return primitiveCount; }
+    int64_t getPrimitiveCount() const
+    {
+        return primitiveCount;
+    }
 
 private:
     /**
@@ -498,16 +589,25 @@ public:
      * @param tagID          The assigned tagID.
      * @param transferType   The subtype of the transfer.
      */
-    LCSAccelerationStructureTransfer(uint64_t tagID, Type transferType, int64_t byteCount);
+    LCSAccelerationStructureTransfer(
+        uint64_t tagID,
+        Type transferType,
+        int64_t byteCount);
 
     /** @return The subtype of the transfer */
-    Type getTransferType() const { return transferType; }
+    Type getTransferType() const
+    {
+        return transferType;
+    }
 
     /** @return The subtype of the transfer */
     std::string getTransferTypeStr() const;
 
     /** @return The size of the transfer, in bytes */
-    int64_t getByteCount() const { return byteCount; }
+    int64_t getByteCount() const
+    {
+        return byteCount;
+    }
 
 private:
     /**
@@ -532,14 +632,18 @@ public:
      *
      * @param label   The application debug label.
      */
-    LCSInstructionMarkerPush(const std::string& label);
+    LCSInstructionMarkerPush(
+        const std::string& label);
 
     /**
      * @brief Get the stored debug label
      *
      * @return The label string
      */
-    const std::string& getLabel() const { return *label; }
+    const std::string& getLabel() const
+    {
+        return *label;
+    }
 
 private:
     /**
@@ -572,8 +676,10 @@ public:
      *
      * @param wrkload The workload object (must not be null)
      */
-    LCSInstructionWorkload(std::shared_ptr<WorkloadType> wrkload)
-        : workload(std::move(wrkload))
+    LCSInstructionWorkload(
+        std::shared_ptr<WorkloadType> wrkload
+    ) :
+        workload(std::move(wrkload))
     {
     }
 
@@ -582,7 +688,10 @@ public:
      *
      * @return The workload
      */
-    const WorkloadType& getWorkload() const { return *workload; }
+    const WorkloadType& getWorkload() const
+    {
+        return *workload;
+    }
 
 private:
     /**

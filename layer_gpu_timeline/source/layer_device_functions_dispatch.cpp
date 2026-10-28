@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024 Arm Limited
+ * Copyright (c) 2024-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -42,12 +42,13 @@ extern std::mutex g_vulkanLock;
  *
  * @return The assigned tagID for the workload.
  */
-static uint64_t registerDispatch(Device* layer,
-                                 VkCommandBuffer commandBuffer,
-                                 int64_t groupX,
-                                 int64_t groupY,
-                                 int64_t groupZ)
-{
+static uint64_t registerDispatch(
+    Device* layer,
+    VkCommandBuffer commandBuffer,
+    int64_t groupX,
+    int64_t groupY,
+    int64_t groupZ
+) {
     auto& tracker = layer->getStateTracker();
     auto& cb = tracker.getCommandBuffer(commandBuffer);
     return cb.dispatch(groupX, groupY, groupZ);
@@ -55,11 +56,12 @@ static uint64_t registerDispatch(Device* layer,
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatch<user_tag>(VkCommandBuffer commandBuffer,
-                                                         uint32_t groupCountX,
-                                                         uint32_t groupCountY,
-                                                         uint32_t groupCountZ)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatch<user_tag>(
+    VkCommandBuffer commandBuffer,
+    uint32_t groupCountX,
+    uint32_t groupCountY,
+    uint32_t groupCountZ
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -81,14 +83,15 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatch<user_tag>(VkCommandBuffer command
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchBase<user_tag>(VkCommandBuffer commandBuffer,
-                                                             uint32_t baseGroupX,
-                                                             uint32_t baseGroupY,
-                                                             uint32_t baseGroupZ,
-                                                             uint32_t groupCountX,
-                                                             uint32_t groupCountY,
-                                                             uint32_t groupCountZ)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchBase<user_tag>(
+    VkCommandBuffer commandBuffer,
+    uint32_t baseGroupX,
+    uint32_t baseGroupY,
+    uint32_t baseGroupZ,
+    uint32_t groupCountX,
+    uint32_t groupCountY,
+    uint32_t groupCountZ
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -111,14 +114,15 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchBase<user_tag>(VkCommandBuffer com
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchBaseKHR<user_tag>(VkCommandBuffer commandBuffer,
-                                                                uint32_t baseGroupX,
-                                                                uint32_t baseGroupY,
-                                                                uint32_t baseGroupZ,
-                                                                uint32_t groupCountX,
-                                                                uint32_t groupCountY,
-                                                                uint32_t groupCountZ)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchBaseKHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    uint32_t baseGroupX,
+    uint32_t baseGroupY,
+    uint32_t baseGroupZ,
+    uint32_t groupCountX,
+    uint32_t groupCountY,
+    uint32_t groupCountZ
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -141,10 +145,11 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchBaseKHR<user_tag>(VkCommandBuffer 
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchIndirect<user_tag>(VkCommandBuffer commandBuffer,
-                                                                 VkBuffer buffer,
-                                                                 VkDeviceSize offset)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchIndirect<user_tag>(
+    VkCommandBuffer commandBuffer,
+    VkBuffer buffer,
+    VkDeviceSize offset
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store

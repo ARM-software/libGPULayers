@@ -36,8 +36,10 @@ extern std::mutex g_vulkanLock;
  * @param layer           The layer context for the device.
  * @param commandBuffer   The command buffer we are recording.
  */
-static void preDispatchDataGraph(Device* layer, VkCommandBuffer commandBuffer)
-{
+static void preDispatchDataGraph(
+    Device* layer,
+    VkCommandBuffer commandBuffer
+) {
     if (!layer->instance->config.serialize_cmdstream_data_graph_dispatch_pre())
     {
         return;
@@ -62,8 +64,10 @@ static void preDispatchDataGraph(Device* layer, VkCommandBuffer commandBuffer)
  * @param layer           The layer context for the device.
  * @param commandBuffer   The command buffer we are recording.
  */
-static void postDispatchDataGraph(Device* layer, VkCommandBuffer commandBuffer)
-{
+static void postDispatchDataGraph(
+    Device* layer,
+    VkCommandBuffer commandBuffer
+) {
     if (!layer->instance->config.serialize_cmdstream_data_graph_dispatch_post())
     {
         return;
@@ -84,10 +88,11 @@ static void postDispatchDataGraph(Device* layer, VkCommandBuffer commandBuffer)
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchDataGraphARM<user_tag>(VkCommandBuffer commandBuffer,
-                                                                     VkDataGraphPipelineSessionARM session,
-                                                                     const VkDataGraphPipelineDispatchInfoARM* pInfo)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchDataGraphARM<user_tag>(
+    VkCommandBuffer commandBuffer,
+    VkDataGraphPipelineSessionARM session,
+    const VkDataGraphPipelineDispatchInfoARM* pInfo
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store

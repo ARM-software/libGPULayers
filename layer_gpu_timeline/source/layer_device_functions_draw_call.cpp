@@ -38,8 +38,10 @@ extern std::mutex g_vulkanLock;
  * @param layer           The layer context for the device.
  * @param commandBuffer   The command buffer we are recording.
  */
-static void registerDrawCall(Device* layer, VkCommandBuffer commandBuffer)
-{
+static void registerDrawCall(
+    Device* layer,
+    VkCommandBuffer commandBuffer
+) {
     auto& state = layer->getStateTracker();
     auto& stats = state.getCommandBuffer(commandBuffer).getStats();
     stats.incDrawCallCount();
@@ -47,12 +49,13 @@ static void registerDrawCall(Device* layer, VkCommandBuffer commandBuffer)
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDraw<user_tag>(VkCommandBuffer commandBuffer,
-                                                     uint32_t vertexCount,
-                                                     uint32_t instanceCount,
-                                                     uint32_t firstVertex,
-                                                     uint32_t firstInstance)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDraw<user_tag>(
+    VkCommandBuffer commandBuffer,
+    uint32_t vertexCount,
+    uint32_t instanceCount,
+    uint32_t firstVertex,
+    uint32_t firstInstance
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -68,13 +71,14 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDraw<user_tag>(VkCommandBuffer commandBuff
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndexed<user_tag>(VkCommandBuffer commandBuffer,
-                                                            uint32_t indexCount,
-                                                            uint32_t instanceCount,
-                                                            uint32_t firstIndex,
-                                                            int32_t vertexOffset,
-                                                            uint32_t firstInstance)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndexed<user_tag>(
+    VkCommandBuffer commandBuffer,
+    uint32_t indexCount,
+    uint32_t instanceCount,
+    uint32_t firstIndex,
+    int32_t vertexOffset,
+    uint32_t firstInstance
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -90,12 +94,13 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndexed<user_tag>(VkCommandBuffer comm
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndexedIndirect<user_tag>(VkCommandBuffer commandBuffer,
-                                                                    VkBuffer buffer,
-                                                                    VkDeviceSize offset,
-                                                                    uint32_t drawCount,
-                                                                    uint32_t stride)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndexedIndirect<user_tag>(
+    VkCommandBuffer commandBuffer,
+    VkBuffer buffer,
+    VkDeviceSize offset,
+    uint32_t drawCount,
+    uint32_t stride
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -111,14 +116,15 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndexedIndirect<user_tag>(VkCommandBuf
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndexedIndirectCount<user_tag>(VkCommandBuffer commandBuffer,
-                                                                         VkBuffer buffer,
-                                                                         VkDeviceSize offset,
-                                                                         VkBuffer countBuffer,
-                                                                         VkDeviceSize countBufferOffset,
-                                                                         uint32_t maxDrawCount,
-                                                                         uint32_t stride)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndexedIndirectCount<user_tag>(
+    VkCommandBuffer commandBuffer,
+    VkBuffer buffer,
+    VkDeviceSize offset,
+    VkBuffer countBuffer,
+    VkDeviceSize countBufferOffset,
+    uint32_t maxDrawCount,
+    uint32_t stride
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -140,14 +146,15 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndexedIndirectCount<user_tag>(VkComma
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndexedIndirectCountKHR<user_tag>(VkCommandBuffer commandBuffer,
-                                                                            VkBuffer buffer,
-                                                                            VkDeviceSize offset,
-                                                                            VkBuffer countBuffer,
-                                                                            VkDeviceSize countBufferOffset,
-                                                                            uint32_t maxDrawCount,
-                                                                            uint32_t stride)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndexedIndirectCountKHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    VkBuffer buffer,
+    VkDeviceSize offset,
+    VkBuffer countBuffer,
+    VkDeviceSize countBufferOffset,
+    uint32_t maxDrawCount,
+    uint32_t stride
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -169,12 +176,13 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndexedIndirectCountKHR<user_tag>(VkCo
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirect<user_tag>(VkCommandBuffer commandBuffer,
-                                                             VkBuffer buffer,
-                                                             VkDeviceSize offset,
-                                                             uint32_t drawCount,
-                                                             uint32_t stride)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirect<user_tag>(
+    VkCommandBuffer commandBuffer,
+    VkBuffer buffer,
+    VkDeviceSize offset,
+    uint32_t drawCount,
+    uint32_t stride
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -190,14 +198,15 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirect<user_tag>(VkCommandBuffer com
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirectByteCountEXT<user_tag>(VkCommandBuffer commandBuffer,
-                                                                         uint32_t instanceCount,
-                                                                         uint32_t firstInstance,
-                                                                         VkBuffer counterBuffer,
-                                                                         VkDeviceSize counterBufferOffset,
-                                                                         uint32_t counterOffset,
-                                                                         uint32_t vertexStride)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirectByteCountEXT<user_tag>(
+    VkCommandBuffer commandBuffer,
+    uint32_t instanceCount,
+    uint32_t firstInstance,
+    VkBuffer counterBuffer,
+    VkDeviceSize counterBufferOffset,
+    uint32_t counterOffset,
+    uint32_t vertexStride
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -219,14 +228,15 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirectByteCountEXT<user_tag>(VkComma
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirectCount<user_tag>(VkCommandBuffer commandBuffer,
-                                                                  VkBuffer buffer,
-                                                                  VkDeviceSize offset,
-                                                                  VkBuffer countBuffer,
-                                                                  VkDeviceSize countBufferOffset,
-                                                                  uint32_t maxDrawCount,
-                                                                  uint32_t stride)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirectCount<user_tag>(
+    VkCommandBuffer commandBuffer,
+    VkBuffer buffer,
+    VkDeviceSize offset,
+    VkBuffer countBuffer,
+    VkDeviceSize countBufferOffset,
+    uint32_t maxDrawCount,
+    uint32_t stride
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -243,14 +253,15 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirectCount<user_tag>(VkCommandBuffe
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirectCountKHR<user_tag>(VkCommandBuffer commandBuffer,
-                                                                     VkBuffer buffer,
-                                                                     VkDeviceSize offset,
-                                                                     VkBuffer countBuffer,
-                                                                     VkDeviceSize countBufferOffset,
-                                                                     uint32_t maxDrawCount,
-                                                                     uint32_t stride)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirectCountKHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    VkBuffer buffer,
+    VkDeviceSize offset,
+    VkBuffer countBuffer,
+    VkDeviceSize countBufferOffset,
+    uint32_t maxDrawCount,
+    uint32_t stride
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -267,10 +278,10 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirectCountKHR<user_tag>(VkCommandBu
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL
-    layer_vkCmdDrawIndexedIndirect2KHR<user_tag>(VkCommandBuffer commandBuffer,
-                                                 const VkDrawIndirect2InfoKHR* pInfo)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndexedIndirect2KHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkDrawIndirect2InfoKHR* pInfo
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -286,10 +297,10 @@ VKAPI_ATTR void VKAPI_CALL
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL
-    layer_vkCmdDrawIndexedIndirectCount2KHR<user_tag>(VkCommandBuffer commandBuffer,
-                                                      const VkDrawIndirectCount2InfoKHR* pInfo)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndexedIndirectCount2KHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkDrawIndirectCount2InfoKHR* pInfo
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -305,9 +316,10 @@ VKAPI_ATTR void VKAPI_CALL
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirect2KHR<user_tag>(VkCommandBuffer commandBuffer,
-                                                                 const VkDrawIndirect2InfoKHR* pInfo)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirect2KHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkDrawIndirect2InfoKHR* pInfo
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -323,13 +335,14 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirect2KHR<user_tag>(VkCommandBuffer
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirectByteCount2EXT<user_tag>(VkCommandBuffer commandBuffer,
-                                                                          uint32_t instanceCount,
-                                                                          uint32_t firstInstance,
-                                                                          const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfo,
-                                                                          uint32_t counterOffset,
-                                                                          uint32_t vertexStride)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirectByteCount2EXT<user_tag>(
+    VkCommandBuffer commandBuffer,
+    uint32_t instanceCount,
+    uint32_t firstInstance,
+    const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfo,
+    uint32_t counterOffset,
+    uint32_t vertexStride
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -346,10 +359,10 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirectByteCount2EXT<user_tag>(VkComm
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL
-    layer_vkCmdDrawIndirectCount2KHR<user_tag>(VkCommandBuffer commandBuffer,
-                                               const VkDrawIndirectCount2InfoKHR* pInfo)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirectCount2KHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkDrawIndirectCount2InfoKHR* pInfo
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -365,10 +378,10 @@ VKAPI_ATTR void VKAPI_CALL
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL
-    layer_vkCmdDrawMeshTasksIndirect2EXT<user_tag>(VkCommandBuffer commandBuffer,
-                                                   const VkDrawIndirect2InfoKHR* pInfo)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawMeshTasksIndirect2EXT<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkDrawIndirect2InfoKHR* pInfo
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -384,10 +397,10 @@ VKAPI_ATTR void VKAPI_CALL
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL
-    layer_vkCmdDrawMeshTasksIndirectCount2EXT<user_tag>(VkCommandBuffer commandBuffer,
-                                                        const VkDrawIndirectCount2InfoKHR* pInfo)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawMeshTasksIndirectCount2EXT<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkDrawIndirectCount2InfoKHR* pInfo
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store

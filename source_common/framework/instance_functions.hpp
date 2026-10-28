@@ -25,8 +25,6 @@
 
 #pragma once
 
-// clang-format off
-
 #include <vulkan/vulkan.h>
 
 #if defined(VK_USE_PLATFORM_ANDROID_KHR)
@@ -1352,5 +1350,3 @@ VKAPI_ATTR void VKAPI_CALL layer_vkSubmitDebugUtilsMessageEXT<default_tag>(
     VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
     VkDebugUtilsMessageTypeFlagsEXT messageTypes,
     const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData);
-
-// clang-format on

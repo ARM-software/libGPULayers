@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024-2025 Arm Limited
+ * Copyright (c) 2024-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -35,11 +35,12 @@ extern std::mutex g_vulkanLock;
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateRenderPass<user_tag>(VkDevice device,
-                                                                  const VkRenderPassCreateInfo* pCreateInfo,
-                                                                  const VkAllocationCallbacks* pAllocator,
-                                                                  VkRenderPass* pRenderPass)
-{
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateRenderPass<user_tag>(
+    VkDevice device,
+    const VkRenderPassCreateInfo* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkRenderPass* pRenderPass
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -63,11 +64,12 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateRenderPass<user_tag>(VkDevice devic
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateRenderPass2<user_tag>(VkDevice device,
-                                                                   const VkRenderPassCreateInfo2* pCreateInfo,
-                                                                   const VkAllocationCallbacks* pAllocator,
-                                                                   VkRenderPass* pRenderPass)
-{
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateRenderPass2<user_tag>(
+    VkDevice device,
+    const VkRenderPassCreateInfo2* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkRenderPass* pRenderPass
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -91,11 +93,12 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateRenderPass2<user_tag>(VkDevice devi
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateRenderPass2KHR<user_tag>(VkDevice device,
-                                                                      const VkRenderPassCreateInfo2* pCreateInfo,
-                                                                      const VkAllocationCallbacks* pAllocator,
-                                                                      VkRenderPass* pRenderPass)
-{
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateRenderPass2KHR<user_tag>(
+    VkDevice device,
+    const VkRenderPassCreateInfo2* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkRenderPass* pRenderPass
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -119,10 +122,11 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateRenderPass2KHR<user_tag>(VkDevice d
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroyRenderPass<user_tag>(VkDevice device,
-                                                               VkRenderPass renderPass,
-                                                               const VkAllocationCallbacks* pAllocator)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyRenderPass<user_tag>(
+    VkDevice device,
+    VkRenderPass renderPass,
+    const VkAllocationCallbacks* pAllocator
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -139,10 +143,11 @@ VKAPI_ATTR void VKAPI_CALL layer_vkDestroyRenderPass<user_tag>(VkDevice device,
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass<user_tag>(VkCommandBuffer commandBuffer,
-                                                                const VkRenderPassBeginInfo* pRenderPassBegin,
-                                                                VkSubpassContents contents)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkRenderPassBeginInfo* pRenderPassBegin,
+    VkSubpassContents contents
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -169,10 +174,11 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass<user_tag>(VkCommandBuffer 
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass2<user_tag>(VkCommandBuffer commandBuffer,
-                                                                 const VkRenderPassBeginInfo* pRenderPassBegin,
-                                                                 const VkSubpassBeginInfo* pSubpassBeginInfo)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass2<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkRenderPassBeginInfo* pRenderPassBegin,
+    const VkSubpassBeginInfo* pSubpassBeginInfo
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -199,10 +205,11 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass2<user_tag>(VkCommandBuffer
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass2KHR<user_tag>(VkCommandBuffer commandBuffer,
-                                                                    const VkRenderPassBeginInfo* pRenderPassBegin,
-                                                                    const VkSubpassBeginInfo* pSubpassBeginInfo)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass2KHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkRenderPassBeginInfo* pRenderPassBegin,
+    const VkSubpassBeginInfo* pSubpassBeginInfo
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -229,9 +236,10 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass2KHR<user_tag>(VkCommandBuf
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRendering<user_tag>(VkCommandBuffer commandBuffer,
-                                                               const VkRenderingInfo* pRenderingInfo)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRendering<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkRenderingInfo* pRenderingInfo
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -262,9 +270,10 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRendering<user_tag>(VkCommandBuffer c
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderingKHR<user_tag>(VkCommandBuffer commandBuffer,
-                                                                  const VkRenderingInfo* pRenderingInfo)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderingKHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkRenderingInfo* pRenderingInfo
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -295,8 +304,9 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderingKHR<user_tag>(VkCommandBuffe
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderPass<user_tag>(VkCommandBuffer commandBuffer)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderPass<user_tag>(
+    VkCommandBuffer commandBuffer
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -319,9 +329,10 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderPass<user_tag>(VkCommandBuffer co
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderPass2<user_tag>(VkCommandBuffer commandBuffer,
-                                                               const VkSubpassEndInfo* pSubpassEndInfo)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderPass2<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkSubpassEndInfo* pSubpassEndInfo
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -344,9 +355,10 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderPass2<user_tag>(VkCommandBuffer c
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderPass2KHR<user_tag>(VkCommandBuffer commandBuffer,
-                                                                  const VkSubpassEndInfo* pSubpassEndInfo)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderPass2KHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkSubpassEndInfo* pSubpassEndInfo
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -369,8 +381,9 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderPass2KHR<user_tag>(VkCommandBuffe
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRendering<user_tag>(VkCommandBuffer commandBuffer)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRendering<user_tag>(
+    VkCommandBuffer commandBuffer
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -397,8 +410,9 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRendering<user_tag>(VkCommandBuffer com
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderingKHR<user_tag>(VkCommandBuffer commandBuffer)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderingKHR<user_tag>(
+    VkCommandBuffer commandBuffer
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store

@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2025 Arm Limited
+ * Copyright (c) 2025-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -56,7 +56,8 @@ public:
      *
      * @return @c true if profiling should be enabled, @c false otherwise.
      */
-    bool isFrameOfInterest(uint64_t frameID) const;
+    bool isFrameOfInterest(
+        uint64_t frameID) const;
 
     /**
      * @brief Test if we are sampling workloads.
@@ -114,7 +115,8 @@ private:
      *
      * @throws json::out_of_bounds if required fields are missing.
      */
-    void parseSamplingOptions(const json& config);
+    void parseSamplingOptions(
+        const json& config);
 
     /**
      * @brief The frame selection mode.

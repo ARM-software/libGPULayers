@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2022-2024 Arm Limited
+ * Copyright (c) 2022-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -51,49 +51,74 @@ public:
     /**
      * @brief Increment the frame counter.
      */
-    void incFrameCount() { frameCount += 1; }
+    void incFrameCount()
+    {
+        frameCount += 1;
+    }
 
     /**
      * @brief Increment the render pass counter.
      */
-    void incRenderPassCount() { renderPassCount += 1; }
+    void incRenderPassCount()
+    {
+        renderPassCount += 1;
+    }
 
     /**
      * @brief Increment the draw counter.
      */
-    void incDrawCallCount() { drawCallCount += 1; }
+    void incDrawCallCount()
+    {
+        drawCallCount += 1;
+    }
 
     /**
      * @brief Increment the compute dispatch counter.
      */
-    void incDispatchCount() { dispatchCount += 1; }
+    void incDispatchCount()
+    {
+        dispatchCount += 1;
+    }
 
     /**
      * @brief Increment the data graph dispatch counter.
      */
-    void incDispatchDataGraphCount() { dispatchDataGraphCount += 1; }
+    void incDispatchDataGraphCount()
+    {
+        dispatchDataGraphCount += 1;
+    }
 
 
     /**
      * @brief Increment the trace rays counter.
      */
-    void incTraceRaysCount() { traceRaysCount += 1; };
+    void incTraceRaysCount()
+    {
+        traceRaysCount += 1;
+    };
 
     /**
      * @brief Increment the buffer transfer counter.
      */
-    void incBufferTransferCount() { bufferTransferCount += 1; }
+    void incBufferTransferCount()
+    {
+        bufferTransferCount += 1;
+    }
 
     /**
      * @brief Increment the image transfer counter.
      */
-    void incImageTransferCount() { imageTransferCount += 1; }
+    void incImageTransferCount()
+    {
+        imageTransferCount += 1;
+    }
 
     /**
      * @brief Increment all counters with values from another stats object.
      */
-    void mergeCounts(const Stats& other)
-    {
+    void mergeCounts(
+        const Stats& other
+    ) {
         frameCount += other.frameCount;
         renderPassCount += other.renderPassCount;
         drawCallCount += other.drawCallCount;
@@ -122,42 +147,66 @@ public:
     /**
      * @brief Get the frame counter.
      */
-    uint64_t getFrameCount() const { return frameCount; }
+    uint64_t getFrameCount() const
+    {
+        return frameCount;
+    }
 
     /**
      * @brief Get the render pass counter.
      */
-    uint64_t getRenderPassCount() const { return renderPassCount; }
+    uint64_t getRenderPassCount() const
+    {
+        return renderPassCount;
+    }
 
     /**
      * @brief Get the draw counter.
      */
-    uint64_t getDrawCallCount() const { return drawCallCount; }
+    uint64_t getDrawCallCount() const
+    {
+        return drawCallCount;
+    }
 
     /**
      * @brief Get the compute dispatch counter.
      */
-    uint64_t getDispatchCount() const { return dispatchCount; }
+    uint64_t getDispatchCount() const
+    {
+        return dispatchCount;
+    }
 
     /**
      * @brief Get the compute dispatch counter.
      */
-    uint64_t getDispatchDataGraphCount() const { return dispatchDataGraphCount; }
+    uint64_t getDispatchDataGraphCount() const
+    {
+        return dispatchDataGraphCount;
+    }
 
     /**
      * @brief Get the trace rays counter.
      */
-    uint64_t getTraceRaysCount() const { return traceRaysCount; };
+    uint64_t getTraceRaysCount() const
+    {
+        return traceRaysCount;
+    };
 
     /**
      * @brief Get the buffer transfer counter.
      */
-    uint64_t getBufferTransferCount() const { return bufferTransferCount; }
+    uint64_t getBufferTransferCount() const
+    {
+        return bufferTransferCount;
+    }
 
     /**
      * @brief Get the image transfer counter.
      */
-    uint64_t getImageTransferCount() const { return imageTransferCount; }
+    uint64_t getImageTransferCount() const
+    {
+        return imageTransferCount;
+    }
 
 private:
     /**

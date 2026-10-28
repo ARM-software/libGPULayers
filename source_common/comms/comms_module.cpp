@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024 Arm Limited
+ * Copyright (c) 2024-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -44,8 +44,9 @@ namespace Comms
 {
 
 /* See header for documentation. */
-CommsModule::CommsModule(const std::string& domainAddress)
-{
+CommsModule::CommsModule(
+    const std::string& domainAddress
+) {
     sockfd = socket(AF_UNIX, SOCK_STREAM, 0);
     if (sockfd < 0)
     {
@@ -78,8 +79,10 @@ CommsModule::CommsModule(const std::string& domainAddress)
 }
 
 /* See header for documentation. */
-CommsModule::CommsModule(const std::string& hostAddress, int port)
-{
+CommsModule::CommsModule(
+    const std::string& hostAddress,
+    int port
+) {
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0)
     {
@@ -137,8 +140,9 @@ bool CommsModule::isConnected()
 }
 
 /* See header for documentation. */
-EndpointID CommsModule::getEndpointID(const std::string& name)
-{
+EndpointID CommsModule::getEndpointID(
+    const std::string& name
+) {
     std::lock_guard<std::mutex> lock(registryLock);
     if (registry.empty())
     {
@@ -188,16 +192,20 @@ EndpointID CommsModule::getEndpointID(const std::string& name)
 }
 
 /* See header for documentation. */
-void CommsModule::txAsync(EndpointID endpoint, std::unique_ptr<MessageData> data)
-{
+void CommsModule::txAsync(
+    EndpointID endpoint,
+    std::unique_ptr<MessageData> data
+) {
     auto message = std::make_shared<Message>(endpoint, MessageType::TX_ASYNC, 0, std::move(data));
 
     enqueueMessage(std::move(message));
 }
 
 /* See header for documentation. */
-void CommsModule::tx(EndpointID endpoint, std::unique_ptr<MessageData> data)
-{
+void CommsModule::tx(
+    EndpointID endpoint,
+    std::unique_ptr<MessageData> data
+) {
     auto message = std::make_shared<Message>(endpoint, MessageType::TX, 0, std::move(data));
 
     enqueueMessage(message);
@@ -205,8 +213,10 @@ void CommsModule::tx(EndpointID endpoint, std::unique_ptr<MessageData> data)
 }
 
 /* See header for documentation. */
-std::unique_ptr<MessageData> CommsModule::txRx(EndpointID endpoint, std::unique_ptr<MessageData> data)
-{
+std::unique_ptr<MessageData> CommsModule::txRx(
+    EndpointID endpoint,
+    std::unique_ptr<MessageData> data
+) {
     auto message = std::make_shared<Message>(endpoint, MessageType::TX_RX, assignMessageID(), std::move(data));
 
     enqueueMessage(message);
@@ -222,8 +232,9 @@ MessageID CommsModule::assignMessageID()
 }
 
 /* See header for documentation. */
-void CommsModule::enqueueMessage(std::shared_ptr<Message> message)
-{
+void CommsModule::enqueueMessage(
+    std::shared_ptr<Message> message
+) {
     messageQueue.put(std::move(message));
 }
 

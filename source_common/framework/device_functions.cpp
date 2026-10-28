@@ -23,8 +23,6 @@
  * ----------------------------------------------------------------------------
  */
 
-// clang-format off
-
 #include <mutex>
 
 // Include from per-layer code
@@ -10046,5 +10044,3 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkWriteSamplerDescriptorsEXT<default_tag>(
     lock.unlock();
     return layer->driver.vkWriteSamplerDescriptorsEXT(device, samplerCount, pSamplers, pDescriptors);
 }
-
-// clang-format on

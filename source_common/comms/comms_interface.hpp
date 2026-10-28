@@ -79,7 +79,8 @@ public:
      *
      * @return The service address, or @c NO_ENDPOINT if service is not found.
      */
-    virtual EndpointID getEndpointID(const std::string& name) = 0;
+    virtual EndpointID getEndpointID(
+        const std::string& name) = 0;
 
     /**
      * @brief Asynchronously transmit message to the host.
@@ -90,7 +91,9 @@ public:
      * @param endpoint   The address of the destination service.
      * @param data       The data to transmit.
      */
-    virtual void txAsync(EndpointID endpoint, std::unique_ptr<MessageData> data) = 0;
+    virtual void txAsync(
+        EndpointID endpoint,
+        std::unique_ptr<MessageData> data) = 0;
 
     /**
      * @brief Synchronously transmit message to the host.
@@ -102,7 +105,9 @@ public:
      * @param endpoint   The address of the destination service.
      * @param data       The data to transmit.
      */
-    virtual void tx(EndpointID endpoint, std::unique_ptr<MessageData> data) = 0;
+    virtual void tx(
+        EndpointID endpoint,
+        std::unique_ptr<MessageData> data) = 0;
 
     /**
      * @brief Synchronously transmit message to the host and wait for response.
@@ -117,7 +122,9 @@ public:
      *
      * @return The response message data payload.
      */
-    virtual std::unique_ptr<MessageData> txRx(EndpointID endpoint, std::unique_ptr<MessageData> data) = 0;
+    virtual std::unique_ptr<MessageData> txRx(
+        EndpointID endpoint,
+        std::unique_ptr<MessageData> data) = 0;
 };
 
 }

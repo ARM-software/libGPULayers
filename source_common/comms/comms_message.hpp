@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024 Arm Limited
+ * Copyright (c) 2024-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -80,10 +80,11 @@ public:
      * @param messageID      The sequence ID of the message.
      * @param transmitData   The data to transmit.
      */
-    Message(EndpointID endpointID,
-            MessageType messageType,
-            MessageID messageID,
-            std::unique_ptr<MessageData> transmitData);
+    Message(
+        EndpointID endpointID,
+        MessageType messageType,
+        MessageID messageID,
+        std::unique_ptr<MessageData> transmitData);
 
     /**
      * @brief The type of the message.

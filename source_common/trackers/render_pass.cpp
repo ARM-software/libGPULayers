@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2022-2025 Arm Limited
+ * Copyright (c) 2022-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -31,14 +31,16 @@ namespace Tracker
 {
 
 /* See header for details. */
-RenderPassAttachment::RenderPassAttachment(RenderPassAttachName _name,
-                                           VkAttachmentLoadOp _loadOp,
-                                           VkAttachmentStoreOp _storeOp,
-                                           bool _resolve)
-    : name(_name),
-      loadOp(_loadOp),
-      storeOp(_storeOp),
-      resolve(_resolve)
+RenderPassAttachment::RenderPassAttachment(
+    RenderPassAttachName _name,
+    VkAttachmentLoadOp _loadOp,
+    VkAttachmentStoreOp _storeOp,
+    bool _resolve
+) :
+    name(_name),
+    loadOp(_loadOp),
+    storeOp(_storeOp),
+    resolve(_resolve)
 {
 }
 
@@ -75,8 +77,11 @@ std::string RenderPassAttachment::getAttachmentStr() const
 }
 
 /* See header for details. */
-RenderPass::RenderPass(VkRenderPass _handle, const VkRenderPassCreateInfo& createInfo)
-    : handle(_handle)
+RenderPass::RenderPass(
+    VkRenderPass _handle,
+    const VkRenderPassCreateInfo& createInfo
+) :
+    handle(_handle)
 {
     subpassCount = createInfo.subpassCount;
 
@@ -163,8 +168,11 @@ RenderPass::RenderPass(VkRenderPass _handle, const VkRenderPassCreateInfo& creat
 }
 
 /* See header for details. */
-RenderPass::RenderPass(VkRenderPass _handle, const VkRenderPassCreateInfo2& createInfo)
-    : handle(_handle)
+RenderPass::RenderPass(
+    VkRenderPass _handle,
+    const VkRenderPassCreateInfo2& createInfo
+) :
+    handle(_handle)
 {
     subpassCount = createInfo.subpassCount;
 
@@ -251,8 +259,10 @@ RenderPass::RenderPass(VkRenderPass _handle, const VkRenderPassCreateInfo2& crea
 }
 
 /* See header for details. */
-RenderPass::RenderPass(const VkRenderingInfo& createInfo)
-    : handle(VK_NULL_HANDLE)
+RenderPass::RenderPass(
+    const VkRenderingInfo& createInfo
+) :
+    handle(VK_NULL_HANDLE)
 {
     // No subpasses in dynamic rendering
     subpassCount = 1;

@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024 Arm Limited
+ * Copyright (c) 2024-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -37,8 +37,11 @@
  * @param commandBuffer   The command buffer we are recording.
  * @param tagID           The tagID to emit into the label.
  */
-[[maybe_unused]] static void emitStartTag(Device* layer, VkCommandBuffer commandBuffer, uint64_t tagID)
-{
+[[maybe_unused]] static void emitStartTag(
+    Device* layer,
+    VkCommandBuffer commandBuffer,
+    uint64_t tagID
+) {
     // Emit the unique workload tag into the command stream
     std::string tagLabel = formatString("t%" PRIu64, tagID);
     VkDebugUtilsLabelEXT tagInfo {
@@ -61,8 +64,10 @@
  * @param layer           The layer context for the device.
  * @param commandBuffer   The command buffer we are recording.
  */
- [[maybe_unused]] static void emitEndTag(Device* layer, VkCommandBuffer commandBuffer)
- {
+ [[maybe_unused]] static void emitEndTag(
+     Device* layer,
+     VkCommandBuffer commandBuffer
+ ) {
     // Function pointer may be null if driver does not expose the extension
     if (layer->driver.vkCmdEndDebugUtilsLabelEXT)
     {

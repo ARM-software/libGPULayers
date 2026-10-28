@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024-2025 Arm Limited
+ * Copyright (c) 2024-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -37,9 +37,10 @@ extern std::mutex g_vulkanLock;
  * @param layer           The layer context for the device.
  * @param commandBuffer   The command buffer we are recording.
  */
-static void registerDispatchDataGraph(Device* layer,
-                                      VkCommandBuffer commandBuffer)
-{
+static void registerDispatchDataGraph(
+    Device* layer,
+    VkCommandBuffer commandBuffer
+) {
     if (!layer->isFrameOfInterest)
     {
         return;
@@ -52,10 +53,11 @@ static void registerDispatchDataGraph(Device* layer,
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchDataGraphARM<user_tag>(VkCommandBuffer commandBuffer,
-                                                                     VkDataGraphPipelineSessionARM session,
-                                                                     const VkDataGraphPipelineDispatchInfoARM* pInfo)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDispatchDataGraphARM<user_tag>(
+    VkCommandBuffer commandBuffer,
+    VkDataGraphPipelineSessionARM session,
+    const VkDataGraphPipelineDispatchInfoARM* pInfo
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store

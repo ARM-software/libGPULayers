@@ -25,8 +25,6 @@
 
 #pragma once
 
-// clang-format off
-
 #include <vulkan/vulkan.h>
 
 #if defined(VK_USE_PLATFORM_ANDROID_KHR)
@@ -34,7 +32,10 @@
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateAndroidSurfaceKHR = requires(
-    VkInstance instance, const VkAndroidSurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface
+    VkInstance instance,
+    const VkAndroidSurfaceCreateInfoKHR* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkSurfaceKHR* pSurface
 ) {
     layer_vkCreateAndroidSurfaceKHR<T>(instance, pCreateInfo, pAllocator, pSurface);
 };
@@ -58,7 +59,10 @@ constexpr PFN_vkCreateAndroidSurfaceKHR getLayerPtr_vkCreateAndroidSurfaceKHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateDebugReportCallbackEXT = requires(
-    VkInstance instance, const VkDebugReportCallbackCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugReportCallbackEXT* pCallback
+    VkInstance instance,
+    const VkDebugReportCallbackCreateInfoEXT* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkDebugReportCallbackEXT* pCallback
 ) {
     layer_vkCreateDebugReportCallbackEXT<T>(instance, pCreateInfo, pAllocator, pCallback);
 };
@@ -80,7 +84,10 @@ constexpr PFN_vkCreateDebugReportCallbackEXT getLayerPtr_vkCreateDebugReportCall
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateDebugUtilsMessengerEXT = requires(
-    VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pMessenger
+    VkInstance instance,
+    const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkDebugUtilsMessengerEXT* pMessenger
 ) {
     layer_vkCreateDebugUtilsMessengerEXT<T>(instance, pCreateInfo, pAllocator, pMessenger);
 };
@@ -102,7 +109,10 @@ constexpr PFN_vkCreateDebugUtilsMessengerEXT getLayerPtr_vkCreateDebugUtilsMesse
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateDevice = requires(
-    VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDevice* pDevice
+    VkPhysicalDevice physicalDevice,
+    const VkDeviceCreateInfo* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkDevice* pDevice
 ) {
     layer_vkCreateDevice<T>(physicalDevice, pCreateInfo, pAllocator, pDevice);
 };
@@ -124,7 +134,11 @@ constexpr PFN_vkCreateDevice getLayerPtr_vkCreateDevice()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateDisplayModeKHR = requires(
-    VkPhysicalDevice physicalDevice, VkDisplayKHR display, const VkDisplayModeCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDisplayModeKHR* pMode
+    VkPhysicalDevice physicalDevice,
+    VkDisplayKHR display,
+    const VkDisplayModeCreateInfoKHR* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkDisplayModeKHR* pMode
 ) {
     layer_vkCreateDisplayModeKHR<T>(physicalDevice, display, pCreateInfo, pAllocator, pMode);
 };
@@ -146,7 +160,10 @@ constexpr PFN_vkCreateDisplayModeKHR getLayerPtr_vkCreateDisplayModeKHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateDisplayPlaneSurfaceKHR = requires(
-    VkInstance instance, const VkDisplaySurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface
+    VkInstance instance,
+    const VkDisplaySurfaceCreateInfoKHR* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkSurfaceKHR* pSurface
 ) {
     layer_vkCreateDisplayPlaneSurfaceKHR<T>(instance, pCreateInfo, pAllocator, pSurface);
 };
@@ -168,7 +185,9 @@ constexpr PFN_vkCreateDisplayPlaneSurfaceKHR getLayerPtr_vkCreateDisplayPlaneSur
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkCreateInstance = requires(
-    const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkInstance* pInstance
+    const VkInstanceCreateInfo* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkInstance* pInstance
 ) {
     layer_vkCreateInstance<T>(pCreateInfo, pAllocator, pInstance);
 };
@@ -190,7 +209,14 @@ constexpr PFN_vkCreateInstance getLayerPtr_vkCreateInstance()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDebugReportMessageEXT = requires(
-    VkInstance instance, VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objectType, uint64_t object, size_t location, int32_t messageCode, const char* pLayerPrefix, const char* pMessage
+    VkInstance instance,
+    VkDebugReportFlagsEXT flags,
+    VkDebugReportObjectTypeEXT objectType,
+    uint64_t object,
+    size_t location,
+    int32_t messageCode,
+    const char* pLayerPrefix,
+    const char* pMessage
 ) {
     layer_vkDebugReportMessageEXT<T>(instance, flags, objectType, object, location, messageCode, pLayerPrefix, pMessage);
 };
@@ -212,7 +238,9 @@ constexpr PFN_vkDebugReportMessageEXT getLayerPtr_vkDebugReportMessageEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDestroyDebugReportCallbackEXT = requires(
-    VkInstance instance, VkDebugReportCallbackEXT callback, const VkAllocationCallbacks* pAllocator
+    VkInstance instance,
+    VkDebugReportCallbackEXT callback,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkDestroyDebugReportCallbackEXT<T>(instance, callback, pAllocator);
 };
@@ -234,7 +262,9 @@ constexpr PFN_vkDestroyDebugReportCallbackEXT getLayerPtr_vkDestroyDebugReportCa
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDestroyDebugUtilsMessengerEXT = requires(
-    VkInstance instance, VkDebugUtilsMessengerEXT messenger, const VkAllocationCallbacks* pAllocator
+    VkInstance instance,
+    VkDebugUtilsMessengerEXT messenger,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkDestroyDebugUtilsMessengerEXT<T>(instance, messenger, pAllocator);
 };
@@ -256,7 +286,8 @@ constexpr PFN_vkDestroyDebugUtilsMessengerEXT getLayerPtr_vkDestroyDebugUtilsMes
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDestroyInstance = requires(
-    VkInstance instance, const VkAllocationCallbacks* pAllocator
+    VkInstance instance,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkDestroyInstance<T>(instance, pAllocator);
 };
@@ -278,7 +309,9 @@ constexpr PFN_vkDestroyInstance getLayerPtr_vkDestroyInstance()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkDestroySurfaceKHR = requires(
-    VkInstance instance, VkSurfaceKHR surface, const VkAllocationCallbacks* pAllocator
+    VkInstance instance,
+    VkSurfaceKHR surface,
+    const VkAllocationCallbacks* pAllocator
 ) {
     layer_vkDestroySurfaceKHR<T>(instance, surface, pAllocator);
 };
@@ -300,7 +333,10 @@ constexpr PFN_vkDestroySurfaceKHR getLayerPtr_vkDestroySurfaceKHR()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkEnumerateDeviceExtensionProperties = requires(
-    VkPhysicalDevice physicalDevice, const char* pLayerName, uint32_t* pPropertyCount, VkExtensionProperties* pProperties
+    VkPhysicalDevice physicalDevice,
+    const char* pLayerName,
+    uint32_t* pPropertyCount,
+    VkExtensionProperties* pProperties
 ) {
     layer_vkEnumerateDeviceExtensionProperties<T>(physicalDevice, pLayerName, pPropertyCount, pProperties);
 };
@@ -322,7 +358,9 @@ constexpr PFN_vkEnumerateDeviceExtensionProperties getLayerPtr_vkEnumerateDevice
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkEnumerateDeviceLayerProperties = requires(
-    VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkLayerProperties* pProperties
+    VkPhysicalDevice physicalDevice,
+    uint32_t* pPropertyCount,
+    VkLayerProperties* pProperties
 ) {
     layer_vkEnumerateDeviceLayerProperties<T>(physicalDevice, pPropertyCount, pProperties);
 };
@@ -344,7 +382,9 @@ constexpr PFN_vkEnumerateDeviceLayerProperties getLayerPtr_vkEnumerateDeviceLaye
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkEnumerateInstanceExtensionProperties = requires(
-    const char* pLayerName, uint32_t* pPropertyCount, VkExtensionProperties* pProperties
+    const char* pLayerName,
+    uint32_t* pPropertyCount,
+    VkExtensionProperties* pProperties
 ) {
     layer_vkEnumerateInstanceExtensionProperties<T>(pLayerName, pPropertyCount, pProperties);
 };
@@ -366,7 +406,8 @@ constexpr PFN_vkEnumerateInstanceExtensionProperties getLayerPtr_vkEnumerateInst
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkEnumerateInstanceLayerProperties = requires(
-    uint32_t* pPropertyCount, VkLayerProperties* pProperties
+    uint32_t* pPropertyCount,
+    VkLayerProperties* pProperties
 ) {
     layer_vkEnumerateInstanceLayerProperties<T>(pPropertyCount, pProperties);
 };
@@ -388,7 +429,9 @@ constexpr PFN_vkEnumerateInstanceLayerProperties getLayerPtr_vkEnumerateInstance
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkEnumeratePhysicalDeviceGroups = requires(
-    VkInstance instance, uint32_t* pPhysicalDeviceGroupCount, VkPhysicalDeviceGroupProperties* pPhysicalDeviceGroupProperties
+    VkInstance instance,
+    uint32_t* pPhysicalDeviceGroupCount,
+    VkPhysicalDeviceGroupProperties* pPhysicalDeviceGroupProperties
 ) {
     layer_vkEnumeratePhysicalDeviceGroups<T>(instance, pPhysicalDeviceGroupCount, pPhysicalDeviceGroupProperties);
 };
@@ -410,7 +453,9 @@ constexpr PFN_vkEnumeratePhysicalDeviceGroups getLayerPtr_vkEnumeratePhysicalDev
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkEnumeratePhysicalDeviceGroupsKHR = requires(
-    VkInstance instance, uint32_t* pPhysicalDeviceGroupCount, VkPhysicalDeviceGroupProperties* pPhysicalDeviceGroupProperties
+    VkInstance instance,
+    uint32_t* pPhysicalDeviceGroupCount,
+    VkPhysicalDeviceGroupProperties* pPhysicalDeviceGroupProperties
 ) {
     layer_vkEnumeratePhysicalDeviceGroupsKHR<T>(instance, pPhysicalDeviceGroupCount, pPhysicalDeviceGroupProperties);
 };
@@ -432,7 +477,11 @@ constexpr PFN_vkEnumeratePhysicalDeviceGroupsKHR getLayerPtr_vkEnumeratePhysical
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM = requires(
-    VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, uint32_t* pCounterCount, VkPerformanceCounterARM* pCounters, VkPerformanceCounterDescriptionARM* pCounterDescriptions
+    VkPhysicalDevice physicalDevice,
+    uint32_t queueFamilyIndex,
+    uint32_t* pCounterCount,
+    VkPerformanceCounterARM* pCounters,
+    VkPerformanceCounterDescriptionARM* pCounterDescriptions
 ) {
     layer_vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM<T>(physicalDevice, queueFamilyIndex, pCounterCount, pCounters, pCounterDescriptions);
 };
@@ -454,7 +503,11 @@ constexpr PFN_vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR = requires(
-    VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, uint32_t* pCounterCount, VkPerformanceCounterKHR* pCounters, VkPerformanceCounterDescriptionKHR* pCounterDescriptions
+    VkPhysicalDevice physicalDevice,
+    uint32_t queueFamilyIndex,
+    uint32_t* pCounterCount,
+    VkPerformanceCounterKHR* pCounters,
+    VkPerformanceCounterDescriptionKHR* pCounterDescriptions
 ) {
     layer_vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR<T>(physicalDevice, queueFamilyIndex, pCounterCount, pCounters, pCounterDescriptions);
 };
@@ -476,7 +529,9 @@ constexpr PFN_vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR ge
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkEnumeratePhysicalDeviceShaderInstrumentationMetricsARM = requires(
-    VkPhysicalDevice physicalDevice, uint32_t* pDescriptionCount, VkShaderInstrumentationMetricDescriptionARM* pDescriptions
+    VkPhysicalDevice physicalDevice,
+    uint32_t* pDescriptionCount,
+    VkShaderInstrumentationMetricDescriptionARM* pDescriptions
 ) {
     layer_vkEnumeratePhysicalDeviceShaderInstrumentationMetricsARM<T>(physicalDevice, pDescriptionCount, pDescriptions);
 };
@@ -498,7 +553,9 @@ constexpr PFN_vkEnumeratePhysicalDeviceShaderInstrumentationMetricsARM getLayerP
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkEnumeratePhysicalDevices = requires(
-    VkInstance instance, uint32_t* pPhysicalDeviceCount, VkPhysicalDevice* pPhysicalDevices
+    VkInstance instance,
+    uint32_t* pPhysicalDeviceCount,
+    VkPhysicalDevice* pPhysicalDevices
 ) {
     layer_vkEnumeratePhysicalDevices<T>(instance, pPhysicalDeviceCount, pPhysicalDevices);
 };
@@ -520,7 +577,10 @@ constexpr PFN_vkEnumeratePhysicalDevices getLayerPtr_vkEnumeratePhysicalDevices(
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetDisplayModeProperties2KHR = requires(
-    VkPhysicalDevice physicalDevice, VkDisplayKHR display, uint32_t* pPropertyCount, VkDisplayModeProperties2KHR* pProperties
+    VkPhysicalDevice physicalDevice,
+    VkDisplayKHR display,
+    uint32_t* pPropertyCount,
+    VkDisplayModeProperties2KHR* pProperties
 ) {
     layer_vkGetDisplayModeProperties2KHR<T>(physicalDevice, display, pPropertyCount, pProperties);
 };
@@ -542,7 +602,10 @@ constexpr PFN_vkGetDisplayModeProperties2KHR getLayerPtr_vkGetDisplayModePropert
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetDisplayModePropertiesKHR = requires(
-    VkPhysicalDevice physicalDevice, VkDisplayKHR display, uint32_t* pPropertyCount, VkDisplayModePropertiesKHR* pProperties
+    VkPhysicalDevice physicalDevice,
+    VkDisplayKHR display,
+    uint32_t* pPropertyCount,
+    VkDisplayModePropertiesKHR* pProperties
 ) {
     layer_vkGetDisplayModePropertiesKHR<T>(physicalDevice, display, pPropertyCount, pProperties);
 };
@@ -564,7 +627,9 @@ constexpr PFN_vkGetDisplayModePropertiesKHR getLayerPtr_vkGetDisplayModeProperti
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetDisplayPlaneCapabilities2KHR = requires(
-    VkPhysicalDevice physicalDevice, const VkDisplayPlaneInfo2KHR* pDisplayPlaneInfo, VkDisplayPlaneCapabilities2KHR* pCapabilities
+    VkPhysicalDevice physicalDevice,
+    const VkDisplayPlaneInfo2KHR* pDisplayPlaneInfo,
+    VkDisplayPlaneCapabilities2KHR* pCapabilities
 ) {
     layer_vkGetDisplayPlaneCapabilities2KHR<T>(physicalDevice, pDisplayPlaneInfo, pCapabilities);
 };
@@ -586,7 +651,10 @@ constexpr PFN_vkGetDisplayPlaneCapabilities2KHR getLayerPtr_vkGetDisplayPlaneCap
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetDisplayPlaneCapabilitiesKHR = requires(
-    VkPhysicalDevice physicalDevice, VkDisplayModeKHR mode, uint32_t planeIndex, VkDisplayPlaneCapabilitiesKHR* pCapabilities
+    VkPhysicalDevice physicalDevice,
+    VkDisplayModeKHR mode,
+    uint32_t planeIndex,
+    VkDisplayPlaneCapabilitiesKHR* pCapabilities
 ) {
     layer_vkGetDisplayPlaneCapabilitiesKHR<T>(physicalDevice, mode, planeIndex, pCapabilities);
 };
@@ -608,7 +676,10 @@ constexpr PFN_vkGetDisplayPlaneCapabilitiesKHR getLayerPtr_vkGetDisplayPlaneCapa
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetDisplayPlaneSupportedDisplaysKHR = requires(
-    VkPhysicalDevice physicalDevice, uint32_t planeIndex, uint32_t* pDisplayCount, VkDisplayKHR* pDisplays
+    VkPhysicalDevice physicalDevice,
+    uint32_t planeIndex,
+    uint32_t* pDisplayCount,
+    VkDisplayKHR* pDisplays
 ) {
     layer_vkGetDisplayPlaneSupportedDisplaysKHR<T>(physicalDevice, planeIndex, pDisplayCount, pDisplays);
 };
@@ -630,7 +701,8 @@ constexpr PFN_vkGetDisplayPlaneSupportedDisplaysKHR getLayerPtr_vkGetDisplayPlan
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetInstanceProcAddr = requires(
-    VkInstance instance, const char* pName
+    VkInstance instance,
+    const char* pName
 ) {
     layer_vkGetInstanceProcAddr<T>(instance, pName);
 };
@@ -652,7 +724,9 @@ constexpr PFN_vkGetInstanceProcAddr getLayerPtr_vkGetInstanceProcAddr()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceCalibrateableTimeDomainsEXT = requires(
-    VkPhysicalDevice physicalDevice, uint32_t* pTimeDomainCount, VkTimeDomainKHR* pTimeDomains
+    VkPhysicalDevice physicalDevice,
+    uint32_t* pTimeDomainCount,
+    VkTimeDomainKHR* pTimeDomains
 ) {
     layer_vkGetPhysicalDeviceCalibrateableTimeDomainsEXT<T>(physicalDevice, pTimeDomainCount, pTimeDomains);
 };
@@ -674,7 +748,9 @@ constexpr PFN_vkGetPhysicalDeviceCalibrateableTimeDomainsEXT getLayerPtr_vkGetPh
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceCalibrateableTimeDomainsKHR = requires(
-    VkPhysicalDevice physicalDevice, uint32_t* pTimeDomainCount, VkTimeDomainKHR* pTimeDomains
+    VkPhysicalDevice physicalDevice,
+    uint32_t* pTimeDomainCount,
+    VkTimeDomainKHR* pTimeDomains
 ) {
     layer_vkGetPhysicalDeviceCalibrateableTimeDomainsKHR<T>(physicalDevice, pTimeDomainCount, pTimeDomains);
 };
@@ -696,7 +772,10 @@ constexpr PFN_vkGetPhysicalDeviceCalibrateableTimeDomainsKHR getLayerPtr_vkGetPh
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceCooperativeMatrixProperties2EXT = requires(
-    VkPhysicalDevice physicalDevice, const VkPhysicalDeviceCooperativeMatrixInfo2EXT* pCooperativeMatrixInfo, uint32_t* pPropertyCount, VkCooperativeMatrixProperties2EXT* pProperties
+    VkPhysicalDevice physicalDevice,
+    const VkPhysicalDeviceCooperativeMatrixInfo2EXT* pCooperativeMatrixInfo,
+    uint32_t* pPropertyCount,
+    VkCooperativeMatrixProperties2EXT* pProperties
 ) {
     layer_vkGetPhysicalDeviceCooperativeMatrixProperties2EXT<T>(physicalDevice, pCooperativeMatrixInfo, pPropertyCount, pProperties);
 };
@@ -718,7 +797,9 @@ constexpr PFN_vkGetPhysicalDeviceCooperativeMatrixProperties2EXT getLayerPtr_vkG
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR = requires(
-    VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkCooperativeMatrixPropertiesKHR* pProperties
+    VkPhysicalDevice physicalDevice,
+    uint32_t* pPropertyCount,
+    VkCooperativeMatrixPropertiesKHR* pProperties
 ) {
     layer_vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR<T>(physicalDevice, pPropertyCount, pProperties);
 };
@@ -740,7 +821,8 @@ constexpr PFN_vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR getLayerPtr_vkGe
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceDescriptorSizeEXT = requires(
-    VkPhysicalDevice physicalDevice, VkDescriptorType descriptorType
+    VkPhysicalDevice physicalDevice,
+    VkDescriptorType descriptorType
 ) {
     layer_vkGetPhysicalDeviceDescriptorSizeEXT<T>(physicalDevice, descriptorType);
 };
@@ -762,7 +844,9 @@ constexpr PFN_vkGetPhysicalDeviceDescriptorSizeEXT getLayerPtr_vkGetPhysicalDevi
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceDisplayPlaneProperties2KHR = requires(
-    VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkDisplayPlaneProperties2KHR* pProperties
+    VkPhysicalDevice physicalDevice,
+    uint32_t* pPropertyCount,
+    VkDisplayPlaneProperties2KHR* pProperties
 ) {
     layer_vkGetPhysicalDeviceDisplayPlaneProperties2KHR<T>(physicalDevice, pPropertyCount, pProperties);
 };
@@ -784,7 +868,9 @@ constexpr PFN_vkGetPhysicalDeviceDisplayPlaneProperties2KHR getLayerPtr_vkGetPhy
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceDisplayPlanePropertiesKHR = requires(
-    VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkDisplayPlanePropertiesKHR* pProperties
+    VkPhysicalDevice physicalDevice,
+    uint32_t* pPropertyCount,
+    VkDisplayPlanePropertiesKHR* pProperties
 ) {
     layer_vkGetPhysicalDeviceDisplayPlanePropertiesKHR<T>(physicalDevice, pPropertyCount, pProperties);
 };
@@ -806,7 +892,9 @@ constexpr PFN_vkGetPhysicalDeviceDisplayPlanePropertiesKHR getLayerPtr_vkGetPhys
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceDisplayProperties2KHR = requires(
-    VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkDisplayProperties2KHR* pProperties
+    VkPhysicalDevice physicalDevice,
+    uint32_t* pPropertyCount,
+    VkDisplayProperties2KHR* pProperties
 ) {
     layer_vkGetPhysicalDeviceDisplayProperties2KHR<T>(physicalDevice, pPropertyCount, pProperties);
 };
@@ -828,7 +916,9 @@ constexpr PFN_vkGetPhysicalDeviceDisplayProperties2KHR getLayerPtr_vkGetPhysical
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceDisplayPropertiesKHR = requires(
-    VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkDisplayPropertiesKHR* pProperties
+    VkPhysicalDevice physicalDevice,
+    uint32_t* pPropertyCount,
+    VkDisplayPropertiesKHR* pProperties
 ) {
     layer_vkGetPhysicalDeviceDisplayPropertiesKHR<T>(physicalDevice, pPropertyCount, pProperties);
 };
@@ -850,7 +940,9 @@ constexpr PFN_vkGetPhysicalDeviceDisplayPropertiesKHR getLayerPtr_vkGetPhysicalD
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceExternalBufferProperties = requires(
-    VkPhysicalDevice physicalDevice, const VkPhysicalDeviceExternalBufferInfo* pExternalBufferInfo, VkExternalBufferProperties* pExternalBufferProperties
+    VkPhysicalDevice physicalDevice,
+    const VkPhysicalDeviceExternalBufferInfo* pExternalBufferInfo,
+    VkExternalBufferProperties* pExternalBufferProperties
 ) {
     layer_vkGetPhysicalDeviceExternalBufferProperties<T>(physicalDevice, pExternalBufferInfo, pExternalBufferProperties);
 };
@@ -872,7 +964,9 @@ constexpr PFN_vkGetPhysicalDeviceExternalBufferProperties getLayerPtr_vkGetPhysi
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceExternalBufferPropertiesKHR = requires(
-    VkPhysicalDevice physicalDevice, const VkPhysicalDeviceExternalBufferInfo* pExternalBufferInfo, VkExternalBufferProperties* pExternalBufferProperties
+    VkPhysicalDevice physicalDevice,
+    const VkPhysicalDeviceExternalBufferInfo* pExternalBufferInfo,
+    VkExternalBufferProperties* pExternalBufferProperties
 ) {
     layer_vkGetPhysicalDeviceExternalBufferPropertiesKHR<T>(physicalDevice, pExternalBufferInfo, pExternalBufferProperties);
 };
@@ -894,7 +988,9 @@ constexpr PFN_vkGetPhysicalDeviceExternalBufferPropertiesKHR getLayerPtr_vkGetPh
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceExternalFenceProperties = requires(
-    VkPhysicalDevice physicalDevice, const VkPhysicalDeviceExternalFenceInfo* pExternalFenceInfo, VkExternalFenceProperties* pExternalFenceProperties
+    VkPhysicalDevice physicalDevice,
+    const VkPhysicalDeviceExternalFenceInfo* pExternalFenceInfo,
+    VkExternalFenceProperties* pExternalFenceProperties
 ) {
     layer_vkGetPhysicalDeviceExternalFenceProperties<T>(physicalDevice, pExternalFenceInfo, pExternalFenceProperties);
 };
@@ -916,7 +1012,9 @@ constexpr PFN_vkGetPhysicalDeviceExternalFenceProperties getLayerPtr_vkGetPhysic
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceExternalFencePropertiesKHR = requires(
-    VkPhysicalDevice physicalDevice, const VkPhysicalDeviceExternalFenceInfo* pExternalFenceInfo, VkExternalFenceProperties* pExternalFenceProperties
+    VkPhysicalDevice physicalDevice,
+    const VkPhysicalDeviceExternalFenceInfo* pExternalFenceInfo,
+    VkExternalFenceProperties* pExternalFenceProperties
 ) {
     layer_vkGetPhysicalDeviceExternalFencePropertiesKHR<T>(physicalDevice, pExternalFenceInfo, pExternalFenceProperties);
 };
@@ -938,7 +1036,9 @@ constexpr PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR getLayerPtr_vkGetPhy
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceExternalSemaphoreProperties = requires(
-    VkPhysicalDevice physicalDevice, const VkPhysicalDeviceExternalSemaphoreInfo* pExternalSemaphoreInfo, VkExternalSemaphoreProperties* pExternalSemaphoreProperties
+    VkPhysicalDevice physicalDevice,
+    const VkPhysicalDeviceExternalSemaphoreInfo* pExternalSemaphoreInfo,
+    VkExternalSemaphoreProperties* pExternalSemaphoreProperties
 ) {
     layer_vkGetPhysicalDeviceExternalSemaphoreProperties<T>(physicalDevice, pExternalSemaphoreInfo, pExternalSemaphoreProperties);
 };
@@ -960,7 +1060,9 @@ constexpr PFN_vkGetPhysicalDeviceExternalSemaphoreProperties getLayerPtr_vkGetPh
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceExternalSemaphorePropertiesKHR = requires(
-    VkPhysicalDevice physicalDevice, const VkPhysicalDeviceExternalSemaphoreInfo* pExternalSemaphoreInfo, VkExternalSemaphoreProperties* pExternalSemaphoreProperties
+    VkPhysicalDevice physicalDevice,
+    const VkPhysicalDeviceExternalSemaphoreInfo* pExternalSemaphoreInfo,
+    VkExternalSemaphoreProperties* pExternalSemaphoreProperties
 ) {
     layer_vkGetPhysicalDeviceExternalSemaphorePropertiesKHR<T>(physicalDevice, pExternalSemaphoreInfo, pExternalSemaphoreProperties);
 };
@@ -982,7 +1084,9 @@ constexpr PFN_vkGetPhysicalDeviceExternalSemaphorePropertiesKHR getLayerPtr_vkGe
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceExternalTensorPropertiesARM = requires(
-    VkPhysicalDevice physicalDevice, const VkPhysicalDeviceExternalTensorInfoARM* pExternalTensorInfo, VkExternalTensorPropertiesARM* pExternalTensorProperties
+    VkPhysicalDevice physicalDevice,
+    const VkPhysicalDeviceExternalTensorInfoARM* pExternalTensorInfo,
+    VkExternalTensorPropertiesARM* pExternalTensorProperties
 ) {
     layer_vkGetPhysicalDeviceExternalTensorPropertiesARM<T>(physicalDevice, pExternalTensorInfo, pExternalTensorProperties);
 };
@@ -1004,7 +1108,8 @@ constexpr PFN_vkGetPhysicalDeviceExternalTensorPropertiesARM getLayerPtr_vkGetPh
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceFeatures = requires(
-    VkPhysicalDevice physicalDevice, VkPhysicalDeviceFeatures* pFeatures
+    VkPhysicalDevice physicalDevice,
+    VkPhysicalDeviceFeatures* pFeatures
 ) {
     layer_vkGetPhysicalDeviceFeatures<T>(physicalDevice, pFeatures);
 };
@@ -1026,7 +1131,8 @@ constexpr PFN_vkGetPhysicalDeviceFeatures getLayerPtr_vkGetPhysicalDeviceFeature
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceFeatures2 = requires(
-    VkPhysicalDevice physicalDevice, VkPhysicalDeviceFeatures2* pFeatures
+    VkPhysicalDevice physicalDevice,
+    VkPhysicalDeviceFeatures2* pFeatures
 ) {
     layer_vkGetPhysicalDeviceFeatures2<T>(physicalDevice, pFeatures);
 };
@@ -1048,7 +1154,8 @@ constexpr PFN_vkGetPhysicalDeviceFeatures2 getLayerPtr_vkGetPhysicalDeviceFeatur
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceFeatures2KHR = requires(
-    VkPhysicalDevice physicalDevice, VkPhysicalDeviceFeatures2* pFeatures
+    VkPhysicalDevice physicalDevice,
+    VkPhysicalDeviceFeatures2* pFeatures
 ) {
     layer_vkGetPhysicalDeviceFeatures2KHR<T>(physicalDevice, pFeatures);
 };
@@ -1070,7 +1177,9 @@ constexpr PFN_vkGetPhysicalDeviceFeatures2KHR getLayerPtr_vkGetPhysicalDeviceFea
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceFormatProperties = requires(
-    VkPhysicalDevice physicalDevice, VkFormat format, VkFormatProperties* pFormatProperties
+    VkPhysicalDevice physicalDevice,
+    VkFormat format,
+    VkFormatProperties* pFormatProperties
 ) {
     layer_vkGetPhysicalDeviceFormatProperties<T>(physicalDevice, format, pFormatProperties);
 };
@@ -1092,7 +1201,9 @@ constexpr PFN_vkGetPhysicalDeviceFormatProperties getLayerPtr_vkGetPhysicalDevic
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceFormatProperties2 = requires(
-    VkPhysicalDevice physicalDevice, VkFormat format, VkFormatProperties2* pFormatProperties
+    VkPhysicalDevice physicalDevice,
+    VkFormat format,
+    VkFormatProperties2* pFormatProperties
 ) {
     layer_vkGetPhysicalDeviceFormatProperties2<T>(physicalDevice, format, pFormatProperties);
 };
@@ -1114,7 +1225,9 @@ constexpr PFN_vkGetPhysicalDeviceFormatProperties2 getLayerPtr_vkGetPhysicalDevi
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceFormatProperties2KHR = requires(
-    VkPhysicalDevice physicalDevice, VkFormat format, VkFormatProperties2* pFormatProperties
+    VkPhysicalDevice physicalDevice,
+    VkFormat format,
+    VkFormatProperties2* pFormatProperties
 ) {
     layer_vkGetPhysicalDeviceFormatProperties2KHR<T>(physicalDevice, format, pFormatProperties);
 };
@@ -1136,7 +1249,9 @@ constexpr PFN_vkGetPhysicalDeviceFormatProperties2KHR getLayerPtr_vkGetPhysicalD
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceFragmentShadingRatesKHR = requires(
-    VkPhysicalDevice physicalDevice, uint32_t* pFragmentShadingRateCount, VkPhysicalDeviceFragmentShadingRateKHR* pFragmentShadingRates
+    VkPhysicalDevice physicalDevice,
+    uint32_t* pFragmentShadingRateCount,
+    VkPhysicalDeviceFragmentShadingRateKHR* pFragmentShadingRates
 ) {
     layer_vkGetPhysicalDeviceFragmentShadingRatesKHR<T>(physicalDevice, pFragmentShadingRateCount, pFragmentShadingRates);
 };
@@ -1158,7 +1273,13 @@ constexpr PFN_vkGetPhysicalDeviceFragmentShadingRatesKHR getLayerPtr_vkGetPhysic
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceImageFormatProperties = requires(
-    VkPhysicalDevice physicalDevice, VkFormat format, VkImageType type, VkImageTiling tiling, VkImageUsageFlags usage, VkImageCreateFlags flags, VkImageFormatProperties* pImageFormatProperties
+    VkPhysicalDevice physicalDevice,
+    VkFormat format,
+    VkImageType type,
+    VkImageTiling tiling,
+    VkImageUsageFlags usage,
+    VkImageCreateFlags flags,
+    VkImageFormatProperties* pImageFormatProperties
 ) {
     layer_vkGetPhysicalDeviceImageFormatProperties<T>(physicalDevice, format, type, tiling, usage, flags, pImageFormatProperties);
 };
@@ -1180,7 +1301,9 @@ constexpr PFN_vkGetPhysicalDeviceImageFormatProperties getLayerPtr_vkGetPhysical
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceImageFormatProperties2 = requires(
-    VkPhysicalDevice physicalDevice, const VkPhysicalDeviceImageFormatInfo2* pImageFormatInfo, VkImageFormatProperties2* pImageFormatProperties
+    VkPhysicalDevice physicalDevice,
+    const VkPhysicalDeviceImageFormatInfo2* pImageFormatInfo,
+    VkImageFormatProperties2* pImageFormatProperties
 ) {
     layer_vkGetPhysicalDeviceImageFormatProperties2<T>(physicalDevice, pImageFormatInfo, pImageFormatProperties);
 };
@@ -1202,7 +1325,9 @@ constexpr PFN_vkGetPhysicalDeviceImageFormatProperties2 getLayerPtr_vkGetPhysica
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceImageFormatProperties2KHR = requires(
-    VkPhysicalDevice physicalDevice, const VkPhysicalDeviceImageFormatInfo2* pImageFormatInfo, VkImageFormatProperties2* pImageFormatProperties
+    VkPhysicalDevice physicalDevice,
+    const VkPhysicalDeviceImageFormatInfo2* pImageFormatInfo,
+    VkImageFormatProperties2* pImageFormatProperties
 ) {
     layer_vkGetPhysicalDeviceImageFormatProperties2KHR<T>(physicalDevice, pImageFormatInfo, pImageFormatProperties);
 };
@@ -1224,7 +1349,8 @@ constexpr PFN_vkGetPhysicalDeviceImageFormatProperties2KHR getLayerPtr_vkGetPhys
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceMemoryProperties = requires(
-    VkPhysicalDevice physicalDevice, VkPhysicalDeviceMemoryProperties* pMemoryProperties
+    VkPhysicalDevice physicalDevice,
+    VkPhysicalDeviceMemoryProperties* pMemoryProperties
 ) {
     layer_vkGetPhysicalDeviceMemoryProperties<T>(physicalDevice, pMemoryProperties);
 };
@@ -1246,7 +1372,8 @@ constexpr PFN_vkGetPhysicalDeviceMemoryProperties getLayerPtr_vkGetPhysicalDevic
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceMemoryProperties2 = requires(
-    VkPhysicalDevice physicalDevice, VkPhysicalDeviceMemoryProperties2* pMemoryProperties
+    VkPhysicalDevice physicalDevice,
+    VkPhysicalDeviceMemoryProperties2* pMemoryProperties
 ) {
     layer_vkGetPhysicalDeviceMemoryProperties2<T>(physicalDevice, pMemoryProperties);
 };
@@ -1268,7 +1395,8 @@ constexpr PFN_vkGetPhysicalDeviceMemoryProperties2 getLayerPtr_vkGetPhysicalDevi
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceMemoryProperties2KHR = requires(
-    VkPhysicalDevice physicalDevice, VkPhysicalDeviceMemoryProperties2* pMemoryProperties
+    VkPhysicalDevice physicalDevice,
+    VkPhysicalDeviceMemoryProperties2* pMemoryProperties
 ) {
     layer_vkGetPhysicalDeviceMemoryProperties2KHR<T>(physicalDevice, pMemoryProperties);
 };
@@ -1290,7 +1418,9 @@ constexpr PFN_vkGetPhysicalDeviceMemoryProperties2KHR getLayerPtr_vkGetPhysicalD
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceMultisamplePropertiesEXT = requires(
-    VkPhysicalDevice physicalDevice, VkSampleCountFlagBits samples, VkMultisamplePropertiesEXT* pMultisampleProperties
+    VkPhysicalDevice physicalDevice,
+    VkSampleCountFlagBits samples,
+    VkMultisamplePropertiesEXT* pMultisampleProperties
 ) {
     layer_vkGetPhysicalDeviceMultisamplePropertiesEXT<T>(physicalDevice, samples, pMultisampleProperties);
 };
@@ -1312,7 +1442,10 @@ constexpr PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT getLayerPtr_vkGetPhysi
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDevicePresentRectanglesKHR = requires(
-    VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, uint32_t* pRectCount, VkRect2D* pRects
+    VkPhysicalDevice physicalDevice,
+    VkSurfaceKHR surface,
+    uint32_t* pRectCount,
+    VkRect2D* pRects
 ) {
     layer_vkGetPhysicalDevicePresentRectanglesKHR<T>(physicalDevice, surface, pRectCount, pRects);
 };
@@ -1334,7 +1467,8 @@ constexpr PFN_vkGetPhysicalDevicePresentRectanglesKHR getLayerPtr_vkGetPhysicalD
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceProperties = requires(
-    VkPhysicalDevice physicalDevice, VkPhysicalDeviceProperties* pProperties
+    VkPhysicalDevice physicalDevice,
+    VkPhysicalDeviceProperties* pProperties
 ) {
     layer_vkGetPhysicalDeviceProperties<T>(physicalDevice, pProperties);
 };
@@ -1356,7 +1490,8 @@ constexpr PFN_vkGetPhysicalDeviceProperties getLayerPtr_vkGetPhysicalDevicePrope
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceProperties2 = requires(
-    VkPhysicalDevice physicalDevice, VkPhysicalDeviceProperties2* pProperties
+    VkPhysicalDevice physicalDevice,
+    VkPhysicalDeviceProperties2* pProperties
 ) {
     layer_vkGetPhysicalDeviceProperties2<T>(physicalDevice, pProperties);
 };
@@ -1378,7 +1513,8 @@ constexpr PFN_vkGetPhysicalDeviceProperties2 getLayerPtr_vkGetPhysicalDeviceProp
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceProperties2KHR = requires(
-    VkPhysicalDevice physicalDevice, VkPhysicalDeviceProperties2* pProperties
+    VkPhysicalDevice physicalDevice,
+    VkPhysicalDeviceProperties2* pProperties
 ) {
     layer_vkGetPhysicalDeviceProperties2KHR<T>(physicalDevice, pProperties);
 };
@@ -1400,7 +1536,10 @@ constexpr PFN_vkGetPhysicalDeviceProperties2KHR getLayerPtr_vkGetPhysicalDeviceP
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceQueueFamilyDataGraphEngineOperationPropertiesARM = requires(
-    VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, const VkQueueFamilyDataGraphPropertiesARM* pQueueFamilyDataGraphProperties, VkBaseOutStructure* pProperties
+    VkPhysicalDevice physicalDevice,
+    uint32_t queueFamilyIndex,
+    const VkQueueFamilyDataGraphPropertiesARM* pQueueFamilyDataGraphProperties,
+    VkBaseOutStructure* pProperties
 ) {
     layer_vkGetPhysicalDeviceQueueFamilyDataGraphEngineOperationPropertiesARM<T>(physicalDevice, queueFamilyIndex, pQueueFamilyDataGraphProperties, pProperties);
 };
@@ -1422,7 +1561,12 @@ constexpr PFN_vkGetPhysicalDeviceQueueFamilyDataGraphEngineOperationPropertiesAR
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM = requires(
-    VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, const VkQueueFamilyDataGraphPropertiesARM* pQueueFamilyDataGraphProperties, const VkDataGraphOpticalFlowImageFormatInfoARM* pOpticalFlowImageFormatInfo, uint32_t* pFormatCount, VkDataGraphOpticalFlowImageFormatPropertiesARM* pImageFormatProperties
+    VkPhysicalDevice physicalDevice,
+    uint32_t queueFamilyIndex,
+    const VkQueueFamilyDataGraphPropertiesARM* pQueueFamilyDataGraphProperties,
+    const VkDataGraphOpticalFlowImageFormatInfoARM* pOpticalFlowImageFormatInfo,
+    uint32_t* pFormatCount,
+    VkDataGraphOpticalFlowImageFormatPropertiesARM* pImageFormatProperties
 ) {
     layer_vkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM<T>(physicalDevice, queueFamilyIndex, pQueueFamilyDataGraphProperties, pOpticalFlowImageFormatInfo, pFormatCount, pImageFormatProperties);
 };
@@ -1444,7 +1588,9 @@ constexpr PFN_vkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM 
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM = requires(
-    VkPhysicalDevice physicalDevice, const VkPhysicalDeviceQueueFamilyDataGraphProcessingEngineInfoARM* pQueueFamilyDataGraphProcessingEngineInfo, VkQueueFamilyDataGraphProcessingEnginePropertiesARM* pQueueFamilyDataGraphProcessingEngineProperties
+    VkPhysicalDevice physicalDevice,
+    const VkPhysicalDeviceQueueFamilyDataGraphProcessingEngineInfoARM* pQueueFamilyDataGraphProcessingEngineInfo,
+    VkQueueFamilyDataGraphProcessingEnginePropertiesARM* pQueueFamilyDataGraphProcessingEngineProperties
 ) {
     layer_vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM<T>(physicalDevice, pQueueFamilyDataGraphProcessingEngineInfo, pQueueFamilyDataGraphProcessingEngineProperties);
 };
@@ -1466,7 +1612,10 @@ constexpr PFN_vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesA
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM = requires(
-    VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, uint32_t* pQueueFamilyDataGraphPropertyCount, VkQueueFamilyDataGraphPropertiesARM* pQueueFamilyDataGraphProperties
+    VkPhysicalDevice physicalDevice,
+    uint32_t queueFamilyIndex,
+    uint32_t* pQueueFamilyDataGraphPropertyCount,
+    VkQueueFamilyDataGraphPropertiesARM* pQueueFamilyDataGraphProperties
 ) {
     layer_vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM<T>(physicalDevice, queueFamilyIndex, pQueueFamilyDataGraphPropertyCount, pQueueFamilyDataGraphProperties);
 };
@@ -1488,7 +1637,9 @@ constexpr PFN_vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM getLayerPtr_v
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR = requires(
-    VkPhysicalDevice physicalDevice, const VkQueryPoolPerformanceCreateInfoKHR* pPerformanceQueryCreateInfo, uint32_t* pNumPasses
+    VkPhysicalDevice physicalDevice,
+    const VkQueryPoolPerformanceCreateInfoKHR* pPerformanceQueryCreateInfo,
+    uint32_t* pNumPasses
 ) {
     layer_vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR<T>(physicalDevice, pPerformanceQueryCreateInfo, pNumPasses);
 };
@@ -1510,7 +1661,9 @@ constexpr PFN_vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR getLayerPt
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceQueueFamilyProperties = requires(
-    VkPhysicalDevice physicalDevice, uint32_t* pQueueFamilyPropertyCount, VkQueueFamilyProperties* pQueueFamilyProperties
+    VkPhysicalDevice physicalDevice,
+    uint32_t* pQueueFamilyPropertyCount,
+    VkQueueFamilyProperties* pQueueFamilyProperties
 ) {
     layer_vkGetPhysicalDeviceQueueFamilyProperties<T>(physicalDevice, pQueueFamilyPropertyCount, pQueueFamilyProperties);
 };
@@ -1532,7 +1685,9 @@ constexpr PFN_vkGetPhysicalDeviceQueueFamilyProperties getLayerPtr_vkGetPhysical
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceQueueFamilyProperties2 = requires(
-    VkPhysicalDevice physicalDevice, uint32_t* pQueueFamilyPropertyCount, VkQueueFamilyProperties2* pQueueFamilyProperties
+    VkPhysicalDevice physicalDevice,
+    uint32_t* pQueueFamilyPropertyCount,
+    VkQueueFamilyProperties2* pQueueFamilyProperties
 ) {
     layer_vkGetPhysicalDeviceQueueFamilyProperties2<T>(physicalDevice, pQueueFamilyPropertyCount, pQueueFamilyProperties);
 };
@@ -1554,7 +1709,9 @@ constexpr PFN_vkGetPhysicalDeviceQueueFamilyProperties2 getLayerPtr_vkGetPhysica
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceQueueFamilyProperties2KHR = requires(
-    VkPhysicalDevice physicalDevice, uint32_t* pQueueFamilyPropertyCount, VkQueueFamilyProperties2* pQueueFamilyProperties
+    VkPhysicalDevice physicalDevice,
+    uint32_t* pQueueFamilyPropertyCount,
+    VkQueueFamilyProperties2* pQueueFamilyProperties
 ) {
     layer_vkGetPhysicalDeviceQueueFamilyProperties2KHR<T>(physicalDevice, pQueueFamilyPropertyCount, pQueueFamilyProperties);
 };
@@ -1576,7 +1733,14 @@ constexpr PFN_vkGetPhysicalDeviceQueueFamilyProperties2KHR getLayerPtr_vkGetPhys
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceSparseImageFormatProperties = requires(
-    VkPhysicalDevice physicalDevice, VkFormat format, VkImageType type, VkSampleCountFlagBits samples, VkImageUsageFlags usage, VkImageTiling tiling, uint32_t* pPropertyCount, VkSparseImageFormatProperties* pProperties
+    VkPhysicalDevice physicalDevice,
+    VkFormat format,
+    VkImageType type,
+    VkSampleCountFlagBits samples,
+    VkImageUsageFlags usage,
+    VkImageTiling tiling,
+    uint32_t* pPropertyCount,
+    VkSparseImageFormatProperties* pProperties
 ) {
     layer_vkGetPhysicalDeviceSparseImageFormatProperties<T>(physicalDevice, format, type, samples, usage, tiling, pPropertyCount, pProperties);
 };
@@ -1598,7 +1762,10 @@ constexpr PFN_vkGetPhysicalDeviceSparseImageFormatProperties getLayerPtr_vkGetPh
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceSparseImageFormatProperties2 = requires(
-    VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSparseImageFormatInfo2* pFormatInfo, uint32_t* pPropertyCount, VkSparseImageFormatProperties2* pProperties
+    VkPhysicalDevice physicalDevice,
+    const VkPhysicalDeviceSparseImageFormatInfo2* pFormatInfo,
+    uint32_t* pPropertyCount,
+    VkSparseImageFormatProperties2* pProperties
 ) {
     layer_vkGetPhysicalDeviceSparseImageFormatProperties2<T>(physicalDevice, pFormatInfo, pPropertyCount, pProperties);
 };
@@ -1620,7 +1787,10 @@ constexpr PFN_vkGetPhysicalDeviceSparseImageFormatProperties2 getLayerPtr_vkGetP
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceSparseImageFormatProperties2KHR = requires(
-    VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSparseImageFormatInfo2* pFormatInfo, uint32_t* pPropertyCount, VkSparseImageFormatProperties2* pProperties
+    VkPhysicalDevice physicalDevice,
+    const VkPhysicalDeviceSparseImageFormatInfo2* pFormatInfo,
+    uint32_t* pPropertyCount,
+    VkSparseImageFormatProperties2* pProperties
 ) {
     layer_vkGetPhysicalDeviceSparseImageFormatProperties2KHR<T>(physicalDevice, pFormatInfo, pPropertyCount, pProperties);
 };
@@ -1642,7 +1812,9 @@ constexpr PFN_vkGetPhysicalDeviceSparseImageFormatProperties2KHR getLayerPtr_vkG
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceSurfaceCapabilities2EXT = requires(
-    VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, VkSurfaceCapabilities2EXT* pSurfaceCapabilities
+    VkPhysicalDevice physicalDevice,
+    VkSurfaceKHR surface,
+    VkSurfaceCapabilities2EXT* pSurfaceCapabilities
 ) {
     layer_vkGetPhysicalDeviceSurfaceCapabilities2EXT<T>(physicalDevice, surface, pSurfaceCapabilities);
 };
@@ -1664,7 +1836,9 @@ constexpr PFN_vkGetPhysicalDeviceSurfaceCapabilities2EXT getLayerPtr_vkGetPhysic
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceSurfaceCapabilities2KHR = requires(
-    VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, VkSurfaceCapabilities2KHR* pSurfaceCapabilities
+    VkPhysicalDevice physicalDevice,
+    const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo,
+    VkSurfaceCapabilities2KHR* pSurfaceCapabilities
 ) {
     layer_vkGetPhysicalDeviceSurfaceCapabilities2KHR<T>(physicalDevice, pSurfaceInfo, pSurfaceCapabilities);
 };
@@ -1686,7 +1860,9 @@ constexpr PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR getLayerPtr_vkGetPhysic
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceSurfaceCapabilitiesKHR = requires(
-    VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, VkSurfaceCapabilitiesKHR* pSurfaceCapabilities
+    VkPhysicalDevice physicalDevice,
+    VkSurfaceKHR surface,
+    VkSurfaceCapabilitiesKHR* pSurfaceCapabilities
 ) {
     layer_vkGetPhysicalDeviceSurfaceCapabilitiesKHR<T>(physicalDevice, surface, pSurfaceCapabilities);
 };
@@ -1708,7 +1884,10 @@ constexpr PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR getLayerPtr_vkGetPhysica
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceSurfaceFormats2KHR = requires(
-    VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, uint32_t* pSurfaceFormatCount, VkSurfaceFormat2KHR* pSurfaceFormats
+    VkPhysicalDevice physicalDevice,
+    const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo,
+    uint32_t* pSurfaceFormatCount,
+    VkSurfaceFormat2KHR* pSurfaceFormats
 ) {
     layer_vkGetPhysicalDeviceSurfaceFormats2KHR<T>(physicalDevice, pSurfaceInfo, pSurfaceFormatCount, pSurfaceFormats);
 };
@@ -1730,7 +1909,10 @@ constexpr PFN_vkGetPhysicalDeviceSurfaceFormats2KHR getLayerPtr_vkGetPhysicalDev
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceSurfaceFormatsKHR = requires(
-    VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, uint32_t* pSurfaceFormatCount, VkSurfaceFormatKHR* pSurfaceFormats
+    VkPhysicalDevice physicalDevice,
+    VkSurfaceKHR surface,
+    uint32_t* pSurfaceFormatCount,
+    VkSurfaceFormatKHR* pSurfaceFormats
 ) {
     layer_vkGetPhysicalDeviceSurfaceFormatsKHR<T>(physicalDevice, surface, pSurfaceFormatCount, pSurfaceFormats);
 };
@@ -1752,7 +1934,10 @@ constexpr PFN_vkGetPhysicalDeviceSurfaceFormatsKHR getLayerPtr_vkGetPhysicalDevi
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceSurfacePresentModesKHR = requires(
-    VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, uint32_t* pPresentModeCount, VkPresentModeKHR* pPresentModes
+    VkPhysicalDevice physicalDevice,
+    VkSurfaceKHR surface,
+    uint32_t* pPresentModeCount,
+    VkPresentModeKHR* pPresentModes
 ) {
     layer_vkGetPhysicalDeviceSurfacePresentModesKHR<T>(physicalDevice, surface, pPresentModeCount, pPresentModes);
 };
@@ -1774,7 +1959,10 @@ constexpr PFN_vkGetPhysicalDeviceSurfacePresentModesKHR getLayerPtr_vkGetPhysica
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceSurfaceSupportKHR = requires(
-    VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, VkSurfaceKHR surface, VkBool32* pSupported
+    VkPhysicalDevice physicalDevice,
+    uint32_t queueFamilyIndex,
+    VkSurfaceKHR surface,
+    VkBool32* pSupported
 ) {
     layer_vkGetPhysicalDeviceSurfaceSupportKHR<T>(physicalDevice, queueFamilyIndex, surface, pSupported);
 };
@@ -1796,7 +1984,9 @@ constexpr PFN_vkGetPhysicalDeviceSurfaceSupportKHR getLayerPtr_vkGetPhysicalDevi
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceToolProperties = requires(
-    VkPhysicalDevice physicalDevice, uint32_t* pToolCount, VkPhysicalDeviceToolProperties* pToolProperties
+    VkPhysicalDevice physicalDevice,
+    uint32_t* pToolCount,
+    VkPhysicalDeviceToolProperties* pToolProperties
 ) {
     layer_vkGetPhysicalDeviceToolProperties<T>(physicalDevice, pToolCount, pToolProperties);
 };
@@ -1818,7 +2008,9 @@ constexpr PFN_vkGetPhysicalDeviceToolProperties getLayerPtr_vkGetPhysicalDeviceT
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkGetPhysicalDeviceToolPropertiesEXT = requires(
-    VkPhysicalDevice physicalDevice, uint32_t* pToolCount, VkPhysicalDeviceToolProperties* pToolProperties
+    VkPhysicalDevice physicalDevice,
+    uint32_t* pToolCount,
+    VkPhysicalDeviceToolProperties* pToolProperties
 ) {
     layer_vkGetPhysicalDeviceToolPropertiesEXT<T>(physicalDevice, pToolCount, pToolProperties);
 };
@@ -1840,7 +2032,8 @@ constexpr PFN_vkGetPhysicalDeviceToolPropertiesEXT getLayerPtr_vkGetPhysicalDevi
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkReleaseDisplayEXT = requires(
-    VkPhysicalDevice physicalDevice, VkDisplayKHR display
+    VkPhysicalDevice physicalDevice,
+    VkDisplayKHR display
 ) {
     layer_vkReleaseDisplayEXT<T>(physicalDevice, display);
 };
@@ -1862,7 +2055,10 @@ constexpr PFN_vkReleaseDisplayEXT getLayerPtr_vkReleaseDisplayEXT()
 /* Test for user_tag availability. */
 template <typename T>
 concept hasLayerPtr_vkSubmitDebugUtilsMessageEXT = requires(
-    VkInstance instance, VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageTypes, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData
+    VkInstance instance,
+    VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+    VkDebugUtilsMessageTypeFlagsEXT messageTypes,
+    const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData
 ) {
     layer_vkSubmitDebugUtilsMessageEXT<T>(instance, messageSeverity, messageTypes, pCallbackData);
 };
@@ -1880,5 +2076,3 @@ constexpr PFN_vkSubmitDebugUtilsMessageEXT getLayerPtr_vkSubmitDebugUtilsMessage
         return layer_vkSubmitDebugUtilsMessageEXT<default_tag>;
     }.operator()<user_tag>();
 }
-
-// clang-format on

@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2025 Arm Limited
+ * Copyright (c) 2025-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -32,9 +32,12 @@ extern std::mutex g_vulkanLock;
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR VkResult VKAPI_CALL
-    layer_vkQueueSubmit<user_tag>(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence)
-{
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit<user_tag>(
+    VkQueue queue,
+    uint32_t submitCount,
+    const VkSubmitInfo* pSubmits,
+    VkFence fence
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -109,9 +112,12 @@ VKAPI_ATTR VkResult VKAPI_CALL
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR VkResult VKAPI_CALL
-    layer_vkQueueSubmit2<user_tag>(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence)
-{
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit2<user_tag>(
+    VkQueue queue,
+    uint32_t submitCount,
+    const VkSubmitInfo2* pSubmits,
+    VkFence fence
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -193,9 +199,12 @@ VKAPI_ATTR VkResult VKAPI_CALL
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR VkResult VKAPI_CALL
-    layer_vkQueueSubmit2KHR<user_tag>(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence)
-{
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit2KHR<user_tag>(
+    VkQueue queue,
+    uint32_t submitCount,
+    const VkSubmitInfo2* pSubmits,
+    VkFence fence
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store

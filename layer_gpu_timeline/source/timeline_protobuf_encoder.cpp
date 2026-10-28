@@ -278,8 +278,10 @@ namespace
  * @return The encoded byte sequence
  */
 template<pp::basic_fixed_string F, typename T>
-Comms::MessageData packBuffer(pp::constant<F> c, T&& f)
-{
+Comms::MessageData packBuffer(
+    pp::constant<F> c,
+    T&& f
+) {
     using namespace pp;
 
     TimelineRecord record {};
@@ -310,8 +312,8 @@ Comms::MessageData packBuffer(pp::constant<F> c, T&& f)
  * the corresponding attachment index (or nullopt in the case the index is not relevant).
  */
 constexpr std::pair<RenderpassAttachmentType, std::optional<uint32_t>> mapRenderPassAttachmentName(
-    Tracker::RenderPassAttachName name)
-{
+    Tracker::RenderPassAttachName name
+) {
     switch (name)
     {
     case Tracker::RenderPassAttachName::COLOR0:
@@ -351,8 +353,9 @@ constexpr std::pair<RenderpassAttachmentType, std::optional<uint32_t>> mapRender
  *
  * @return The wire value enum to store in the protobuf message
  */
-constexpr AccelerationStructureBuildType mapASBuildType(Tracker::LCSAccelerationStructureBuild::Type type)
-{
+constexpr AccelerationStructureBuildType mapASBuildType(
+    Tracker::LCSAccelerationStructureBuild::Type type
+) {
     switch (type)
     {
     case Tracker::LCSAccelerationStructureBuild::Type::unknown:
@@ -378,8 +381,9 @@ constexpr AccelerationStructureBuildType mapASBuildType(Tracker::LCSAcceleration
  *
  * @return The wire value enum to store in the protobuf message
  */
-constexpr BufferTransferType mapBufferTransferType(Tracker::LCSBufferTransfer::Type type)
-{
+constexpr BufferTransferType mapBufferTransferType(
+    Tracker::LCSBufferTransfer::Type type
+) {
     switch (type)
     {
     case Tracker::LCSBufferTransfer::Type::unknown:
@@ -409,8 +413,9 @@ constexpr BufferTransferType mapBufferTransferType(Tracker::LCSBufferTransfer::T
  *
  * @return The wire value enum to store in the protobuf message
  */
-constexpr ImageTransferType mapImageTransferType(Tracker::LCSImageTransfer::Type type)
-{
+constexpr ImageTransferType mapImageTransferType(
+    Tracker::LCSImageTransfer::Type type
+) {
     switch (type)
     {
     case Tracker::LCSImageTransfer::Type::unknown:
@@ -442,8 +447,9 @@ constexpr ImageTransferType mapImageTransferType(Tracker::LCSImageTransfer::Type
  *
  * @return The wire value enum to store in the protobuf message
  */
-constexpr AccelerationStructureTransferType mapASTransferType(Tracker::LCSAccelerationStructureTransfer::Type type)
-{
+constexpr AccelerationStructureTransferType mapASTransferType(
+    Tracker::LCSAccelerationStructureTransfer::Type type
+) {
     switch (type)
     {
     case Tracker::LCSAccelerationStructureTransfer::Type::unknown:
@@ -472,8 +478,10 @@ constexpr AccelerationStructureTransferType mapASTransferType(Tracker::LCSAccele
  * @param renderPass   The render pass to serialize
  * @param debugLabel   The debug label stack of the VkQueue at submit time.
  */
-Comms::MessageData serialize(const Tracker::LCSRenderPass& renderPass, const std::vector<std::string>& debugLabel)
-{
+Comms::MessageData serialize(
+    const Tracker::LCSRenderPass& renderPass,
+    const std::vector<std::string>& debugLabel
+) {
     using namespace pp;
 
     // Draw count for a multi-submit command buffer cannot be reliably
@@ -521,8 +529,10 @@ Comms::MessageData serialize(const Tracker::LCSRenderPass& renderPass, const std
  * @param continuation        The render pass continuation to serialize
  * @param tagIDContinuation   The ID of the workload if this is a continuation of it.
  */
-Comms::MessageData serialize(const Tracker::LCSRenderPassContinuation& continuation, uint64_t tagIDContinuation)
-{
+Comms::MessageData serialize(
+    const Tracker::LCSRenderPassContinuation& continuation,
+    uint64_t tagIDContinuation
+) {
     using namespace pp;
 
     return packBuffer("continue_renderpass"_f,
@@ -539,8 +549,10 @@ Comms::MessageData serialize(const Tracker::LCSRenderPassContinuation& continuat
  * @param dispatch     The dispatch to serialize
  * @param debugLabel   The debug label stack for the VkQueue at submit time.
  */
-Comms::MessageData serialize(const Tracker::LCSDispatch& dispatch, const std::vector<std::string>& debugLabel)
-{
+Comms::MessageData serialize(
+    const Tracker::LCSDispatch& dispatch,
+    const std::vector<std::string>& debugLabel
+) {
     using namespace pp;
 
     return packBuffer("dispatch"_f,
@@ -559,8 +571,10 @@ Comms::MessageData serialize(const Tracker::LCSDispatch& dispatch, const std::ve
  * @param dispatch     The dispatch data graph to serialize
  * @param debugLabel   The debug label stack for the VkQueue at submit time.
  */
-Comms::MessageData serialize(const Tracker::LCSDispatchDataGraph& dispatch, const std::vector<std::string>& debugLabel)
-{
+Comms::MessageData serialize(
+    const Tracker::LCSDispatchDataGraph& dispatch,
+    const std::vector<std::string>& debugLabel
+) {
     using namespace pp;
 
     return packBuffer("dispatch_data_graph"_f,
@@ -576,8 +590,10 @@ Comms::MessageData serialize(const Tracker::LCSDispatchDataGraph& dispatch, cons
  * @param traceRays    The trace rays to serialize
  * @param debugLabel   The debug label stack for the VkQueue at submit time.
  */
-Comms::MessageData serialize(const Tracker::LCSTraceRays& traceRays, const std::vector<std::string>& debugLabel)
-{
+Comms::MessageData serialize(
+    const Tracker::LCSTraceRays& traceRays,
+    const std::vector<std::string>& debugLabel
+) {
     using namespace pp;
 
     return packBuffer("trace_rays"_f,
@@ -596,8 +612,10 @@ Comms::MessageData serialize(const Tracker::LCSTraceRays& traceRays, const std::
  * @param imageTransfer   The image transfer to serialize
  * @param debugLabel      The debug label stack for the VkQueue at submit time.
  */
-Comms::MessageData serialize(const Tracker::LCSImageTransfer& imageTransfer, const std::vector<std::string>& debugLabel)
-{
+Comms::MessageData serialize(
+    const Tracker::LCSImageTransfer& imageTransfer,
+    const std::vector<std::string>& debugLabel
+) {
     using namespace pp;
 
     return packBuffer("image_transfer"_f,
@@ -615,9 +633,10 @@ Comms::MessageData serialize(const Tracker::LCSImageTransfer& imageTransfer, con
  * @param bufferTransfer   The buffer transfer to serialize
  * @param debugLabel       The debug label stack for the VkQueue at submit time.
  */
-Comms::MessageData serialize(const Tracker::LCSBufferTransfer& bufferTransfer,
-                             const std::vector<std::string>& debugLabel)
-{
+Comms::MessageData serialize(
+    const Tracker::LCSBufferTransfer& bufferTransfer,
+    const std::vector<std::string>& debugLabel
+) {
     using namespace pp;
 
     return packBuffer("buffer_transfer"_f,
@@ -635,9 +654,10 @@ Comms::MessageData serialize(const Tracker::LCSBufferTransfer& bufferTransfer,
  * @param asBuild      The acceleration structure build to serialize
  * @param debugLabel   The debug label stack for the VkQueue at submit time.
  */
-Comms::MessageData serialize(const Tracker::LCSAccelerationStructureBuild& asBuild,
-                             const std::vector<std::string>& debugLabel)
-{
+Comms::MessageData serialize(
+    const Tracker::LCSAccelerationStructureBuild& asBuild,
+    const std::vector<std::string>& debugLabel
+) {
     using namespace pp;
 
     return packBuffer("acceleration_structure_build"_f,
@@ -655,9 +675,10 @@ Comms::MessageData serialize(const Tracker::LCSAccelerationStructureBuild& asBui
  * @param asTransfer   The acceleration structure transfer to serialize
  * @param debugLabel   The debug label stack for the VkQueue at submit time.
  */
-Comms::MessageData serialize(const Tracker::LCSAccelerationStructureTransfer& asTransfer,
-                             const std::vector<std::string>& debugLabel)
-{
+Comms::MessageData serialize(
+    const Tracker::LCSAccelerationStructureTransfer& asTransfer,
+    const std::vector<std::string>& debugLabel
+) {
     using namespace pp;
 
     return packBuffer("acceleration_structure_transfer"_f,
@@ -670,8 +691,9 @@ Comms::MessageData serialize(const Tracker::LCSAccelerationStructureTransfer& as
 }
 }
 
-void TimelineProtobufEncoder::emitHeaderMessage(TimelineComms& comms)
-{
+void TimelineProtobufEncoder::emitHeaderMessage(
+    TimelineComms& comms
+) {
     using namespace pp;
 
     comms.txMessage(packBuffer("header"_f,
@@ -680,13 +702,14 @@ void TimelineProtobufEncoder::emitHeaderMessage(TimelineComms& comms)
                                }));
 }
 
-void TimelineProtobufEncoder::emitMetadata(Device& device,
-                                           uint32_t pid,
-                                           uint32_t major,
-                                           uint32_t minor,
-                                           uint32_t patch,
-                                           std::string name)
-{
+void TimelineProtobufEncoder::emitMetadata(
+    Device& device,
+    uint32_t pid,
+    uint32_t major,
+    uint32_t minor,
+    uint32_t patch,
+    std::string name
+) {
     using namespace pp;
 
     device.txMessage(packBuffer("metadata"_f,
@@ -700,8 +723,11 @@ void TimelineProtobufEncoder::emitMetadata(Device& device,
                                 }));
 }
 
-void TimelineProtobufEncoder::emitFrame(Device& device, uint64_t frameNumber, uint64_t timestamp)
-{
+void TimelineProtobufEncoder::emitFrame(
+    Device& device,
+    uint64_t frameNumber,
+    uint64_t timestamp
+) {
     using namespace pp;
 
     device.txMessage(packBuffer("frame"_f,
@@ -712,8 +738,10 @@ void TimelineProtobufEncoder::emitFrame(Device& device, uint64_t frameNumber, ui
                                 }));
 }
 
-void TimelineProtobufEncoder::emitSubmit(VkQueue queue, uint64_t timestamp)
-{
+void TimelineProtobufEncoder::emitSubmit(
+    VkQueue queue,
+    uint64_t timestamp
+) {
     using namespace pp;
 
     device.txMessage(packBuffer("submit"_f,
@@ -724,59 +752,68 @@ void TimelineProtobufEncoder::emitSubmit(VkQueue queue, uint64_t timestamp)
                                 }));
 }
 
-void TimelineProtobufEncoder::operator()(const Tracker::LCSRenderPass& renderPass,
-                                         const std::vector<std::string>& debugStack)
-{
+void TimelineProtobufEncoder::operator()(
+    const Tracker::LCSRenderPass& renderPass,
+    const std::vector<std::string>& debugStack
+) {
     device.txMessage(serialize(renderPass, debugStack));
 }
 
-void TimelineProtobufEncoder::operator()(const Tracker::LCSRenderPassContinuation& continuation,
-                                         const std::vector<std::string>& debugStack,
-                                         uint64_t renderPassTagID)
-{
+void TimelineProtobufEncoder::operator()(
+    const Tracker::LCSRenderPassContinuation& continuation,
+    const std::vector<std::string>& debugStack,
+    uint64_t renderPassTagID
+) {
     UNUSED(debugStack);
 
     device.txMessage(serialize(continuation, renderPassTagID));
 }
 
-void TimelineProtobufEncoder::operator()(const Tracker::LCSDispatch& dispatch,
-                                         const std::vector<std::string>& debugStack)
-{
+void TimelineProtobufEncoder::operator()(
+    const Tracker::LCSDispatch& dispatch,
+    const std::vector<std::string>& debugStack
+) {
     device.txMessage(serialize(dispatch, debugStack));
 }
 
-void TimelineProtobufEncoder::operator()(const Tracker::LCSDispatchDataGraph& dispatch,
-                                         const std::vector<std::string>& debugStack)
-{
+void TimelineProtobufEncoder::operator()(
+    const Tracker::LCSDispatchDataGraph& dispatch,
+    const std::vector<std::string>& debugStack
+) {
     device.txMessage(serialize(dispatch, debugStack));
 }
 
-void TimelineProtobufEncoder::operator()(const Tracker::LCSTraceRays& traceRays,
-                                         const std::vector<std::string>& debugStack)
-{
+void TimelineProtobufEncoder::operator()(
+    const Tracker::LCSTraceRays& traceRays,
+    const std::vector<std::string>& debugStack
+) {
     device.txMessage(serialize(traceRays, debugStack));
 }
 
-void TimelineProtobufEncoder::operator()(const Tracker::LCSImageTransfer& imageTransfer,
-                                         const std::vector<std::string>& debugStack)
-{
+void TimelineProtobufEncoder::operator()(
+    const Tracker::LCSImageTransfer& imageTransfer,
+    const std::vector<std::string>& debugStack
+) {
     device.txMessage(serialize(imageTransfer, debugStack));
 }
 
-void TimelineProtobufEncoder::operator()(const Tracker::LCSBufferTransfer& bufferTransfer,
-                                         const std::vector<std::string>& debugStack)
-{
+void TimelineProtobufEncoder::operator()(
+    const Tracker::LCSBufferTransfer& bufferTransfer,
+    const std::vector<std::string>& debugStack
+) {
     device.txMessage(serialize(bufferTransfer, debugStack));
 }
 
-void TimelineProtobufEncoder::operator()(const Tracker::LCSAccelerationStructureBuild& asBuild,
-                                         const std::vector<std::string>& debugStack)
-{
+void TimelineProtobufEncoder::operator()(
+    const Tracker::LCSAccelerationStructureBuild& asBuild,
+    const std::vector<std::string>& debugStack
+) {
     device.txMessage(serialize(asBuild, debugStack));
 }
 
-void TimelineProtobufEncoder::operator()(const Tracker::LCSAccelerationStructureTransfer& asTransfer,
-                                         const std::vector<std::string>& debugStack)
-{
+void TimelineProtobufEncoder::operator()(
+    const Tracker::LCSAccelerationStructureTransfer& asTransfer,
+    const std::vector<std::string>& debugStack
+) {
     device.txMessage(serialize(asTransfer, debugStack));
 }

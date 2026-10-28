@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024 Arm Limited
+ * Copyright (c) 2024-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -30,8 +30,10 @@
 #include <memory>
 
 /* See header for documentation. */
-TimelineComms::TimelineComms(Comms::CommsInterface& _comms)
-    : comms(_comms)
+TimelineComms::TimelineComms(
+    Comms::CommsInterface& _comms
+) :
+    comms(_comms)
 {
     if (comms.isConnected())
     {
@@ -42,8 +44,9 @@ TimelineComms::TimelineComms(Comms::CommsInterface& _comms)
 }
 
 /* See header for documentation. */
-void TimelineComms::txMessage(Comms::MessageData&& message)
-{
+void TimelineComms::txMessage(
+    Comms::MessageData&& message
+) {
     // Message endpoint is not available
     if (endpoint == 0)
     {

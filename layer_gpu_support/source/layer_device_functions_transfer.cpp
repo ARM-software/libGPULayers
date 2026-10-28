@@ -36,8 +36,10 @@ extern std::mutex g_vulkanLock;
  * @param layer           The layer context for the device.
  * @param commandBuffer   The command buffer we are recording.
  */
-static void preTransfer(Device* layer, VkCommandBuffer commandBuffer)
-{
+static void preTransfer(
+    Device* layer,
+    VkCommandBuffer commandBuffer
+) {
     if (!layer->instance->config.serialize_cmdstream_transfer_pre())
     {
         return;
@@ -62,8 +64,10 @@ static void preTransfer(Device* layer, VkCommandBuffer commandBuffer)
  * @param layer           The layer context for the device.
  * @param commandBuffer   The command buffer we are recording.
  */
-static void postTransfer(Device* layer, VkCommandBuffer commandBuffer)
-{
+static void postTransfer(
+    Device* layer,
+    VkCommandBuffer commandBuffer
+) {
     if (!layer->instance->config.serialize_cmdstream_transfer_post())
     {
         return;
@@ -86,12 +90,13 @@ static void postTransfer(Device* layer, VkCommandBuffer commandBuffer)
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdFillBuffer<user_tag>(VkCommandBuffer commandBuffer,
-                                                           VkBuffer dstBuffer,
-                                                           VkDeviceSize dstOffset,
-                                                           VkDeviceSize size,
-                                                           uint32_t data)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdFillBuffer<user_tag>(
+    VkCommandBuffer commandBuffer,
+    VkBuffer dstBuffer,
+    VkDeviceSize dstOffset,
+    VkDeviceSize size,
+    uint32_t data
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -108,11 +113,12 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdFillBuffer<user_tag>(VkCommandBuffer comma
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdFillMemoryKHR<user_tag>(VkCommandBuffer commandBuffer,
-                                                              const VkDeviceAddressRangeKHR* pDstRange,
-                                                              VkAddressCommandFlagsKHR dstFlags,
-                                                              uint32_t data)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdFillMemoryKHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkDeviceAddressRangeKHR* pDstRange,
+    VkAddressCommandFlagsKHR dstFlags,
+    uint32_t data
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -129,13 +135,14 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdFillMemoryKHR<user_tag>(VkCommandBuffer co
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdClearColorImage<user_tag>(VkCommandBuffer commandBuffer,
-                                                                VkImage image,
-                                                                VkImageLayout imageLayout,
-                                                                const VkClearColorValue* pColor,
-                                                                uint32_t rangeCount,
-                                                                const VkImageSubresourceRange* pRanges)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdClearColorImage<user_tag>(
+    VkCommandBuffer commandBuffer,
+    VkImage image,
+    VkImageLayout imageLayout,
+    const VkClearColorValue* pColor,
+    uint32_t rangeCount,
+    const VkImageSubresourceRange* pRanges
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -152,13 +159,14 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdClearColorImage<user_tag>(VkCommandBuffer 
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdClearDepthStencilImage<user_tag>(VkCommandBuffer commandBuffer,
-                                                                       VkImage image,
-                                                                       VkImageLayout imageLayout,
-                                                                       const VkClearDepthStencilValue* pDepthStencil,
-                                                                       uint32_t rangeCount,
-                                                                       const VkImageSubresourceRange* pRanges)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdClearDepthStencilImage<user_tag>(
+    VkCommandBuffer commandBuffer,
+    VkImage image,
+    VkImageLayout imageLayout,
+    const VkClearDepthStencilValue* pDepthStencil,
+    uint32_t rangeCount,
+    const VkImageSubresourceRange* pRanges
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -175,12 +183,13 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdClearDepthStencilImage<user_tag>(VkCommand
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBuffer<user_tag>(VkCommandBuffer commandBuffer,
-                                                           VkBuffer srcBuffer,
-                                                           VkBuffer dstBuffer,
-                                                           uint32_t regionCount,
-                                                           const VkBufferCopy* pRegions)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBuffer<user_tag>(
+    VkCommandBuffer commandBuffer,
+    VkBuffer srcBuffer,
+    VkBuffer dstBuffer,
+    uint32_t regionCount,
+    const VkBufferCopy* pRegions
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -197,9 +206,10 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBuffer<user_tag>(VkCommandBuffer comma
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBuffer2<user_tag>(VkCommandBuffer commandBuffer,
-                                                            const VkCopyBufferInfo2* pCopyBufferInfo)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBuffer2<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkCopyBufferInfo2* pCopyBufferInfo
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -216,9 +226,10 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBuffer2<user_tag>(VkCommandBuffer comm
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBuffer2KHR<user_tag>(VkCommandBuffer commandBuffer,
-                                                               const VkCopyBufferInfo2* pCopyBufferInfo)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBuffer2KHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkCopyBufferInfo2* pCopyBufferInfo
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -235,13 +246,14 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBuffer2KHR<user_tag>(VkCommandBuffer c
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBufferToImage<user_tag>(VkCommandBuffer commandBuffer,
-                                                                  VkBuffer srcBuffer,
-                                                                  VkImage dstImage,
-                                                                  VkImageLayout dstImageLayout,
-                                                                  uint32_t regionCount,
-                                                                  const VkBufferImageCopy* pRegions)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBufferToImage<user_tag>(
+    VkCommandBuffer commandBuffer,
+    VkBuffer srcBuffer,
+    VkImage dstImage,
+    VkImageLayout dstImageLayout,
+    uint32_t regionCount,
+    const VkBufferImageCopy* pRegions
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -258,10 +270,10 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBufferToImage<user_tag>(VkCommandBuffe
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL
-    layer_vkCmdCopyBufferToImage2<user_tag>(VkCommandBuffer commandBuffer,
-                                            const VkCopyBufferToImageInfo2* pCopyBufferToImageInfo)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBufferToImage2<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkCopyBufferToImageInfo2* pCopyBufferToImageInfo
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -278,10 +290,10 @@ VKAPI_ATTR void VKAPI_CALL
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL
-    layer_vkCmdCopyBufferToImage2KHR<user_tag>(VkCommandBuffer commandBuffer,
-                                               const VkCopyBufferToImageInfo2* pCopyBufferToImageInfo)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyBufferToImage2KHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkCopyBufferToImageInfo2* pCopyBufferToImageInfo
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -298,14 +310,15 @@ VKAPI_ATTR void VKAPI_CALL
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImage<user_tag>(VkCommandBuffer commandBuffer,
-                                                          VkImage srcImage,
-                                                          VkImageLayout srcImageLayout,
-                                                          VkImage dstImage,
-                                                          VkImageLayout dstImageLayout,
-                                                          uint32_t regionCount,
-                                                          const VkImageCopy* pRegions)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImage<user_tag>(
+    VkCommandBuffer commandBuffer,
+    VkImage srcImage,
+    VkImageLayout srcImageLayout,
+    VkImage dstImage,
+    VkImageLayout dstImageLayout,
+    uint32_t regionCount,
+    const VkImageCopy* pRegions
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -323,9 +336,10 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImage<user_tag>(VkCommandBuffer comman
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImage2<user_tag>(VkCommandBuffer commandBuffer,
-                                                           const VkCopyImageInfo2* pCopyImageInfo)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImage2<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkCopyImageInfo2* pCopyImageInfo
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -342,9 +356,10 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImage2<user_tag>(VkCommandBuffer comma
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImage2KHR<user_tag>(VkCommandBuffer commandBuffer,
-                                                              const VkCopyImageInfo2* pCopyImageInfo)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImage2KHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkCopyImageInfo2* pCopyImageInfo
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -361,13 +376,14 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImage2KHR<user_tag>(VkCommandBuffer co
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImageToBuffer<user_tag>(VkCommandBuffer commandBuffer,
-                                                                  VkImage srcImage,
-                                                                  VkImageLayout srcImageLayout,
-                                                                  VkBuffer dstBuffer,
-                                                                  uint32_t regionCount,
-                                                                  const VkBufferImageCopy* pRegions)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImageToBuffer<user_tag>(
+    VkCommandBuffer commandBuffer,
+    VkImage srcImage,
+    VkImageLayout srcImageLayout,
+    VkBuffer dstBuffer,
+    uint32_t regionCount,
+    const VkBufferImageCopy* pRegions
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -384,10 +400,10 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImageToBuffer<user_tag>(VkCommandBuffe
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL
-    layer_vkCmdCopyImageToBuffer2<user_tag>(VkCommandBuffer commandBuffer,
-                                            const VkCopyImageToBufferInfo2* pCopyImageToBufferInfo)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImageToBuffer2<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkCopyImageToBufferInfo2* pCopyImageToBufferInfo
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -404,10 +420,10 @@ VKAPI_ATTR void VKAPI_CALL
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL
-    layer_vkCmdCopyImageToBuffer2KHR<user_tag>(VkCommandBuffer commandBuffer,
-                                               const VkCopyImageToBufferInfo2* pCopyImageToBufferInfo)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImageToBuffer2KHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkCopyImageToBufferInfo2* pCopyImageToBufferInfo
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -424,10 +440,10 @@ VKAPI_ATTR void VKAPI_CALL
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL
-    layer_vkCmdCopyImageToMemoryKHR<user_tag>(VkCommandBuffer commandBuffer,
-                                              const VkCopyDeviceMemoryImageInfoKHR* pCopyMemoryInfo)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImageToMemoryKHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkCopyDeviceMemoryImageInfoKHR* pCopyMemoryInfo
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -444,9 +460,10 @@ VKAPI_ATTR void VKAPI_CALL
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMemoryKHR<user_tag>(VkCommandBuffer commandBuffer,
-                                                              const VkCopyDeviceMemoryInfoKHR* pCopyMemoryInfo)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMemoryKHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkCopyDeviceMemoryInfoKHR* pCopyMemoryInfo
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -463,10 +480,10 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMemoryKHR<user_tag>(VkCommandBuffer co
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL
-    layer_vkCmdCopyMemoryToImageKHR<user_tag>(VkCommandBuffer commandBuffer,
-                                              const VkCopyDeviceMemoryImageInfoKHR* pCopyMemoryInfo)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMemoryToImageKHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkCopyDeviceMemoryImageInfoKHR* pCopyMemoryInfo
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -483,15 +500,15 @@ VKAPI_ATTR void VKAPI_CALL
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL
-    layer_vkCmdCopyQueryPoolResultsToMemoryKHR<user_tag>(VkCommandBuffer commandBuffer,
-                                                         VkQueryPool queryPool,
-                                                         uint32_t firstQuery,
-                                                         uint32_t queryCount,
-                                                         const VkStridedDeviceAddressRangeKHR* pDstRange,
-                                                         VkAddressCommandFlagsKHR dstFlags,
-                                                         VkQueryResultFlags queryResultFlags)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyQueryPoolResultsToMemoryKHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    VkQueryPool queryPool,
+    uint32_t firstQuery,
+    uint32_t queryCount,
+    const VkStridedDeviceAddressRangeKHR* pDstRange,
+    VkAddressCommandFlagsKHR dstFlags,
+    VkQueryResultFlags queryResultFlags
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -509,12 +526,13 @@ VKAPI_ATTR void VKAPI_CALL
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdUpdateMemoryKHR<user_tag>(VkCommandBuffer commandBuffer,
-                                                                const VkDeviceAddressRangeKHR* pDstRange,
-                                                                VkAddressCommandFlagsKHR dstFlags,
-                                                                VkDeviceSize dataSize,
-                                                                const void* pData)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdUpdateMemoryKHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkDeviceAddressRangeKHR* pDstRange,
+    VkAddressCommandFlagsKHR dstFlags,
+    VkDeviceSize dataSize,
+    const void* pData
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -531,10 +549,10 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdUpdateMemoryKHR<user_tag>(VkCommandBuffer 
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL
-    layer_vkCmdCopyMemoryIndirectKHR<user_tag>(VkCommandBuffer commandBuffer,
-                                               const VkCopyMemoryIndirectInfoKHR* pCopyMemoryIndirectInfo)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMemoryIndirectKHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkCopyMemoryIndirectInfoKHR* pCopyMemoryIndirectInfo
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -551,10 +569,10 @@ VKAPI_ATTR void VKAPI_CALL
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL
-    layer_vkCmdCopyMemoryToImageIndirectKHR<user_tag>(VkCommandBuffer commandBuffer,
-                                                      const VkCopyMemoryToImageIndirectInfoKHR* pCopyMemoryToImageIndirectInfo)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMemoryToImageIndirectKHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkCopyMemoryToImageIndirectInfoKHR* pCopyMemoryToImageIndirectInfo
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -571,10 +589,10 @@ VKAPI_ATTR void VKAPI_CALL
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL
-    layer_vkCmdCopyAccelerationStructureKHR<user_tag>(VkCommandBuffer commandBuffer,
-                                                      const VkCopyAccelerationStructureInfoKHR* pInfo)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyAccelerationStructureKHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkCopyAccelerationStructureInfoKHR* pInfo
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -591,10 +609,10 @@ VKAPI_ATTR void VKAPI_CALL
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL
-    layer_vkCmdCopyAccelerationStructureToMemoryKHR<user_tag>(VkCommandBuffer commandBuffer,
-                                                              const VkCopyAccelerationStructureToMemoryInfoKHR* pInfo)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyAccelerationStructureToMemoryKHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkCopyAccelerationStructureToMemoryInfoKHR* pInfo
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -610,10 +628,10 @@ VKAPI_ATTR void VKAPI_CALL
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL
-    layer_vkCmdCopyMemoryToAccelerationStructureKHR<user_tag>(VkCommandBuffer commandBuffer,
-                                                              const VkCopyMemoryToAccelerationStructureInfoKHR* pInfo)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMemoryToAccelerationStructureKHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkCopyMemoryToAccelerationStructureInfoKHR* pInfo
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store

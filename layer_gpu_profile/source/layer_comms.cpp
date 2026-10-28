@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024-2025 Arm Limited
+ * Copyright (c) 2024-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -29,8 +29,10 @@
 
 
 /* See header for documentation. */
-ProfileComms::ProfileComms(Comms::CommsInterface& _comms)
-    : comms(_comms)
+ProfileComms::ProfileComms(
+    Comms::CommsInterface& _comms
+) :
+    comms(_comms)
 {
     if (comms.isConnected())
     {
@@ -39,8 +41,9 @@ ProfileComms::ProfileComms(Comms::CommsInterface& _comms)
 }
 
 /* See header for documentation. */
-void ProfileComms::txMessage(const std::string& message)
-{
+void ProfileComms::txMessage(
+    const std::string& message
+) {
     // Message endpoint is not available
     if (endpoint == 0)
     {

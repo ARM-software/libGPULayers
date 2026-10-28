@@ -75,7 +75,9 @@ public:
      * @param handle     The dispatchable instance handle to use as an indirect key.
      * @param instance   The @c Instance object to store.
      */
-    static void store(VkInstance handle, std::unique_ptr<Instance>& instance);
+    static void store(
+        VkInstance handle,
+        std::unique_ptr<Instance>& instance);
 
     /**
      * @brief Fetch an instance from the global store of dispatchable instances.
@@ -84,7 +86,8 @@ public:
      *
      * @return The layer instance context.
      */
-    static Instance* retrieve(VkInstance handle);
+    static Instance* retrieve(
+        VkInstance handle);
 
     /**
      * @brief Fetch an instance from the global store of dispatchable instances.
@@ -93,7 +96,8 @@ public:
      *
      * @return The layer instance context.
      */
-    static Instance* retrieve(VkPhysicalDevice handle);
+    static Instance* retrieve(
+        VkPhysicalDevice handle);
 
     /**
      * @brief Drop an instance from the global store of dispatchable instances.
@@ -114,7 +118,9 @@ public:
      * @param instance               The instance handle this instance is created with.
      * @param nlayerGetProcAddress   The vkGetProcAddress function in the driver/next layer down.
      */
-    Instance(VkInstance instance, PFN_vkGetInstanceProcAddr nlayerGetProcAddress);
+    Instance(
+        VkInstance instance,
+        PFN_vkGetInstanceProcAddr nlayerGetProcAddress);
 
 public:
     /**

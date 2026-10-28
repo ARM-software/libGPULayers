@@ -33,29 +33,36 @@ namespace Tracker
 /* See header for details. */
 std::atomic<uint64_t> LCSWorkload::nextTagID {1};
 
-LCSWorkload::LCSWorkload(uint64_t _tagID)
-    : tagID(_tagID)
+LCSWorkload::LCSWorkload(
+    uint64_t _tagID
+) :
+    tagID(_tagID)
 {
 }
 
 /* See header for details. */
-LCSRenderPassBase::LCSRenderPassBase(uint64_t _tagID, bool _suspending)
-    : LCSWorkload(_tagID),
-      suspending(_suspending)
+LCSRenderPassBase::LCSRenderPassBase(
+    uint64_t _tagID,
+    bool _suspending
+) :
+    LCSWorkload(_tagID),
+    suspending(_suspending)
 {
 }
 
 /* See header for details. */
-LCSRenderPass::LCSRenderPass(uint64_t _tagID,
-                             const RenderPass& renderPass,
-                             uint32_t _width,
-                             uint32_t _height,
-                             bool _suspending,
-                             bool _oneTimeSubmit)
-    : LCSRenderPassBase(_tagID, _suspending),
-      width(_width),
-      height(_height),
-      oneTimeSubmit(_oneTimeSubmit)
+LCSRenderPass::LCSRenderPass(
+    uint64_t _tagID,
+    const RenderPass& renderPass,
+    uint32_t _width,
+    uint32_t _height,
+    bool _suspending,
+    bool _oneTimeSubmit
+) :
+    LCSRenderPassBase(_tagID, _suspending),
+    width(_width),
+    height(_height),
+    oneTimeSubmit(_oneTimeSubmit)
 {
     // Copy these as the render pass object may be transient.
     subpassCount = renderPass.getSubpassCount();
@@ -63,34 +70,50 @@ LCSRenderPass::LCSRenderPass(uint64_t _tagID,
 }
 
 /* See header for details. */
-LCSDispatch::LCSDispatch(uint64_t _tagID, int64_t _xGroups, int64_t _yGroups, int64_t _zGroups)
-    : LCSWorkload(_tagID),
-      xGroups(_xGroups),
-      yGroups(_yGroups),
-      zGroups(_zGroups)
+LCSDispatch::LCSDispatch(
+    uint64_t _tagID,
+    int64_t _xGroups,
+    int64_t _yGroups,
+    int64_t _zGroups
+) :
+    LCSWorkload(_tagID),
+    xGroups(_xGroups),
+    yGroups(_yGroups),
+    zGroups(_zGroups)
 {
 }
 
 /* See header for details. */
-LCSDispatchDataGraph::LCSDispatchDataGraph(uint64_t _tagID)
-    : LCSWorkload(_tagID)
+LCSDispatchDataGraph::LCSDispatchDataGraph(
+    uint64_t _tagID
+) :
+    LCSWorkload(_tagID)
 {
 }
 
 /* See header for details. */
-LCSTraceRays::LCSTraceRays(uint64_t _tagID, int64_t _xItems, int64_t _yItems, int64_t _zItems)
-    : LCSWorkload(_tagID),
-      xItems(_xItems),
-      yItems(_yItems),
-      zItems(_zItems)
+LCSTraceRays::LCSTraceRays(
+    uint64_t _tagID,
+    int64_t _xItems,
+    int64_t _yItems,
+    int64_t _zItems
+) :
+    LCSWorkload(_tagID),
+    xItems(_xItems),
+    yItems(_yItems),
+    zItems(_zItems)
 {
 }
 
 /* See header for details. */
-LCSImageTransfer::LCSImageTransfer(uint64_t _tagID, Type _transferType, int64_t _pixelCount)
-    : LCSWorkload(_tagID),
-      transferType(_transferType),
-      pixelCount(_pixelCount)
+LCSImageTransfer::LCSImageTransfer(
+    uint64_t _tagID,
+    Type _transferType,
+    int64_t _pixelCount
+) :
+    LCSWorkload(_tagID),
+    transferType(_transferType),
+    pixelCount(_pixelCount)
 {
 }
 
@@ -118,10 +141,14 @@ std::string LCSImageTransfer::getTransferTypeStr() const
 }
 
 /* See header for details. */
-LCSBufferTransfer::LCSBufferTransfer(uint64_t _tagID, Type _transferType, int64_t _byteCount)
-    : LCSWorkload(_tagID),
-      transferType(_transferType),
-      byteCount(_byteCount)
+LCSBufferTransfer::LCSBufferTransfer(
+    uint64_t _tagID,
+    Type _transferType,
+    int64_t _byteCount
+) :
+    LCSWorkload(_tagID),
+    transferType(_transferType),
+    byteCount(_byteCount)
 {
 }
 
@@ -147,10 +174,14 @@ std::string LCSBufferTransfer::getTransferTypeStr() const
 }
 
 /* See header for details. */
-LCSAccelerationStructureBuild::LCSAccelerationStructureBuild(uint64_t _tagID, Type _buildType, int64_t _primitiveCount)
-    : LCSWorkload(_tagID),
-      buildType(_buildType),
-      primitiveCount(_primitiveCount)
+LCSAccelerationStructureBuild::LCSAccelerationStructureBuild(
+    uint64_t _tagID,
+    Type _buildType,
+    int64_t _primitiveCount
+) :
+    LCSWorkload(_tagID),
+    buildType(_buildType),
+    primitiveCount(_primitiveCount)
 {
 }
 
@@ -172,12 +203,14 @@ std::string LCSAccelerationStructureBuild::getBuildTypeStr() const
 }
 
 /* See header for details. */
-LCSAccelerationStructureTransfer::LCSAccelerationStructureTransfer(uint64_t _tagID,
-                                                                   Type _transferType,
-                                                                   int64_t _byteCount)
-    : LCSWorkload(_tagID),
-      transferType(_transferType),
-      byteCount(_byteCount)
+LCSAccelerationStructureTransfer::LCSAccelerationStructureTransfer(
+    uint64_t _tagID,
+    Type _transferType,
+    int64_t _byteCount
+) :
+    LCSWorkload(_tagID),
+    transferType(_transferType),
+    byteCount(_byteCount)
 {
 }
 
@@ -207,8 +240,10 @@ std::string LCSAccelerationStructureTransfer::getTransferTypeStr() const
 }
 
 /* See header for details. */
-LCSInstructionMarkerPush::LCSInstructionMarkerPush(const std::string& _label)
-    : label(std::make_shared<std::string>(_label))
+LCSInstructionMarkerPush::LCSInstructionMarkerPush(
+    const std::string& _label
+) :
+    label(std::make_shared<std::string>(_label))
 {
 }
 

@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024 Arm Limited
+ * Copyright (c) 2024-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -52,7 +52,8 @@ public:
      *
      * @param parent   The parent comms module.
      */
-    Receiver(CommsModule& parent);
+    Receiver(
+        CommsModule& parent);
 
     /**
      * @brief Destroy this receiver.
@@ -71,7 +72,8 @@ public:
      *
      * @param message   The message waiting for a response.
      */
-    void parkMessage(std::shared_ptr<Message> message);
+    void parkMessage(
+        std::shared_ptr<Message> message);
 
 private:
     /**
@@ -85,7 +87,9 @@ private:
      * @param messageID   The message to wake.
      * @param data        The response data payload from the host.
      */
-    void wakeMessage(MessageID messageID, std::unique_ptr<MessageData> data);
+    void wakeMessage(
+        MessageID messageID,
+        std::unique_ptr<MessageData> data);
 
     /**
      * @brief Receive N bytes of data from the socket.
@@ -95,7 +99,9 @@ private:
      *
      * @return @c true if we received a message, @c false otherwise.
      */
-    bool receiveData(uint8_t* data, size_t dataSize);
+    bool receiveData(
+        uint8_t* data,
+        size_t dataSize);
 
 private:
     /**

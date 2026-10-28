@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2025 Arm Limited
+ * Copyright (c) 2025-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -41,9 +41,10 @@ extern std::mutex g_vulkanLock;
  *
  * @return Bitmask of supported VkImageCompressionFixedRateFlagBitsEXT bits.
  */
-static VkImageCompressionFixedRateFlagsEXT getSupportedCompressionLevels(Device* layer,
-                                                                         const VkImageCreateInfo* pCreateInfo)
-{
+static VkImageCompressionFixedRateFlagsEXT getSupportedCompressionLevels(
+    Device* layer,
+    const VkImageCreateInfo* pCreateInfo
+) {
     VkImageCompressionControlEXT compressionInfo {
         .sType = VK_STRUCTURE_TYPE_IMAGE_COMPRESSION_CONTROL_EXT,
         .pNext = nullptr,
@@ -85,11 +86,12 @@ static VkImageCompressionFixedRateFlagsEXT getSupportedCompressionLevels(Device*
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateImage<user_tag>(VkDevice device,
-                                                             const VkImageCreateInfo* pCreateInfo,
-                                                             const VkAllocationCallbacks* pAllocator,
-                                                             VkImage* pImage)
-{
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateImage<user_tag>(
+    VkDevice device,
+    const VkImageCreateInfo* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkImage* pImage
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
