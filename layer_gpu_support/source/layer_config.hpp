@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2025 Arm Limited
+ * Copyright (c) 2025-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -82,6 +82,16 @@ public:
      * @brief True if config wants to serialize after compute workloads.
      */
     bool serialize_cmdstream_compute_dispatch_post() const;
+
+    /**
+     * @brief True if config wants to serialize before data graph workloads.
+     */
+    bool serialize_cmdstream_data_graph_dispatch_pre() const;
+
+    /**
+     * @brief True if config wants to serialize after data graph workloads.
+     */
+    bool serialize_cmdstream_data_graph_dispatch_post() const;
 
     /**
      * @brief True if config wants to serialize before render pass workloads.
@@ -232,6 +242,16 @@ private:
      * @brief True if we force serialize after compute dispatches.
      */
     bool conf_serialize_dispatch_post {false};
+
+    /**
+     * @brief True if we force serialize before data graph dispatches.
+     */
+    bool conf_serialize_data_graph_dispatch_pre {false};
+
+    /**
+     * @brief True if we force serialize after data graph dispatches.
+     */
+    bool conf_serialize_data_graph_dispatch_post {false};
 
     /**
      * @brief True if we force serialize before render pass workloads.

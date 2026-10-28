@@ -121,17 +121,21 @@ convenience options to force disable or enable all serialization.
     "queue": false,           // Force cross-queue serialization of submits
     "queue_wait_idle": false, // Insert vkDeviceWaitIdle after submits
     "commandstream": {
+        "asbuild": {
+            "pre": false,   // Insert full barrier before acceleration structure builds
+            "post": false   // Insert full barrier after acceleration structure builds
+        },
         "compute": {
             "pre": false,   // Insert full barrier before dispatches
             "post": false   // Insert full barrier after dispatches
         },
+        "datagraph": {
+            "pre": false,   // Insert full barrier before data graph dispatches
+            "post": false   // Insert full barrier after data graph dispatches
+        },
         "renderpass": {
             "pre": false,   // Insert full barrier before render passes
             "post": false   // Insert full barrier after render passes
-        },
-        "asbuild": {
-            "pre": false,   // Insert full barrier before acceleration structure builds
-            "post": false   // Insert full barrier after acceleration structure builds
         },
         "tracerays": {
             "pre": false,   // Insert full barrier before trace rays
@@ -190,4 +194,4 @@ allocated and handled by the driver.
 
 - - -
 
-_Copyright © 2025, Arm Limited and contributors._
+_Copyright © 2025-2026, Arm Limited and contributors._
