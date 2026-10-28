@@ -743,6 +743,54 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdUpdateMemoryKHR<user_tag>(
 
 /* See Vulkan API for documentation. */
 template<>
+VKAPI_ATTR void VKAPI_CALL
+    layer_vkCmdCopyMemoryIndirectKHR<user_tag>(VkCommandBuffer commandBuffer,
+                                               const VkCopyMemoryIndirectInfoKHR* pCopyMemoryIndirectInfo)
+{
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
+    auto* layer = Device::retrieve(commandBuffer);
+
+    // The transfer size is stored in device memory, so it is not known here.
+    registerBufferTransfer(layer,
+                           commandBuffer,
+                           Tracker::LCSBufferTransfer::Type::copy_memory,
+                           -1);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    layer->driver.vkCmdCopyMemoryIndirectKHR(commandBuffer, pCopyMemoryIndirectInfo);
+    emitCPUTrap(*layer, commandBuffer);
+}
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL
+    layer_vkCmdCopyMemoryToImageIndirectKHR<user_tag>(VkCommandBuffer commandBuffer,
+                                                      const VkCopyMemoryToImageIndirectInfoKHR* pCopyMemoryToImageIndirectInfo)
+{
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
+    auto* layer = Device::retrieve(commandBuffer);
+
+    // The transfer size is stored in device memory, so it is not known here.
+    registerImageTransfer(layer,
+                          commandBuffer,
+                          Tracker::LCSImageTransfer::Type::copy_memory_to_image,
+                          -1);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    layer->driver.vkCmdCopyMemoryToImageIndirectKHR(commandBuffer, pCopyMemoryToImageIndirectInfo);
+    emitCPUTrap(*layer, commandBuffer);
+}
+
+/* See Vulkan API for documentation. */
+template<>
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyAccelerationStructureKHR<user_tag>(VkCommandBuffer commandBuffer,
                                                                              const VkCopyAccelerationStructureInfoKHR* pInfo)
 {
