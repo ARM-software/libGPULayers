@@ -244,6 +244,50 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirectCountKHR<user_tag>(VkCommandBu
                                                                      uint32_t maxDrawCount,
                                                                      uint32_t stride);
 
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL
+    layer_vkCmdDrawIndexedIndirect2KHR<user_tag>(VkCommandBuffer commandBuffer,
+                                                 const VkDrawIndirect2InfoKHR* pInfo);
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL
+    layer_vkCmdDrawIndexedIndirectCount2KHR<user_tag>(VkCommandBuffer commandBuffer,
+                                                      const VkDrawIndirectCount2InfoKHR* pInfo);
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirect2KHR<user_tag>(VkCommandBuffer commandBuffer,
+                                                                 const VkDrawIndirect2InfoKHR* pInfo);
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirectByteCount2EXT<user_tag>(VkCommandBuffer commandBuffer,
+                                                                          uint32_t instanceCount,
+                                                                          uint32_t firstInstance,
+                                                                          const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfo,
+                                                                          uint32_t counterOffset,
+                                                                          uint32_t vertexStride);
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL
+    layer_vkCmdDrawIndirectCount2KHR<user_tag>(VkCommandBuffer commandBuffer,
+                                               const VkDrawIndirectCount2InfoKHR* pInfo);
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL
+    layer_vkCmdDrawMeshTasksIndirect2EXT<user_tag>(VkCommandBuffer commandBuffer,
+                                                   const VkDrawIndirect2InfoKHR* pInfo);
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL
+    layer_vkCmdDrawMeshTasksIndirectCount2EXT<user_tag>(VkCommandBuffer commandBuffer,
+                                                        const VkDrawIndirectCount2InfoKHR* pInfo);
+
 // Functions for compute dispatches
 
 /* See Vulkan API for documentation. */
@@ -443,6 +487,49 @@ template<>
 VKAPI_ATTR void VKAPI_CALL
     layer_vkCmdCopyImageToBuffer2KHR<user_tag>(VkCommandBuffer commandBuffer,
                                                const VkCopyImageToBufferInfo2* pCopyImageToBufferInfo);
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL
+    layer_vkCmdCopyImageToMemoryKHR<user_tag>(VkCommandBuffer commandBuffer,
+                                              const VkCopyDeviceMemoryImageInfoKHR* pCopyMemoryInfo);
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMemoryKHR<user_tag>(VkCommandBuffer commandBuffer,
+                                                              const VkCopyDeviceMemoryInfoKHR* pCopyMemoryInfo);
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL
+    layer_vkCmdCopyMemoryToImageKHR<user_tag>(VkCommandBuffer commandBuffer,
+                                              const VkCopyDeviceMemoryImageInfoKHR* pCopyMemoryInfo);
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL
+    layer_vkCmdCopyQueryPoolResultsToMemoryKHR<user_tag>(VkCommandBuffer commandBuffer,
+                                                         VkQueryPool queryPool,
+                                                         uint32_t firstQuery,
+                                                         uint32_t queryCount,
+                                                         const VkStridedDeviceAddressRangeKHR* pDstRange,
+                                                         VkAddressCommandFlagsKHR dstFlags,
+                                                         VkQueryResultFlags queryResultFlags);
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdFillMemoryKHR<user_tag>(VkCommandBuffer commandBuffer,
+                                                              const VkDeviceAddressRangeKHR* pDstRange,
+                                                              VkAddressCommandFlagsKHR dstFlags,
+                                                              uint32_t data);
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdUpdateMemoryKHR<user_tag>(VkCommandBuffer commandBuffer,
+                                                                const VkDeviceAddressRangeKHR* pDstRange,
+                                                                VkAddressCommandFlagsKHR dstFlags,
+                                                                VkDeviceSize dataSize,
+                                                                const void* pData);
 
 /* See Vulkan API for documentation. */
 template<>
