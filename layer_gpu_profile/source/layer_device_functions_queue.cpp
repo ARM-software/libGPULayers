@@ -42,9 +42,9 @@ extern std::mutex g_vulkanLock;
 /**
  * @brief Process the command buffer stream for events.
  *
- * @param layer             The layer context.
- * @param queue             The queue being submitted to.
- * @param commandBuffer     The command buffer being submitted.
+ * @param layer           The layer context.
+ * @param queue           The queue being submitted to.
+ * @param commandBuffer   The command buffer being submitted.
  */
 static void processLayerCommandStream(
     Device& layer,
@@ -70,9 +70,9 @@ static void processLayerCommandStream(
 }
 
 /**
- * @brief Process frame boundaries
+ * @brief Process frame boundaries.
  *
- * @param layer             The layer context.
+ * @param layer   The layer context.
  */
 static void processFrameBoundaryPreSubmit(
     Device& layer
@@ -132,7 +132,7 @@ static bool processManualFrameBoundaryPreSubmit(
 }
 
 /**
- * @brief Process frame boundaries
+ * @brief Process frame boundaries.
  *
  * @param layer         The layer context.
  * @param frameSample   @c true to emit frame sample, @c false just to reset.

@@ -38,9 +38,10 @@ namespace
 {
 
     /**
-     * @brief A visitor implementation that processes each command stream instruction, and
-     *        correctly updates the Queue's state, as well as serializing workload objects
-     *        into the message data callback.
+     * @brief A visitor pattern to processes command stream instructions.
+     *
+     * The visitor implementation updates the Queue's state, as well as
+     * serializing workload objects into the message data callback.
      */
     class SubmitCommandInstructionVisitor
     {
@@ -54,20 +55,23 @@ namespace
         {
         }
 
-        // visitor should not be copied or moved from
+        // Visitor should not be copied or moved from
         SubmitCommandInstructionVisitor(
             const SubmitCommandInstructionVisitor&) = delete;
+
         SubmitCommandInstructionVisitor(
             SubmitCommandInstructionVisitor&&) noexcept = delete;
+
         SubmitCommandInstructionVisitor& operator=(
             const SubmitCommandInstructionVisitor&) = delete;
+
         SubmitCommandInstructionVisitor& operator=(
             SubmitCommandInstructionVisitor&&) noexcept = delete;
 
         /**
-         * @brief Visit a debug-label push marker instruction
+         * @brief Visit a debug-label push marker instruction.
          *
-         * @param instruction The push instruction
+         * @param instruction   The push instruction
          */
         void operator()(
             const LCSInstructionMarkerPush& instruction
@@ -76,9 +80,9 @@ namespace
         }
 
         /**
-         * @brief Visit a debug-label pop marker instruction
+         * @brief Visit a debug-label pop marker instruction.
          *
-         * @param instruction The pop instruction
+         * @param instruction   The pop instruction
          */
         void operator()(
             const LCSInstructionMarkerPop& instruction
@@ -94,9 +98,9 @@ namespace
         }
 
         /**
-         * @brief Visit a render pass workload instruction
+         * @brief Visit a render pass workload instruction.
          *
-         * @param instruction The workload instruction
+         * @param instruction   The workload instruction
          */
         void operator()(
             const LCSInstructionWorkload<LCSRenderPass>& instruction
@@ -114,9 +118,9 @@ namespace
         }
 
         /**
-         * @brief Visit a render pass continuation workload instruction
+         * @brief Visit a render pass continuation workload instruction.
          *
-         * @param instruction The workload instruction
+         * @param instruction   The workload instruction
          */
         void operator()(
             const LCSInstructionWorkload<LCSRenderPassContinuation>& instruction
@@ -138,9 +142,9 @@ namespace
         }
 
         /**
-         * @brief Visit a dispatch/trace rays/any transfer workload instruction
+         * @brief Visit a dispatch/trace rays/transfer workload instruction.
          *
-         * @param instruction The workload instruction
+         * @param instruction   The workload instruction
          */
         template<typename WorkloadType>
         requires(std::is_same_v<WorkloadType, LCSDispatch>

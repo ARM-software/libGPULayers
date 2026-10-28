@@ -54,25 +54,30 @@ class TimelineProtobufEncoder : public Tracker::SubmitCommandWorkloadVisitor
 {
 public:
     /**
-     * @brief Called once when the GPU timeline comms connection is first established.
+     * @brief Emit a header message.
      *
-     * Outputs a header message into the stream identifying the version of the layer driver protocol
-     * used.
+     * This is called once, when the GPU timeline comms connection is first
+     * established. It outputs a header message into the stream that identifies
+     * the version of the layer driver protocol used.
      *
-     * @param comms The commons interface used to transmit the message
+     * @param comms   The comms interface used to transmit the message
      */
     static void emitHeaderMessage(
         TimelineComms& comms);
 
     /**
-     * @brief Called once when the layer is first created to produce the "metadata" frame for that layer device
+     * @brief Emit a device metadata message.
      *
-     * @param device The device object that the payloads are produced for, and to which they are passed for transmission
-     * @param pid The process ID of this process
-     * @param major The driver major version
-     * @param minor The driver minor version
-     * @param patch The driver patch version
-     * @param name The device name
+     * This is called once, when the layer is first created for a device. It
+     * outputs a metadata message into the steam that identifies the device and
+     * driver configuration it uses.
+     *
+     * @param device   The device object that the payloads are produced for
+     * @param pid      The process ID of this process
+     * @param major    The driver major version
+     * @param minor    The driver minor version
+     * @param patch    The driver patch version
+     * @param name     The device name
      */
     static void emitMetadata(
         Device& device,
@@ -83,11 +88,14 @@ public:
         std::string name);
 
     /**
-     * @brief Called at the start of a frame, delimiting the subsequent items from any later frame
+     * @brief Emit a start of frame message.
      *
-     * @param device The device object that the payloads are produced for, and to which they are passed for transmission
-     * @param frameNumber The frame number that uniquely identifies this frame
-     * @param timestamp The timestamp of the frame
+     * This is called at the start of every frame, delimiting the subsequent
+     * messages from from any earlier frame.
+     *
+     * @param device        The device object that the payloads are produced for
+     * @param frameNumber   The frame number that uniquely identifies this frame
+     * @param timestamp     The timestamp of the frame
      */
     static void emitFrame(
         Device& device,
@@ -95,10 +103,9 @@ public:
         uint64_t timestamp);
 
     /**
-     * Construct a new workload metadata emitter that will output payloads for the provided device
+     * @brief Construct a new workload metadata emitter for the provided device.
      *
-     * @param _device The device object that the payloads are produced for, and to which they are passed for
-     * transmission
+     * @param _device   The device object that the payloads are produced for.
      */
     TimelineProtobufEncoder(
         Device& _device
@@ -110,10 +117,13 @@ public:
     // Visitor should not be copied or moved from
     TimelineProtobufEncoder(
         const TimelineProtobufEncoder&) = delete;
+
     TimelineProtobufEncoder(
         TimelineProtobufEncoder&&) noexcept = delete;
+
     TimelineProtobufEncoder& operator=(
         const TimelineProtobufEncoder&) = delete;
+
     TimelineProtobufEncoder& operator=(
         TimelineProtobufEncoder&&) noexcept = delete;
 
@@ -121,38 +131,48 @@ public:
     void operator()(
         const Tracker::LCSRenderPass& renderPass,
         const std::vector<std::string>& debugStack) override;
+
     void operator()(
         const Tracker::LCSRenderPassContinuation& continuation,
         const std::vector<std::string>& debugStack,
         uint64_t renderPassTagID) override;
+
     void operator()(
         const Tracker::LCSDispatch& dispatch,
         const std::vector<std::string>& debugStack) override;
+
     void operator()(
         const Tracker::LCSDispatchDataGraph& dispatch,
         const std::vector<std::string>& debugStack) override;
+
     void operator()(
         const Tracker::LCSTraceRays& traceRays,
         const std::vector<std::string>& debugStack) override;
+
     void operator()(
         const Tracker::LCSImageTransfer& imageTransfer,
         const std::vector<std::string>& debugStack) override;
+
     void operator()(
         const Tracker::LCSBufferTransfer& bufferTransfer,
         const std::vector<std::string>& debugStack) override;
+
     void operator()(
         const Tracker::LCSAccelerationStructureBuild& asBuild,
         const std::vector<std::string>& debugStack) override;
+
     void operator()(
         const Tracker::LCSAccelerationStructureTransfer& asTransfer,
         const std::vector<std::string>& debugStack) override;
 
     /**
-     * @brief Called at the start of the submit to emit a "Submit" record, delimiting the subsequent items from any
-     * later submit
+     * @brief Emit a queue submit message.
      *
-     * @param queue The queue that was submitted to
-     * @param timestamp The timestamp of the submission
+     * This is called at the start of every submit, delimiting the subsequent
+     * messages from from any earlier submit.
+     *
+     * @param queue       The queue that was submitted to
+     * @param timestamp   The timestamp of the submission
      */
     void emitSubmit(
         VkQueue queue,

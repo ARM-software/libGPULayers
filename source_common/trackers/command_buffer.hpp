@@ -211,6 +211,8 @@ public:
 
     /**
      * @brief Execute a secondary command buffer.
+     *
+     * @param secondary   The secondary command buffer to execute.
      */
     void executeCommands(
         CommandBuffer& secondary);
@@ -271,7 +273,7 @@ public:
     /**
      * @brief Construct a new command pool wrapping a Vulkan allocation.
      *
-     * @param handle       The Vulkan pool buffer handle we are wrapping.
+     * @param handle   The Vulkan pool buffer handle we are wrapping.
      */
     CommandPool(
         VkCommandPool handle);

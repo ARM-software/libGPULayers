@@ -25,7 +25,7 @@
 
 /**
  * @file
- * Declares the a config file to parameterize the layer.
+ * Declares a config file to parameterize the layer.
  */
 
 #pragma once

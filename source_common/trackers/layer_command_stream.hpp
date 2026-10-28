@@ -53,7 +53,7 @@
 namespace Tracker
 {
 /**
- * @brief Base class representing a GPU workload in the command stream.
+ * @brief Base class for a workload in the command stream.
  */
 class LCSWorkload
 {
@@ -95,8 +95,10 @@ protected:
         uint64_t tagID);
 
     /**
-     * @brief Destroy a workload; this is protected since we should never really be dealing with workloads in the
-     * abstract sense (or at least not deleting them as such)
+     * @brief Destroy a workload.
+     *
+     * This is protected since we should never really be dealing with workloads
+     * in the abstract sense (or at least not deleting them as such)
      */
     ~LCSWorkload() noexcept = default;
 
@@ -108,7 +110,7 @@ private:
 };
 
 /**
- * @brief Common base class for classes representing render pass workload in the command stream.
+ * @brief Common base class for classes representing a render pass workload.
  */
 class LCSRenderPassBase : public LCSWorkload
 {
@@ -134,7 +136,11 @@ public:
         drawCallCount = count;
     }
 
-    /** @return The number of draw calls in this renderpass */
+    /**
+     * @brief Get the number of draw call commands recorded in this render pass.
+     *
+     * @return The number of draw calls in this render pass.
+     */
     uint64_t getDrawCallCount() const
     {
         return drawCallCount;
@@ -142,10 +148,10 @@ public:
 
 protected:
     /**
-     * @brief Construct the common renderbase workload
+     * @brief Construct the common render pass workload
      *
-     * @param tagID           The assigned tagID.
-     * @param suspending      Is this a render pass part that suspends later?
+     * @param tagID        The assigned tagID.
+     * @param suspending   Is this a render pass part that suspends later?
      */
     LCSRenderPassBase(
         uint64_t tagID,
@@ -166,7 +172,7 @@ protected:
 };
 
 /**
- * @brief Class representing a render pass workload in the command stream.
+ * @brief A render pass workload in the command stream.
  */
 class LCSRenderPass : public LCSRenderPassBase
 {
@@ -247,7 +253,7 @@ private:
 };
 
 /**
- * @brief Class representing the continuation of a split render pass workload continuation in the command stream.
+ * @brief A continuation of a split render pass workload in the command stream.
  */
 class LCSRenderPassContinuation : public LCSRenderPassBase
 {
@@ -255,7 +261,7 @@ public:
     /**
      * @brief Create a new workload representing a split render pass.
      *
-     * @param _suspending      Is this a render pass part that suspends later?
+     * @param _suspending   Is this a render pass part that suspends later?
      */
     LCSRenderPassContinuation(
         bool _suspending
@@ -266,7 +272,7 @@ public:
 };
 
 /**
- * @brief Class representing a compute dispatch workload in the command stream.
+ * @brief A compute dispatch workload in the command stream.
  */
 class LCSDispatch : public LCSWorkload
 {
@@ -323,7 +329,7 @@ private:
 };
 
 /**
- * @brief Class representing a data graph dispatch workload in the command stream.
+ * @brief A data graph dispatch workload in the command stream.
  */
 class LCSDispatchDataGraph : public LCSWorkload
 {
@@ -331,14 +337,14 @@ public:
     /**
      * @brief Create a new data graph dispatch workload.
      *
-     * @param tagID     The assigned tagID.
+     * @param tagID   The assigned tagID.
      */
     LCSDispatchDataGraph(
         uint64_t tagID);
 };
 
 /**
- * @brief Class representing a trace rays workload in the command stream.
+ * @brief A trace rays workload in the command stream.
  */
 class LCSTraceRays : public LCSWorkload
 {
@@ -395,7 +401,7 @@ private:
 };
 
 /**
- * @brief Class representing an image transfer workload in the command stream.
+ * @brief An image transfer workload in the command stream.
  */
 class LCSImageTransfer : public LCSWorkload
 {
@@ -453,7 +459,7 @@ private:
 };
 
 /**
- * @brief Class representing a buffer transfer workload in the command stream.
+ * @brief A buffer transfer workload in the command stream.
  */
 class LCSBufferTransfer : public LCSWorkload
 {
@@ -511,7 +517,7 @@ private:
 };
 
 /**
- * @brief Class representing an acceleration structure build workload in the command stream.
+ * @brief An acceleration structure build workload in the command stream.
  */
 class LCSAccelerationStructureBuild : public LCSWorkload
 {
@@ -566,7 +572,7 @@ private:
 };
 
 /**
- * @brief Class representing an acceleration structure transfer workload in the command stream.
+ * @brief An acceleration structure transfer workload in the command stream.
  */
 class LCSAccelerationStructureTransfer : public LCSWorkload
 {
@@ -588,6 +594,7 @@ public:
      *
      * @param tagID          The assigned tagID.
      * @param transferType   The subtype of the transfer.
+     * @param byteCount      The size of the transfer, or -1 if unknown.
      */
     LCSAccelerationStructureTransfer(
         uint64_t tagID,
@@ -622,7 +629,7 @@ private:
 };
 
 /**
- * @brief Class representing a marker instruction in the command stream that represents a debug label push operation.
+ * @brief A debug marker push instruction in the command stream.
  */
 class LCSInstructionMarkerPush
 {
@@ -649,22 +656,22 @@ private:
     /**
      * @brief The application debug label.
      *
-     * The label is stored in a shared pointer to avoid copying the actual string when it is shared between
-     * subcommandbuffers
+     * The label is stored in a shared pointer to avoid copying the actual
+     * value when it is shared between related command buffers.
      */
     std::shared_ptr<std::string> label;
 };
 
 /**
- * @brief Class representing a marker instruction in the command stream that represents a debug label pop operation.
+ * @brief A debug marker pop instruction in the command stream.
  */
 class LCSInstructionMarkerPop
 {
-    // there are no members, as this type is just a marker within LCSInstruction variant
+    // There are no members, as this type is just a marker within LCSInstruction variant
 };
 
 /**
- * @brief Class representing a workload instruction in the command stream.
+ * @brief A workload instruction in the command stream.
  */
 template<typename WorkloadType>
 requires(std::is_base_of_v<LCSWorkload, WorkloadType>)
@@ -674,7 +681,7 @@ public:
     /**
      * @brief Create a new workload instruction from a pre-made workload pointer.
      *
-     * @param wrkload The workload object (must not be null)
+     * @param wrkload   The workload object (must not be null)
      */
     LCSInstructionWorkload(
         std::shared_ptr<WorkloadType> wrkload
@@ -695,10 +702,10 @@ public:
 
 private:
     /**
-     * @brief The stored workload
+     * @brief The stored workload.
      *
-     * The workload is stored in a shared point to avoid copying the actual value when it is shared between
-     * subcommandbuffers
+     * The workload is stored in a shared pointer to avoid copying the actual
+     * value when it is shared between related command buffers.
      */
     std::shared_ptr<WorkloadType> workload;
 };

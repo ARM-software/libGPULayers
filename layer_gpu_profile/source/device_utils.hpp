@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2025 Arm Limited
+ * Copyright (c) 2025-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -95,7 +95,7 @@
  * allows the CPU to set/wait/reset events in a command buffer after it has
  * been submitted to a queue.
  *
- * @param layer           The layer context for the device.
+ * @param layer   The layer context for the device.
  */
 [[maybe_unused]] static void waitForGPU(
     Device& layer
@@ -136,7 +136,7 @@
  * allows the CPU to set/wait/reset events in a command buffer after it has
  * been submitted to a queue.
  *
- * @param layer           The layer context for the device.
+ * @param layer   The layer context for the device.
  */
 [[maybe_unused]] static void notifyGPU(
     Device& layer

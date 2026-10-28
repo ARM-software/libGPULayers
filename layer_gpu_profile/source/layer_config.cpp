@@ -25,7 +25,7 @@
 
 /**
  * @file
- * Defines the a config file to parameterize the layer.
+ * Defines a config file to parameterize the layer.
  */
 
 #include "layer_config.hpp"

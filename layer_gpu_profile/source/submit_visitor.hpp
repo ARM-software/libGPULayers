@@ -41,7 +41,7 @@ public:
     /**
      * Construct a profile workload visitor for a layer command stream.
      *
-     * @param _device The device object for the command stream.
+     * @param _device   The device object for the command stream.
      */
     ProfileSubmitVisitor(
         Device& _device
@@ -53,10 +53,13 @@ public:
     // Visitor should not be copied or moved from
     ProfileSubmitVisitor(
         const ProfileSubmitVisitor&) = delete;
+
     ProfileSubmitVisitor(
         ProfileSubmitVisitor&&) noexcept = delete;
+
     ProfileSubmitVisitor& operator=(
         const ProfileSubmitVisitor&) = delete;
+
     ProfileSubmitVisitor& operator=(
         ProfileSubmitVisitor&&) noexcept = delete;
 
@@ -112,4 +115,3 @@ private:
 private:
     Device& device;
 };
-

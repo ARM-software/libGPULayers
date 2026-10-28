@@ -65,7 +65,7 @@ VkLayerInstanceCreateInfo* getChainInfo(
  *
  * @param pCreateInfo   The device creation data from the loader.
  *
- * @return The instance creation info, or @c nullptr if not found.
+ * @return The device creation info, or @c nullptr if not found.
  */
 VkLayerDeviceCreateInfo* getChainInfo(
     const VkDeviceCreateInfo* pCreateInfo);
@@ -96,23 +96,22 @@ bool isFunctionAlwaysExported(
  * @return Boolean indicating if this is a globally accessible function, the
  *         active layer function pointer, and whether the layer function was a
  *         layer specialization. Returns @c nullptr for the function if the
- *         layer doesn't implement any handler for the function.
+ *         layer doesn't implement a handler for it.
  */
 std::tuple<bool, PFN_vkVoidFunction, bool> getInstanceLayerFunction(
     const char* name);
 
 /**
- * @brief Fetch the function for a given dynamic instance entrypoint name.
+ * @brief Fetch the function for a given dynamic device entrypoint name.
  *
  * This function is used for finding the dynamic entrypoints that need a
  * created device to return a valid function pointer.
  *
  * @param name   The Vulkan function name.
  *
- * @return The active the layer function pointer, and whether the layer
+ * @return The active layer function pointer, and whether the layer
  *         function was a layer specialization. Returns @c nullptr for the
- *         function pointers if the layer doesn't implement any handler for the
- *         function.
+ *         function if the layer doesn't implement a handler for it.
  */
 std::pair<PFN_vkVoidFunction, bool> getDeviceLayerFunction(
     const char* name);
