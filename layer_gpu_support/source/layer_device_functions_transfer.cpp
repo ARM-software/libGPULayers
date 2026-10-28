@@ -532,6 +532,46 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdUpdateMemoryKHR<user_tag>(VkCommandBuffer 
 /* See Vulkan API for documentation. */
 template<>
 VKAPI_ATTR void VKAPI_CALL
+    layer_vkCmdCopyMemoryIndirectKHR<user_tag>(VkCommandBuffer commandBuffer,
+                                               const VkCopyMemoryIndirectInfoKHR* pCopyMemoryIndirectInfo)
+{
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
+    auto* layer = Device::retrieve(commandBuffer);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+
+    preTransfer(layer, commandBuffer);
+    layer->driver.vkCmdCopyMemoryIndirectKHR(commandBuffer, pCopyMemoryIndirectInfo);
+    postTransfer(layer, commandBuffer);
+}
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL
+    layer_vkCmdCopyMemoryToImageIndirectKHR<user_tag>(VkCommandBuffer commandBuffer,
+                                                      const VkCopyMemoryToImageIndirectInfoKHR* pCopyMemoryToImageIndirectInfo)
+{
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
+    auto* layer = Device::retrieve(commandBuffer);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+
+    preTransfer(layer, commandBuffer);
+    layer->driver.vkCmdCopyMemoryToImageIndirectKHR(commandBuffer, pCopyMemoryToImageIndirectInfo);
+    postTransfer(layer, commandBuffer);
+}
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL
     layer_vkCmdCopyAccelerationStructureKHR<user_tag>(VkCommandBuffer commandBuffer,
                                                       const VkCopyAccelerationStructureInfoKHR* pInfo)
 {
