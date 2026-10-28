@@ -317,6 +317,18 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdUpdateMemoryKHR<user_tag>(VkCommandBuffer 
 /* See Vulkan API for documentation. */
 template<>
 VKAPI_ATTR void VKAPI_CALL
+    layer_vkCmdCopyMemoryIndirectKHR<user_tag>(VkCommandBuffer commandBuffer,
+                                               const VkCopyMemoryIndirectInfoKHR* pCopyMemoryIndirectInfo);
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL
+    layer_vkCmdCopyMemoryToImageIndirectKHR<user_tag>(VkCommandBuffer commandBuffer,
+                                                      const VkCopyMemoryToImageIndirectInfoKHR* pCopyMemoryToImageIndirectInfo);
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL
     layer_vkCmdCopyAccelerationStructureKHR<user_tag>(VkCommandBuffer commandBuffer,
                                                       const VkCopyAccelerationStructureInfoKHR* pInfo);
 
