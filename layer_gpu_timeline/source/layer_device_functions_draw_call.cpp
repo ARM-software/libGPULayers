@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024 Arm Limited
+ * Copyright (c) 2024-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -263,4 +263,140 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirectCountKHR<user_tag>(VkCommandBu
     lock.unlock();
     layer->driver
         .vkCmdDrawIndirectCountKHR(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
+}
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL
+    layer_vkCmdDrawIndexedIndirect2KHR<user_tag>(VkCommandBuffer commandBuffer,
+                                                 const VkDrawIndirect2InfoKHR* pInfo)
+{
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
+    auto* layer = Device::retrieve(commandBuffer);
+
+    registerDrawCall(layer, commandBuffer);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    layer->driver.vkCmdDrawIndexedIndirect2KHR(commandBuffer, pInfo);
+}
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL
+    layer_vkCmdDrawIndexedIndirectCount2KHR<user_tag>(VkCommandBuffer commandBuffer,
+                                                      const VkDrawIndirectCount2InfoKHR* pInfo)
+{
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
+    auto* layer = Device::retrieve(commandBuffer);
+
+    registerDrawCall(layer, commandBuffer);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    layer->driver.vkCmdDrawIndexedIndirectCount2KHR(commandBuffer, pInfo);
+}
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirect2KHR<user_tag>(VkCommandBuffer commandBuffer,
+                                                                 const VkDrawIndirect2InfoKHR* pInfo)
+{
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
+    auto* layer = Device::retrieve(commandBuffer);
+
+    registerDrawCall(layer, commandBuffer);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    layer->driver.vkCmdDrawIndirect2KHR(commandBuffer, pInfo);
+}
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdDrawIndirectByteCount2EXT<user_tag>(VkCommandBuffer commandBuffer,
+                                                                          uint32_t instanceCount,
+                                                                          uint32_t firstInstance,
+                                                                          const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfo,
+                                                                          uint32_t counterOffset,
+                                                                          uint32_t vertexStride)
+{
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
+    auto* layer = Device::retrieve(commandBuffer);
+
+    registerDrawCall(layer, commandBuffer);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    layer->driver.vkCmdDrawIndirectByteCount2EXT(
+        commandBuffer, instanceCount, firstInstance, pCounterInfo, counterOffset, vertexStride);
+}
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL
+    layer_vkCmdDrawIndirectCount2KHR<user_tag>(VkCommandBuffer commandBuffer,
+                                               const VkDrawIndirectCount2InfoKHR* pInfo)
+{
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
+    auto* layer = Device::retrieve(commandBuffer);
+
+    registerDrawCall(layer, commandBuffer);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    layer->driver.vkCmdDrawIndirectCount2KHR(commandBuffer, pInfo);
+}
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL
+    layer_vkCmdDrawMeshTasksIndirect2EXT<user_tag>(VkCommandBuffer commandBuffer,
+                                                   const VkDrawIndirect2InfoKHR* pInfo)
+{
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
+    auto* layer = Device::retrieve(commandBuffer);
+
+    registerDrawCall(layer, commandBuffer);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    layer->driver.vkCmdDrawMeshTasksIndirect2EXT(commandBuffer, pInfo);
+}
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL
+    layer_vkCmdDrawMeshTasksIndirectCount2EXT<user_tag>(VkCommandBuffer commandBuffer,
+                                                        const VkDrawIndirectCount2InfoKHR* pInfo)
+{
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
+    auto* layer = Device::retrieve(commandBuffer);
+
+    registerDrawCall(layer, commandBuffer);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    layer->driver.vkCmdDrawMeshTasksIndirectCount2EXT(commandBuffer, pInfo);
 }

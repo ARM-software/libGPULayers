@@ -130,6 +130,32 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdFillBuffer<user_tag>(VkCommandBuffer comma
 
 /* See Vulkan API for documentation. */
 template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdFillMemoryKHR<user_tag>(VkCommandBuffer commandBuffer,
+                                                              const VkDeviceAddressRangeKHR* pDstRange,
+                                                              VkAddressCommandFlagsKHR dstFlags,
+                                                              uint32_t data)
+{
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
+    auto* layer = Device::retrieve(commandBuffer);
+
+    int64_t byteCount = static_cast<int64_t>(pDstRange->size);
+    uint64_t tagID = registerBufferTransfer(layer,
+                                            commandBuffer,
+                                            Tracker::LCSBufferTransfer::Type::fill_buffer,
+                                            byteCount);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    emitStartTag(layer, commandBuffer, tagID);
+    layer->driver.vkCmdFillMemoryKHR(commandBuffer, pDstRange, dstFlags, data);
+    emitEndTag(layer, commandBuffer);
+}
+
+/* See Vulkan API for documentation. */
+template<>
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdClearColorImage<user_tag>(VkCommandBuffer commandBuffer,
                                                                 VkImage image,
                                                                 VkImageLayout imageLayout,
@@ -579,6 +605,161 @@ VKAPI_ATTR void VKAPI_CALL
     lock.unlock();
     emitStartTag(layer, commandBuffer, tagID);
     layer->driver.vkCmdCopyImageToBuffer2KHR(commandBuffer, pCopyImageToBufferInfo);
+    emitEndTag(layer, commandBuffer);
+}
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL
+    layer_vkCmdCopyImageToMemoryKHR<user_tag>(VkCommandBuffer commandBuffer,
+                                              const VkCopyDeviceMemoryImageInfoKHR* pCopyMemoryInfo)
+{
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
+    auto* layer = Device::retrieve(commandBuffer);
+
+    int64_t pixelCount = 0;
+    for (uint32_t i = 0; i < pCopyMemoryInfo->regionCount; i++)
+    {
+        const auto& extent = pCopyMemoryInfo->pRegions[i].imageExtent;
+        int64_t regionPixelCount = static_cast<int64_t>(extent.width)
+                                 * static_cast<int64_t>(extent.height)
+                                 * static_cast<int64_t>(extent.depth);
+        pixelCount += regionPixelCount;
+    }
+
+    uint64_t tagID = registerImageTransfer(layer,
+                                           commandBuffer,
+                                           Tracker::LCSImageTransfer::Type::copy_image_to_buffer,
+                                           pixelCount);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    emitStartTag(layer, commandBuffer, tagID);
+    layer->driver.vkCmdCopyImageToMemoryKHR(commandBuffer, pCopyMemoryInfo);
+    emitEndTag(layer, commandBuffer);
+}
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMemoryKHR<user_tag>(VkCommandBuffer commandBuffer,
+                                                              const VkCopyDeviceMemoryInfoKHR* pCopyMemoryInfo)
+{
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
+    auto* layer = Device::retrieve(commandBuffer);
+
+    int64_t byteCount = 0;
+    for (uint32_t i = 0; i < pCopyMemoryInfo->regionCount; i++)
+    {
+        byteCount += static_cast<int64_t>(pCopyMemoryInfo->pRegions[i].dstRange.size);
+    }
+
+    uint64_t tagID = registerBufferTransfer(layer,
+                                            commandBuffer,
+                                            Tracker::LCSBufferTransfer::Type::copy_memory,
+                                            byteCount);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    emitStartTag(layer, commandBuffer, tagID);
+    layer->driver.vkCmdCopyMemoryKHR(commandBuffer, pCopyMemoryInfo);
+    emitEndTag(layer, commandBuffer);
+}
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL
+    layer_vkCmdCopyMemoryToImageKHR<user_tag>(VkCommandBuffer commandBuffer,
+                                              const VkCopyDeviceMemoryImageInfoKHR* pCopyMemoryInfo)
+{
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
+    auto* layer = Device::retrieve(commandBuffer);
+
+    int64_t pixelCount = 0;
+    for (uint32_t i = 0; i < pCopyMemoryInfo->regionCount; i++)
+    {
+        const auto& extent = pCopyMemoryInfo->pRegions[i].imageExtent;
+        int64_t regionPixelCount = static_cast<int64_t>(extent.width)
+                                 * static_cast<int64_t>(extent.height)
+                                 * static_cast<int64_t>(extent.depth);
+        pixelCount += regionPixelCount;
+    }
+
+    uint64_t tagID = registerImageTransfer(layer,
+                                           commandBuffer,
+                                           Tracker::LCSImageTransfer::Type::copy_memory_to_image,
+                                           pixelCount);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    emitStartTag(layer, commandBuffer, tagID);
+    layer->driver.vkCmdCopyMemoryToImageKHR(commandBuffer, pCopyMemoryInfo);
+    emitEndTag(layer, commandBuffer);
+}
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL
+    layer_vkCmdCopyQueryPoolResultsToMemoryKHR<user_tag>(VkCommandBuffer commandBuffer,
+                                                         VkQueryPool queryPool,
+                                                         uint32_t firstQuery,
+                                                         uint32_t queryCount,
+                                                         const VkStridedDeviceAddressRangeKHR* pDstRange,
+                                                         VkAddressCommandFlagsKHR dstFlags,
+                                                         VkQueryResultFlags queryResultFlags)
+{
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
+    auto* layer = Device::retrieve(commandBuffer);
+
+    int64_t byteCount = static_cast<int64_t>(pDstRange->size);
+    uint64_t tagID = registerBufferTransfer(layer,
+                                            commandBuffer,
+                                            Tracker::LCSBufferTransfer::Type::unknown,
+                                            byteCount);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    emitStartTag(layer, commandBuffer, tagID);
+    layer->driver.vkCmdCopyQueryPoolResultsToMemoryKHR(
+        commandBuffer, queryPool, firstQuery, queryCount, pDstRange, dstFlags, queryResultFlags);
+    emitEndTag(layer, commandBuffer);
+}
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdUpdateMemoryKHR<user_tag>(VkCommandBuffer commandBuffer,
+                                                                const VkDeviceAddressRangeKHR* pDstRange,
+                                                                VkAddressCommandFlagsKHR dstFlags,
+                                                                VkDeviceSize dataSize,
+                                                                const void* pData)
+{
+    LAYER_TRACE(__func__);
+
+    // Hold the lock to access layer-wide global store
+    std::unique_lock<std::mutex> lock {g_vulkanLock};
+    auto* layer = Device::retrieve(commandBuffer);
+
+    int64_t byteCount = static_cast<int64_t>(dataSize);
+    uint64_t tagID = registerBufferTransfer(layer,
+                                            commandBuffer,
+                                            Tracker::LCSBufferTransfer::Type::copy_memory,
+                                            byteCount);
+
+    // Release the lock to call into the driver
+    lock.unlock();
+    emitStartTag(layer, commandBuffer, tagID);
+    layer->driver.vkCmdUpdateMemoryKHR(commandBuffer, pDstRange, dstFlags, dataSize, pData);
     emitEndTag(layer, commandBuffer);
 }
 
