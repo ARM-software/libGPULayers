@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024-2025 Arm Limited
+ * Copyright (c) 2024-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -263,6 +263,14 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdFillBuffer<user_tag>(VkCommandBuffer comma
 
 /* See Vulkan API for documentation. */
 template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdFillMemoryKHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkDeviceAddressRangeKHR* pDstRange,
+    VkAddressCommandFlagsKHR dstFlags,
+    uint32_t data);
+
+/* See Vulkan API for documentation. */
+template<>
 VKAPI_ATTR void VKAPI_CALL layer_vkCmdClearColorImage<user_tag>(VkCommandBuffer commandBuffer,
                                                                 VkImage image,
                                                                 VkImageLayout imageLayout,
@@ -358,6 +366,44 @@ template<>
 VKAPI_ATTR void VKAPI_CALL
     layer_vkCmdCopyImageToBuffer2KHR<user_tag>(VkCommandBuffer commandBuffer,
                                                const VkCopyImageToBufferInfo2* pCopyImageToBufferInfo);
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyImageToMemoryKHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkCopyDeviceMemoryImageInfoKHR* pCopyMemoryInfo);
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMemoryKHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkCopyDeviceMemoryInfoKHR* pCopyMemoryInfo);
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyMemoryToImageKHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkCopyDeviceMemoryImageInfoKHR* pCopyMemoryInfo);
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdCopyQueryPoolResultsToMemoryKHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    VkQueryPool queryPool,
+    uint32_t firstQuery,
+    uint32_t queryCount,
+    const VkStridedDeviceAddressRangeKHR* pDstRange,
+    VkAddressCommandFlagsKHR dstFlags,
+    VkQueryResultFlags queryResultFlags);
+
+/* See Vulkan API for documentation. */
+template<>
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdUpdateMemoryKHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkDeviceAddressRangeKHR* pDstRange,
+    VkAddressCommandFlagsKHR dstFlags,
+    VkDeviceSize dataSize,
+    const void* pData);
 
 /* See Vulkan API for documentation. */
 template<>
