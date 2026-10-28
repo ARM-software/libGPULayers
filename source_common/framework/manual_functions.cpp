@@ -259,6 +259,9 @@ APIVersion getDeviceAPIVersion(
 
 /**
  * @brief Is version A >= version B.
+ *
+ * @param a   The first operand.
+ * @param b   The second operand.
  */
 static bool isVersionGreaterEqual(
     const APIVersion& a,
@@ -401,7 +404,7 @@ std::vector<const char*> cloneExtensionList(
  * Enabling this requires passing the extension string to vkCreateInstance().
  *
  * @param createInfo   The createInfo we can search to find user config.
- * @param supported    The list of supported extension, or empty if unknown.
+ * @param supported    The list of supported extensions, or empty if unknown.
  */
 static void enableInstanceVkExtDebugUtils(
     vku::safe_VkInstanceCreateInfo& createInfo,

@@ -115,6 +115,8 @@ public:
 
     /**
      * @brief Increment all counters with values from another stats object.
+     *
+     * @param other   The stats object to read increment values from.
      */
     void mergeCounts(
         const Stats& other

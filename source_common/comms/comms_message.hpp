@@ -56,7 +56,7 @@ enum class MessageType : uint8_t
 };
 
 /**
- * @brief The packed data layout (assuming both ends are little-endian)
+ * @brief The packed data layout, assuming both ends are little-endian.
  */
 typedef struct __attribute__((packed))
 {
@@ -67,7 +67,7 @@ typedef struct __attribute__((packed))
 } MessageHeader;
 
 /**
- * @brief Class representing a task in the protocol.
+ * @brief A task in the protocol.
  */
 class Message : public Task
 {

@@ -52,31 +52,32 @@
 namespace Tracker
 {
 /**
- * @brief Represents the interface to some workload visitor that can be passed to Queue::runSubmitCommandStream
- * and which will be called once per item within the submitted command stream for that queue.
+ * @brief Interface to workload visitor that is passed to @c Queue::runSubmitCommandStream().
+ *
+ * The visitor is called once per item within the submitted command stream for that queue.
  */
 class SubmitCommandWorkloadVisitor
 {
 public:
-    /** @brief Destructor for the visitor */
+    /** @brief Destructor for the visitor. */
     virtual ~SubmitCommandWorkloadVisitor() noexcept = default;
 
     /**
-     * @brief Visit a render pass workload object
+     * @brief Visit a render pass workload object.
      *
-     * @param renderPass The render pass
-     * @param debugStack The stack of debug labels that are associated with this render pass
+     * @param renderPass   The render pass
+     * @param debugStack   The stack of debug labels for this render pass
      */
     virtual void operator()(
         const LCSRenderPass& renderPass,
         const std::vector<std::string>& debugStack) = 0;
 
     /**
-     * @brief Visit a render pass continuation workload object
+     * @brief Visit a render pass continuation workload object.
      *
-     * @param continuation The render pass continuation
-     * @param debugStack The stack of debug labels that are associated with this render pass
-     * @param renderPassTagID The render pass tag that the continuation was associated with
+     * @param continuation      The render pass continuation
+     * @param debugStack        The stack of debug labels for this render pass
+     * @param renderPassTagID   The render pass tag that the continuation was associated with
      */
     virtual void operator()(
         const LCSRenderPassContinuation& continuation,
@@ -84,70 +85,70 @@ public:
         uint64_t renderPassTagID) = 0;
 
     /**
-     * @brief Visit a dispatch workload object
+     * @brief Visit a dispatch workload object.
      *
-     * @param dispatch The dispatch
-     * @param debugStack The stack of debug labels that are associated with this dispatch
+     * @param dispatch     The dispatch
+     * @param debugStack   The stack of debug labels for this dispatch
      */
     virtual void operator()(
         const LCSDispatch& dispatch,
         const std::vector<std::string>& debugStack) = 0;
 
     /**
-     * @brief Visit a dispatch data graph workload object
+     * @brief Visit a dispatch data graph workload object.
      *
-     * @param dispatch The dispatch data graph
-     * @param debugStack The stack of debug labels that are associated with this dispatch data graph
+     * @param dispatch     The dispatch data graph
+     * @param debugStack   The stack of debug labels for this dispatch data graph
      */
     virtual void operator()(
         const LCSDispatchDataGraph& dispatch,
         const std::vector<std::string>& debugStack) = 0;
 
     /**
-     * @brief Visit a trace rays workload object
+     * @brief Visit a trace rays workload object.
      *
-     * @param traceRays The trace rays
-     * @param debugStack The stack of debug labels that are associated with this trace rays
+     * @param traceRays    The trace rays
+     * @param debugStack   The stack of debug labels for this trace rays command
      */
     virtual void operator()(
         const LCSTraceRays& traceRays,
         const std::vector<std::string>& debugStack) = 0;
 
     /**
-     * @brief Visit an image transfer workload object
+     * @brief Visit an image transfer workload object.
      *
-     * @param imageTransfer The image transfer
-     * @param debugStack The stack of debug labels that are associated with this image transfer
+     * @param imageTransfer   The image transfer
+     * @param debugStack      The stack of debug labels for this image transfer
      */
     virtual void operator()(
         const LCSImageTransfer& imageTransfer,
         const std::vector<std::string>& debugStack) = 0;
 
     /**
-     * @brief Visit a buffer transfer workload object
+     * @brief Visit a buffer transfer workload object.
      *
-     * @param bufferTransfer The buffer transfer
-     * @param debugStack The stack of debug labels that are associated with this buffer transfer
+     * @param bufferTransfer   The buffer transfer
+     * @param debugStack       The stack of debug labels for this buffer transfer
      */
     virtual void operator()(
         const LCSBufferTransfer& bufferTransfer,
         const std::vector<std::string>& debugStack) = 0;
 
     /**
-     * @brief Visit an acceleration structure build workload object
+     * @brief Visit an acceleration structure build workload object.
      *
-     * @param asBuild The acceleration structure build
-     * @param debugStack The stack of debug labels that are associated with this acceleration structure build
+     * @param asBuild      The acceleration structure build
+     * @param debugStack   The stack of debug labels for this acceleration structure build
      */
     virtual void operator()(
         const LCSAccelerationStructureBuild& asBuild,
         const std::vector<std::string>& debugStack) = 0;
 
     /**
-     * @brief Visit an acceleration structure transfer workload object
+     * @brief Visit an acceleration structure transfer workload object.
      *
-     * @param asTransfer The acceleration structure transfer
-     * @param debugStack The stack of debug labels that are associated with this acceleration structure transfer
+     * @param asTransfer   The acceleration structure transfer
+     * @param debugStack   The stack of debug labels for this acceleration structure transfer
      */
     virtual void operator()(
         const LCSAccelerationStructureTransfer& asTransfer,
@@ -155,15 +156,17 @@ public:
 };
 
 /**
- * Metadata tracked by the queue when it emits commands, that can be
- * shared with the LCSInstruction visitor object during instruction processing
+ * @brief Persistent queue state.
+ *
+ * Metadata is tracked by the queue when it emits commands, and is shared with
+ * the @c LCSInstruction visitor object during instruction processing.
  */
 struct QueueState
 {
     /**
-     * @brief Construct the state object
+     * @brief Construct the state object.
      *
-     * @param queue The queue which the state tracks
+     * @param queue   The queue which the state tracks
      */
     QueueState(
         VkQueue queue
@@ -173,7 +176,7 @@ struct QueueState
     }
 
     /**
-     * The handle of the native queue we are wrapping.
+     * @brief The handle of the native queue we are wrapping.
      */
     VkQueue handle;
 
@@ -200,8 +203,8 @@ public:
     /**
      * @brief Execute a layer command stream.
      *
-     * @param stream            The layer command stream to execute.
-     * @param workload_visitor  The visitor to pass submitted workloads to.
+     * @param stream             The layer command stream to execute.
+     * @param workload_visitor   The visitor to pass submitted workloads to.
      */
     void runSubmitCommandStream(
         const std::vector<LCSInstruction>& stream,

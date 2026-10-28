@@ -270,12 +270,12 @@ using TimelineRecord =
 namespace
 {
 /**
- * A helper to pack some message into a TimelineRecord and then encode it to the
- * corresponding protobuf byte sequence.
+ * @brief Pack a TimelineRecord and emit the protobuf byte sequence.
  *
- * @param c The record field name
- * @param f The record field value
- * @return The encoded byte sequence
+ * @param c   The record field name
+ * @param f   The record field value
+ *
+ * @return The encoded byte sequence.
  */
 template<pp::basic_fixed_string F, typename T>
 Comms::MessageData packBuffer(
@@ -303,13 +303,13 @@ Comms::MessageData packBuffer(
 }
 
 /**
- * @brief Map the state-tracker enum value that describes the render pass attachment name to some pair of
- * protocol values, being the attachment type, and optional attachment index.
+ * @brief Map a render pass attachment enum to protocol encoding.
  *
  * @param name   The name value to map to the pair of type and index
  *
- * @return A pair, where the first value is the corresponding attachment type, and the second value is
- * the corresponding attachment index (or nullopt in the case the index is not relevant).
+ * @return A pair, where the first value is the corresponding attachment type,
+ *         and the second value is the corresponding attachment index (or
+ *         @c nullopt in the case the index is not relevant).
  */
 constexpr std::pair<RenderpassAttachmentType, std::optional<uint32_t>> mapRenderPassAttachmentName(
     Tracker::RenderPassAttachName name
@@ -343,11 +343,10 @@ constexpr std::pair<RenderpassAttachmentType, std::optional<uint32_t>> mapRender
 }
 
 /**
- * @brief Map the enum value that describes the acceleration structure build into the protocol encoded value
+ * @brief Map an acceleration structure build type enum to protocol encoding.
  *
- * NB: Whilst we are currently just replicating one enum value into another (which the compiler should be smart enough
- * to fix), we do it this way to ensure we decouple the state-tracker from the protobuf encoding, since we don't want to
- * accidentally change some enum wire-value in the future.
+ * We use this explicit translation to decouple the layer value from the wire
+ * protocol value, even though they are the same in most cases.
  *
  * @param type   The type enum to convert
  *
@@ -371,11 +370,10 @@ constexpr AccelerationStructureBuildType mapASBuildType(
 }
 
 /**
- * @brief Map the state-tracker enum value that describes the buffer transfer type into the protocol encoded value
+ * @brief Map a buffer transfer type enum to protocol encoding.
  *
- * NB: Whilst we are currently just replicating one enum value into another (which the compiler should be smart enough
- * to fix), we do it this way to ensure we decouple the state-tracker from the protobuf encoding, since we don't want to
- * accidentally change some enum wire-value in the future.
+ * We use this explicit translation to decouple the layer value from the wire
+ * protocol value, even though they are the same in most cases.
  *
  * @param type   The type enum to convert
  *
@@ -403,11 +401,10 @@ constexpr BufferTransferType mapBufferTransferType(
 }
 
 /**
- * @brief Map the state-tracker enum value that describes the image transfer type into the protocol encoded value
+ * @brief Map an image transfer type enum to protocol encoding.
  *
- * NB: Whilst we are currently just replicating one enum value into another (which the compiler should be smart enough
- * to fix), we do it this way to ensure we decouple the state-tracker from the protobuf encoding, since we don't want to
- * accidentally change some enum wire-value in the future.
+ * We use this explicit translation to decouple the layer value from the wire
+ * protocol value, even though they are the same in most cases.
  *
  * @param type   The type enum to convert
  *
@@ -437,11 +434,10 @@ constexpr ImageTransferType mapImageTransferType(
 }
 
 /**
- * @brief Map the state-tracker enum value that describes the buffer transfer type into the protocol encoded value
+ * @brief Map an acceleration structure transfer type enum to protocol encoding.
  *
- * NB: Whilst we are currently just replicating one enum value into another (which the compiler should be smart enough
- * to fix), we do it this way to ensure we decouple the state-tracker from the protobuf encoding, since we don't want to
- * accidentally change some enum wire-value in the future.
+ * We use this explicit translation to decouple the layer value from the wire
+ * protocol value, even though they are the same in most cases.
  *
  * @param type   The type enum to convert
  *
@@ -544,7 +540,7 @@ Comms::MessageData serialize(
 }
 
 /**
- * @brief Get the metadata for this workload
+ * @brief Get the metadata for this workload.
  *
  * @param dispatch     The dispatch to serialize
  * @param debugLabel   The debug label stack for the VkQueue at submit time.
@@ -566,7 +562,7 @@ Comms::MessageData serialize(
 }
 
 /**
- * @brief Get the metadata for this workload
+ * @brief Get the metadata for this workload.
  *
  * @param dispatch     The dispatch data graph to serialize
  * @param debugLabel   The debug label stack for the VkQueue at submit time.
@@ -585,7 +581,7 @@ Comms::MessageData serialize(
 }
 
 /**
- * @brief Get the metadata for this workload
+ * @brief Get the metadata for this workload.
  *
  * @param traceRays    The trace rays to serialize
  * @param debugLabel   The debug label stack for the VkQueue at submit time.
@@ -607,7 +603,7 @@ Comms::MessageData serialize(
 }
 
 /**
- * @brief Get the metadata for this workload
+ * @brief Get the metadata for this workload.
  *
  * @param imageTransfer   The image transfer to serialize
  * @param debugLabel      The debug label stack for the VkQueue at submit time.
@@ -628,7 +624,7 @@ Comms::MessageData serialize(
 }
 
 /**
- * @brief Get the metadata for this workload
+ * @brief Get the metadata for this workload.
  *
  * @param bufferTransfer   The buffer transfer to serialize
  * @param debugLabel       The debug label stack for the VkQueue at submit time.
@@ -649,7 +645,7 @@ Comms::MessageData serialize(
 }
 
 /**
- * @brief Get the metadata for this workload
+ * @brief Get the metadata for this workload.
  *
  * @param asBuild      The acceleration structure build to serialize
  * @param debugLabel   The debug label stack for the VkQueue at submit time.
@@ -670,7 +666,7 @@ Comms::MessageData serialize(
 }
 
 /**
- * @brief Get the metadata for this workload
+ * @brief Get the metadata for this workload.
  *
  * @param asTransfer   The acceleration structure transfer to serialize
  * @param debugLabel   The debug label stack for the VkQueue at submit time.
@@ -691,6 +687,7 @@ Comms::MessageData serialize(
 }
 }
 
+/* See header for documentation. */
 void TimelineProtobufEncoder::emitHeaderMessage(
     TimelineComms& comms
 ) {
@@ -702,6 +699,7 @@ void TimelineProtobufEncoder::emitHeaderMessage(
                                }));
 }
 
+/* See header for documentation. */
 void TimelineProtobufEncoder::emitMetadata(
     Device& device,
     uint32_t pid,
@@ -723,6 +721,7 @@ void TimelineProtobufEncoder::emitMetadata(
                                 }));
 }
 
+/* See header for documentation. */
 void TimelineProtobufEncoder::emitFrame(
     Device& device,
     uint64_t frameNumber,
@@ -738,6 +737,7 @@ void TimelineProtobufEncoder::emitFrame(
                                 }));
 }
 
+/* See header for documentation. */
 void TimelineProtobufEncoder::emitSubmit(
     VkQueue queue,
     uint64_t timestamp
@@ -752,6 +752,7 @@ void TimelineProtobufEncoder::emitSubmit(
                                 }));
 }
 
+/* See header for documentation. */
 void TimelineProtobufEncoder::operator()(
     const Tracker::LCSRenderPass& renderPass,
     const std::vector<std::string>& debugStack
@@ -759,6 +760,7 @@ void TimelineProtobufEncoder::operator()(
     device.txMessage(serialize(renderPass, debugStack));
 }
 
+/* See header for documentation. */
 void TimelineProtobufEncoder::operator()(
     const Tracker::LCSRenderPassContinuation& continuation,
     const std::vector<std::string>& debugStack,
@@ -769,6 +771,7 @@ void TimelineProtobufEncoder::operator()(
     device.txMessage(serialize(continuation, renderPassTagID));
 }
 
+/* See header for documentation. */
 void TimelineProtobufEncoder::operator()(
     const Tracker::LCSDispatch& dispatch,
     const std::vector<std::string>& debugStack
@@ -776,6 +779,7 @@ void TimelineProtobufEncoder::operator()(
     device.txMessage(serialize(dispatch, debugStack));
 }
 
+/* See header for documentation. */
 void TimelineProtobufEncoder::operator()(
     const Tracker::LCSDispatchDataGraph& dispatch,
     const std::vector<std::string>& debugStack
@@ -783,6 +787,7 @@ void TimelineProtobufEncoder::operator()(
     device.txMessage(serialize(dispatch, debugStack));
 }
 
+/* See header for documentation. */
 void TimelineProtobufEncoder::operator()(
     const Tracker::LCSTraceRays& traceRays,
     const std::vector<std::string>& debugStack
@@ -790,6 +795,7 @@ void TimelineProtobufEncoder::operator()(
     device.txMessage(serialize(traceRays, debugStack));
 }
 
+/* See header for documentation. */
 void TimelineProtobufEncoder::operator()(
     const Tracker::LCSImageTransfer& imageTransfer,
     const std::vector<std::string>& debugStack
@@ -797,6 +803,7 @@ void TimelineProtobufEncoder::operator()(
     device.txMessage(serialize(imageTransfer, debugStack));
 }
 
+/* See header for documentation. */
 void TimelineProtobufEncoder::operator()(
     const Tracker::LCSBufferTransfer& bufferTransfer,
     const std::vector<std::string>& debugStack
@@ -804,6 +811,7 @@ void TimelineProtobufEncoder::operator()(
     device.txMessage(serialize(bufferTransfer, debugStack));
 }
 
+/* See header for documentation. */
 void TimelineProtobufEncoder::operator()(
     const Tracker::LCSAccelerationStructureBuild& asBuild,
     const std::vector<std::string>& debugStack
@@ -811,6 +819,7 @@ void TimelineProtobufEncoder::operator()(
     device.txMessage(serialize(asBuild, debugStack));
 }
 
+/* See header for documentation. */
 void TimelineProtobufEncoder::operator()(
     const Tracker::LCSAccelerationStructureTransfer& asTransfer,
     const std::vector<std::string>& debugStack

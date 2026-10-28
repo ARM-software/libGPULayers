@@ -48,9 +48,9 @@ public:
     /**
      * @brief Construct a new message.
      *
-     * @param endpointID     The destination endpoint.
-     * @param messageType    The type of the message.
-     * @param data            The received data.
+     * @param endpointID    The destination endpoint.
+     * @param messageType   The type of the message.
+     * @param data          The received data.
      */
     TestMessage(
         Comms::EndpointID endpointID,
