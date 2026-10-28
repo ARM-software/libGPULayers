@@ -8,15 +8,19 @@
         "all": false,
         "none": false,
         "commandstream": {
+            "asbuild": {
+                "pre": false,
+                "post": false
+            },
             "compute": {
                 "pre": false,
                 "post": false
             },
-            "renderpass": {
+            "datagraph": {
                 "pre": false,
                 "post": false
             },
-            "asbuild": {
+            "renderpass": {
                 "pre": false,
                 "post": false
             },

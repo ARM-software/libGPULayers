@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2025 Arm Limited
+ * Copyright (c) 2025-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -86,6 +86,9 @@ void LayerConfig::parse_serialization_options(const json& config)
     bool s_stream_c_pre = s_stream.at("compute").at("pre");
     bool s_stream_c_post = s_stream.at("compute").at("post");
 
+    bool s_stream_dg_pre = s_stream.at("datagraph").at("pre");
+    bool s_stream_dg_post = s_stream.at("datagraph").at("post");
+
     bool s_stream_rp_pre = s_stream.at("renderpass").at("pre");
     bool s_stream_rp_post = s_stream.at("renderpass").at("post");
 
@@ -108,6 +111,9 @@ void LayerConfig::parse_serialization_options(const json& config)
     conf_serialize_dispatch_pre = (!s_none) && (s_all || s_stream_c_pre);
     conf_serialize_dispatch_post = (!s_none) && (s_all || s_stream_c_post);
 
+    conf_serialize_data_graph_dispatch_pre = (!s_none) && (s_all || s_stream_dg_pre);
+    conf_serialize_data_graph_dispatch_post = (!s_none) && (s_all || s_stream_dg_post);
+
     conf_serialize_render_pass_pre = (!s_none) && (s_all || s_stream_rp_pre);
     conf_serialize_render_pass_post = (!s_none) && (s_all || s_stream_rp_post);
 
@@ -126,6 +132,8 @@ void LayerConfig::parse_serialization_options(const json& config)
     LAYER_LOG(" - Wait idle after queue submit: %d", conf_serialize_queue_wait_idle);
     LAYER_LOG(" - Serialize compute pre: %d", conf_serialize_dispatch_pre);
     LAYER_LOG(" - Serialize compute post: %d", conf_serialize_dispatch_post);
+    LAYER_LOG(" - Serialize data graph pre: %d", conf_serialize_data_graph_dispatch_pre);
+    LAYER_LOG(" - Serialize data graph post: %d", conf_serialize_data_graph_dispatch_post);
     LAYER_LOG(" - Serialize render pass pre: %d", conf_serialize_render_pass_pre);
     LAYER_LOG(" - Serialize render pass post: %d", conf_serialize_render_pass_post);
     LAYER_LOG(" - Serialize acceleration structure build pre: %d", conf_serialize_as_build_pre);
@@ -345,6 +353,18 @@ bool LayerConfig::serialize_cmdstream_compute_dispatch_pre() const
 bool LayerConfig::serialize_cmdstream_compute_dispatch_post() const
 {
     return conf_serialize_dispatch_post;
+}
+
+/* See header for documentation. */
+bool LayerConfig::serialize_cmdstream_data_graph_dispatch_pre() const
+{
+    return conf_serialize_data_graph_dispatch_pre;
+}
+
+/* See header for documentation. */
+bool LayerConfig::serialize_cmdstream_data_graph_dispatch_post() const
+{
+    return conf_serialize_data_graph_dispatch_post;
 }
 
 /* See header for documentation. */

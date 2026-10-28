@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: MIT
 # -----------------------------------------------------------------------------
-# Copyright (c) 2025 Arm Limited
+# Copyright (c) 2025-2026 Arm Limited
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to
@@ -46,6 +46,7 @@ add_library(
         instance.cpp
         layer_config.cpp
         layer_device_functions_dispatch.cpp
+        layer_device_functions_data_graph.cpp
         layer_device_functions_image.cpp
         layer_device_functions_pipelines.cpp
         layer_device_functions_queue.cpp
