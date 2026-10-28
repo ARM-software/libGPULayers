@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2022-2025 Arm Limited
+ * Copyright (c) 2022-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -45,25 +45,33 @@ namespace
     class SubmitCommandInstructionVisitor
     {
     public:
-        SubmitCommandInstructionVisitor(QueueState& _queueState, SubmitCommandWorkloadVisitor& _workload_visitor)
-            : queueState(_queueState),
-              workload_visitor(_workload_visitor)
+        SubmitCommandInstructionVisitor(
+            QueueState& _queueState,
+            SubmitCommandWorkloadVisitor& _workload_visitor
+        ) :
+            queueState(_queueState),
+            workload_visitor(_workload_visitor)
         {
         }
 
         // visitor should not be copied or moved from
-        SubmitCommandInstructionVisitor(const SubmitCommandInstructionVisitor&) = delete;
-        SubmitCommandInstructionVisitor(SubmitCommandInstructionVisitor&&) noexcept = delete;
-        SubmitCommandInstructionVisitor& operator=(const SubmitCommandInstructionVisitor&) = delete;
-        SubmitCommandInstructionVisitor& operator=(SubmitCommandInstructionVisitor&&) noexcept = delete;
+        SubmitCommandInstructionVisitor(
+            const SubmitCommandInstructionVisitor&) = delete;
+        SubmitCommandInstructionVisitor(
+            SubmitCommandInstructionVisitor&&) noexcept = delete;
+        SubmitCommandInstructionVisitor& operator=(
+            const SubmitCommandInstructionVisitor&) = delete;
+        SubmitCommandInstructionVisitor& operator=(
+            SubmitCommandInstructionVisitor&&) noexcept = delete;
 
         /**
          * @brief Visit a debug-label push marker instruction
          *
          * @param instruction The push instruction
          */
-        void operator()(const LCSInstructionMarkerPush& instruction)
-        {
+        void operator()(
+            const LCSInstructionMarkerPush& instruction
+        ) {
             queueState.debugStack.emplace_back(instruction.getLabel());
         }
 
@@ -72,8 +80,9 @@ namespace
          *
          * @param instruction The pop instruction
          */
-        void operator()(const LCSInstructionMarkerPop& instruction)
-        {
+        void operator()(
+            const LCSInstructionMarkerPop& instruction
+        ) {
             UNUSED(instruction);
 
             // Only pop if we have an earlier push - this shouldn't happen and
@@ -89,8 +98,9 @@ namespace
          *
          * @param instruction The workload instruction
          */
-        void operator()(const LCSInstructionWorkload<LCSRenderPass>& instruction)
-        {
+        void operator()(
+            const LCSInstructionWorkload<LCSRenderPass>& instruction
+        ) {
             const auto& workload = instruction.getWorkload();
             const auto tagID = workload.getTagID();
 
@@ -108,8 +118,9 @@ namespace
          *
          * @param instruction The workload instruction
          */
-        void operator()(const LCSInstructionWorkload<LCSRenderPassContinuation>& instruction)
-        {
+        void operator()(
+            const LCSInstructionWorkload<LCSRenderPassContinuation>& instruction
+        ) {
             const auto& workload = instruction.getWorkload();
             const auto tagID = workload.getTagID();
 
@@ -154,15 +165,18 @@ namespace
 }
 
 /* See header for details. */
-Queue::Queue(VkQueue _handle)
-    : state(_handle)
+Queue::Queue(
+    VkQueue _handle
+) :
+    state(_handle)
 {
 }
 
 /* See header for details. */
-void Queue::runSubmitCommandStream(const std::vector<LCSInstruction>& stream,
-                                   SubmitCommandWorkloadVisitor& workload_visitor)
-{
+void Queue::runSubmitCommandStream(
+    const std::vector<LCSInstruction>& stream,
+    SubmitCommandWorkloadVisitor& workload_visitor
+) {
     SubmitCommandInstructionVisitor instruction_visitor {state, workload_visitor};
 
     for (auto& instr : stream)

@@ -38,8 +38,9 @@
 #include <vulkan/vulkan.h>
 
 /* See header for documentation. */
-void LayerConfig::parse_feature_options(const json& config)
-{
+void LayerConfig::parse_feature_options(
+    const json& config
+) {
     // Decode serialization state
     json feature = config.at("feature");
 
@@ -69,8 +70,9 @@ void LayerConfig::parse_feature_options(const json& config)
 
 
 /* See header for documentation. */
-void LayerConfig::parse_serialization_options(const json& config)
-{
+void LayerConfig::parse_serialization_options(
+    const json& config
+) {
     // Decode serialization state
     json serialize = config.at("serialize");
 
@@ -145,8 +147,9 @@ void LayerConfig::parse_serialization_options(const json& config)
 }
 
 /* See header for documentation. */
-void LayerConfig::parse_shader_options(const json& config)
-{
+void LayerConfig::parse_shader_options(
+    const json& config
+) {
     // Decode serialization state
     json shader = config.at("shader");
 
@@ -167,8 +170,9 @@ void LayerConfig::parse_shader_options(const json& config)
 }
 
 /* See header for documentation. */
-void LayerConfig::parse_framebuffer_options(const json& config)
-{
+void LayerConfig::parse_framebuffer_options(
+    const json& config
+) {
     // Decode serialization state
     json framebuffer = config.at("framebuffer");
 

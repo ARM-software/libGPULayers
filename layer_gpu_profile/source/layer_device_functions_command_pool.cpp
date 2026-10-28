@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024 Arm Limited
+ * Copyright (c) 2024-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -32,11 +32,12 @@ extern std::mutex g_vulkanLock;
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateCommandPool<user_tag>(VkDevice device,
-                                                                   const VkCommandPoolCreateInfo* pCreateInfo,
-                                                                   const VkAllocationCallbacks* pAllocator,
-                                                                   VkCommandPool* pCommandPool)
-{
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateCommandPool<user_tag>(
+    VkDevice device,
+    const VkCommandPoolCreateInfo* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkCommandPool* pCommandPool
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -60,10 +61,11 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateCommandPool<user_tag>(VkDevice devi
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkResetCommandPool<user_tag>(VkDevice device,
-                                                                  VkCommandPool commandPool,
-                                                                  VkCommandPoolResetFlags flags)
-{
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkResetCommandPool<user_tag>(
+    VkDevice device,
+    VkCommandPool commandPool,
+    VkCommandPoolResetFlags flags
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -80,10 +82,11 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkResetCommandPool<user_tag>(VkDevice devic
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkDestroyCommandPool<user_tag>(VkDevice device,
-                                                                VkCommandPool commandPool,
-                                                                const VkAllocationCallbacks* pAllocator)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkDestroyCommandPool<user_tag>(
+    VkDevice device,
+    VkCommandPool commandPool,
+    const VkAllocationCallbacks* pAllocator
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store

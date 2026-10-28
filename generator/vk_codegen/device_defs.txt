@@ -1,5 +1,3 @@
-// clang-format off
-
 #include <mutex>
 
 // Include from per-layer code
@@ -12,4 +10,3 @@
 extern std::mutex g_vulkanLock;
 
 {FUNCTION_DEFS}
-// clang-format on

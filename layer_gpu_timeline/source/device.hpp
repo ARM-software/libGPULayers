@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024-2025 Arm Limited
+ * Copyright (c) 2024-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -83,7 +83,9 @@ public:
      * @param handle   The dispatchable device handle to use as an indirect key.
      * @param device   The @c Device object to store.
      */
-    static void store(VkDevice handle, std::unique_ptr<Device> device);
+    static void store(
+        VkDevice handle,
+        std::unique_ptr<Device> device);
 
     /**
      * @brief Fetch a device from the global store of dispatchable devices.
@@ -92,7 +94,8 @@ public:
      *
      * @return The layer device context.
      */
-    static Device* retrieve(VkDevice handle);
+    static Device* retrieve(
+        VkDevice handle);
 
     /**
      * @brief Fetch a device from the global store of dispatchable devices.
@@ -101,7 +104,8 @@ public:
      *
      * @return The layer device context.
      */
-    static Device* retrieve(VkQueue handle);
+    static Device* retrieve(
+        VkQueue handle);
 
     /**
      * @brief Fetch a device from the global store of dispatchable devices.
@@ -110,7 +114,8 @@ public:
      *
      * @return The layer device context.
      */
-    static Device* retrieve(VkCommandBuffer handle);
+    static Device* retrieve(
+        VkCommandBuffer handle);
 
     /**
      * @brief Drop a device from the global store of dispatchable devices.
@@ -136,11 +141,12 @@ public:
      * @param nlayerGetProcAddress   The vkGetDeviceProcAddress function for the driver.
      * @param createInfo             The create info used to create the device.
      */
-    Device(Instance* instance,
-           VkPhysicalDevice physicalDevice,
-           VkDevice device,
-           PFN_vkGetDeviceProcAddr nlayerGetProcAddress,
-           const VkDeviceCreateInfo& createInfo);
+    Device(
+        Instance* instance,
+        VkPhysicalDevice physicalDevice,
+        VkDevice device,
+        PFN_vkGetDeviceProcAddr nlayerGetProcAddress,
+        const VkDeviceCreateInfo& createInfo);
 
     /**
      * @brief Destroy this layer device object.
@@ -152,12 +158,19 @@ public:
      *
      * @param message   The message to send.
      */
-    void txMessage(Comms::MessageData&& message) { commsWrapper->txMessage(std::move(message)); }
+    void txMessage(
+        Comms::MessageData&& message
+    ) {
+        commsWrapper->txMessage(std::move(message));
+    }
 
     /**
      * @brief Get the cumulative stats for this device.
      */
-    Tracker::Device& getStateTracker() { return stateTracker; }
+    Tracker::Device& getStateTracker()
+    {
+        return stateTracker;
+    }
 
 public:
     /**

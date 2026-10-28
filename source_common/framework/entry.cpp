@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024-2025 Arm Limited
+ * Copyright (c) 2024-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -53,48 +53,54 @@ std::mutex g_vulkanLock;
 extern "C"
 {
 /** See Vulkan API for documentation. */
-VK_LAYER_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetDeviceProcAddr(VkDevice device, const char* pName)
-{
+VK_LAYER_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetDeviceProcAddr(
+    VkDevice device,
+    const char* pName
+) {
     return getLayerPtr_vkGetDeviceProcAddr()(device, pName);
 }
 
 /** See Vulkan API for documentation. */
-VK_LAYER_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetInstanceProcAddr(VkInstance instance, const char* pName)
-{
+VK_LAYER_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetInstanceProcAddr(
+    VkInstance instance,
+    const char* pName
+) {
     return getLayerPtr_vkGetInstanceProcAddr()(instance, pName);
 }
 
 /** See Vulkan API for documentation. */
-VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL
-    vkEnumerateInstanceExtensionProperties(const char* pLayerName,
-                                           uint32_t* pPropertyCount,
-                                           VkExtensionProperties* pProperties)
-{
+VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateInstanceExtensionProperties(
+    const char* pLayerName,
+    uint32_t* pPropertyCount,
+    VkExtensionProperties* pProperties
+) {
     return getLayerPtr_vkEnumerateInstanceExtensionProperties()(pLayerName, pPropertyCount, pProperties);
 }
 
 /** See Vulkan API for documentation. */
-VK_LAYER_EXPORT_ANDROID VKAPI_ATTR VkResult VKAPI_CALL
-    vkEnumerateDeviceExtensionProperties(VkPhysicalDevice gpu,
-                                         const char* pLayerName,
-                                         uint32_t* pPropertyCount,
-                                         VkExtensionProperties* pProperties)
-{
+VK_LAYER_EXPORT_ANDROID VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceExtensionProperties(
+    VkPhysicalDevice gpu,
+    const char* pLayerName,
+    uint32_t* pPropertyCount,
+    VkExtensionProperties* pProperties
+) {
     return getLayerPtr_vkEnumerateDeviceExtensionProperties()(gpu, pLayerName, pPropertyCount, pProperties);
 }
 
 /** See Vulkan API for documentation. */
-VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateInstanceLayerProperties(uint32_t* pPropertyCount,
-                                                                                  VkLayerProperties* pProperties)
-{
+VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateInstanceLayerProperties(
+    uint32_t* pPropertyCount,
+    VkLayerProperties* pProperties
+) {
     return getLayerPtr_vkEnumerateInstanceLayerProperties()(pPropertyCount, pProperties);
 }
 
 /** See Vulkan API for documentation. */
-VK_LAYER_EXPORT_ANDROID VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceLayerProperties(VkPhysicalDevice gpu,
-                                                                                        uint32_t* pPropertyCount,
-                                                                                        VkLayerProperties* pProperties)
-{
+VK_LAYER_EXPORT_ANDROID VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceLayerProperties(
+    VkPhysicalDevice gpu,
+    uint32_t* pPropertyCount,
+    VkLayerProperties* pProperties
+) {
     return getLayerPtr_vkEnumerateDeviceLayerProperties()(gpu, pPropertyCount, pProperties);
 }
 }

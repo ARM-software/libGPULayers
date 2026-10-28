@@ -183,7 +183,8 @@ private:
      *
      * @throws json::out_of_bounds if required fields are missing.
      */
-    void parse_feature_options(const json& config);
+    void parse_feature_options(
+        const json& config);
 
     /**
      * @brief Parse the configuration options for the serializer.
@@ -192,7 +193,8 @@ private:
      *
      * @throws json::out_of_bounds if required fields are missing.
      */
-    void parse_serialization_options(const json& config);
+    void parse_serialization_options(
+        const json& config);
 
     /**
      * @brief Parse the configuration options for the shader module.
@@ -201,7 +203,8 @@ private:
      *
      * @throws json::out_of_bounds if required fields are missing.
      */
-    void parse_shader_options(const json& config);
+    void parse_shader_options(
+        const json& config);
 
     /**
      * @brief Parse the configuration options for the framebuffer module.
@@ -210,7 +213,8 @@ private:
      *
      * @throws json::out_of_bounds if required fields are missing.
      */
-    void parse_framebuffer_options(const json& config);
+    void parse_framebuffer_options(
+        const json& config);
 
 private:
     /**

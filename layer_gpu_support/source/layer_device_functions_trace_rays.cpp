@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2025 Arm Limited
+ * Copyright (c) 2025-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -36,8 +36,10 @@ extern std::mutex g_vulkanLock;
  * @param layer           The layer context for the device.
  * @param commandBuffer   The command buffer we are recording.
  */
-static void preTraceRays(Device* layer, VkCommandBuffer commandBuffer)
-{
+static void preTraceRays(
+    Device* layer,
+    VkCommandBuffer commandBuffer
+) {
     if (!layer->instance->config.serialize_cmdstream_trace_rays_pre())
     {
         return;
@@ -62,8 +64,10 @@ static void preTraceRays(Device* layer, VkCommandBuffer commandBuffer)
  * @param layer           The layer context for the device.
  * @param commandBuffer   The command buffer we are recording.
  */
-static void postTraceRays(Device* layer, VkCommandBuffer commandBuffer)
-{
+static void postTraceRays(
+    Device* layer,
+    VkCommandBuffer commandBuffer
+) {
     if (!layer->instance->config.serialize_cmdstream_trace_rays_post())
     {
         return;
@@ -88,8 +92,10 @@ static void postTraceRays(Device* layer, VkCommandBuffer commandBuffer)
  * @param layer           The layer context for the device.
  * @param commandBuffer   The command buffer we are recording.
  */
-static void preAccelerationStructureBuild(Device* layer, VkCommandBuffer commandBuffer)
-{
+static void preAccelerationStructureBuild(
+    Device* layer,
+    VkCommandBuffer commandBuffer
+) {
     if (!layer->instance->config.serialize_cmdstream_as_build_pre())
     {
         return;
@@ -114,8 +120,10 @@ static void preAccelerationStructureBuild(Device* layer, VkCommandBuffer command
  * @param layer           The layer context for the device.
  * @param commandBuffer   The command buffer we are recording.
  */
-static void postAccelerationStructureBuild(Device* layer, VkCommandBuffer commandBuffer)
-{
+static void postAccelerationStructureBuild(
+    Device* layer,
+    VkCommandBuffer commandBuffer
+) {
     if (!layer->instance->config.serialize_cmdstream_as_build_post())
     {
         return;
@@ -136,9 +144,10 @@ static void postAccelerationStructureBuild(Device* layer, VkCommandBuffer comman
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdTraceRaysIndirect2KHR<user_tag>(VkCommandBuffer commandBuffer,
-                                                                      VkDeviceAddress indirectDeviceAddress)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdTraceRaysIndirect2KHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    VkDeviceAddress indirectDeviceAddress
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -155,14 +164,14 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdTraceRaysIndirect2KHR<user_tag>(VkCommandB
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL
-    layer_vkCmdTraceRaysIndirectKHR<user_tag>(VkCommandBuffer commandBuffer,
-                                              const VkStridedDeviceAddressRegionKHR* pRaygenShaderBindingTable,
-                                              const VkStridedDeviceAddressRegionKHR* pMissShaderBindingTable,
-                                              const VkStridedDeviceAddressRegionKHR* pHitShaderBindingTable,
-                                              const VkStridedDeviceAddressRegionKHR* pCallableShaderBindingTable,
-                                              VkDeviceAddress indirectDeviceAddress)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdTraceRaysIndirectKHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkStridedDeviceAddressRegionKHR* pRaygenShaderBindingTable,
+    const VkStridedDeviceAddressRegionKHR* pMissShaderBindingTable,
+    const VkStridedDeviceAddressRegionKHR* pHitShaderBindingTable,
+    const VkStridedDeviceAddressRegionKHR* pCallableShaderBindingTable,
+    VkDeviceAddress indirectDeviceAddress
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -184,16 +193,16 @@ VKAPI_ATTR void VKAPI_CALL
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL
-    layer_vkCmdTraceRaysKHR<user_tag>(VkCommandBuffer commandBuffer,
-                                      const VkStridedDeviceAddressRegionKHR* pRaygenShaderBindingTable,
-                                      const VkStridedDeviceAddressRegionKHR* pMissShaderBindingTable,
-                                      const VkStridedDeviceAddressRegionKHR* pHitShaderBindingTable,
-                                      const VkStridedDeviceAddressRegionKHR* pCallableShaderBindingTable,
-                                      uint32_t width,
-                                      uint32_t height,
-                                      uint32_t depth)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdTraceRaysKHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkStridedDeviceAddressRegionKHR* pRaygenShaderBindingTable,
+    const VkStridedDeviceAddressRegionKHR* pMissShaderBindingTable,
+    const VkStridedDeviceAddressRegionKHR* pHitShaderBindingTable,
+    const VkStridedDeviceAddressRegionKHR* pCallableShaderBindingTable,
+    uint32_t width,
+    uint32_t height,
+    uint32_t depth
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -223,8 +232,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBuildAccelerationStructuresIndirectKHR<use
     const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,
     const VkDeviceAddress* pIndirectDeviceAddresses,
     const uint32_t* pIndirectStrides,
-    const uint32_t* const* ppMaxPrimitiveCounts)
-{
+    const uint32_t* const* ppMaxPrimitiveCounts
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -249,8 +258,8 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBuildAccelerationStructuresKHR<user_tag>(
     VkCommandBuffer commandBuffer,
     uint32_t infoCount,
     const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,
-    const VkAccelerationStructureBuildRangeInfoKHR* const* ppBuildRangeInfos)
-{
+    const VkAccelerationStructureBuildRangeInfoKHR* const* ppBuildRangeInfos
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store

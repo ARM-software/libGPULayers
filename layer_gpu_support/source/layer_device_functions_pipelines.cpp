@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2025 Arm Limited
+ * Copyright (c) 2025-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -57,8 +57,9 @@ static const uint32_t SPIRV_DECORATE_RELAXED_PRECISION {0};
  *
  * @return   The modified binary.
  */
-static std::vector<uint32_t> remove_relaxed_precision(const std::vector<uint32_t>& originalCode)
-{
+static std::vector<uint32_t> remove_relaxed_precision(
+    const std::vector<uint32_t>& originalCode
+) {
     // This module assumes the input SPIR-V is valid
     std::vector<uint32_t> code;
 
@@ -116,8 +117,9 @@ static std::vector<uint32_t> remove_relaxed_precision(const std::vector<uint32_t
  *
  * @return   The modified binary.
  */
-static std::vector<uint32_t> fuzz_spirv(const std::vector<uint32_t>& originalCode)
-{
+static std::vector<uint32_t> fuzz_spirv(
+    const std::vector<uint32_t>& originalCode
+) {
     // This module assumes the input SPIR-V is valid
     std::vector<uint32_t> code = originalCode;
 
@@ -130,11 +132,12 @@ static std::vector<uint32_t> fuzz_spirv(const std::vector<uint32_t>& originalCod
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateShaderModule<user_tag>(VkDevice device,
-                                                                    const VkShaderModuleCreateInfo* pCreateInfo,
-                                                                    const VkAllocationCallbacks* pAllocator,
-                                                                    VkShaderModule* pShaderModule)
-{
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateShaderModule<user_tag>(
+    VkDevice device,
+    const VkShaderModuleCreateInfo* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkShaderModule* pShaderModule
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -167,12 +170,13 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateShaderModule<user_tag>(VkDevice dev
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateShadersEXT<user_tag>(VkDevice device,
-                                                                  uint32_t createInfoCount,
-                                                                  const VkShaderCreateInfoEXT* pCreateInfos,
-                                                                  const VkAllocationCallbacks* pAllocator,
-                                                                  VkShaderEXT* pShaders)
-{
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateShadersEXT<user_tag>(
+    VkDevice device,
+    uint32_t createInfoCount,
+    const VkShaderCreateInfoEXT* pCreateInfos,
+    const VkAllocationCallbacks* pAllocator,
+    VkShaderEXT* pShaders
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -259,10 +263,11 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateShadersEXT<user_tag>(VkDevice devic
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPipelineKeyKHR<user_tag>(VkDevice device,
-                                                                   const VkPipelineCreateInfoKHR* pPipelineCreateInfo,
-                                                                   VkPipelineBinaryKeyKHR* pPipelineKey)
-{
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPipelineKeyKHR<user_tag>(
+    VkDevice device,
+    const VkPipelineCreateInfoKHR* pPipelineCreateInfo,
+    VkPipelineBinaryKeyKHR* pPipelineKey
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -288,13 +293,14 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkGetPipelineKeyKHR<user_tag>(VkDevice devi
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateComputePipelines<user_tag>(VkDevice device,
-                                                                        VkPipelineCache pipelineCache,
-                                                                        uint32_t createInfoCount,
-                                                                        const VkComputePipelineCreateInfo* pCreateInfos,
-                                                                        const VkAllocationCallbacks* pAllocator,
-                                                                        VkPipeline* pPipelines)
-{
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateComputePipelines<user_tag>(
+    VkDevice device,
+    VkPipelineCache pipelineCache,
+    uint32_t createInfoCount,
+    const VkComputePipelineCreateInfo* pCreateInfos,
+    const VkAllocationCallbacks* pAllocator,
+    VkPipeline* pPipelines
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -314,14 +320,14 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateComputePipelines<user_tag>(VkDevice
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR VkResult VKAPI_CALL
-    layer_vkCreateGraphicsPipelines<user_tag>(VkDevice device,
-                                              VkPipelineCache pipelineCache,
-                                              uint32_t createInfoCount,
-                                              const VkGraphicsPipelineCreateInfo* pCreateInfos,
-                                              const VkAllocationCallbacks* pAllocator,
-                                              VkPipeline* pPipelines)
-{
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateGraphicsPipelines<user_tag>(
+    VkDevice device,
+    VkPipelineCache pipelineCache,
+    uint32_t createInfoCount,
+    const VkGraphicsPipelineCreateInfo* pCreateInfos,
+    const VkAllocationCallbacks* pAllocator,
+    VkPipeline* pPipelines
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -341,15 +347,15 @@ VKAPI_ATTR VkResult VKAPI_CALL
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR VkResult VKAPI_CALL
-    layer_vkCreateRayTracingPipelinesKHR<user_tag>(VkDevice device,
-                                                   VkDeferredOperationKHR deferredOperation,
-                                                   VkPipelineCache pipelineCache,
-                                                   uint32_t createInfoCount,
-                                                   const VkRayTracingPipelineCreateInfoKHR* pCreateInfos,
-                                                   const VkAllocationCallbacks* pAllocator,
-                                                   VkPipeline* pPipelines)
-{
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkCreateRayTracingPipelinesKHR<user_tag>(
+    VkDevice device,
+    VkDeferredOperationKHR deferredOperation,
+    VkPipelineCache pipelineCache,
+    uint32_t createInfoCount,
+    const VkRayTracingPipelineCreateInfoKHR* pCreateInfos,
+    const VkAllocationCallbacks* pAllocator,
+    VkPipeline* pPipelines
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store

@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024 Arm Limited
+ * Copyright (c) 2024-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -52,7 +52,8 @@ public:
      *
      * @param parent   The parent comms module.
      */
-    Transmitter(CommsModule& parent);
+    Transmitter(
+        CommsModule& parent);
 
     /**
      * @brief Destroy this transmitter.
@@ -77,7 +78,8 @@ private:
      *
      * @param message   The message to send.
      */
-    void sendMessage(const Message& message);
+    void sendMessage(
+        const Message& message);
 
     /**
      * @brief Send N bytes of data to the socket.
@@ -85,7 +87,9 @@ private:
      * @param data       The data to send.
      * @param dataSize   The number of bytes in the data.
      */
-    void sendData(uint8_t* data, size_t dataSize);
+    void sendData(
+        uint8_t* data,
+        size_t dataSize);
 
 private:
     /**

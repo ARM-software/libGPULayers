@@ -25,8 +25,6 @@
 
 #pragma once
 
-// clang-format off
-
 #include <vulkan/vulkan.h>
 
 #include "framework/utils.hpp"
@@ -8627,5 +8625,3 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkWriteSamplerDescriptorsEXT<default_tag>(
     uint32_t samplerCount,
     const VkSamplerCreateInfo* pSamplers,
     const VkHostAddressRangeEXT* pDescriptors);
-
-// clang-format on

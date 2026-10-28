@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024-2025 Arm Limited
+ * Copyright (c) 2024-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -86,8 +86,9 @@ struct default_tag {};
  *
  * @return The dispatch key.
  */
-inline static void* getDispatchKey(void* ptr)
-{
+inline static void* getDispatchKey(
+    void* ptr
+) {
     return *static_cast<void**>(ptr);
 }
 

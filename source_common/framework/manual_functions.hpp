@@ -57,7 +57,8 @@
  *
  * @return The instance creation info, or @c nullptr if not found.
  */
-VkLayerInstanceCreateInfo* getChainInfo(const VkInstanceCreateInfo* pCreateInfo);
+VkLayerInstanceCreateInfo* getChainInfo(
+    const VkInstanceCreateInfo* pCreateInfo);
 
 /**
  * @brief Extract the layer chain info from the device creation info.
@@ -66,7 +67,8 @@ VkLayerInstanceCreateInfo* getChainInfo(const VkInstanceCreateInfo* pCreateInfo)
  *
  * @return The instance creation info, or @c nullptr if not found.
  */
-VkLayerDeviceCreateInfo* getChainInfo(const VkDeviceCreateInfo* pCreateInfo);
+VkLayerDeviceCreateInfo* getChainInfo(
+    const VkDeviceCreateInfo* pCreateInfo);
 
 /**
  * @brief Is this function always exported by the layer?
@@ -80,7 +82,8 @@ VkLayerDeviceCreateInfo* getChainInfo(const VkDeviceCreateInfo* pCreateInfo);
  * @return @c true if default implementation is always exported, @c false if
  *         only @c <user_tag> specializations are exported .
  */
-bool isFunctionAlwaysExported(const char* name);
+bool isFunctionAlwaysExported(
+    const char* name);
 
 /**
  * @brief Fetch the function for a given dynamic instance entrypoint name.
@@ -95,7 +98,8 @@ bool isFunctionAlwaysExported(const char* name);
  *         layer specialization. Returns @c nullptr for the function if the
  *         layer doesn't implement any handler for the function.
  */
-std::tuple<bool, PFN_vkVoidFunction, bool> getInstanceLayerFunction(const char* name);
+std::tuple<bool, PFN_vkVoidFunction, bool> getInstanceLayerFunction(
+    const char* name);
 
 /**
  * @brief Fetch the function for a given dynamic instance entrypoint name.
@@ -110,7 +114,8 @@ std::tuple<bool, PFN_vkVoidFunction, bool> getInstanceLayerFunction(const char* 
  *         function pointers if the layer doesn't implement any handler for the
  *         function.
  */
-std::pair<PFN_vkVoidFunction, bool> getDeviceLayerFunction(const char* name);
+std::pair<PFN_vkVoidFunction, bool> getDeviceLayerFunction(
+    const char* name);
 
 /**
  * @brief Fetch the maximum supported instance API version.
@@ -119,7 +124,8 @@ std::pair<PFN_vkVoidFunction, bool> getDeviceLayerFunction(const char* name);
  *
  * @return The major/minor version numbers, or zeros on error.
  */
-APIVersion getInstanceAPIVersion(PFN_vkGetInstanceProcAddr fpGetProcAddr);
+APIVersion getInstanceAPIVersion(
+    PFN_vkGetInstanceProcAddr fpGetProcAddr);
 
 /**
  * @brief Fetch the application requested instance API version.
@@ -128,7 +134,8 @@ APIVersion getInstanceAPIVersion(PFN_vkGetInstanceProcAddr fpGetProcAddr);
  *
  * @return The major/minor version numbers.
  */
-APIVersion getApplicationAPIVersion(const VkInstanceCreateInfo* pCreateInfo);
+APIVersion getApplicationAPIVersion(
+    const VkInstanceCreateInfo* pCreateInfo);
 
 /**
  * @brief Fetch the maximum supported device API version.
@@ -139,9 +146,10 @@ APIVersion getApplicationAPIVersion(const VkInstanceCreateInfo* pCreateInfo);
  *
  * @return The major/minor version numbers, or zeros on error.
  */
-APIVersion getDeviceAPIVersion(PFN_vkGetInstanceProcAddr fpGetProcAddr,
-                               VkInstance instance,
-                               VkPhysicalDevice physicalDevice);
+APIVersion getDeviceAPIVersion(
+    PFN_vkGetInstanceProcAddr fpGetProcAddr,
+    VkInstance instance,
+    VkPhysicalDevice physicalDevice);
 
 /**
  * @brief Return an increased API version, if supported.
@@ -152,9 +160,10 @@ APIVersion getDeviceAPIVersion(PFN_vkGetInstanceProcAddr fpGetProcAddr,
  *
  * @return The major/minor version numbers, or zeros on error.
  */
-APIVersion increaseAPIVersion(const APIVersion& userVersion,
-                              const APIVersion& maxVersion,
-                              const APIVersion& requiredVersion);
+APIVersion increaseAPIVersion(
+    const APIVersion& userVersion,
+    const APIVersion& maxVersion,
+    const APIVersion& requiredVersion);
 
 /**
  * @brief Fetch the list of supported extensions from the instance.
@@ -168,7 +177,8 @@ APIVersion increaseAPIVersion(const APIVersion& userVersion,
  *
  * @return The list of supported extensions; empty list on failure.
  */
-std::vector<std::string> getInstanceExtensionList(const VkInstanceCreateInfo* pCreateInfo);
+std::vector<std::string> getInstanceExtensionList(
+    const VkInstanceCreateInfo* pCreateInfo);
 
 /**
  * @brief Fetch the list of supported extensions from a physical device.
@@ -179,9 +189,10 @@ std::vector<std::string> getInstanceExtensionList(const VkInstanceCreateInfo* pC
  *
  * @return The list of supported extensions; empty list on failure.
  */
-std::vector<std::string> getDeviceExtensionList(VkInstance instance,
-                                                VkPhysicalDevice physicalDevice,
-                                                const VkDeviceCreateInfo* pCreateInfo);
+std::vector<std::string> getDeviceExtensionList(
+    VkInstance instance,
+    VkPhysicalDevice physicalDevice,
+    const VkDeviceCreateInfo* pCreateInfo);
 
 /**
  * @brief Clone the target extension list.
@@ -191,7 +202,9 @@ std::vector<std::string> getDeviceExtensionList(VkInstance instance,
  *
  * @return the cloned list.
  */
-std::vector<const char*> cloneExtensionList(uint32_t extensionCount, const char* const* extensionList);
+std::vector<const char*> cloneExtensionList(
+    uint32_t extensionCount,
+    const char* const* extensionList);
 
 /**
  * Enable VK_KHR_timeline_semaphore if not enabled.
@@ -208,10 +221,11 @@ std::vector<const char*> cloneExtensionList(uint32_t extensionCount, const char*
  * @param createInfo       The createInfo we can search to find user config.
  * @param supported        The list of supported extensions.
  */
-void enableDeviceVkKhrTimelineSemaphore(Instance& instance,
-                                        VkPhysicalDevice physicalDevice,
-                                        vku::safe_VkDeviceCreateInfo& createInfo,
-                                        std::vector<std::string>& supported);
+void enableDeviceVkKhrTimelineSemaphore(
+    Instance& instance,
+    VkPhysicalDevice physicalDevice,
+    vku::safe_VkDeviceCreateInfo& createInfo,
+    std::vector<std::string>& supported);
 
 /**
  * Enable VK_EXT_image_compression_control if not enabled.
@@ -227,10 +241,11 @@ void enableDeviceVkKhrTimelineSemaphore(Instance& instance,
  * @param createInfo       The createInfo we can search to find user config.
  * @param supported        The list of supported extensions.
  */
-void enableDeviceVkExtImageCompressionControl(Instance& instance,
-                                              VkPhysicalDevice physicalDevice,
-                                              vku::safe_VkDeviceCreateInfo& createInfo,
-                                              std::vector<std::string>& supported);
+void enableDeviceVkExtImageCompressionControl(
+    Instance& instance,
+    VkPhysicalDevice physicalDevice,
+    vku::safe_VkDeviceCreateInfo& createInfo,
+    std::vector<std::string>& supported);
 
 /**
  * Hide VK_EXT_frame_boundary if emulated on top of the driver.
@@ -243,8 +258,9 @@ void enableDeviceVkExtImageCompressionControl(Instance& instance,
  * @param createInfo       The createInfo we can search to find user config.
  * @param supported        The list of supported extensions.
  */
-void emulateDeviceVkExtFrameBoundary(Instance& instance,
-                                     VkPhysicalDevice physicalDevice,
-                                     vku::safe_VkDeviceCreateInfo& createInfo,
-                                     std::vector<std::string>& supported);
+void emulateDeviceVkExtFrameBoundary(
+    Instance& instance,
+    VkPhysicalDevice physicalDevice,
+    vku::safe_VkDeviceCreateInfo& createInfo,
+    std::vector<std::string>& supported);
 

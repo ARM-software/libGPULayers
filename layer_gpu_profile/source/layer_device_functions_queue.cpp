@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024-2025 Arm Limited
+ * Copyright (c) 2024-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -46,10 +46,11 @@ extern std::mutex g_vulkanLock;
  * @param queue             The queue being submitted to.
  * @param commandBuffer     The command buffer being submitted.
  */
-static void processLayerCommandStream(Device& layer,
-                                      VkQueue queue,
-                                      VkCommandBuffer commandBuffer)
-{
+static void processLayerCommandStream(
+    Device& layer,
+    VkQueue queue,
+    VkCommandBuffer commandBuffer
+) {
     // Skip doing this if we are not doing per-workload profiling
     if (!layer.instance->config.isSamplingWorkloads())
     {
@@ -210,8 +211,10 @@ static void processFrameBoundaryPostSubmit(
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueuePresentKHR<user_tag>(VkQueue queue, const VkPresentInfoKHR* pPresentInfo)
-{
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueuePresentKHR<user_tag>(
+    VkQueue queue,
+    const VkPresentInfoKHR* pPresentInfo
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -247,9 +250,12 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueuePresentKHR<user_tag>(VkQueue queue, 
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR VkResult VKAPI_CALL
-    layer_vkQueueSubmit<user_tag>(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence)
-{
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit<user_tag>(
+    VkQueue queue,
+    uint32_t submitCount,
+    const VkSubmitInfo* pSubmits,
+    VkFence fence
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -305,9 +311,12 @@ VKAPI_ATTR VkResult VKAPI_CALL
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR VkResult VKAPI_CALL
-    layer_vkQueueSubmit2<user_tag>(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence)
-{
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit2<user_tag>(
+    VkQueue queue,
+    uint32_t submitCount,
+    const VkSubmitInfo2* pSubmits,
+    VkFence fence
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -363,9 +372,12 @@ VKAPI_ATTR VkResult VKAPI_CALL
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR VkResult VKAPI_CALL
-    layer_vkQueueSubmit2KHR<user_tag>(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence)
-{
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit2KHR<user_tag>(
+    VkQueue queue,
+    uint32_t submitCount,
+    const VkSubmitInfo2* pSubmits,
+    VkFence fence
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store

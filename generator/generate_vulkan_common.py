@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: MIT
 # -----------------------------------------------------------------------------
-# Copyright (c) 2024-2025 Arm Limited
+# Copyright (c) 2024-2026 Arm Limited
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to
@@ -490,13 +490,11 @@ def generate_instance_decls(
     file.write('#pragma once\n')
     file.write('\n')
 
-    file.write('// clang-format off\n')
-    file.write('\n')
-
     file.write('#include <vulkan/vulkan.h>\n')
     file.write('\n')
 
     # Create a listing of API versions and API extensions
+    blocks = []
     for command in commands:
         if command.dispatch_type != 'instance':
             continue
@@ -542,10 +540,10 @@ def generate_instance_decls(
         if plat_define:
             lines.append('#endif\n')
 
-        file.write('\n'.join(lines))
-        file.write('\n')
+        blocks.append('\n'.join(lines).rstrip('\n'))
 
-    file.write('// clang-format on\n')
+    file.write('\n\n'.join(blocks))
+    file.write('\n')
 
 
 def generate_instance_queries(
@@ -564,13 +562,11 @@ def generate_instance_queries(
     file.write('#pragma once\n')
     file.write('\n')
 
-    file.write('// clang-format off\n')
-    file.write('\n')
-
     file.write('#include <vulkan/vulkan.h>\n')
     file.write('\n')
 
     # Create a listing of API versions and API extensions
+    blocks = []
     for command in commands:
         if command.dispatch_type != 'instance':
             continue
@@ -588,7 +584,7 @@ def generate_instance_queries(
         for (ptype, pname, array) in command.params:
             plist.append(f'{ptype} {pname}{array}')
             nlist.append(pname)
-        plist_str = ', '.join(plist)
+        plist_str = ',\n    '.join(plist)
         nlist_str = ', '.join(nlist)
 
         lines.append('/* Test for user_tag availability. */')
@@ -603,8 +599,8 @@ def generate_instance_queries(
 
         # Define the function pointer resolution
         lines.append('/* Function pointer resolution. */')
-        decl = f'constexpr PFN_{command.name} getLayerPtr_{command.name}()\n' \
-               f'{{\n' \
+        decl = f'constexpr PFN_{command.name}' \
+               f' getLayerPtr_{command.name}()\n{{\n' \
                f'    return [] <typename T>\n' \
                f'    {{\n' \
                f'        if constexpr(hasLayerPtr_{command.name}<T>)\n' \
@@ -621,10 +617,10 @@ def generate_instance_queries(
         if plat_define:
             lines.append('#endif\n')
 
-        file.write('\n'.join(lines))
-        file.write('\n')
+        blocks.append('\n'.join(lines).rstrip('\n'))
 
-    file.write('// clang-format on\n')
+    file.write('\n\n'.join(blocks))
+    file.write('\n')
 
 
 def generate_instance_defs(
@@ -690,7 +686,8 @@ def generate_instance_defs(
             lines.append('#endif\n')
 
     data = data.replace('{FUNCTION_DEFS}', '\n'.join(lines))
-    file.write(data)
+    file.write(data.rstrip('\n'))
+    file.write('\n')
 
 
 def generate_device_dispatch_table(
@@ -764,14 +761,12 @@ def generate_device_decls(
     file.write('#pragma once\n')
     file.write('\n')
 
-    file.write('// clang-format off\n')
-    file.write('\n')
-
     file.write('#include <vulkan/vulkan.h>\n\n')
     file.write('#include "framework/utils.hpp"\n')
     file.write('\n')
 
     # Create a listing of API versions and API extensions
+    blocks = []
     for command in commands:
         if command.dispatch_type != 'device':
             continue
@@ -817,10 +812,10 @@ def generate_device_decls(
         if plat_define:
             lines.append('#endif\n')
 
-        file.write('\n'.join(lines))
-        file.write('\n')
+        blocks.append('\n'.join(lines).rstrip('\n'))
 
-    file.write('// clang-format on\n')
+    file.write('\n\n'.join(blocks))
+    file.write('\n')
 
 
 def generate_device_defs(
@@ -886,7 +881,8 @@ def generate_device_defs(
             lines.append('#endif\n')
 
     data = data.replace('{FUNCTION_DEFS}', '\n'.join(lines))
-    file.write(data)
+    file.write(data.rstrip('\n'))
+    file.write('\n')
 
 
 def generate_device_queries(
@@ -906,14 +902,12 @@ def generate_device_queries(
     file.write('#pragma once\n')
     file.write('\n')
 
-    file.write('// clang-format off\n')
-    file.write('\n')
-
     file.write('#include <vulkan/vulkan.h>\n\n')
     file.write('#include "framework/utils.hpp"\n')
     file.write('\n')
 
     # Create a listing of API versions and API extensions
+    blocks = []
     for command in commands:
         if command.dispatch_type != 'device':
             continue
@@ -931,7 +925,7 @@ def generate_device_queries(
         for (ptype, pname, array) in command.params:
             plist.append(f'{ptype} {pname}{array}')
             nlist.append(pname)
-        plist_str = ', '.join(plist)
+        plist_str = ',\n    '.join(plist)
         nlist_str = ', '.join(nlist)
 
         lines.append('/* Test for user_tag availability. */')
@@ -964,10 +958,10 @@ def generate_device_queries(
         if plat_define:
             lines.append('#endif\n')
 
-        file.write('\n'.join(lines))
-        file.write('\n')
+        blocks.append('\n'.join(lines).rstrip('\n'))
 
-    file.write('// clang-format on\n')
+    file.write('\n\n'.join(blocks))
+    file.write('\n')
 
 
 def main() -> int:

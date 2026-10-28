@@ -67,17 +67,24 @@ public:
      *
      * @param handle   The Vulkan command buffer handle we are tracking.
      */
-    CommandBuffer(VkCommandBuffer handle);
+    CommandBuffer(
+        VkCommandBuffer handle);
 
     /**
      * @brief Get the stats object for this command buffer;
      */
-    Stats& getStats() { return stats; }
+    Stats& getStats()
+    {
+        return stats;
+    }
 
     /**
      * @brief Get the layer submit-time command stream for this command buffer.
      */
-    const std::vector<LCSInstruction>& getSubmitCommandStream() const { return workloadCommandStream; }
+    const std::vector<LCSInstruction>& getSubmitCommandStream() const
+    {
+        return workloadCommandStream;
+    }
 
     /**
      * @brief Begin recording a render pass.
@@ -91,11 +98,12 @@ public:
      * @return Returns the tagID assigned to this workload. Always returns 0
      *         if @c resuming an existing workload.
      */
-    uint64_t renderPassBegin(const RenderPass& renderPass,
-                             uint32_t width,
-                             uint32_t height,
-                             bool resuming = false,
-                             bool suspending = false);
+    uint64_t renderPassBegin(
+        const RenderPass& renderPass,
+        uint32_t width,
+        uint32_t height,
+        bool resuming = false,
+        bool suspending = false);
 
     /**
      * @brief End the current render pass workload recording.
@@ -114,7 +122,10 @@ public:
      *
      * @return Returns the tagID assigned to this workload.
      */
-    uint64_t dispatch(int64_t xGroups, int64_t yGroups, int64_t zGroups);
+    uint64_t dispatch(
+        int64_t xGroups,
+        int64_t yGroups,
+        int64_t zGroups);
 
     /**
      * @brief Capture a data graph dispatch.
@@ -132,7 +143,10 @@ public:
      *
      * @return Returns the tagID assigned to this workload.
      */
-    uint64_t traceRays(int64_t xItems, int64_t yItems, int64_t zItems);
+    uint64_t traceRays(
+        int64_t xItems,
+        int64_t yItems,
+        int64_t zItems);
 
     /**
      * @brief Capture a transfer where the destination is an image.
@@ -142,7 +156,9 @@ public:
      *
      * @return Returns the tagID assigned to this workload.
      */
-    uint64_t imageTransfer(LCSImageTransfer::Type transferType, int64_t pixelCount);
+    uint64_t imageTransfer(
+        LCSImageTransfer::Type transferType,
+        int64_t pixelCount);
 
     /**
      * @brief Capture a transfer where the destination is a buffer.
@@ -152,7 +168,9 @@ public:
      *
      * @return Returns the tagID assigned to this workload.
      */
-    uint64_t bufferTransfer(LCSBufferTransfer::Type transferType, int64_t byteCount);
+    uint64_t bufferTransfer(
+        LCSBufferTransfer::Type transferType,
+        int64_t byteCount);
 
     /**
      * @brief Capture an acceleration structure build.
@@ -162,7 +180,9 @@ public:
      *
      * @return Returns the tagID assigned to this workload.
      */
-    uint64_t accelerationStructureBuild(LCSAccelerationStructureBuild::Type buildType, int64_t primitiveCount);
+    uint64_t accelerationStructureBuild(
+        LCSAccelerationStructureBuild::Type buildType,
+        int64_t primitiveCount);
 
     /**
      * @brief Capture a transfer where the destination is an acceleration structure.
@@ -172,14 +192,17 @@ public:
      *
      * @return Returns the tagID assigned to this workload.
      */
-    uint64_t accelerationStructureTransfer(LCSAccelerationStructureTransfer::Type transferType, int64_t byteCount);
+    uint64_t accelerationStructureTransfer(
+        LCSAccelerationStructureTransfer::Type transferType,
+        int64_t byteCount);
 
     /**
      * @brief Begin a user debug marker range.
      *
      * @param marker   The marker label.
      */
-    void debugMarkerBegin(std::string marker);
+    void debugMarkerBegin(
+        std::string marker);
 
     /**
      * @brief End a user debug marker range.
@@ -189,7 +212,8 @@ public:
     /**
      * @brief Execute a secondary command buffer.
      */
-    void executeCommands(CommandBuffer& secondary);
+    void executeCommands(
+        CommandBuffer& secondary);
 
     /**
      * @brief Reset the command buffer back into the @a Initial state.
@@ -201,7 +225,8 @@ public:
      *
      * @param oneTimeSubmit   Is this a one-time submit recording?
      */
-    void begin(bool oneTimeSubmit);
+    void begin(
+        bool oneTimeSubmit);
 
 private:
     /**
@@ -248,7 +273,8 @@ public:
      *
      * @param handle       The Vulkan pool buffer handle we are wrapping.
      */
-    CommandPool(VkCommandPool handle);
+    CommandPool(
+        VkCommandPool handle);
 
     /**
      * @brief Allocate a command buffer in the pool with the given handle.
@@ -257,14 +283,16 @@ public:
      *
      * @return The layer wrapper object for the command buffer.
      */
-    CommandBuffer& allocateCommandBuffer(VkCommandBuffer commandBuffer);
+    CommandBuffer& allocateCommandBuffer(
+        VkCommandBuffer commandBuffer);
 
     /**
      * @brief Free the command buffer in the pool with the given handle.
      *
      * @param commandBuffer   The Vulkan handle of the command buffer to free.
      */
-    void freeCommandBuffer(VkCommandBuffer commandBuffer);
+    void freeCommandBuffer(
+        VkCommandBuffer commandBuffer);
 
     /**
      * @brief Return view onto the allocated command buffers in the pool.

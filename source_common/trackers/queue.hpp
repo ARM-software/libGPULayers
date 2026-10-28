@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2022-2024 Arm Limited
+ * Copyright (c) 2022-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -67,7 +67,9 @@ public:
      * @param renderPass The render pass
      * @param debugStack The stack of debug labels that are associated with this render pass
      */
-    virtual void operator()(const LCSRenderPass& renderPass, const std::vector<std::string>& debugStack) = 0;
+    virtual void operator()(
+        const LCSRenderPass& renderPass,
+        const std::vector<std::string>& debugStack) = 0;
 
     /**
      * @brief Visit a render pass continuation workload object
@@ -76,9 +78,10 @@ public:
      * @param debugStack The stack of debug labels that are associated with this render pass
      * @param renderPassTagID The render pass tag that the continuation was associated with
      */
-    virtual void operator()(const LCSRenderPassContinuation& continuation,
-                            const std::vector<std::string>& debugStack,
-                            uint64_t renderPassTagID) = 0;
+    virtual void operator()(
+        const LCSRenderPassContinuation& continuation,
+        const std::vector<std::string>& debugStack,
+        uint64_t renderPassTagID) = 0;
 
     /**
      * @brief Visit a dispatch workload object
@@ -86,7 +89,9 @@ public:
      * @param dispatch The dispatch
      * @param debugStack The stack of debug labels that are associated with this dispatch
      */
-    virtual void operator()(const LCSDispatch& dispatch, const std::vector<std::string>& debugStack) = 0;
+    virtual void operator()(
+        const LCSDispatch& dispatch,
+        const std::vector<std::string>& debugStack) = 0;
 
     /**
      * @brief Visit a dispatch data graph workload object
@@ -94,7 +99,9 @@ public:
      * @param dispatch The dispatch data graph
      * @param debugStack The stack of debug labels that are associated with this dispatch data graph
      */
-    virtual void operator()(const LCSDispatchDataGraph& dispatch, const std::vector<std::string>& debugStack) = 0;
+    virtual void operator()(
+        const LCSDispatchDataGraph& dispatch,
+        const std::vector<std::string>& debugStack) = 0;
 
     /**
      * @brief Visit a trace rays workload object
@@ -102,7 +109,9 @@ public:
      * @param traceRays The trace rays
      * @param debugStack The stack of debug labels that are associated with this trace rays
      */
-    virtual void operator()(const LCSTraceRays& traceRays, const std::vector<std::string>& debugStack) = 0;
+    virtual void operator()(
+        const LCSTraceRays& traceRays,
+        const std::vector<std::string>& debugStack) = 0;
 
     /**
      * @brief Visit an image transfer workload object
@@ -110,7 +119,9 @@ public:
      * @param imageTransfer The image transfer
      * @param debugStack The stack of debug labels that are associated with this image transfer
      */
-    virtual void operator()(const LCSImageTransfer& imageTransfer, const std::vector<std::string>& debugStack) = 0;
+    virtual void operator()(
+        const LCSImageTransfer& imageTransfer,
+        const std::vector<std::string>& debugStack) = 0;
 
     /**
      * @brief Visit a buffer transfer workload object
@@ -118,7 +129,9 @@ public:
      * @param bufferTransfer The buffer transfer
      * @param debugStack The stack of debug labels that are associated with this buffer transfer
      */
-    virtual void operator()(const LCSBufferTransfer& bufferTransfer, const std::vector<std::string>& debugStack) = 0;
+    virtual void operator()(
+        const LCSBufferTransfer& bufferTransfer,
+        const std::vector<std::string>& debugStack) = 0;
 
     /**
      * @brief Visit an acceleration structure build workload object
@@ -126,8 +139,9 @@ public:
      * @param asBuild The acceleration structure build
      * @param debugStack The stack of debug labels that are associated with this acceleration structure build
      */
-    virtual void operator()(const LCSAccelerationStructureBuild& asBuild,
-                            const std::vector<std::string>& debugStack) = 0;
+    virtual void operator()(
+        const LCSAccelerationStructureBuild& asBuild,
+        const std::vector<std::string>& debugStack) = 0;
 
     /**
      * @brief Visit an acceleration structure transfer workload object
@@ -135,8 +149,9 @@ public:
      * @param asTransfer The acceleration structure transfer
      * @param debugStack The stack of debug labels that are associated with this acceleration structure transfer
      */
-    virtual void operator()(const LCSAccelerationStructureTransfer& asTransfer,
-                            const std::vector<std::string>& debugStack) = 0;
+    virtual void operator()(
+        const LCSAccelerationStructureTransfer& asTransfer,
+        const std::vector<std::string>& debugStack) = 0;
 };
 
 /**
@@ -150,8 +165,10 @@ struct QueueState
      *
      * @param queue The queue which the state tracks
      */
-    QueueState(VkQueue queue)
-        : handle(queue)
+    QueueState(
+        VkQueue queue
+    ) :
+        handle(queue)
     {
     }
 
@@ -177,7 +194,8 @@ struct QueueState
 class Queue
 {
 public:
-    Queue(VkQueue handle);
+    Queue(
+        VkQueue handle);
 
     /**
      * @brief Execute a layer command stream.
@@ -185,8 +203,9 @@ public:
      * @param stream            The layer command stream to execute.
      * @param workload_visitor  The visitor to pass submitted workloads to.
      */
-    void runSubmitCommandStream(const std::vector<LCSInstruction>& stream,
-                                SubmitCommandWorkloadVisitor& workload_visitor);
+    void runSubmitCommandStream(
+        const std::vector<LCSInstruction>& stream,
+        SubmitCommandWorkloadVisitor& workload_visitor);
 
 private:
     QueueState state;

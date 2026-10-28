@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2025 Arm Limited
+ * Copyright (c) 2025-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -41,8 +41,9 @@
 #include <vulkan/vulkan.h>
 
 /* See header for documentation. */
-void LayerConfig::parseSamplingOptions(const json& config)
-{
+void LayerConfig::parseSamplingOptions(
+    const json& config
+) {
     // Decode frame selection mode
     std::string rawFrameMode = config.at("frame_mode");
 

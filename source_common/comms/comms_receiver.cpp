@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024 Arm Limited
+ * Copyright (c) 2024-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -44,8 +44,10 @@
 namespace Comms
 {
 /* See header for documentation. */
-Receiver::Receiver(CommsModule& _parent)
-    : parent(_parent)
+Receiver::Receiver(
+    CommsModule& _parent
+) :
+    parent(_parent)
 {
     int pipe_err = pipe(stopRequestPipe);
     if (pipe_err)
@@ -87,8 +89,9 @@ void Receiver::stop()
 }
 
 /* See header for documentation. */
-void Receiver::parkMessage(std::shared_ptr<Message> message)
-{
+void Receiver::parkMessage(
+    std::shared_ptr<Message> message
+) {
     std::lock_guard<std::mutex> lock(parkingLock);
     parkingBuffer.insert({message->messageID, std::move(message)});
 }
@@ -122,8 +125,10 @@ void Receiver::runReceiver()
 }
 
 /* See header for documentation. */
-void Receiver::wakeMessage(MessageID messageID, std::unique_ptr<MessageData> data)
-{
+void Receiver::wakeMessage(
+    MessageID messageID,
+    std::unique_ptr<MessageData> data
+) {
     std::lock_guard<std::mutex> lock(parkingLock);
 
     // Handle message not found ...
@@ -143,8 +148,10 @@ void Receiver::wakeMessage(MessageID messageID, std::unique_ptr<MessageData> dat
 }
 
 /* See header for documentation. */
-bool Receiver::receiveData(uint8_t* data, size_t dataSize)
-{
+bool Receiver::receiveData(
+    uint8_t* data,
+    size_t dataSize
+) {
     int sockfd = parent.sockfd;
     int pipefd = stopRequestPipe[0];
     int maxfd = std::max(sockfd, pipefd);

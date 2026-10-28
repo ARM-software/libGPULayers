@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2025 Arm Limited
+ * Copyright (c) 2025-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -42,8 +42,10 @@ static std::unordered_map<VkCommandBuffer, bool> dynamic_suspend_state;
  * @param layer           The layer context for the device.
  * @param commandBuffer   The command buffer we are recording.
  */
-static void preRenderPass(Device* layer, VkCommandBuffer commandBuffer)
-{
+static void preRenderPass(
+    Device* layer,
+    VkCommandBuffer commandBuffer
+) {
     if (!layer->instance->config.serialize_cmdstream_render_pass_pre())
     {
         return;
@@ -68,8 +70,10 @@ static void preRenderPass(Device* layer, VkCommandBuffer commandBuffer)
  * @param layer           The layer context for the device.
  * @param commandBuffer   The command buffer we are recording.
  */
-static void postRenderPass(Device* layer, VkCommandBuffer commandBuffer)
-{
+static void postRenderPass(
+    Device* layer,
+    VkCommandBuffer commandBuffer
+) {
     if (!layer->instance->config.serialize_cmdstream_render_pass_post())
     {
         return;
@@ -90,10 +94,11 @@ static void postRenderPass(Device* layer, VkCommandBuffer commandBuffer)
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass<user_tag>(VkCommandBuffer commandBuffer,
-                                                                const VkRenderPassBeginInfo* pRenderPassBegin,
-                                                                VkSubpassContents contents)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkRenderPassBeginInfo* pRenderPassBegin,
+    VkSubpassContents contents
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -109,10 +114,11 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass<user_tag>(VkCommandBuffer 
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass2<user_tag>(VkCommandBuffer commandBuffer,
-                                                                 const VkRenderPassBeginInfo* pRenderPassBegin,
-                                                                 const VkSubpassBeginInfo* pSubpassBeginInfo)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass2<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkRenderPassBeginInfo* pRenderPassBegin,
+    const VkSubpassBeginInfo* pSubpassBeginInfo
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -128,10 +134,11 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass2<user_tag>(VkCommandBuffer
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass2KHR<user_tag>(VkCommandBuffer commandBuffer,
-                                                                    const VkRenderPassBeginInfo* pRenderPassBegin,
-                                                                    const VkSubpassBeginInfo* pSubpassBeginInfo)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass2KHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkRenderPassBeginInfo* pRenderPassBegin,
+    const VkSubpassBeginInfo* pSubpassBeginInfo
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -147,9 +154,10 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderPass2KHR<user_tag>(VkCommandBuf
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRendering<user_tag>(VkCommandBuffer commandBuffer,
-                                                               const VkRenderingInfo* pRenderingInfo)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRendering<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkRenderingInfo* pRenderingInfo
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -173,9 +181,10 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRendering<user_tag>(VkCommandBuffer c
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderingKHR<user_tag>(VkCommandBuffer commandBuffer,
-                                                                  const VkRenderingInfo* pRenderingInfo)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderingKHR<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkRenderingInfo* pRenderingInfo
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -199,8 +208,9 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdBeginRenderingKHR<user_tag>(VkCommandBuffe
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderPass<user_tag>(VkCommandBuffer commandBuffer)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderPass<user_tag>(
+    VkCommandBuffer commandBuffer
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -216,8 +226,9 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderPass<user_tag>(VkCommandBuffer co
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRendering<user_tag>(VkCommandBuffer commandBuffer)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRendering<user_tag>(
+    VkCommandBuffer commandBuffer
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -242,8 +253,9 @@ VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRendering<user_tag>(VkCommandBuffer com
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderingKHR<user_tag>(VkCommandBuffer commandBuffer)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdEndRenderingKHR<user_tag>(
+    VkCommandBuffer commandBuffer
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store

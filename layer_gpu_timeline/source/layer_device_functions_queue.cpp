@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024-2025 Arm Limited
+ * Copyright (c) 2024-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -65,8 +65,10 @@ static uint64_t getClockMonotonicRaw()
  * @param queue             The queue being submitted to.
  * @param workloadVisitor   The data emit callback.
  */
-static void emitQueueMetadata(VkQueue queue, TimelineProtobufEncoder& workloadVisitor)
-{
+static void emitQueueMetadata(
+    VkQueue queue,
+    TimelineProtobufEncoder& workloadVisitor
+) {
     workloadVisitor.emitSubmit(queue, getClockMonotonicRaw());
 }
 
@@ -78,11 +80,12 @@ static void emitQueueMetadata(VkQueue queue, TimelineProtobufEncoder& workloadVi
  * @param commandBuffer     The command buffer being submitted.
  * @param workloadVisitor   The data emit callback.
  */
-static void emitCommandBufferMetadata(Device& layer,
-                                      VkQueue queue,
-                                      VkCommandBuffer commandBuffer,
-                                      Tracker::SubmitCommandWorkloadVisitor& workloadVisitor)
-{
+static void emitCommandBufferMetadata(
+    Device& layer,
+    VkQueue queue,
+    VkCommandBuffer commandBuffer,
+    Tracker::SubmitCommandWorkloadVisitor& workloadVisitor
+) {
     // Fetch layer proxies for this workload
     auto& tracker = layer.getStateTracker();
     auto& trackQueue = tracker.getQueue(queue);
@@ -133,8 +136,10 @@ static void checkManualFrameBoundary(
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueuePresentKHR<user_tag>(VkQueue queue, const VkPresentInfoKHR* pPresentInfo)
-{
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueuePresentKHR<user_tag>(
+    VkQueue queue,
+    const VkPresentInfoKHR* pPresentInfo
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -160,9 +165,12 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueuePresentKHR<user_tag>(VkQueue queue, 
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR VkResult VKAPI_CALL
-    layer_vkQueueSubmit<user_tag>(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence)
-{
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit<user_tag>(
+    VkQueue queue,
+    uint32_t submitCount,
+    const VkSubmitInfo* pSubmits,
+    VkFence fence
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -198,9 +206,12 @@ VKAPI_ATTR VkResult VKAPI_CALL
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR VkResult VKAPI_CALL
-    layer_vkQueueSubmit2<user_tag>(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence)
-{
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit2<user_tag>(
+    VkQueue queue,
+    uint32_t submitCount,
+    const VkSubmitInfo2* pSubmits,
+    VkFence fence
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -236,9 +247,12 @@ VKAPI_ATTR VkResult VKAPI_CALL
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR VkResult VKAPI_CALL
-    layer_vkQueueSubmit2KHR<user_tag>(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence)
-{
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkQueueSubmit2KHR<user_tag>(
+    VkQueue queue,
+    uint32_t submitCount,
+    const VkSubmitInfo2* pSubmits,
+    VkFence fence
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store

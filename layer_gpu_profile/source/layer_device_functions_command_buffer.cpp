@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024 Arm Limited
+ * Copyright (c) 2024-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -32,11 +32,11 @@ extern std::mutex g_vulkanLock;
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR VkResult VKAPI_CALL
-    layer_vkAllocateCommandBuffers<user_tag>(VkDevice device,
-                                             const VkCommandBufferAllocateInfo* pAllocateInfo,
-                                             VkCommandBuffer* pCommandBuffers)
-{
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkAllocateCommandBuffers<user_tag>(
+    VkDevice device,
+    const VkCommandBufferAllocateInfo* pAllocateInfo,
+    VkCommandBuffer* pCommandBuffers
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -64,9 +64,10 @@ VKAPI_ATTR VkResult VKAPI_CALL
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR VkResult layer_vkBeginCommandBuffer<user_tag>(VkCommandBuffer commandBuffer,
-                                                         const VkCommandBufferBeginInfo* pBeginInfo)
-{
+VKAPI_ATTR VkResult layer_vkBeginCommandBuffer<user_tag>(
+    VkCommandBuffer commandBuffer,
+    const VkCommandBufferBeginInfo* pBeginInfo
+) {
     // Hold the lock to access layer-wide global store
     std::unique_lock<std::mutex> lock {g_vulkanLock};
     auto* layer = Device::retrieve(commandBuffer);
@@ -83,9 +84,10 @@ VKAPI_ATTR VkResult layer_vkBeginCommandBuffer<user_tag>(VkCommandBuffer command
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR VkResult VKAPI_CALL layer_vkResetCommandBuffer<user_tag>(VkCommandBuffer commandBuffer,
-                                                                    VkCommandBufferResetFlags flags)
-{
+VKAPI_ATTR VkResult VKAPI_CALL layer_vkResetCommandBuffer<user_tag>(
+    VkCommandBuffer commandBuffer,
+    VkCommandBufferResetFlags flags
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -103,11 +105,12 @@ VKAPI_ATTR VkResult VKAPI_CALL layer_vkResetCommandBuffer<user_tag>(VkCommandBuf
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkFreeCommandBuffers<user_tag>(VkDevice device,
-                                                                VkCommandPool commandPool,
-                                                                uint32_t commandBufferCount,
-                                                                const VkCommandBuffer* pCommandBuffers)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkFreeCommandBuffers<user_tag>(
+    VkDevice device,
+    VkCommandPool commandPool,
+    uint32_t commandBufferCount,
+    const VkCommandBuffer* pCommandBuffers
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store
@@ -127,10 +130,11 @@ VKAPI_ATTR void VKAPI_CALL layer_vkFreeCommandBuffers<user_tag>(VkDevice device,
 
 /* See Vulkan API for documentation. */
 template<>
-VKAPI_ATTR void VKAPI_CALL layer_vkCmdExecuteCommands<user_tag>(VkCommandBuffer commandBuffer,
-                                                                uint32_t commandBufferCount,
-                                                                const VkCommandBuffer* pCommandBuffers)
-{
+VKAPI_ATTR void VKAPI_CALL layer_vkCmdExecuteCommands<user_tag>(
+    VkCommandBuffer commandBuffer,
+    uint32_t commandBufferCount,
+    const VkCommandBuffer* pCommandBuffers
+) {
     LAYER_TRACE(__func__);
 
     // Hold the lock to access layer-wide global store and device-wide data

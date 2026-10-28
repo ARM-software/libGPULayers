@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: MIT
  * ----------------------------------------------------------------------------
- * Copyright (c) 2024-2025 Arm Limited
+ * Copyright (c) 2024-2026 Arm Limited
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -36,10 +36,11 @@
 static std::unordered_map<void*, std::unique_ptr<Device>> g_devices;
 
 /* Predeclare custom DeviceCreatePatch functions */
-static void modifyDeviceRobustBufferAccess(Instance& instance,
-                                           VkPhysicalDevice physicalDevice,
-                                           vku::safe_VkDeviceCreateInfo& createInfo,
-                                           std::vector<std::string>& supported);
+static void modifyDeviceRobustBufferAccess(
+    Instance& instance,
+    VkPhysicalDevice physicalDevice,
+    vku::safe_VkDeviceCreateInfo& createInfo,
+    std::vector<std::string>& supported);
 
 /* See header for documentation. */
 const std::vector<DeviceCreatePatchPtr> Device::createInfoPatches {
@@ -49,31 +50,36 @@ const std::vector<DeviceCreatePatchPtr> Device::createInfoPatches {
 };
 
 /* See header for documentation. */
-void Device::store(VkDevice handle, std::unique_ptr<Device> device)
-{
+void Device::store(
+    VkDevice handle,
+    std::unique_ptr<Device> device
+) {
     void* key = getDispatchKey(handle);
     g_devices.insert({key, std::move(device)});
 }
 
 /* See header for documentation. */
-Device* Device::retrieve(VkDevice handle)
-{
+Device* Device::retrieve(
+    VkDevice handle
+) {
     void* key = getDispatchKey(handle);
     assert(isInMap(key, g_devices));
     return g_devices.at(key).get();
 }
 
 /* See header for documentation. */
-Device* Device::retrieve(VkQueue handle)
-{
+Device* Device::retrieve(
+    VkQueue handle
+) {
     void* key = getDispatchKey(handle);
     assert(isInMap(key, g_devices));
     return g_devices.at(key).get();
 }
 
 /* See header for documentation. */
-Device* Device::retrieve(VkCommandBuffer handle)
-{
+Device* Device::retrieve(
+    VkCommandBuffer handle
+) {
     void* key = getDispatchKey(handle);
     assert(isInMap(key, g_devices));
     return g_devices.at(key).get();
@@ -92,14 +98,16 @@ std::unique_ptr<Device> Device::destroy(
 }
 
 /* See header for documentation. */
-Device::Device(Instance* _instance,
-               VkPhysicalDevice _physicalDevice,
-               VkDevice _device,
-               PFN_vkGetDeviceProcAddr nlayerGetProcAddress,
-               const VkDeviceCreateInfo& createInfo)
-    : instance(_instance),
-      physicalDevice(_physicalDevice),
-      device(_device)
+Device::Device(
+    Instance* _instance,
+    VkPhysicalDevice _physicalDevice,
+    VkDevice _device,
+    PFN_vkGetDeviceProcAddr nlayerGetProcAddress,
+    const VkDeviceCreateInfo& createInfo
+) :
+    instance(_instance),
+    physicalDevice(_physicalDevice),
+    device(_device)
 {
     UNUSED(createInfo);
 
@@ -134,11 +142,12 @@ Device::Device(Instance* _instance,
  * @param createInfo       The createInfo we can search to find user config.
  * @param supported        The list of supported extensions.
  */
-static void modifyDeviceRobustBufferAccess(Instance& instance,
-                                           VkPhysicalDevice physicalDevice,
-                                           vku::safe_VkDeviceCreateInfo& createInfo,
-                                           std::vector<std::string>& supported)
-{
+static void modifyDeviceRobustBufferAccess(
+    Instance& instance,
+    VkPhysicalDevice physicalDevice,
+    vku::safe_VkDeviceCreateInfo& createInfo,
+    std::vector<std::string>& supported
+) {
     UNUSED(supported);
 
     // Only one of these can be set as an override
