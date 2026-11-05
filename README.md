@@ -78,7 +78,7 @@ Common documentation
 Layer documentation
 
 * [Layer: GPU Support](./layer_gpu_support/README_LAYER.md)
-* [Layer: GPU Profile](./layer_gpu_support/README_LAYER.md)
+* [Layer: GPU Profile](./layer_gpu_profile/README_LAYER.md)
 * [Layer: GPU Timeline](./layer_gpu_timeline/README_LAYER.md)
 
 # Support
